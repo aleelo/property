@@ -28,4 +28,5 @@ jobs:
         remote-port: 22
         sync: "full"
         remote-path: "/public_html"
+        # turn off full after deploy
 
