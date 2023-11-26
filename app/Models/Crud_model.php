@@ -22,18 +22,23 @@ class Crud_model extends Model {
     protected $allowedFields = array();
     private $Activity_logs_model;
     
-    function __construct($table = null, $db = null) {
+    function __construct($table = null, $db = null,$prefix = true) {
         $this->Activity_logs_model = model("App\Models\Activity_logs_model");
         $this->db = $db ? $db : db_connect('default');
         $this->db->query("SET sql_mode = ''");
-        $this->use_table($table);
+        $this->use_table($table,$prefix);
     }
 
-    protected function use_table($table) {
+    protected function use_table($table,$prefix=false) {
         $db_prefix = $this->db->getPrefix();
         $this->table = $db_prefix . $table;
         $this->table_without_prefix = $table;
-        $this->db_builder = $this->db->table($this->table);
+
+        if($prefix){
+            $this->db_builder = $this->db->table($this->table);
+        }else{
+            $this->db_builder = $this->db->table($this->table_without_prefix);
+        }
     }
 
     protected function disable_log_activity() {

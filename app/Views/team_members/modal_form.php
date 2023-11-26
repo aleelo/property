@@ -2,23 +2,33 @@
 <div class="modal-body clearfix">
     <div class="container-fluid">
 
+    <style>
+        .app-alert.alert-danger {
+            margin-top: 70px;
+        }
+    </style>
         <div class="form-widget">
             <div class="widget-title clearfix">
                 <div class="row">
-                    <div id="general-info-label" class="col-sm-4"><i data-feather="circle" class="icon-16"></i><strong> <?php echo app_lang('general_info'); ?></strong></div>
-                    <div id="job-info-label" class="col-sm-4"><i data-feather="circle" class="icon-16"></i><strong>  <?php echo app_lang('job_info'); ?></strong></div>
-                    <div id="account-info-label" class="col-sm-4"><i data-feather="circle" class="icon-16"></i><strong>  <?php echo app_lang('account_settings'); ?></strong></div> 
+                    <div id="general-info-label" class="col-sm-3"><i data-feather="circle" class="icon-16"></i><strong> <?php echo app_lang('general_info'); ?></strong></div>
+                    <div id="job-info-label" class="col-sm-3"><i data-feather="circle" class="icon-16"></i><strong>  <?php echo app_lang('job_info'); ?></strong></div>
+                    <div id="account-info-label" class="col-sm-3"><i data-feather="circle" class="icon-16"></i><strong>  <?php echo app_lang('account_settings'); ?></strong></div> 
                 </div>
             </div>
 
             <div class="progress ml15 mr15">
-                <div id="form-progress-bar" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 10%">
+                <div id="form-progress-bar" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
                 </div>
             </div>
         </div>
 
         <div class="tab-content mt15">
-            <div role="tabpanel" class="tab-pane active" id="general-info-tab">
+         <div role="tabpanel" class="tab-pane active" id="general-info-tab">
+                
+                <div class="mb-4">
+                    <h4  class="text-muted">Basic Information</h4>
+                    <hr class="mt-0"/> 
+                </div>
                 <div class="form-group">
                     <div class="row">
                         <label for="first_name" class=" col-md-3"><?php echo app_lang('first_name'); ?></label>
@@ -86,6 +96,21 @@
                 </div>
                 <div class="form-group">
                     <div class="row">
+                        <label for="marital_status" class=" col-md-3"><?php echo 'Marital Status'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_input(array(
+                                "id" => "marital_status",
+                                "name" => "marital_status",
+                                "class" => "form-control",
+                                "placeholder" => 'Marital Status'
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
                         <label for="gender" class=" col-md-3"><?php echo app_lang('gender'); ?></label>
                         <div class=" col-md-9">
                             <?php
@@ -115,22 +140,211 @@
                         </div>
                     </div>
                 </div>
-
-
-                <?php echo view("custom_fields/form/prepare_context_fields", array("custom_fields" => $custom_fields, "label_column" => "col-md-3", "field_column" => " col-md-9")); ?> 
-
-            </div>
-            <div role="tabpanel" class="tab-pane" id="job-info-tab">
                 <div class="form-group">
                     <div class="row">
-                        <label for="job_title" class=" col-md-3"><?php echo app_lang('job_title'); ?></label>
+                        <label for="birth_date" class=" col-md-3"><?php echo 'Date of Birth'; ?></label>
                         <div class=" col-md-9">
                             <?php
                             echo form_input(array(
-                                "id" => "job_title",
-                                "name" => "job_title",
+                                "id" => "birth_date",
+                                "name" => "birth_date",
+                                "class" => "form-control date_input",
+                                "placeholder" => 'Date of Birth'
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="row">
+                        <label for="birth_place" class=" col-md-3"><?php echo 'Place of Birth'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_input(array(
+                                "id" => "birth_place",
+                                "name" => "birth_place",
                                 "class" => "form-control",
-                                "placeholder" => app_lang('job_title'),
+                                "placeholder" => 'Place of Birth'
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label for="passport_no" class=" col-md-3"><?php echo 'Passport Number'; ?></label>
+                        <div class="col-md-9">
+                            <?php
+                            echo form_input(array(
+                                "id" => "passport_no",
+                                "name" => "passport_no",
+                                "class" => "form-control",
+                                "placeholder" => 'Passport Number'
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="my-4">
+                    <h4 class="text-muted">Emergency Information</h4>
+                    <hr class="mt-0"/> 
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label for="emergency_name" class=" col-md-3"><?php echo 'Emergency Contact Name'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_input(array(
+                                "id" => "emergency_name",
+                                "name" => "emergency_name",
+                                "class" => "form-control",
+                                "placeholder" => 'Emergency Contact Name'
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="row">
+                        <label for="emergency_phone" class=" col-md-3"><?php echo 'Emergency Phone'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_input(array(
+                                "id" => "emergency_phone",
+                                "name" => "emergency_phone",
+                                "class" => "form-control",
+                                "placeholder" => 'Emergency Phone'
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="my-4">
+                    <h4 class="text-muted">Education Information</h4>
+                    <hr class="mt-0"/> 
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <label for="education_level" class=" col-md-3"><?php echo 'Education Level'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_dropdown(array(
+                                "id" => "education_level",
+                                "name" => "education_level",
+                                "class" => "form-control select2",
+                                "placeholder" => 'Education Level'
+                            ),$education_levels,[$model_info->education_level]);
+                            ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <label for="education_field" class=" col-md-3"><?php echo 'Field of Study'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_dropdown(array(
+                                "id" => "education_field",
+                                "name" => "education_field",
+                                "class" => "form-control select2",
+                                "placeholder" => 'Field of Study',
+                                "autocomplete" => "off",
+                            ),$education_fields,[$model_info->education_field]);
+                            ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <label for="education_school" class=" col-md-3"><?php echo 'School of Study'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_input(array(
+                                "id" => "education_school",
+                                "name" => "education_school",
+                                "class" => "form-control",
+                                "placeholder" => 'School of Study',
+                                "autocomplete" => "off",
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <?php echo view("custom_fields/form/prepare_context_fields", array("custom_fields" => $custom_fields, "label_column" => "col-md-3", "field_column" => " col-md-9")); ?> 
+
+            </div>
+                
+            <div role="tabpanel" class="tab-pane" id="job-info-tab">
+                
+                    <div class="form-group">
+                        <div class="row">
+                            <label for="employee_type" class=" col-md-3"><?php echo 'Employee Type'; ?></label>
+                            <div class=" col-md-9">
+                                <?php
+                                echo form_dropdown(array(
+                                    "id" => "employee_type",
+                                    "name" => "employee_type",
+                                    "class" => "form-control select2",
+                                    "placeholder" => 'Employee Type',
+                                    "autocomplete" => "off"
+                                ),['Fixed'=>'Fixed','Temporary'=>'Temporary','Internship'=>'Internship']);
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <label for="department_id" class=" col-md-3"><?php echo 'Employee Department'; ?></label>
+                            <div class=" col-md-9">
+                                <?php
+                                echo form_dropdown(array(
+                                    "id" => "department_id",
+                                    "name" => "department_id",
+                                    "class" => "form-control select2",
+                                    "placeholder" => 'Employee Department',
+                                    "autocomplete" => "off",
+                                    "data-rule-required" => true,
+                                    "data-msg-required" => app_lang("field_required"),
+                                ),$departments);
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+ 
+                <div class="form-group">
+                    <div class="row">
+                        <label for="section_id" class=" col-md-3"><?php echo 'Department Section'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_dropdown(array(
+                                "id" => "section_id",
+                                "name" => "section_id",
+                                "class" => "form-control select2",
+                                "placeholder" => 'Department Section',
+                                "autocomplete" => "off",
+                                "data-rule-required" => true,
+                                "data-msg-required" => app_lang("field_required"),
+                            ),$sections);
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label for="job_title_en" class=" col-md-3"><?php echo 'Job Title English'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_input(array(
+                                "id" => "job_title_en",
+                                "name" => "job_title_en",
+                                "class" => "form-control",
+                                "placeholder" => 'Job Title English',
                                 "data-rule-required" => true,
                                 "data-msg-required" => app_lang("field_required"),
                             ));
@@ -140,6 +354,23 @@
                 </div>
                 <div class="form-group">
                     <div class="row">
+                        <label for="job_title_so" class=" col-md-3"><?php echo 'Job Title Somali'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_input(array(
+                                "id" => "job_title_so",
+                                "name" => "job_title_so",
+                                "class" => "form-control",
+                                "placeholder" => 'Job Title Somali',
+                                "data-rule-required" => true,
+                                "data-msg-required" => app_lang("field_required"),
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group "  style="display:none;">
+                    <div class="row">
                         <label for="salary" class=" col-md-3"><?php echo app_lang('salary'); ?></label>
                         <div class=" col-md-9">
                             <?php
@@ -148,12 +379,12 @@
                                 "name" => "salary",
                                 "class" => "form-control",
                                 "placeholder" => app_lang('salary')
-                            ));
+                            ),'500',['style' => 'display:none']);
                             ?>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <div class="row">
                         <label for="salary_term" class=" col-md-3"><?php echo app_lang('salary_term'); ?></label>
                         <div class=" col-md-9">
@@ -163,7 +394,7 @@
                                 "name" => "salary_term",
                                 "class" => "form-control",
                                 "placeholder" => app_lang('salary_term')
-                            ));
+                            ),'test',['style' => 'display:none']);
                             ?>
                         </div>
                     </div>
@@ -184,7 +415,25 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="form-group">
+                    <div class="row">
+                        <label for="employee_id" class=" col-md-3"><?php echo 'Employee Number'; ?></label>
+                        <div class=" col-md-9">
+                            <?php
+                            echo form_input(array(
+                                "id" => "employee_id",
+                                "name" => "employee_id",
+                                "class" => "form-control",
+                                "placeholder" => 'eg. Employee Card Number',
+                                "autocomplete" => "off"
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
             </div>
+            
             <div role="tabpanel" class="tab-pane" id="account-info-tab">
                 <div class="form-group">
                     <div class="row">
@@ -195,7 +444,7 @@
                                 "id" => "email",
                                 "name" => "email",
                                 "class" => "form-control",
-                                "placeholder" => app_lang('email'),
+                                "placeholder" => app_lang('email').': Microsoft 365 email',
                                 "autocomplete" => "off",
                                 "data-rule-email" => true,
                                 "data-msg-email" => app_lang("enter_valid_email"),
@@ -206,7 +455,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display: none">
                     <div class="row">
                         <label for="password" class="col-md-3"><?php echo app_lang('password'); ?></label>
                         <div class=" col-md-8">
@@ -224,7 +473,7 @@
                                     "data-msg-minlength" => app_lang("enter_minimum_6_characters"),
                                     "autocomplete" => "off",
                                     "style" => "z-index:auto;"
-                                ));
+                                ),'aleelo',['style' => 'display:none;']);
                                 ?>
                                 <button type="button" class="input-group-text clickable no-border" id="generate_password"><span data-feather="key" class="icon-16"></span> <?php echo app_lang('generate'); ?></button>
                             </div>
@@ -299,6 +548,7 @@
         $("#team_member-form .select2").select2();
 
         setDatePicker("#date_of_hire");
+        setDatePicker(".date_input");
 
         $("#form-previous").click(function () {
             var $generalTab = $("#general-info-tab"),
@@ -319,7 +569,7 @@
                 $previousButton.addClass("hide");
                 $nextButton.removeClass("hide");
                 $submitButton.addClass("hide");
-            }
+            } 
         });
 
         $("#form-next").click(function () {
@@ -336,12 +586,12 @@
                 $generalTab.removeClass("active");
                 $jobTab.addClass("active");
                 $previousButton.removeClass("hide");
-                $("#form-progress-bar").width("35%");
+                $("#form-progress-bar").width("45%");
                 $("#general-info-label").find("svg").remove();
                 $("#general-info-label").prepend('<i data-feather="check-circle" class="icon-16"></i>');
                 feather.replace();
                 $("#team_member_id").focus();
-                $("#job_title").focus();
+                $("#employee_type").focus();
             } else if ($jobTab.hasClass("active")) {
                 $jobTab.removeClass("active");
                 $accountTab.addClass("active");
@@ -352,9 +602,9 @@
                 $("#job-info-label").find("svg").remove();
                 $("#job-info-label").prepend('<i data-feather="check-circle" class="icon-16"></i>');
                 feather.replace();
-                $("#username").focus();
+                $("#employee_type").focus();
                 $("#email").focus();
-            }
+            } 
         });
 
         $("#form-submit").click(function () {

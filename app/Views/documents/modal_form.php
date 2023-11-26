@@ -1,7 +1,7 @@
-<?php echo form_open(get_uri("leads/save"), array("id" => "lead-form", "class" => "general-form", "role" => "form")); ?>
+<?php echo form_open(get_uri("documents/save"), array("id" => "lead-form", "class" => "general-form", "role" => "form")); ?>
 <div class="modal-body clearfix">
     <div class="container-fluid">
-        <?php echo view("leads/lead_form_fields"); ?>
+        <?php echo view("documents/lead_form_fields"); ?>
     </div>
 </div>
 
@@ -17,17 +17,32 @@
             onSuccess: function (result) {
                 if (result.view === "details") {
                     appAlert.success(result.message, {duration: 10000});
+
                     setTimeout(function () {
-                        location.reload();
+                       
+                        window.location.reload();
+
                     }, 500);
                 } else {
+                    appAlert.success(result.message, {duration: 10000});
+
+                        if(result.webUrl != null) {
+                            let newTab = window.open();
+                            newTab.location.target = '_blank';
+                            newTab.location.href = result.webUrl;
+                        }
+                        
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 500);
+
                     $("#lead-table").appTable({newData: result.data, dataId: result.id});
                     $("#reload-kanban-button:visible").trigger("click");
                 }
             }
         });
         setTimeout(function () {
-            $("#company_name").focus();
+            $("#document_title").focus();
         }, 200);
     });
 </script>    

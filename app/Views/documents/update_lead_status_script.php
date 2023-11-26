@@ -10,7 +10,7 @@ foreach ($lead_statuses as $status) {
         $('body').on('click', '[data-act=update-lead-status]', function () {
             $(this).appModifier({
                 value: $(this).attr('data-value'),
-                actionUrl: '<?php echo_uri("leads/save_lead_status") ?>/' + $(this).attr('data-id'),
+                actionUrl: '<?php echo_uri("documents/save_lead_status") ?>/' + $(this).attr('data-id'),
                 select2Option: {data: <?php echo json_encode($statuses) ?>},
                 onSuccess: function (response, newValue) {
                     if (response.success) {

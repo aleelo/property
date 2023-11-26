@@ -7,6 +7,7 @@ class Team_members extends Security_Controller {
     function __construct() {
         parent::__construct();
         $this->access_only_team_members();
+        
     }
 
     private function can_view_team_members_contact_info() {
@@ -120,7 +121,18 @@ class Team_members extends Security_Controller {
         );
 
         $view_data['model_info'] = $this->Users_model->get_details($options)->getRow();
+        $view_data['departments'] = $this->Team_model->get_departments_for_select();
+        $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
+        $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
+        $education_fields = $this->db->query("select id,name from education_industry")->getResult();
 
+        $array_fields=[];
+        foreach($education_fields as $f){
+            $array_fields[$f->id] = $f->name;
+        }
+        $view_data['education_fields'] = $array_fields;
+
+        array_unshift($view_data['departments'],'Choose Department');
         $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("team_members", 0, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
 
         return $this->template->view('team_members/modal_form', $view_data);
@@ -141,12 +153,16 @@ class Team_members extends Security_Controller {
             "email" => "required|valid_email",
             "first_name" => "required",
             "last_name" => "required",
-            "job_title" => "required",
+            "job_title_en" => "required",
+            "job_title_so" => "required",
+            "department_id" => "required",
+            "section_id" => "required",
             "role" => "required"
         ));
 
         $password = $this->request->getPost("password");
 
+        // new Data:  `marital_status`, `emergency_name`, `emergency_phone`, `birth_date`, `birth_place`, `education_level`, `education_field`, `education_school`
         $user_data = array(
             "email" => $this->request->getPost('email'),
             "first_name" => $this->request->getPost('first_name'),
@@ -155,9 +171,18 @@ class Team_members extends Security_Controller {
             "address" => $this->request->getPost('address'),
             "phone" => $this->request->getPost('phone'),
             "gender" => $this->request->getPost('gender'),
-            "job_title" => $this->request->getPost('job_title'),
+            "job_title" => $this->request->getPost('job_title_en'),
             "phone" => $this->request->getPost('phone'),
             "gender" => $this->request->getPost('gender'),
+            "marital_status" => $this->request->getPost('marital_status'),
+            "emergency_name" => $this->request->getPost('emergency_name'),
+            "emergency_phone" => $this->request->getPost('emergency_phone'),
+            "birth_date" => $this->request->getPost('birth_date'),
+            "birth_place" => $this->request->getPost('birth_place'),
+            "education_level" => $this->request->getPost('education_level'),
+            "education_field" => $this->request->getPost('education_field'),
+            "education_school" => $this->request->getPost('education_school'),
+            "passport_no" => $this->request->getPost('passport_no'),
             "user_type" => "staff",
             "created_at" => get_current_utc_time()
         );
@@ -183,11 +208,18 @@ class Team_members extends Security_Controller {
         $user_id = $this->Users_model->ci_save($user_data);
         if ($user_id) {
             //user added, now add the job info for the user
+            // new Data: `department_id`, `section_id`, `job_title_en`, `job_title_so`, `employee_type`, `employee_id`
             $job_data = array(
                 "user_id" => $user_id,
                 "salary" => $this->request->getPost('salary') ? $this->request->getPost('salary') : 0,
                 "salary_term" => $this->request->getPost('salary_term'),
-                "date_of_hire" => $this->request->getPost('date_of_hire')
+                "date_of_hire" => $this->request->getPost('date_of_hire'),
+                "department_id" => $this->request->getPost('department_id'),
+                "section_id" => $this->request->getPost('section_id'),
+                "job_title_en" => $this->request->getPost('job_title_en'),
+                "job_title_so" => $this->request->getPost('job_title_so'),
+                "employee_type" => $this->request->getPost('employee_type'),
+                "employee_id" => $this->request->getPost('employee_id'),
             );
             $this->Users_model->save_job_info($job_data);
 
@@ -398,13 +430,14 @@ class Team_members extends Security_Controller {
                 app_redirect("forbidden");
             }
 
-
-
             //we have an id. view the team_member's profie
             $options = array("id" => $id, "user_type" => "staff");
             $user_info = $this->Users_model->get_details($options)->getRow();
+           
+
             if ($user_info) {
 
+                // var_dump($user_info);
                 //check which tabs are viewable for current logged in user
                 $view_data['show_timeline'] = get_setting("module_timeline") ? true : false;
 
@@ -490,6 +523,7 @@ class Team_members extends Security_Controller {
                     $view_data["show_notes"] = true;
                 }
 
+               
                 return $this->template->rander("team_members/view", $view_data);
             } else {
                 show_404();
@@ -514,6 +548,14 @@ class Team_members extends Security_Controller {
             app_redirect("forbidden");
         }
 
+        $view_data['departments'] = $this->Team_model->get_departments_for_select();
+        $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
+        $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
+
+        array_unshift($view_data['departments'],'Choose Department');
+        // var_dump($view_data['departments']);
+        // die();
+
         $options = array("id" => $user_id);
         $user_info = $this->Users_model->get_details($options)->getRow();
 
@@ -535,24 +577,35 @@ class Team_members extends Security_Controller {
         if (!($this->login_user->is_admin || $this->has_job_info_manage_permission())) {
             app_redirect("forbidden");
         }
+        
+        // var_dump($this->request->getPost());
+        // die();
 
         $this->validate_submitted_data(array(
             "user_id" => "required|numeric"
         ));
-
         $user_id = $this->request->getPost('user_id');
-
+       
         $job_data = array(
             "user_id" => $user_id,
             "salary" => unformat_currency($this->request->getPost('salary')),
             "salary_term" => $this->request->getPost('salary_term'),
-            "date_of_hire" => $this->request->getPost('date_of_hire')
+            "date_of_hire" => $this->request->getPost('date_of_hire'),         
+               
+            "department_id" => $this->request->getPost('department_id'),
+            "section_id" => $this->request->getPost('section_id'),
+            "job_title_en" => $this->request->getPost('job_title_en'),
+            "job_title_so" => $this->request->getPost('job_title_so'),
+            "employee_type" => $this->request->getPost('employee_type'),
+            "employee_id" => $this->request->getPost('employee_id')
         );
 
+       
         //we'll save the job title in users table
         $user_data = array(
-            "job_title" => $this->request->getPost('job_title')
+            "job_title" => $this->request->getPost('job_title_en')
         );
+
 
         $this->Users_model->ci_save($user_data, $user_id);
         if ($this->Users_model->save_job_info($job_data)) {
@@ -567,6 +620,12 @@ class Team_members extends Security_Controller {
         validate_numeric_value($user_id);
         $this->update_only_allowed_members($user_id);
 
+        $view_data['departments'] = $this->Team_model->get_departments_for_select();
+        array_unshift($view_data['departments'],'Choose Department');
+        $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
+        $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
+        $view_data['education_fields'] = $this->db->query("select id,name from education_industry")->getResult();
+
         $view_data['user_info'] = $this->Users_model->get_one($user_id);
         $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("team_members", $user_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
 
@@ -575,6 +634,7 @@ class Team_members extends Security_Controller {
 
     //save general information of a team member
     function save_general_info($user_id) {
+        
         validate_numeric_value($user_id);
         $this->update_only_allowed_members($user_id);
 
@@ -593,7 +653,16 @@ class Team_members extends Security_Controller {
             "alternative_address" => $this->request->getPost('alternative_address'),
             "alternative_phone" => $this->request->getPost('alternative_phone'),
             "dob" => $this->request->getPost('dob'),
-            "ssn" => $this->request->getPost('ssn')
+            "ssn" => $this->request->getPost('ssn'),
+            "marital_status" => $this->request->getPost('marital_status'),
+            "emergency_name" => $this->request->getPost('emergency_name'),
+            "emergency_phone" => $this->request->getPost('emergency_phone'),
+            "birth_date" => $this->request->getPost('birth_date'),
+            "birth_place" => $this->request->getPost('birth_place'),
+            "education_level" => $this->request->getPost('education_level'),
+            "education_field" => $this->request->getPost('education_field'),
+            "education_school" => $this->request->getPost('education_school'),
+            "passport_no" => $this->request->getPost('passport_no'),
         );
 
         $user_data = clean_data($user_data);

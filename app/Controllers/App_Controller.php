@@ -17,6 +17,7 @@ class App_Controller extends Controller {
     public $session;
     public $form_validation;
     public $parser;
+    protected $db;
     //creation of dynamic property is deprecated in php 8.2
     public $Settings_model;
     public $Users_model;
@@ -25,6 +26,8 @@ class App_Controller extends Controller {
     public $Leave_types_model;
     public $Leave_applications_model;
     public $Events_model;
+    public $Documents_model;
+    public $Templates_model;
     public $Announcements_model;
     public $Messages_model;
     public $Clients_model;
@@ -121,6 +124,7 @@ class App_Controller extends Controller {
             app_redirect($landing_page);
         }
         
+        $this->db = db_connect('default');
     }
 
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger) {
@@ -135,6 +139,8 @@ class App_Controller extends Controller {
             'Attendance_model',
             'Leave_types_model',
             'Leave_applications_model',
+            'Documents_model',
+            'Templates_model',
             'Events_model',
             'Announcements_model',
             'Messages_model',

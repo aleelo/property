@@ -1,4 +1,4 @@
-<a href="<?php echo get_uri("leads/#all_leads"); ?>" class="white-link">
+<a href="<?php echo get_uri("documents/#all_leads"); ?>" class="white-link">
     <div class="card dashboard-icon-widget">
         <div class="card-body">
             <div class="widget-icon bg-orange">

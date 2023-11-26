@@ -108,6 +108,142 @@ class Leaves extends Security_Controller {
         }
     }
 
+    /**
+     * start document functions
+     */
+    // Creates the Document Using the Provided Template
+    public function createDoc($data =array())
+    {
+
+        require_once ROOTPATH . 'vendor/autoload.php';
+
+        // Creating the new document...
+
+        $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'views/documents/'.$data['template']);
+
+        $ext = pathinfo(APPPATH.'views/documents/'.$data['template'],PATHINFO_EXTENSION);
+        $save_as_name = $data['id'].'_'.date('m').'_'.date('Y').'.'.$ext;
+        
+
+        $path_absolute = APPPATH . 'views/documents/'.$save_as_name;
+        // var_dump($data);
+        // var_dump($save_as_name);
+        // die();
+        
+        $template->setValues([
+
+            'ref' => $data['ref_number'],
+            'date' => date('Y-m-d',strtotime($data['created_at'])),
+
+        ]);
+
+        $options = new QROptions([
+            'eccLevel' => EccLevel::H,
+            'outputBase64' => true,
+            'cachefile' => APPPATH . 'views/documents/qrcode.png',
+            'outputType'=>QROutputInterface::GDIMAGE_PNG,
+            'logoSpaceHeight' => 17,
+            'logoSpaceWidth' => 17,
+            'scale' => 20,
+            'version' => 7,
+
+        ]);
+
+        //   $options->outputType = ;
+
+        $qrcode = (new QRCode($options))->render(get_uri('documents'));//->getQRMatrix(current_url())
+
+        // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
+
+        // // dump the output, with an additional logo
+        // $out = $qrOutputInterface->dump(APPPATH . 'views/documents/qrcode.png', APPPATH . 'views/documents/logo.png');
+
+        $template->setImageValue('qrcode',
+            [
+                'path' => APPPATH . 'views/documents/qrcode.png',
+                'width' => '100',
+                'height' => '100',
+                'ratio' => false,
+            ]);
+
+        $template->saveAs($path_absolute);
+
+        return $save_as_name;
+
+    }
+
+    // Gets the created file and uploads it to the SharePoint Drive
+    public function uploadDoc($accessToken,$data, $path)
+    {
+
+        $fileContents = file_get_contents(APPPATH . 'views/documents/' . $path); // Read the contents of the image file
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drives/b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq/root:/'.$data['folder'].'/' . $path . ':/content',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_POSTFIELDS => $fileContents,
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $accessToken,
+            ),
+        ));
+
+        $json = curl_exec($curl);
+
+        curl_close($curl);
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($json, true);
+
+        return $data;
+
+    }
+
+    //opens document with [itemid] in sharepoint
+    public function openDoc($accessToken, $itemID)
+    {
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/sites/villasomaliafrs.sharepoint.com,47e1c0f0-d924-4f35-aeba-f45b4948148d,6d6454c2-2184-4c7b-84dc-1a701bdb5a9b/drive/root:/test/' . $itemID . '?Autho=null',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $accessToken,
+            ),
+        ));
+
+        $json = curl_exec($curl);
+
+        curl_close($curl);
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($json, true);
+
+        // Get the web URL of the file from the array
+        $webUrl = $data["webUrl"];
+
+        // Redirect to the web URL using the header function
+        header("Location: $webUrl");
+        exit;
+    }
+
+    /**
+     * end
+    */
+
     /* prepare common data for a leave application both for apply a leave or assign a leave */
 
     private function _prepare_leave_form_data() {

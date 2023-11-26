@@ -35,4 +35,20 @@ class Team_model extends Crud_model {
         return $this->db->query($sql);
     }
 
+    function get_departments_for_select(){
+        // $depts = $this->db->table('departments')->select('id,nameEn')->get();
+        $depts = $this->db->query('select id,nameEn from departments');
+
+        if(!$depts){
+            return [];
+        }else{
+            $depts = $depts->getResult();
+            $data = array();
+            foreach($depts as $d){
+                $data[$d->id] = $d->nameEn;
+            }
+
+            return $data;
+        }
+    }
 }

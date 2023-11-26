@@ -185,8 +185,167 @@
                     </div>
                 </div>
             </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="marital_status" class=" col-md-2"><?php echo 'Marital Status'; ?></label>
+                    <div class=" col-md-10">
+                        <?php
+                        echo form_input(array(
+                            "id" => "marital_status",
+                            "name" => "marital_status",
+                            "value" => $user_info->marital_status,
+                            "class" => "form-control",
+                            "placeholder" => 'Marital Status'
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="passport_no" class=" col-md-2"><?php echo 'Passport Number'; ?></label>
+                    <div class="col-md-10">
+                        <?php
+                        echo form_input(array(
+                            "id" => "passport_no",
+                            "name" => "passport_no",
+                            "value" => $user_info->passport_no,
+                            "class" => "form-control",
+                            "placeholder" => 'Passport Number'
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="emergency_name" class=" col-md-2"><?php echo 'Emergency Contact Name'; ?></label>
+                    <div class=" col-md-10">
+                        <?php
+                        echo form_input(array(
+                            "id" => "emergency_name",
+                            "name" => "emergency_name",
+                            "value" => $user_info->emergency_name,
+                            "class" => "form-control",
+                            "placeholder" => 'Emergency Contact Name'
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="emergency_phone" class=" col-md-2"><?php echo 'Emergency Contact Phone'; ?></label>
+                    <div class=" col-md-10">
+                        <?php
+                        echo form_input(array(
+                            "id" => "emergency_phone",
+                            "name" => "emergency_phone",
+                            "value" => $user_info->emergency_phone,
+                            "class" => "form-control",
+                            "placeholder" => 'Emergency Contact Phone'
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+                <!-- `marital_status`, `emergency_name`, `emergency_phone`, `birth_date`, `birth_place`, `education_level`, `education_field`, `education_school` -->
 
+            <div class="form-group">
+                <div class="row">
+                    <label for="birth_date" class=" col-md-2"><?php echo 'Date of Birth'; ?></label>
+                    <div class=" col-md-10">
+                        <?php
+                        echo form_input(array(
+                            "id" => "birth_date",
+                            "name" => "birth_date",
+                            "value" => $user_info->birth_date,
+                            "class" => "form-control",
+                            "placeholder" => 'Date of Birth'
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="birth_place" class=" col-md-2"><?php echo 'Place of Birth'; ?></label>
+                    <div class=" col-md-10">
+                        <?php
+                        echo form_input(array(
+                            "id" => "birth_place",
+                            "name" => "birth_place",
+                            "value" => $user_info->birth_place,
+                            "class" => "form-control",
+                            "placeholder" => 'Place of Birth'
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="row">
+                    <label for="education_level" class=" col-md-2"><?php echo 'Education Level'; ?></label>
+                    <div class=" col-md-10">
+                        <?php
+                        echo form_dropdown(array(
+                            "id" => "education_level",
+                            "name" => "education_level",
+                            "class" => "form-control select2",
+                            "value" => $user_info->education_level,
+                            "placeholder" => 'Education Level'
+                        ),$education_levels, [$user_info->education_level =>$education_levels[$user_info->education_level]]);//$education_levels[$user_info->education_level]
+                        ?>
+                    </div>
+                </div>
+            </div>
 
+            <div class="form-group">
+                <div class="row">
+                    <label for="education_field" class=" col-md-2"><?php echo 'Field of Study'; ?></label>
+                    <div class=" col-md-10">
+                                               
+                        <select id= "education_field",
+                                name= "education_field",
+                                class = "form-control select2",
+                                placeholder = 'Field of Study',
+                                autocomplete= "off",
+                                data-rule-required = 'true',
+                                data-msg-required =  "<?= app_lang("field_required")?>">
+                                <option value="">Choose Field of Study</option>
+
+                                    <?php
+                                    if(count($education_fields)){
+                                        foreach($education_fields as $f){
+                                        ?>
+                                            <option value="<?php echo $f->name?>" <?php echo $f->name == $user_info->education_field ? 'selected' : '' ?>><?php echo $f->name?></option>
+                                        <?php
+                                    }
+                                   }
+                                    ?>
+                            </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <label for="education_school" class=" col-md-2"><?php echo 'School of Study'; ?></label>
+                    <div class=" col-md-10">
+                        <?php
+                        echo form_input(array(
+                            "id" => "education_school",
+                            "name" => "education_school",
+                            "class" => "form-control",
+                            "value" => $user_info->education_school,
+                            "placeholder" => 'School of Study',
+                            "autocomplete" => "off",
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
             <?php echo view("custom_fields/form/prepare_context_fields", array("custom_fields" => $custom_fields, "label_column" => "col-md-2", "field_column" => " col-md-10")); ?> 
 
         </div>

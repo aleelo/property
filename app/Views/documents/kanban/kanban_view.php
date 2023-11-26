@@ -57,9 +57,9 @@
 
         $leads_total_counts .= "</small>";
 
-        $open_in_new_tab = anchor(get_uri("leads/view/" . $lead->id), "<i data-feather='external-link' class='icon-16'></i>", array("target" => "_blank", "class" => "invisible float-end text-off", "title" => app_lang("details")));
+        $open_in_new_tab = anchor(get_uri("documents/view/" . $lead->id), "<i data-feather='external-link' class='icon-16'></i>", array("target" => "_blank", "class" => "invisible float-end text-off", "title" => app_lang("details")));
 
-        $make_client = modal_anchor(get_uri("leads/make_client_modal_form/") . $lead->id, "<i data-feather='briefcase' class='icon-16'></i>", array("title" => app_lang('make_client'), "class" => "float-end mr5 invisible text-off"));
+        $make_client = modal_anchor(get_uri("documents/make_client_modal_form/") . $lead->id, "<i data-feather='briefcase' class='icon-16'></i>", array("title" => app_lang('make_client'), "class" => "float-end mr5 invisible text-off"));
 
         //custom fields to show in kanban
         $kanban_custom_fields_data = "";
@@ -71,7 +71,7 @@
         }
 
         $item = $exising_items . "<span class='lead-kanban-item kanban-item' data-id='$lead->id' data-sort='$lead->new_sort' data-post-id='$lead->id'>
-                    <div><span class='avatar'><img src='" . get_avatar($lead->primary_contact_avatar) . "'></span>" . anchor(get_uri("leads/view/" . $lead->id), $lead->company_name) . $open_in_new_tab . $make_client . "</div>" .
+                    <div><span class='avatar'><img src='" . get_avatar($lead->primary_contact_avatar) . "'></span>" . anchor(get_uri("documents/view/" . $lead->id), $lead->company_name) . $open_in_new_tab . $make_client . "</div>" .
                 $source .
                 $owner .
                 $kanban_custom_fields_data .
@@ -201,7 +201,7 @@
 
 
         $.ajax({
-            url: '<?php echo_uri("leads/save_lead_sort_and_status") ?>',
+            url: '<?php echo_uri("documents/save_lead_sort_and_status") ?>',
             type: "POST",
             data: {id: id, sort: newSort, lead_status_id: status},
             success: function () {

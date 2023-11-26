@@ -2,20 +2,17 @@
 
 namespace App\Controllers;
 
-class Signin extends App_Controller
-{
+class Signin extends App_Controller {
 
     private $signin_validation_errors;
 
-    public function __construct()
-    {
+    function __construct() {
         parent::__construct();
         $this->signin_validation_errors = array();
         helper('email');
     }
 
-    public function index()
-    {
+    function index() {
         if ($this->Users_model->login_user_id()) {
             app_redirect('dashboard/view');
         } else {
@@ -25,14 +22,11 @@ class Signin extends App_Controller
                 $view_data["redirect"] = $_REQUEST["redirect"];
             }
 
-            // die('si');
-
             return $this->template->view('signin/index', $view_data);
         }
     }
 
-    private function has_recaptcha_error()
-    {
+    private function has_recaptcha_error() {
         $recaptcha_post_data = $this->request->getPost("g-recaptcha-response");
         $response = $this->is_valid_recaptcha($recaptcha_post_data);
 
@@ -44,10 +38,9 @@ class Signin extends App_Controller
         }
     }
 
-    private function is_valid_recaptcha($recaptcha_post_data)
-    {
+    private function is_valid_recaptcha($recaptcha_post_data) {
         //load recaptcha lib
-        require_once APPPATH . "ThirdParty/recaptcha/autoload.php";
+        require_once(APPPATH . "ThirdParty/recaptcha/autoload.php");
         $recaptcha = new \ReCaptcha\ReCaptcha(get_setting("re_captcha_secret_key"));
         $resp = $recaptcha->verify($recaptcha_post_data, $_SERVER['REMOTE_ADDR']);
 
@@ -65,18 +58,14 @@ class Signin extends App_Controller
     }
 
     // check authentication
-    public function authenticate()
-    {
+    function authenticate() {
         $validation = $this->validate_submitted_data(array(
             "email" => "required|valid_email",
-            "password" => "required",
-        ), true);
+            "password" => "required"
+                ), true);
 
         $email = $this->request->getPost("email");
         $password = $this->request->getPost("password");
-
-        // die($password);
-
         if (!$email) {
             //loaded the page directly
             app_redirect('signin');
@@ -100,15 +89,12 @@ class Signin extends App_Controller
             app_redirect('signin');
         }
 
-        //redirects user to make azure login
-        $this->aad_signin($email);
-
-        // if (!$this->Users_model->authenticateAAD($email)) {
-        //     //authentication failed
-        //     array_push($this->signin_validation_errors, app_lang("authentication_failed"));
-        //     $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
-        //     app_redirect('signin');
-        // }
+        if (!$this->Users_model->authenticate($email, $password)) {
+            //authentication failed
+            array_push($this->signin_validation_errors, app_lang("authentication_failed"));
+            $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
+            app_redirect('signin');
+        }
 
         //authentication success
         $redirect = $this->request->getPost("redirect");
@@ -119,145 +105,24 @@ class Signin extends App_Controller
         }
     }
 
-    /**
-     * authenticate azure active directory
-     * to insure user make login throgh microsoft
-     * then microsoft redirects to aad_callback function in signin controller
-     */
-    public function aad_signin($email)
+    function aad_callback()
     {
-        $appid = getenv('AZURE_APP_ID'); //"a70c275e-7713-46eb-8a09-6d5a7c3b823d";
-
-        $tennantid = getenv('AZURE_TENANT_ID'); //"695822cd-3aaa-446d-aac2-3ebb02854b8a";
-
-        $secret = getenv('AZURE_SECRET_ID'); //"e54c00ad-6cfd-4113-b46f-5a3de239d13b";
-        $env = getenv('ENVIRONMENT'); //ENVIRONMENT
-
-        $login_url = "https://login.microsoftonline.com/" . $tennantid . "/oauth2/v2.0/authorize";
-
-        $session = \Config\Services::session();
-        $session->set('state', session_id());
-
-        $params = array('client_id' => $appid,
-
-            'redirect_uri' => $env == 'development' ? 'http://localhost/rise/index.php/signin/aad_callback' : 'https://phpstack-249906-4047771.cloudwaysapps.com/',
-
-            'response_type' => 'token',
-            'login_hint' => $email, //'admin@presidency@gov.so',
-
-            'scope' => 'https://graph.microsoft.com/User.Read', //User.Read
-
-            'state' => $session->get('state'));
-        // die($login_url . '?' . http_build_query($params));
-        header('Location: ' . $login_url . '?' . http_build_query($params));
-        exit();
-
+        dd('callback');
     }
 
-    public function aad_callback()
-    {
-        // die('callback');
-        // replace # with ?
-
-        echo '
-            <script>
-            url = window.location.href;
-
-            i=url.indexOf("#");
-
-            if(i>0) {
-
-            url=url.replace("#","?");
-
-            window.location.href=url;}
-
-            </script>
-
-             ';
-             
-        //    echo array_key_exists('access_token', $_GET);
-        //    die();    
-
-        if (array_key_exists('access_token', $_GET)) {
-
-            $this->session->set('aad_token', $_GET['access_token']);
-            // $_SESSION['t'] = $_GET['access_token'];
-
-            $t = $this->session->get('aad_token');
-            // die('token: '.$t);
-
-            $ch = curl_init();
-
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $t,
-
-                'Conent-type: application/json'));
-
-            curl_setopt($ch, CURLOPT_URL, "https://graph.microsoft.com/v1.0/me");
-
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-            $rez = json_decode(curl_exec($ch), 1);
-
-            curl_close($ch);
-           
-            // echo 'result=' . var_dump($rez);
-            // die();
-
-            if (array_key_exists('error', $rez)) {
-
-                var_dump($rez['error']);
-
-                die('error=' . $rez['error']);
-
-            } else {
-                $email = $rez['mail'];
-                if ($this->Users_model->authenticateAAD($email)) {
-
-                    //authentication success
-                    $redirect = $this->request->getPost("redirect");
-                    if ($redirect) {
-                        return redirect()->to($redirect);
-                    } else {
-                        app_redirect('dashboard/view');
-                    }
-
-                } else {
-
-                    die('Get: inside ' . var_dump($_GET));
-
-                    //user with email not found ie. authentication failed
-                    array_push($this->signin_validation_errors, app_lang("authentication_failed") . ', User Not Found');
-                    $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
-                    app_redirect('signin');
-                }
-            }
-
-        } else {
-
-            die();
-            //AAD authentication failed
-            array_push($this->signin_validation_errors, app_lang("authentication_failed") . ', No access token');
-            $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
-            app_redirect('signin');
-        }
-
-    }
-
-    public function aad_signout()
+    function aad_signout()
     {
         dd('signout');
     }
 
-    public function sign_out()
-    {
+    function sign_out() {
         $this->Users_model->sign_out();
     }
 
     //send an email to users mail with reset password link
-    public function send_reset_password_mail()
-    {
+    function send_reset_password_mail() {
         $this->validate_submitted_data(array(
-            "email" => "required|valid_email",
+            "email" => "required|valid_email"
         ));
 
         //check if there reCaptcha is enabled
@@ -277,6 +142,8 @@ class Signin extends App_Controller
                 return false;
             }
         }
+
+
 
         $email = $this->request->getPost("email");
 
@@ -298,8 +165,8 @@ class Signin extends App_Controller
                 "code" => make_random_string(),
                 "params" => serialize(array(
                     "email" => $existing_user->email,
-                    "expire_time" => time() + (24 * 60 * 60),
-                )),
+                    "expire_time" => time() + (24 * 60 * 60)
+                ))
             );
 
             $save_id = $this->Verification_model->ci_save($verification_data);
@@ -326,15 +193,13 @@ class Signin extends App_Controller
     }
 
     //show forgot password recovery form
-    public function request_reset_password()
-    {
+    function request_reset_password() {
         $view_data["form_type"] = "request_reset_password";
         return $this->template->view('signin/index', $view_data);
     }
 
     //when user clicks to reset password link from his/her email, redirect to this url
-    public function new_password($key)
-    {
+    function new_password($key) {
         $valid_key = $this->is_valid_reset_password_key($key);
 
         if ($valid_key) {
@@ -354,11 +219,10 @@ class Signin extends App_Controller
     }
 
     //finally reset the old password and save the new password
-    public function do_reset_password()
-    {
+    function do_reset_password() {
         $this->validate_submitted_data(array(
             "key" => "required",
-            "password" => "required",
+            "password" => "required"
         ));
 
         $key = $this->request->getPost("key");
@@ -384,8 +248,7 @@ class Signin extends App_Controller
     }
 
     //check valid key
-    private function is_valid_reset_password_key($verification_code = "")
-    {
+    private function is_valid_reset_password_key($verification_code = "") {
 
         if ($verification_code) {
             $options = array("code" => $verification_code, "type" => "reset_password");

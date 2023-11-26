@@ -4,7 +4,7 @@
 
         var scrollLeft = 0;
         $("#kanban-filters").appFilters({
-            source: '<?php echo_uri("leads/all_leads_kanban_data") ?>',
+            source: '<?php echo_uri("documents/all_leads_kanban_data") ?>',
             targetSelector: '#load-kanban',
             reloadSelector: "#reload-kanban-button",
             smartFilterIdentity: "all_leads_kanban", //a to z and _ only. should be unique to avoid conflicts 
@@ -14,7 +14,7 @@
                     {name: "owner_id", class: "w200", options: <?php echo json_encode($owners_dropdown); ?>},
 <?php } ?>
                 {name: "label_id", class: "w200", options: <?php echo $labels_dropdown; ?>},
-                {name: "source", class: "w200", options: <?php echo view("leads/lead_sources"); ?>},
+                {name: "source", class: "w200", options: <?php echo view("documents/lead_sources"); ?>},
 <?php echo $custom_field_filters; ?>
             ],
             beforeRelaodCallback: function () {

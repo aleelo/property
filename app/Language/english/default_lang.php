@@ -7,6 +7,32 @@ $lang["language_locale"] = "en"; //locale code
 $lang["language_locale_long"] = "en-US"; //long locale code
 $lang["text_direction"] = "ltr"; //supported value ltr/rtl
 
+///
+// added by aleelo developers
+///
+
+/* Documents */
+$lang["document_title"] = "Document Title";
+$lang["ref_number"] = "Reference No.";
+$lang["depertment"] = "Depertment";
+$lang["template"] = "Template";
+$lang["created_by"] = "Created By";
+$lang["item_id"] = "Item ID";
+$lang["created_at"] = "Created At";
+
+//templates:
+$lang["add_template"] = "Add Template";
+$lang["edit_template"] = "Edit Template";
+$lang["template_name"] = "Template Name";
+$lang["template_dept"] = "Template Department";
+$lang["template_path"] = "Template Path";
+$lang["template_prefix"] = "Reference Prefix";
+$lang["template_destination"] = "Destination Folder";
+
+///
+// end addition
+///
+
 /* common */
 $lang["add"] = "Add";
 $lang["edit"] = "Edit";
@@ -111,7 +137,7 @@ $lang["add_team_member"] = "Add member";
 $lang["edit_team_member"] = "Edit team member";
 $lang["delete_team_member"] = "Delete team member";
 $lang["team_member"] = "Team member";
-$lang["team_members"] = "Team members";
+$lang["team_members"] = "Employees List";
 $lang["active_members"] = "Active members";
 $lang["inactive_members"] = "Inactive members";
 $lang["first_name"] = "First name";
@@ -148,7 +174,7 @@ $lang["invite_someone_to_join_as_a_team_member"] = "Invite someone to join as a 
 $lang["add_team"] = "Add team";
 $lang["edit_team"] = "Edit team";
 $lang["delete_team"] = "Delete team";
-$lang["team"] = "Team";
+$lang["team"] = "Employees";
 $lang["select_a_team"] = "Select a team";
 
 /* dashboard */
@@ -1321,26 +1347,26 @@ $lang["past_recurring_date_error_message_title_for_tasks"] = "The selected start
 $lang["recurring_task_created_via_cron_job"] = "Recurring task created via Cron Job";
 $lang["notification_recurring_task_created_via_cron_job"] = "New task created";
 $lang["repeat_type"] = "Repeat type";
-$lang["lead_status"] = "Lead status";
+$lang["lead_status"] = "Document status";
 $lang["add_lead_status"] = "Add lead status";
 $lang["edit_lead_status"] = "Edit lead status";
 $lang["delete_lead_status"] = "Delete lead status";
 $lang["owner"] = "Owner";
 $lang["make_client"] = "Make client";
 $lang["client_contacts"] = "Client contacts";
-$lang["lead_contacts"] = "Lead contacts";
+$lang["lead_contacts"] = "Document contacts";
 $lang["add_a_lead"] = "Add a lead";
 $lang["source"] = "Source";
-$lang["lead_source"] = "Lead source";
-$lang["add_lead_source"] = "Add lead source";
-$lang["edit_lead_source"] = "Edit lead source";
-$lang["delete_lead_source"] = "Delete lead source";
+$lang["lead_source"] = "Document source";
+$lang["add_lead_source"] = "Add document source";
+$lang["edit_lead_source"] = "Edit document source";
+$lang["delete_lead_source"] = "Delete document source";
 $lang["custom_field_migration"] = "Custom field migration";
 $lang["merge_custom_fields"] = "Merge custom fields";
 $lang["do_not_merge"] = "Do not merge";
 $lang["merge_custom_fields_help_message"] = "If there is any similar custom fields exists for %s, this values will be added to those. Otherwise, this will create new custom fields for %s and add values to those.";
-$lang["lead_created"] = "Lead created";
-$lang["notification_lead_created"] = "Created a new lead.";
+$lang["lead_created"] = "Document created";
+$lang["notification_lead_created"] = "Created a new document.";
 $lang["client_created_from_lead"] = "Client created from lead";
 $lang["notification_client_created_from_lead"] = "Converted a lead to client.";
 $lang["project_deadline"] = "Project deadline";
@@ -1350,9 +1376,9 @@ $lang["delete_estimate_form"] = "Delete estimate form";
 $lang["calendar_event_modified"] = "Calendar event modified";
 $lang["notification_calendar_event_modified"] = "Modified an event.";
 
-$lang["there_has_leads_with_this_status"] = "There has leads with this status";
-$lang["lead_created_at"] = "Lead created at";
-$lang["past_lead_information"] = "Past lead information";
+$lang["there_has_leads_with_this_status"] = "There has document with this status";
+$lang["lead_created_at"] = "Document created at";
+$lang["past_lead_information"] = "Past Document information";
 $lang["last_status"] = "Last status";
 $lang["migrated_to_client_at"] = "Migrated to client at";
 $lang["edit_estimate_form"] = "Edit estimate form";
@@ -1389,14 +1415,14 @@ $lang["the_invoices_id_must_be_larger_then_last_invoice_id"] = "The invoices ID 
 $lang["client_dashboard_help_message"] = "This will be the default dashboard for all clients. Please note that, the information you're seeing here in the widgets, isn't any actual infromation of clients.";
 
 $lang["send_to_lead"] = "Send to lead";
-$lang["lead"] = "Lead";
-$lang["leads"] = "Leads";
-$lang["add_lead"] = "Add lead";
-$lang["edit_lead"] = "Edit lead";
-$lang["delete_lead"] = "Delete lead";
-$lang["lead_details"] = "Lead details";
-$lang["can_access_leads_information"] = "Can access lead's information?";
-$lang["lead_info"] = "Lead info";
+$lang["lead"] = "Document";
+$lang["leads"] = "Documents";
+$lang["add_lead"] = "Add Document";
+$lang["edit_lead"] = "Edit Document";
+$lang["delete_lead"] = "Delete Document";
+$lang["lead_details"] = "Document details";
+$lang["can_access_leads_information"] = "Can access document's information?";
+$lang["lead_info"] = "Document info";
 
 $lang["send_task_reminder_on_the_day_of_deadline"] = "Send task reminder on the day of deadline";
 $lang["send_task_deadline_pre_reminder"] = "Send task deadline pre reminder";
@@ -1984,7 +2010,7 @@ $lang["add_new_project_member"] = "Add new project member";
 $lang["field_type_time"] = "Time";
 $lang["client_can_assign_tasks"] = "Client can assign tasks?";
 $lang["can_create_lead_from_public_form"] = "Can create lead from public form";
-$lang["lead_html_form_code"] = "Lead creation HTML form code";
+$lang["lead_html_form_code"] = "Document creation HTML form code";
 
 $lang["enable_comments_on_estimates"] = "Enable comments on estimates";
 $lang["show_most_recent_estimate_comments_at_the_top"] = "Show most recent estimate comments at the top";
@@ -2346,7 +2372,7 @@ $lang["client_can_access_notes"] = "Client can access notes?";
 
 $lang["my_tasks_overview"] = "My Tasks Overview";
 
-$lang["leads_overview"] = "Leads Overview";
+$lang["leads_overview"] = "Documents Overview";
 $lang["converted_to_client"] = "Converted to client";
 
 $lang["remember_to_add_this_urls_in_authorized_redirect_uri"] = "Remember to add this urls in Authorized redirect uri";
@@ -2472,7 +2498,7 @@ $lang["fixed_amount_discount_before_tax_error_message"] = "Fixed amount discount
 
 $lang["invoices_summary"] = "Invoices summary";
 $lang["estimates_summary"] = "Estimates summary";
-$lang["leads_summary"] = "Leads summary";
+$lang["leads_summary"] = "Documents summary";
 $lang["orders_summary"] = "Orders summary";
 $lang["estimate_request_summary"] = "Estimate request summary";
 $lang["proposals_summary"] = "Proposals summary";

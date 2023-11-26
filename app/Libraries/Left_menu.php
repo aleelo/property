@@ -64,7 +64,8 @@ class Left_menu {
             $sidebar_menu["tasks"] = array("name" => "tasks", "url" => "tasks/all_tasks", "class" => "check-circle");
 
             if (get_setting("module_lead") == "1" && ($this->ci->login_user->is_admin || $access_lead)) {
-                $sidebar_menu["leads"] = array("name" => "leads", "url" => "leads", "class" => "layers");
+                //was leads changed to: 'documents'
+                $sidebar_menu["leads"] = array("name" => "leads", "url" => "documents", "class" => "layers");
             }
 
             if (get_setting("module_subscription") && ($this->ci->login_user->is_admin || $access_subscription)) {
@@ -138,7 +139,7 @@ class Left_menu {
             $team_submenu = array();
 
             if (get_array_value($this->ci->login_user->permissions, "hide_team_members_list") != "1") {
-                $team_submenu["team_members"] = array("name" => "team_members", "url" => "team_members", "class" => "users");
+                $team_submenu["team_members"] = array("name" => "team_members", "url" => "team_members", "class" => "users");//team_members
             }
 
 

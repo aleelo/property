@@ -26,6 +26,8 @@ class App extends BaseConfig {
                 $this->baseURL = 'http://' . $domain;
             }
         }
+
+        // die();
     }
 
     private function set_supported_languages() {
@@ -68,7 +70,7 @@ class App extends BaseConfig {
      *
      * @var string
      */
-    public $baseURL = '';
+    public $baseURL = '';//'http://localhost/rise/';
     
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
@@ -96,7 +98,7 @@ class App extends BaseConfig {
      * @var string
      */
     
-    public $indexPage = 'index.php';//
+    public $indexPage = '';//index.php
 
     /**
      * --------------------------------------------------------------------------
@@ -115,7 +117,7 @@ class App extends BaseConfig {
      *
      * @var string
      */
-    public $uriProtocol = 'REQUEST_URI';
+    public $uriProtocol = 'PATH_INFO';//REQUEST_URI
 
     /**
      * --------------------------------------------------------------------------
