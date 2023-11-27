@@ -315,13 +315,13 @@ class Documents extends Security_Controller
 
         // Creating the new document...
 
-        $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'views/documents/'.$data['template']);
+        $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'Views/documents/'.$data['template']);
 
-        $ext = pathinfo(APPPATH.'views/documents/'.$data['template'],PATHINFO_EXTENSION);
+        $ext = pathinfo(APPPATH.'Views/documents/'.$data['template'],PATHINFO_EXTENSION);
         $save_as_name = $data['id'].'_'.date('m').'_'.date('Y').'.'.$ext;
         
 
-        $path_absolute = APPPATH . 'views/documents/'.$save_as_name;
+        $path_absolute = APPPATH . 'Views/documents/'.$save_as_name;
         // var_dump($data);
         // var_dump($save_as_name);
         // die();
@@ -336,7 +336,7 @@ class Documents extends Security_Controller
         $options = new QROptions([
             'eccLevel' => EccLevel::H,
             'outputBase64' => true,
-            'cachefile' => APPPATH . 'views/documents/qrcode.png',
+            'cachefile' => APPPATH . 'Views/documents/qrcode.png',
             'outputType'=>QROutputInterface::GDIMAGE_PNG,
             'logoSpaceHeight' => 17,
             'logoSpaceWidth' => 17,
@@ -352,11 +352,11 @@ class Documents extends Security_Controller
         // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
 
         // // dump the output, with an additional logo
-        // $out = $qrOutputInterface->dump(APPPATH . 'views/documents/qrcode.png', APPPATH . 'views/documents/logo.png');
+        // $out = $qrOutputInterface->dump(APPPATH . 'Views/documents/qrcode.png', APPPATH . 'Views/documents/logo.png');
 
         $template->setImageValue('qrcode',
             [
-                'path' => APPPATH . 'views/documents/qrcode.png',
+                'path' => APPPATH . 'Views/documents/qrcode.png',
                 'width' => '100',
                 'height' => '100',
                 'ratio' => false,
@@ -372,7 +372,7 @@ class Documents extends Security_Controller
     public function uploadDoc($accessToken,$data, $path)
     {
 
-        $fileContents = file_get_contents(APPPATH . 'views/documents/' . $path); // Read the contents of the image file
+        $fileContents = file_get_contents(APPPATH . 'Views/documents/' . $path); // Read the contents of the image file
 
         $curl = curl_init();
 

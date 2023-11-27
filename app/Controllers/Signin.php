@@ -140,7 +140,7 @@ class Signin extends App_Controller
 
         $params = array('client_id' => $appid,
 
-            'redirect_uri' => $env == 'development' ? 'http://localhost/rise/index.php/signin/aad_callback' : 'https://phpstack-249906-4047771.cloudwaysapps.com/',
+            'redirect_uri' => $env == 'development' ? 'http://localhost/rise/index.php/signin/aad_callback' : 'https://phpstack-249906-4047771.cloudwaysapps.com/signin/aad_callback',
 
             'response_type' => 'token',
             'login_hint' => $email, //'admin@presidency@gov.so',
