@@ -50,7 +50,7 @@
                 "value" => $model_info->depertment,
                 "class" => "form-control",
                 "placeholder" => app_lang('depertment')
-            ));
+            ),'',"style='display:none';");
             ?>
         </div>
     </div>

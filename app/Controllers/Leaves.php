@@ -2,6 +2,12 @@
 
 namespace App\Controllers;
 
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Output\QROutputInterface;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
+use PhpOffice\PhpWord\TemplateProcessor;
+
 class Leaves extends Security_Controller {
 
     function __construct() {
@@ -76,13 +82,80 @@ class Leaves extends Security_Controller {
         $leave_data['checked_at'] = $leave_data['created_at'];
         $leave_data['status'] = "approved";
 
+        $webUrl = null;
+
         //hasn't full access? allow to update only specific member's record, excluding loged in user's own record
         $this->access_only_allowed_members($leave_data['applicant_id']);
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
+
+        $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where j.user_id = $applicant_id")->getRow();
+        $leave_info = $this->db->query("SELECT t.* FROM rise_leave_applications l left join rise_leave_types t on t.id=l.leave_type_id where l.applicant_id = $applicant_id")->getRow();
+
+        $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
+
+        $doc_leave_data = [
+            'id'=>$save_id,
+            'employee'=>$user_info->first_name.' '.$user_info->last_name,
+            'jobtitle'=>$user_info->job_title_so,
+            'passport'=>$user_info->passport_no,
+            'leavetype'=>$leave_info->title,
+            'ref_number'=> $template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
+            'template' => $template->path,
+            'folder' => $template->destination_folder,
+            'date' => date('Y-m-d'),
+        ];
+
+        $doc_data = [
+            'document_title' =>'Leave - '.$user_info->first_name.' '.$user_info->last_name,
+            'ref_number' =>$template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
+            "depertment" => $user_info->department_id,
+            "template" => $template->id,
+            "created_by" => $this->login_user->id,
+            "created_at" => date('Y-m-d H:i:s')
+        ];
+
+        $doc_id = $this->Documents_model->ci_save($doc_data);
+        $doc = $this->db->query("SELECT * FROM rise_documents where id = $doc_id")->getRow();
+        $doc_leave_data['document_id'] = $doc->id;
+
+        $path = $this->createDoc($doc_leave_data);
+        $token = $this->AccesToken();  
+        $data = $this->uploadDoc($token,$doc_leave_data,$path);   
+        
+        
+        if (isset($data['error'])) {
+
+            // var_dump($data['error']['code'] . ', ' . $data['error']['message']);
+            if($data['error']['code'] == "notAllowed"){
+                $msg = $data['error']['code'] . ', ' . $data['error']['message'];//"The file is being edited by another user";
+            }else{
+                $msg=$data['error']['code'] . ', ' . $data['error']['message'];
+            }
+            
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred').', '.$msg));
+            exit;
+
+        } else {
+
+            // Get the web URL of the file from the array
+            $webUrl = $data["webUrl"];
+            $itemId = $data["id"];
+
+            //update item id and web url for document
+            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number']);
+            
+            $this->Documents_model->ci_save($u_data, $doc->id);
+
+            // echo $webUrl;
+            // die();
+
+        }
+
+
         if ($save_id) {
             log_notification("leave_assigned", array("leave_id" => $save_id, "to_user_id" => $applicant_id));
-            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
+            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id,'webUrl'=>$webUrl, 'message' => app_lang('record_saved')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
@@ -96,10 +169,85 @@ class Leaves extends Security_Controller {
         $leave_data['created_by'] = 0;
         $leave_data['checked_at'] = "0000:00:00";
         $leave_data['status'] = "pending";
+        $applicant_id = $this->login_user->id;
 
         $leave_data = clean_data($leave_data);
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
+
+        
+        $webUrl = null;
+
+        //hasn't full access? allow to update only specific member's record, excluding loged in user's own record
+        $this->access_only_allowed_members($leave_data['applicant_id']);
+
+        $save_id = $this->Leave_applications_model->ci_save($leave_data);
+
+        $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where j.user_id = $applicant_id")->getRow();
+        $leave_info = $this->db->query("SELECT t.* FROM rise_leave_applications l left join rise_leave_types t on t.id=l.leave_type_id where l.applicant_id = $applicant_id")->getRow();
+
+        $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
+
+        $doc_leave_data = [
+            'id'=>$save_id,
+            'employee'=>$user_info->first_name.' '.$user_info->last_name,
+            'jobtitle'=>$user_info->job_title_so,
+            'passport'=>$user_info->passport_no,
+            'leavetype'=>$leave_info->title,
+            'ref_number'=> $template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
+            'template' => $template->path,
+            'folder' => $template->destination_folder,
+            'date' => date('Y-m-d'),
+        ];
+
+        $doc_data = [
+            'document_title' =>'Leave - '.$user_info->first_name.' '.$user_info->last_name,
+            'ref_number' =>$template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
+            "depertment" => $user_info->department_id,
+            "template" => $template->id,
+            "created_by" => $this->login_user->id,
+            "created_at" => date('Y-m-d H:i:s')
+        ];
+
+        $doc_id = $this->Documents_model->ci_save($doc_data);
+        $doc = $this->db->query("SELECT * FROM rise_documents where id = $doc_id")->getRow();
+        $doc_leave_data['document_id'] = $doc->id;
+
+        $path = $this->createDoc($doc_leave_data);
+        $token = $this->AccesToken();  
+        $data = $this->uploadDoc($token,$doc_leave_data,$path);   
+        
+        
+        if (isset($data['error'])) {
+
+            // var_dump($data['error']['code'] . ', ' . $data['error']['message']);
+            if($data['error']['code'] == "notAllowed"){
+                $msg = $data['error']['code'] . ', ' . $data['error']['message'];//"The file is being edited by another user";
+            }else{
+                $msg=$data['error']['code'] . ', ' . $data['error']['message'];
+            }
+            
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred').', '.$msg));
+            exit;
+
+        } else {
+
+            // Get the web URL of the file from the array
+            $webUrl = $data["webUrl"];
+            $itemId = $data["id"];
+
+            //update item id and web url for document
+            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number']);
+            
+            $this->Documents_model->ci_save($u_data, $doc->id);
+
+            // echo $webUrl;
+            // die();
+
+        }
+
+
+
         if ($save_id) {
             log_notification("leave_application_submitted", array("leave_id" => $save_id));
             echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
@@ -111,6 +259,42 @@ class Leaves extends Security_Controller {
     /**
      * start document functions
      */
+    // get access token
+     public function AccesToken()
+     {
+ 
+         $curl = curl_init();
+ 
+         curl_setopt_array($curl, array(
+             CURLOPT_URL => 'https://login.microsoftonline.com/695822cd-3aaa-446d-aac2-3ebb02854b8a/oauth2/v2.0/token?Content-Type=application%2Fx-www-form-urlencoded',
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_ENCODING => '',
+             CURLOPT_MAXREDIRS => 10,
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_FOLLOWLOCATION => true,
+             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+             CURLOPT_CUSTOMREQUEST => 'POST',
+             CURLOPT_POSTFIELDS => 'client_id=a5d1b470-ceaf-4bb3-8a73-db1dd0ca5661&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=Hzo8Q~Q.nKyCbD6WpqysfD8GPZfpP04bsFt-ncFk&grant_type=client_credentials',
+             CURLOPT_HTTPHEADER => array(
+                 'Content-Type: application/x-www-form-urlencoded',
+                 'Cookie: fpc=AvtPK5Dz759HgjJgzmeSAChRGrKTAQAAAIgG3NwOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd',
+             ),
+         ));
+ 
+         $response = curl_exec($curl);
+ 
+         // Decode the JSON response into an associative array
+         $data = json_decode($response, true);
+         // var_dump($data);
+         // die();
+         // Get the web URL of the file from the array
+         $accessToken = $data["access_token"];
+ 
+         curl_close($curl);
+         return $accessToken;
+ 
+     }
+
     // Creates the Document Using the Provided Template
     public function createDoc($data =array())
     {
@@ -119,28 +303,37 @@ class Leaves extends Security_Controller {
 
         // Creating the new document...
 
-        $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'views/documents/'.$data['template']);
+        $template = new TemplateProcessor(APPPATH . 'Views/documents/'.$data['template']);
 
-        $ext = pathinfo(APPPATH.'views/documents/'.$data['template'],PATHINFO_EXTENSION);
+        $ext = pathinfo(APPPATH.'Views/documents/'.$data['template'],PATHINFO_EXTENSION);
         $save_as_name = $data['id'].'_'.date('m').'_'.date('Y').'.'.$ext;
         
 
-        $path_absolute = APPPATH . 'views/documents/'.$save_as_name;
+        $path_absolute = APPPATH . 'Views/documents/'.$save_as_name;
+        $doc_id = $data['document_id'];
+        
+        $doc = $this->db->query("SELECT * FROM rise_documents where id = $doc_id")->getRow();
+        $webUrl = $doc->webUrl;
         // var_dump($data);
         // var_dump($save_as_name);
         // die();
         
         $template->setValues([
 
+            'id' => $data['id'],
+            'employee' => $data['employee'],
+            'jobtitle' => $data['jobtitle'],
+            'leavetype' => $data['leavetype'],
+            'passport' => $data['passport'],
             'ref' => $data['ref_number'],
-            'date' => date('Y-m-d',strtotime($data['created_at'])),
+            'date' => date('Y-m-d',strtotime($data['date'])),
 
         ]);
 
         $options = new QROptions([
             'eccLevel' => EccLevel::H,
             'outputBase64' => true,
-            'cachefile' => APPPATH . 'views/documents/qrcode.png',
+            'cachefile' => APPPATH . 'Views/documents/qrcode.png',
             'outputType'=>QROutputInterface::GDIMAGE_PNG,
             'logoSpaceHeight' => 17,
             'logoSpaceWidth' => 17,
@@ -151,22 +344,26 @@ class Leaves extends Security_Controller {
 
         //   $options->outputType = ;
 
-        $qrcode = (new QRCode($options))->render(get_uri('documents'));//->getQRMatrix(current_url())
+        $qrcode = (new QRCode($options))->render($webUrl);//->getQRMatrix(current_url())
 
         // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
 
         // // dump the output, with an additional logo
-        // $out = $qrOutputInterface->dump(APPPATH . 'views/documents/qrcode.png', APPPATH . 'views/documents/logo.png');
+        // $out = $qrOutputInterface->dump(APPPATH . 'Views/documents/qrcode.png', APPPATH . 'Views/documents/logo.png');
 
         $template->setImageValue('qrcode',
             [
-                'path' => APPPATH . 'views/documents/qrcode.png',
+                'path' => APPPATH . 'Views/documents/qrcode.png',
                 'width' => '100',
                 'height' => '100',
                 'ratio' => false,
             ]);
 
         $template->saveAs($path_absolute);
+
+        if(file_exists($path_absolute)){
+            unlink($path_absolute);
+        }
 
         return $save_as_name;
 
@@ -176,7 +373,7 @@ class Leaves extends Security_Controller {
     public function uploadDoc($accessToken,$data, $path)
     {
 
-        $fileContents = file_get_contents(APPPATH . 'views/documents/' . $path); // Read the contents of the image file
+        $fileContents = file_get_contents(APPPATH . 'Views/documents/' . $path); // Read the contents of the image file
 
         $curl = curl_init();
 

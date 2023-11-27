@@ -216,6 +216,13 @@
 
         $("#leave-form").appForm({
             onSuccess: function (result) {
+                
+                if(result.webUrl != null) {
+                    let newTab = window.open();
+                    newTab.location.target = '_blank';
+                    newTab.location.href = result.webUrl;
+                }
+                
                 location.reload();
             }
         });

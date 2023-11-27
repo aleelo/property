@@ -257,7 +257,7 @@ class Documents extends Security_Controller
                 $itemId = $data["id"];
 
                 //update item id and web url
-                $u_data= array('item_id' => $itemId,'webUrl' => $webUrl);
+                $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$input['ref_number']);
                 
                 $this->Documents_model->ci_save($u_data, $doc->getRow()->id);
 
