@@ -84,15 +84,24 @@ class Leaves extends Security_Controller {
 
         $webUrl = null;
 
+        $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $applicant_id")->getRow();
+        $leave_info = $this->db->query("SELECT t.* FROM rise_leave_applications l left join rise_leave_types t on t.id=l.leave_type_id where l.applicant_id = $applicant_id")->getRow();
+
+        if(!$user_info){
+            
+            echo json_encode(array("success" => false, 'message' => 'Information is missing'.', Please fill your User & Job information'));
+        }
+
         //hasn't full access? allow to update only specific member's record, excluding loged in user's own record
         $this->access_only_allowed_members($leave_data['applicant_id']);
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
 
-        $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where j.user_id = $applicant_id")->getRow();
-        $leave_info = $this->db->query("SELECT t.* FROM rise_leave_applications l left join rise_leave_types t on t.id=l.leave_type_id where l.applicant_id = $applicant_id")->getRow();
-
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
+
+        // var_dump($user_info);
+        // var_dump($applicant_id);
+        // die();
 
         $doc_leave_data = [
             'id'=>$save_id,
@@ -178,13 +187,18 @@ class Leaves extends Security_Controller {
         
         $webUrl = null;
 
+        $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where j.user_id = $applicant_id")->getRow();
+        $leave_info = $this->db->query("SELECT t.* FROM rise_leave_applications l left join rise_leave_types t on t.id=l.leave_type_id where l.applicant_id = $applicant_id")->getRow();
+
+        if(!$user_info){
+            
+            echo json_encode(array("success" => false, 'message' => 'Information is missing'.', Please fill your User & Job information'));
+        }
+
         //hasn't full access? allow to update only specific member's record, excluding loged in user's own record
         $this->access_only_allowed_members($leave_data['applicant_id']);
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
-
-        $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where j.user_id = $applicant_id")->getRow();
-        $leave_info = $this->db->query("SELECT t.* FROM rise_leave_applications l left join rise_leave_types t on t.id=l.leave_type_id where l.applicant_id = $applicant_id")->getRow();
 
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
 
@@ -361,9 +375,6 @@ class Leaves extends Security_Controller {
 
         $template->saveAs($path_absolute);
 
-        if(file_exists($path_absolute)){
-            unlink($path_absolute);
-        }
 
         return $save_as_name;
 
@@ -398,6 +409,10 @@ class Leaves extends Security_Controller {
 
         // Decode the JSON response into an associative array
         $data = json_decode($json, true);
+
+        if(file_exists($path)){
+            unlink($path);
+        }
 
         return $data;
 

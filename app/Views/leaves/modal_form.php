@@ -217,6 +217,8 @@
         $("#leave-form").appForm({
             onSuccess: function (result) {
                 
+                appAlert.success(result.message, {duration: 15000});
+
                 if(result.webUrl != null) {
                     let newTab = window.open();
                     newTab.location.target = '_blank';

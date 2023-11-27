@@ -398,6 +398,10 @@ class Documents extends Security_Controller
         // Decode the JSON response into an associative array
         $data = json_decode($json, true);
 
+        if(file_exists($path)){
+            unlink($path);
+        }
+        
         return $data;
 
     }

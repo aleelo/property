@@ -1,5 +1,6 @@
 # exclude database configuration
 app/Config/Database.php
+app/Config/App.php
 
 #-------------------------
 # Operating Specific Junk Files
