@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<div class="form-group">
+<div class="form-group" style="display:none;">
     <div class="row">
         <label for="depertment" class="col-3"><?php echo app_lang('depertment'); ?>
         </label>
