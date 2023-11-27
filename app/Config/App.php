@@ -70,7 +70,7 @@ class App extends BaseConfig {
      *
      * @var string
      */
-    public $baseURL = '';//'http://localhost/rise/';
+    public $baseURL = '';//'https://phpstack-249906-4047771.cloudwaysapps.com/';//http://localhost/rise/;
     
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.

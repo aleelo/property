@@ -133,13 +133,13 @@ $lang["admin_user_has_all_power"] = "Admin user's has power to access/modify eve
 $lang["no_posts_to_show"] = "No posts to show";
 
 /* team_member */
-$lang["add_team_member"] = "Add member";
-$lang["edit_team_member"] = "Edit team member";
-$lang["delete_team_member"] = "Delete team member";
-$lang["team_member"] = "Team member";
+$lang["add_team_member"] = "Add employee";
+$lang["edit_team_member"] = "Edit employee";
+$lang["delete_team_member"] = "Delete employee";
+$lang["team_member"] = "Employee";
 $lang["team_members"] = "Employees List";
-$lang["active_members"] = "Active members";
-$lang["inactive_members"] = "Inactive members";
+$lang["active_members"] = "Active employees";
+$lang["inactive_members"] = "Inactive employees";
 $lang["first_name"] = "First name";
 $lang["last_name"] = "Last name";
 $lang["mailing_address"] = "Mailing address";
@@ -168,14 +168,14 @@ $lang["my_profile"] = "My Profile";
 $lang["change_password"] = "Change Password";
 $lang["social_links"] = "Social Links";
 $lang["view_details"] = "View Details";
-$lang["invite_someone_to_join_as_a_team_member"] = "Invite someone to join as a team member.";
+$lang["invite_someone_to_join_as_a_team_member"] = "Invite someone to join as a employees.";
 
 /* team */
-$lang["add_team"] = "Add team";
-$lang["edit_team"] = "Edit team";
-$lang["delete_team"] = "Delete team";
+$lang["add_team"] = "Add employee";
+$lang["edit_team"] = "Edit employee";
+$lang["delete_team"] = "Delete employee";
 $lang["team"] = "Employees";
-$lang["select_a_team"] = "Select a team";
+$lang["select_a_team"] = "Select an employee";
 
 /* dashboard */
 $lang["dashboard"] = "Dashboard";
@@ -254,7 +254,7 @@ $lang["edit_announcement"] = "Edit announcement";
 $lang["delete_announcement"] = "Delete announcement";
 $lang["announcement"] = "Announcement";
 $lang["announcements"] = "Announcements";
-$lang["all_team_members"] = "All team members";
+$lang["all_team_members"] = "All employees";
 $lang["all_team_clients"] = "All Clients";
 
 /* settings */
@@ -314,7 +314,7 @@ $lang["account_created"] = "Your account has been created successfully!";
 $lang["invitation_expaired_message"] = "The invitation has expired or something went wrong";
 $lang["account_already_exists_for_your_mail"] = "Account already exists for your email address.";
 $lang["create_an_account_as_a_new_client"] = "Create an account as a new client.";
-$lang["create_an_account_as_a_team_member"] = "Create an account as a team member.";
+$lang["create_an_account_as_a_team_member"] = "Create an account as an employee.";
 $lang["create_an_account_as_a_client_contact"] = "Create an account as a client contact.";
 
 /* messages */
@@ -573,7 +573,7 @@ $lang["restore_to_default"] = "Restore to default";
 $lang["template_restored"] = "The template has been restored to default.";
 $lang["login_info"] = "Login info";
 $lang["reset_password"] = "Reset password";
-$lang["team_member_invitation"] = "Team member invitation";
+$lang["team_member_invitation"] = "Employee invitation";
 $lang["client_contact_invitation"] = "Client contact invitation";
 $lang["send_invoice"] = "Send invoice";
 $lang["signature"] = "Signature";
@@ -595,8 +595,8 @@ $lang["choose_members_and_or_teams"] = "Choose members and / or teams";
 $lang["choose_ticket_types"] = "Choose ticket types";
 $lang["excluding_his_her_time_cards"] = "Excluding his/her own time cards";
 $lang["excluding_his_her_leaves"] = "Excluding his/her own leaves";
-$lang["can_manage_team_members_leave"] = "Can manage team member's leaves?";
-$lang["can_manage_team_members_timecards"] = "Can manage team member's time cards?";
+$lang["can_manage_team_members_leave"] = "Can manage employee leaves?";
+$lang["can_manage_team_members_timecards"] = "Can manage employee time cards?";
 $lang["can_access_invoices"] = "Can access invoices?";
 $lang["can_access_expenses"] = "Can access expenses?";
 $lang["can_access_clients_information"] = "Can access client's information?";
@@ -762,9 +762,9 @@ $lang["client_can_add_project_files"] = "Client can add project files?";
 $lang["client_can_comment_on_files"] = "Client can comment on files?";
 $lang["mark_invoice_as_not_paid"] = "Mark as Not paid"; //Change invoice status to Not Paid
 
-$lang["set_team_members_permission"] = "Set team members permissions";
-$lang["can_view_team_members_contact_info"] = "Can view team member's contact info?";
-$lang["can_view_team_members_social_links"] = "Can view team member's social links?";
+$lang["set_team_members_permission"] = "Set employee permissions";
+$lang["can_view_team_members_contact_info"] = "Can view employee's contact info?";
+$lang["can_view_team_members_social_links"] = "Can view employee's social links?";
 
 $lang["collaborator"] = "Collaborator";
 $lang["collaborators"] = "Collaborators";
@@ -1023,8 +1023,8 @@ $lang["project_timesheet"] = "Project timesheet";
 
 $lang["set_event_permissions"] = "Set event permissions";
 $lang["disable_event_sharing"] = "Disable event sharing";
-$lang["can_update_team_members_general_info_and_social_links"] = "Can update team member's general info and social links?";
-$lang["can_manage_team_members_project_timesheet"] = "Can manage team member's project timesheet?";
+$lang["can_update_team_members_general_info_and_social_links"] = "Can update employee's general info and social links?";
+$lang["can_manage_team_members_project_timesheet"] = "Can manage employee's project timesheet?";
 
 $lang["cron_job"] = "Cron Job";
 $lang["cron_job_link"] = "Cron Job link";
@@ -1081,7 +1081,7 @@ $lang["mark_project_as_hold"] = "Mark Project as Hold";
 
 $lang["repeat"] = "Repeat";
 
-$lang["hide_team_members_list"] = "Hide team members list?";
+$lang["hide_team_members_list"] = "Hide employees list?";
 
 /* Version 2.0 */
 
@@ -1189,10 +1189,10 @@ $lang["completed_projects"] = "Completed Projects";
 $lang["new_tickets"] = "New Tickets";
 $lang["closed_tickets"] = "Closed Tickets";
 
-$lang["clocked_in_team_members"] = "Clocked in team members";
-$lang["clocked_out_team_members"] = "Clocked out team members";
+$lang["clocked_in_team_members"] = "Clocked in employees";
+$lang["clocked_out_team_members"] = "Clocked out employees";
 $lang["latest_online_client_contacts"] = "Latest online client contacts";
-$lang["latest_online_team_members"] = "Latest online team members";
+$lang["latest_online_team_members"] = "Latest online employees";
 $lang["my_tasks_list"] = "My tasks list";
 
 $lang["discount"] = "Discount";
@@ -1539,7 +1539,7 @@ $lang["available_menu_items"] = "Available menu items";
 $lang["drag_and_drop_items_here"] = "Drag and drop items here";
 $lang["no_more_items_available"] = "No more items available";
 $lang["left_menu_preview_message"] = "Hit save button to see preview.";
-$lang["left_menu_setting_help_message"] = "This will be the default left menu for team members. Please note that, the menu items will be distributed as per user's permission.";
+$lang["left_menu_setting_help_message"] = "This will be the default left menu for employees. Please note that, the menu items will be distributed as per user's permission.";
 
 $lang["draft_invoices"] = "Draft invoices";
 $lang["draft_invoices_total"] = "Draft Invoices Total";
@@ -1649,7 +1649,7 @@ $lang["expense_details"] = "Expense details";
 $lang["read_only"] = "Read only";
 
 $lang["internal_use_only"] = "Internal use only";
-$lang["visible_to_team_members_only"] = "Visible to team members only";
+$lang["visible_to_team_members_only"] = "Visible to employees only";
 $lang["visible_to_clients_only"] = "Visible to clients only";
 
 $lang["open_in_new_tab"] = "Open in new tab";
@@ -1930,7 +1930,7 @@ $lang["version"] = "Version";
 $lang["by"] = "By";
 $lang["visit_plugin_site"] = "Visit plugin site";
 
-$lang["can_manage_team_members_job_information"] = "Can manage team member's job information?";
+$lang["can_manage_team_members_job_information"] = "Can manage employee's job information?";
 
 $lang["add_filter"] = "Add filter";
 $lang["specific_client_groups"] = "Specific client groups";
@@ -1989,7 +1989,7 @@ $lang["imap_encryption_help_message"] = "Different server could work with differ
 $lang["administration_permissions"] = "Administration permissions";
 $lang["can_manage_all_kinds_of_settings"] = "Can manage all kinds of settings";
 $lang["can_manage_user_role_and_permissions"] = "Can manage user role and permissions";
-$lang["can_add_or_invite_new_team_members"] = "Can add/invite new team members";
+$lang["can_add_or_invite_new_team_members"] = "Can add/invite new employees";
 
 $lang["add_signature_option_on_accepting_proposal"] = "Add signature option on accepting proposal";
 $lang["accept"] = "Accept";
@@ -2142,7 +2142,7 @@ $lang["was_this_article_helpful"] = "Was this article helpful?";
 $lang["thank_you_for_your_feedback"] = "Thank you for your feedback.";
 $lang["feedback"] = "Feedback";
 
-$lang["add_signature_option_for_team_members"] = "Add signature option for team members";
+$lang["add_signature_option_for_team_members"] = "Add signature option for employees";
 $lang["sign_contract"] = "Sign contract";
 
 $lang["remove_task_statuses"] = "Remove task statuses";
@@ -2215,7 +2215,7 @@ $lang["import_expense"] = "Import expense";
 
 $lang["mark_as_default"] = "Mark as default";
 $lang["remove_as_default"] = "Remove as default";
-$lang["staff_default_dashboard_help_message"] = "This will replace the default dashboard for all team members. Please note that, the widgets will be distributed as per user's permission.";
+$lang["staff_default_dashboard_help_message"] = "This will replace the default dashboard for all employees. Please note that, the widgets will be distributed as per user's permission.";
 
 /* Version 3.2 */
 
@@ -2272,7 +2272,7 @@ $lang["person"] = "Person";
 $lang["last_announcement"] = "Last announcement";
 $lang["no_announcement_yet"] = "No announcement yet!";
 
-$lang["team_members_overview"] = "Team Members Overview";
+$lang["team_members_overview"] = "Employees Overview";
 $lang["on_leave_today"] = "On leave today";
 
 $lang["enable_embedded_form_to_get_leads"] = "Enable embedded form to get leads";
@@ -2480,8 +2480,8 @@ $lang["send_credit_note"] = "Send credit note";
 
 $lang["taxable"] = "Taxable";
 
-$lang["can_manage_team_members_notes"] = "Can manage team member's notes?";
-$lang["team_members_can_not_see_own_notes"] = "Team members can't see own notes.";
+$lang["can_manage_team_members_notes"] = "Can manage employee's notes?";
+$lang["team_members_can_not_see_own_notes"] = "Employees can't see own notes.";
 
 $lang["articles_order"] = "Articles order";
 $lang["top_menu"] = "Top menu";
@@ -2524,14 +2524,14 @@ $lang["hold_projects"] = "Hold Projects";
 $lang["open_tasks"] = "Open Tasks";
 $lang["completed_tasks"] = "Completed Tasks";
 
-$lang["team_members_summary"] = "Team members summary";
+$lang["team_members_summary"] = "Employees summary";
 $lang["created_date_wise"] = "Created date wise";
 $lang["conversion_date_wise"] = "Conversion date wise";
 
 $lang["ticket_statistics"] = "Ticket Statistics";
 
-$lang["can_activate_deactivate_team_members"] = "Can activate deactivate team members?";
-$lang["can_delete_team_members"] = "Can delete team members?";
+$lang["can_activate_deactivate_team_members"] = "Can activate deactivate employees?";
+$lang["can_delete_team_members"] = "Can delete employees?";
 
 $lang["project_settings"] = "Project settings";
 $lang["project_status"] = "Project Status";

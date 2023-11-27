@@ -13,14 +13,14 @@
                         <label for="employee_type" class=" col-md-3"><?php echo 'Employee Type'; ?></label>
                         <div class=" col-md-9">
                             <?php
-                            $types = ['Fixed'=>'Fixed','Temporary'=>'Temporary','Internship'=>'Internship'];
+                            $types = ['Temporary'=>'Temporary','Fixed'=>'Fixed','Internship'=>'Internship'];
                             echo form_dropdown(array(
                                 "id" => "employee_type",
                                 "name" => "employee_type",
                                 "class" => "form-control select2",
                                 "placeholder" => 'Employee Type',
                                 "autocomplete" => "off"
-                            ),$types,[$job_info->employee_type=>$types[$job_info->employee_type]]);
+                            ),$types,[$job_info->employee_type]);
                             ?>
                         </div>
                     </div>
