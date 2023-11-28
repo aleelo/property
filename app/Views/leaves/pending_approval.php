@@ -13,7 +13,7 @@
                 {title: '<?php echo app_lang("date") ?>', "class": "w20p"},
                 {title: '<?php echo app_lang("duration") ?>', "class": "w20p"},
                 {title: '<?php echo app_lang("status") ?>', "class": "w15p"},
-                {title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
+                {title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w10p"}
             ],
             printColumns: [0, 1, 2, 3, 4],
             xlsColumns: [0, 1, 2, 3, 4]

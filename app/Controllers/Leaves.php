@@ -152,7 +152,7 @@ class Leaves extends Security_Controller {
             $itemId = $data["id"];
 
             //update item id and web url for document
-            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number']);
+            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number'],'leave_id' => $save_id);
             
             $this->Documents_model->ci_save($u_data, $doc->id);
 
@@ -251,7 +251,7 @@ class Leaves extends Security_Controller {
             $itemId = $data["id"];
 
             //update item id and web url for document
-            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number']);
+            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number'],'leave_id' => $save_id);
             
             $this->Documents_model->ci_save($u_data, $doc->id);
 
@@ -610,7 +610,11 @@ class Leaves extends Security_Controller {
             $option_icon = "cloud-lightning";
         }
 
+        $doc = $this->db->query("SELECT * FROM rise_documents where leave_id = $data->id")->getRow();
+
         $actions = modal_anchor(get_uri("leaves/application_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('application_details'), "data-post-id" => $data->id));
+        $webUrl = empty($doc) ? '' : $doc->webUrl;
+        $actions .= "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
 
         //checking the user permissiton to show/hide reject and approve button
         $can_manage_application = false;
