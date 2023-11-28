@@ -126,6 +126,7 @@ class Leaves extends Security_Controller {
 
         $doc_id = $this->Documents_model->ci_save($doc_data);
         $doc = $this->db->query("SELECT * FROM rise_documents where id = $doc_id")->getRow();
+        $this->db->query("insert into rise_leave_document(leave_id,document_id) values($save_id,$doc_id)");
         $doc_leave_data['document_id'] = $doc->id;
 
         $path = $this->createDoc($doc_leave_data);
@@ -152,7 +153,7 @@ class Leaves extends Security_Controller {
             $itemId = $data["id"];
 
             //update item id and web url for document
-            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number'],'leave_id' => $save_id);
+            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number']);
             
             $this->Documents_model->ci_save($u_data, $doc->id);
 
@@ -225,6 +226,7 @@ class Leaves extends Security_Controller {
 
         $doc_id = $this->Documents_model->ci_save($doc_data);
         $doc = $this->db->query("SELECT * FROM rise_documents where id = $doc_id")->getRow();
+        $this->db->query("insert into rise_leave_document(leave_id,document_id) values($save_id,$doc_id)");
         $doc_leave_data['document_id'] = $doc->id;
 
         $path = $this->createDoc($doc_leave_data);
@@ -251,7 +253,7 @@ class Leaves extends Security_Controller {
             $itemId = $data["id"];
 
             //update item id and web url for document
-            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number'],'leave_id' => $save_id);
+            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number']);
             
             $this->Documents_model->ci_save($u_data, $doc->id);
 
@@ -410,8 +412,8 @@ class Leaves extends Security_Controller {
         // Decode the JSON response into an associative array
         $data = json_decode($json, true);
 
-        if(file_exists($path)){
-            unlink($path);
+        if(file_exists(APPPATH.'Views/documents/'.$path)){
+            unlink(APPPATH.'Views/documents/'.$path);
         }
 
         return $data;
@@ -610,7 +612,7 @@ class Leaves extends Security_Controller {
             $option_icon = "cloud-lightning";
         }
 
-        $doc = $this->db->query("SELECT * FROM rise_documents where leave_id = $data->id")->getRow();
+        $doc = $this->db->query("SELECT d.webUrl FROM rise_leave_document l left join rise_documents d on l.document_id = d.id where l.leave_id = $data->id")->getRow();
 
         $actions = modal_anchor(get_uri("leaves/application_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('application_details'), "data-post-id" => $data->id));
         $webUrl = empty($doc) ? '' : $doc->webUrl;
