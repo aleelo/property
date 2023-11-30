@@ -29,6 +29,23 @@ $lang["template_path"] = "Template Path";
 $lang["template_prefix"] = "Reference Prefix";
 $lang["template_destination"] = "Destination Folder";
 
+// client_type	name	created_by	visit_date	created_at	deleted	remarks
+//visitor
+$lang["remarks"] = "Remarks";
+$lang["visitor"] = "Visitor";
+$lang["visitors"] = "Visitors";
+$lang["visitor_name"] = "Visitor Name";
+$lang["visitor_mobile"] = "Visitor Mobile";
+$lang["mobile"] = "Mobile";
+$lang["visitor_type"] = "Visitor Type";
+$lang["client_type"] = "Client Type";
+$lang["add_visitor"] = "Add Visitor";
+$lang["vehicle_details"] = "Vehicle Details";
+$lang["visit_date"] = "Visit Date";
+$lang["delete_visitor"] = "Delete Visitor";
+$lang["delete_visitor"] = "Edit Visitor";
+
+
 ///
 // end addition
 ///
@@ -339,6 +356,7 @@ $lang["edit_client"] = "Edit client";
 $lang["delete_client"] = "Delete client";
 $lang["client"] = "Client";
 $lang["clients"] = "Clients";
+$lang["visitors_new"] = "Visitors";
 $lang["client_details"] = "Client details";
 $lang["due"] = "Due";
 

@@ -56,6 +56,9 @@ class Left_menu {
                 $sidebar_menu["clients"] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
             }
 
+            if ($this->ci->login_user->is_admin) {
+            }
+            $sidebar_menu["visitors_new"] = array("name" => "visitors_new", "url" => "visitors", "class" => "users");
 
             if ($this->ci->login_user->is_admin || !get_array_value($this->ci->login_user->permissions, "do_not_show_projects")) {
                 $sidebar_menu["projects"] = array("name" => "projects", "url" => "projects/all_projects", "class" => "command");

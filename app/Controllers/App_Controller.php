@@ -28,6 +28,7 @@ class App_Controller extends Controller {
     public $Events_model;
     public $Documents_model;
     public $Templates_model;
+    public $Visitors_model;
     public $Announcements_model;
     public $Messages_model;
     public $Clients_model;
@@ -141,6 +142,7 @@ class App_Controller extends Controller {
             'Leave_applications_model',
             'Documents_model',
             'Templates_model',
+            'Visitors_model',
             'Events_model',
             'Announcements_model',
             'Messages_model',

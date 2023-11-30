@@ -38,6 +38,8 @@ class Clients extends Security_Controller {
 
         $view_data['tab'] = clean_data($tab);
 
+        
+
         return $this->template->rander("clients/index", $view_data);
     }
 
