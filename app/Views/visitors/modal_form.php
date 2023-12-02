@@ -38,6 +38,8 @@
 
         
         setDatePicker(".date");
+        
+        setTimePicker(".time");
 
         $(".select2").select2();
 
@@ -48,6 +50,54 @@
         
         $('.modal-dialog').removeClass('modal-lg').addClass('modal-xl');
 
+        //read details for visitor:
+        
+        if($('#id').val() != ''){
+            $.ajax({
+                url: 'visitors/visitor_details_json/'+$('#id').val(),
+                cache: false,
+                type: 'GET',
+                success: function (data) {
+
+                    $('#add_visitors_table').show();
+                    $('#add_visitors_table tbody').html('');
+                    data = JSON.parse(data);
+                    console.log(data.length);
+
+                    if(data.length > 0 && data[0].visitor_name != null){
+                        for(let i=0;i< data.length;i++){
+                            $('#add_visitors_table tbody').append(
+                                "<tr class=''>"+
+                                "<td>" + k + "</td>"+
+                                    "<td><input type='text' class='form-control' value='" + data[i].visitor_name + "' data-rule-required data-msg-required='This field is required.' id='visitor_name_" + k + "' placeholder='Visitor Name' name='visitor_name[]'></td>"+
+                                    "<td><input type='text' class='form-control' value='" + data[i].mobile + "' data-rule-required data-msg-required='This field is required.' id='visitor_mobile_" + k + "' placeholder='Visitor Mobile'  name='visitor_mobile[]'></td>"+
+                                    "<td><input type='text' class='form-control' value='" + data[i].vehicle_details + "' data-rule-required data-msg-required='This field is required.' id='vehicle_details_" + k + "' placeholder='Vehicle Details'  name='vehicle_details[]'></td>"+
+                                    "<td style='width: 110px;'><button type='button' class='btn btn-danger btn-sm mt-2 float-end' onclick='$(this).parent().parent().remove();k--;'><i data-feather='minus-circle' class='icon'></i> Remove</button></td>"+
+                                "</tr>"
+                            );
+                            k = k+1;
+                        }
+                    }
+
+                    feather.replace();
+                },
+                statusCode: {
+                    403: function () {
+                        console.log("403: Session expired.");
+                        window.location.reload();
+                    },
+                    404: function () {
+                        appLoader.hide();
+                        appAlert.error("404: Page not found.");
+                    }
+                },
+                error: function () {
+                    appLoader.hide();
+                    appAlert.error("500: Internal Server Error.");
+                }
+            });
+        }
+        
         $("#lead-form").appForm({
             onSuccess: function (result) {
                 if (result.view === "details") {

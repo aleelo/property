@@ -245,6 +245,50 @@ class App_Controller extends Controller {
         }
     }
 
+     //validate submitted data with messages
+     protected function validate_with_messages($fields = array(),$messages = array(), $return_errors = false) {
+        $final_fields = array();
+
+        foreach ($fields as $field => $validate) {
+            //we've to add permit_empty rule if the field is not required
+            if (strpos($validate, 'required') !== false) {
+                //this is required field
+            } else {
+                //so, this field isn't required, add permit_empty rule
+                $validate .= "|permit_empty";
+            }
+
+            $final_fields[$field] = $validate;
+        }
+
+        if (!$final_fields) {
+            //no fields to validate in this context, so nothing to validate
+            return true;
+        }
+
+        $validate = $this->validate($final_fields,$messages);
+
+        if (!$validate) {
+            if (ENVIRONMENT === 'production') {
+                $message = app_lang('something_went_wrong');
+            } else {
+                $validation = \Config\Services::validation();
+                $message = $validation->getErrors();
+            }
+
+            if ($return_errors) {
+                return $message;
+            }
+
+            // $message = [
+            //     'vErors' => true,
+            //     'message' => $message
+            // ];
+
+            echo json_encode(array("success" => false, 'message' => json_encode($message)));
+            exit();
+        }
+    }
     /**
      * download files. If there is one file then don't archive the file otherwise archive the files.
      * 

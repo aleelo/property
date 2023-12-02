@@ -1,4 +1,4 @@
-<input type="hidden" name="id" value="<?php echo $model_info->id; ?>" />
+<input type="hidden" name="id" id='id' value="<?php echo $model_info->id; ?>" />
 <input type="hidden" name="view" value="<?php echo isset($view) ? $view : ""; ?>" />
 
 
@@ -79,7 +79,7 @@
 <div class="form-group">
     <div class="row">
         <label for="visit_date" class="<?php echo 'col-3'; ?>"><?php echo app_lang('visit_date'); ?></label>
-        <div class="col-9">
+        <div class="col-6">
             <?php
             echo form_input(array(
                 "id" => "visit_date",
@@ -87,6 +87,20 @@
                 "value" => $model_info->visit_date ? $model_info->visit_date : "",
                 "class" => "form-control date",
                 "placeholder" => app_lang('visit_date'),
+                "data-rule-required" => true,
+                "data-msg-required" => app_lang("field_required"),
+            ),);
+            ?>
+
+        </div>
+        <div class="col-3">
+            <?php
+            echo form_input(array(
+                "id" => "visit_time",
+                "name" => "visit_time",
+                "value" => $model_info->visit_time ? $model_info->visit_time : "",
+                "class" => "form-control time",
+                "placeholder" => app_lang('visit_time'),
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),
             ),);

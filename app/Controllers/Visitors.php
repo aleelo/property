@@ -174,28 +174,23 @@ class Visitors extends Security_Controller
     {
         $id = $this->request->getPost('id');
         // $this->validate_lead_access($id);
-
-        if($this->request->getPost('name') != 'Person'){
-            $details_required = [
-                'visitor_name.*'=>'required',
-                'visitor_mobile.*'=>'required',
-                'vehicle_details.*'=>'required',
-            ];
-
-        }else{
-
-            $details_required = [];
-        }
-
+    
         $primary =  [
             "id" => "numeric",
             "name" => "required",
-            "visit_date" => "required"
+            "visit_date" => "required",
+            'visitor_name'=>'required',
+            // 'visitor_mobile'=>'required',
+            // 'vehicle_details'=>'required',
         ];
 
-        $rules = array_merge($primary,$details_required); 
+        $rules = array_merge($primary); 
 
-        $this->validate_submitted_data($rules);
+        $this->validate_with_messages($rules,[
+            'visitor_name'=>[
+                'required' => 'Please add at least one visitor details.'
+            ]
+        ]);
     
         //get dept for login user
         $user_id = $this->login_user->id;
@@ -206,8 +201,9 @@ class Visitors extends Security_Controller
             "name" => $this->request->getPost('name'),
             "client_type" => $this->request->getPost('client_type'),
             "visit_date" => $this->request->getPost('visit_date'),
+            "visit_time" => $this->request->getPost('visit_time'),
             "remarks" => $this->request->getPost('remarks'),
-            "created_by" => $this->request->getPost('owner_id') ? $this->request->getPost('owner_id') : $this->login_user->id,
+            "created_by" => $this->request->getPost('owner_id') ? $this->request->getPost('owner_id') : $user_id,
             "created_at" => date('Y-m-d H:i:s'),
         );
 
@@ -220,19 +216,17 @@ class Visitors extends Security_Controller
             $save_id = $this->Visitors_model->ci_save($parent_input);
 
             //save visitor details:
-            if($this->request->getPost('name') != 'Person'){
-                $visitor_name = $this->request->getPost('visitor_name');
-                $visitor_mobile = $this->request->getPost('visitor_mobile');
-                $vehicle = $this->request->getPost('vehicle_details');
-    
-                foreach($visitor_name as $k => $v){
-                    $this->db->query("INSERT INTO rise_visitors_detail(visitor_name,mobile,vehicle_details,visitor_id)
-                                VALUES('$visitor_name[$k]','$visitor_mobile[$k]','$vehicle[$k]',$save_id)");
-                }
+            $visitor_name = $this->request->getPost('visitor_name');
+            $visitor_mobile = $this->request->getPost('visitor_mobile');
+            $vehicle = $this->request->getPost('vehicle_details');
+
+            foreach($visitor_name as $k => $v){
+                $this->db->query("INSERT INTO rise_visitors_detail(visitor_name,mobile,vehicle_details,visitor_id)
+                            VALUES('$visitor_name[$k]','$visitor_mobile[$k]','$vehicle[$k]',$save_id)");
             }
 
             $visitor_info = $this->db->query("SELECT v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v  
-                    LEFT JOIN rise_users u on v.created_by = u.id  where v.id = $save_id");
+                    LEFT JOIN rise_users u on v.created_by = u.id  where v.id = $save_id")->getRow();
 
             $detail_info = $this->db->query("SELECT vd.* from rise_visitors v left join rise_visitors_detail vd on v.id=vd.visitor_id where v.id = $save_id")->getResult();
 
@@ -247,16 +241,21 @@ class Visitors extends Security_Controller
                             );
             }
 
+            // var_dump($visitor_info);
+            // var_dump($detail_info);
+            // var_dump($arr_table);
+            // die();
 
             $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Visitor'")->getRow();
-
+            $visit_date = date("Y-m-d",strtotime($this->request->getPost('visit_date')));
+            
             $doc_visitor_data = [
                 'id'=>$save_id,
                 'ref_number'=> $template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
                 'template' => $template->path,
                 'folder' => $template->destination_folder,
                 'date' => date('Y-m-d'),
-                'visit_date' => $this->request->getPost('visit_date'),
+                'visit_date' => $visit_date = date('h:i a, F d, Y',strtotime($visit_date.' '.$this->request->getPost('visit_time'))),
                 'table' => $arr_table,
                 "created_at" => date('Y-m-d H:i:s')
             ];
@@ -315,14 +314,30 @@ class Visitors extends Security_Controller
                 "name" => $this->request->getPost('name'),
                 "client_type" => $this->request->getPost('client_type'),
                 "visit_date" => $this->request->getPost('visit_date'),
+                "visit_time" => $this->request->getPost('visit_time'),
                 "remarks" => $this->request->getPost('remarks'),
             );
 
             $updated = $this->Visitors_model->ci_save($input, $id);
-            //get document row
-           
+
+            //delete old data
+            $this->db->query("DELETE FROM rise_visitors_detail where visitor_id = $id");
+
+            //insert new data
+             $visitor_name = $this->request->getPost('visitor_name');
+             $visitor_mobile = $this->request->getPost('visitor_mobile');
+             $vehicle = $this->request->getPost('vehicle_details');
+
+ 
+             foreach($visitor_name as $k => $v){
+                
+                 $this->db->query("INSERT INTO rise_visitors_detail(visitor_name,mobile,vehicle_details,visitor_id)
+                             VALUES('$visitor_name[$k]','$visitor_mobile[$k]','$vehicle[$k]',$id)");
+             } 
+
+            //get row           
             $visitor_info = $this->db->query("SELECT v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v  
-                    LEFT JOIN rise_users u on v.created_by = u.id  where v.id = $id");
+                    LEFT JOIN rise_users u on v.created_by = u.id  where v.id = $id")->getRow();
         }
 
         if ($save_id || $updated) {
@@ -332,7 +347,7 @@ class Visitors extends Security_Controller
                 
                 log_notification("visitor_created", array("visitor_id" => $save_id), $this->login_user->id);
 
-                echo json_encode(array("success" => true, "data" => $this->_make_row($visitor_info->getRow(), null), 'webUrl'=>$webUrl, 'id' => $save_id, 'view' => $this->request->getPost('view'),
+                echo json_encode(array("success" => true, "data" => $this->_make_row($visitor_info, null), 'webUrl'=>$webUrl, 'id' => $save_id, 'view' => $this->request->getPost('view'),
                     'message' => app_lang('record_saved')));
             } else { //update operation
                 
@@ -341,13 +356,20 @@ class Visitors extends Security_Controller
                 // var_dump($doc->getRowArray());
                 // die();
 
-                echo json_encode(array("success" => true, "data" => $this->_make_row($visitor_info->getRow(), null), 'id' => $id, 'view' => $this->request->getPost('view'),
+                echo json_encode(array("success" => true, "data" => $this->_make_row($visitor_info, null), 'id' => $id, 'view' => $this->request->getPost('view'),
                     'message' => app_lang('record_updated')));
             }
 
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred').', Visitor not saved.'));
         }
+    }
+
+    public function visitor_details_json($id) {
+
+        $detail_info = $this->db->query("SELECT vd.* from rise_visitors v left join rise_visitors_detail vd on v.id=vd.visitor_id where v.id = $id")->getResult();
+
+        return json_encode($detail_info);
     }
 
     // Creates the Document Using the Provided Template
@@ -373,7 +395,7 @@ class Visitors extends Security_Controller
 
             'ref' => $data['ref_number'],
             'date' => date('Y-m-d',strtotime($data['created_at'])),
-            'visitDate' => date('Y-m-d',strtotime($data['visit_date'])),
+            'visitDate' => $data['visit_date'],
 
         ]);
 
@@ -501,7 +523,7 @@ class Visitors extends Security_Controller
         $id = $this->request->getPost('id');
         // $this->validate_lead_access($id);
 
-        if ($this->Documents_model->delete($id)) {
+        if ($this->Visitors_model->delete($id)) {
             echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
@@ -623,13 +645,14 @@ class Visitors extends Security_Controller
 
         // $lead_labels = make_labels_view_data($data->labels_list, true);
 
+        $visit_date = date('Y-m-d',strtotime($data->visit_date));
          // client_type	name	created_by	visit_date	created_at	deleted	remarks
         $row_data = array(
             $data->id,
             modal_anchor(get_uri("visitors/modal_form"),$data->name , array("class" => "edit","title" => app_lang('edit_visitor'), "data-post-id" => $data->id)),
             // anchor(get_uri("visitors/view/" . $data->id), ),
             $data->client_type,
-            $data->visit_date,
+            date("h:i a, F d, Y",strtotime($visit_date.' '.$data->visit_time)),
             $owner,
             format_to_date($data->created_at, false),
             $data->remarks,

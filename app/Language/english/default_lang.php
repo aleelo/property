@@ -42,8 +42,9 @@ $lang["client_type"] = "Client Type";
 $lang["add_visitor"] = "Add Visitor";
 $lang["vehicle_details"] = "Vehicle Details";
 $lang["visit_date"] = "Visit Date";
+$lang["visit_time"] = "Visit Time";
 $lang["delete_visitor"] = "Delete Visitor";
-$lang["delete_visitor"] = "Edit Visitor";
+$lang["edit_visitor"] = "Edit Visitor";
 
 
 ///
