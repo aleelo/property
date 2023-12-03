@@ -231,10 +231,12 @@ class Visitors extends Security_Controller
             $detail_info = $this->db->query("SELECT vd.* from rise_visitors v left join rise_visitors_detail vd on v.id=vd.visitor_id where v.id = $save_id")->getResult();
 
             $arr_table = [];
+            $index = 0;
 
             foreach($detail_info as $d){
+                $index = $index + 1;
                 $arr_table[] = array(
-                                'id'=>$d->id,
+                                'id'=>$index,
                                 'visitorName'=>$d->visitor_name,
                                 'visitorMobile'=>$d->mobile,
                                 'vehicle'=>$d->vehicle_details
