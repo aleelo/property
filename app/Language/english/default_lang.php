@@ -45,6 +45,9 @@ $lang["visit_date"] = "Visit Date";
 $lang["visit_time"] = "Visit Time";
 $lang["delete_visitor"] = "Delete Visitor";
 $lang["edit_visitor"] = "Edit Visitor";
+$lang["two_days"] = "Two Days";
+$lang["access_duration"] = "Access Duration";
+$lang["show_info"] = "Show Information";
 
 
 ///

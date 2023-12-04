@@ -178,9 +178,8 @@ class Visitors extends Security_Controller
         $primary =  [
             "id" => "numeric",
             "name" => "required",
-            "visit_date" => "required",
             'visitor_name'=>'required',
-            // 'visitor_mobile'=>'required',
+            'visitor_mobile'=>'required',
             // 'vehicle_details'=>'required',
         ];
 
@@ -189,9 +188,67 @@ class Visitors extends Security_Controller
         $this->validate_with_messages($rules,[
             'visitor_name'=>[
                 'required' => 'Please add at least one visitor details.'
+            ],
+            'visitor_mobile'=>[
+                'required' => 'Visitor mobile is required.'
             ]
         ]);
     
+        $duration = $this->request->getPost('access_duration');
+        $hours_per_day = 8;
+        $hours = 0;
+        $days = 0;
+
+        // $target_path = get_setting("timeline_file_path");
+        // $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "leave");
+        // $new_files = unserialize($files_data);
+
+        if ($duration === "multiple_days") {
+
+            $this->validate_submitted_data(array(
+                "start_date" => "required",
+                "end_date" => "required"
+            ));
+
+            $start_date = $this->request->getPost('start_date');
+            $end_date = $this->request->getPost('end_date');
+
+            //calculate total days
+            $d_start = new \DateTime($start_date);
+            $d_end = new \DateTime($end_date);
+            $d_diff = $d_start->diff($d_end);
+
+            $days = $d_diff->days + 1;
+            $hours = $days * $hours_per_day;
+
+        } else if ($duration === "hours") {
+
+            $this->validate_submitted_data(array(
+                "hour_date" => "required"
+            ));
+
+            $start_date = $this->request->getPost('hour_date');
+            $end_date = $start_date;
+            $hours = $this->request->getPost('hours');
+            $days = $hours / $hours_per_day;
+        } else {
+
+            $this->validate_submitted_data(array(
+                "single_date" => "required"
+            ));
+
+            $start_date = $this->request->getPost('single_date');
+            $end_date = $start_date;
+            $hours = $hours_per_day;
+            $days = 1;
+        }
+
+        if($days > 2){
+            $access_type = 'Short Period';
+        }else{
+            $access_type = 'Long Period';
+        }
+
         //get dept for login user
         $user_id = $this->login_user->id;
         $job_info = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user_id")->getRow();
@@ -200,8 +257,13 @@ class Visitors extends Security_Controller
         $parent_input = array(
             "name" => $this->request->getPost('name'),
             "client_type" => $this->request->getPost('client_type'),
-            "visit_date" => $this->request->getPost('visit_date'),
             "visit_time" => $this->request->getPost('visit_time'),
+            "start_date" => $start_date,
+            "visit_date" => $start_date,
+            "end_date" => $end_date,
+            "total_days" => $days,
+            "total_hours" => $hours,
+            "access_type" => $access_type,
             "remarks" => $this->request->getPost('remarks'),
             "created_by" => $this->request->getPost('owner_id') ? $this->request->getPost('owner_id') : $user_id,
             "created_at" => date('Y-m-d H:i:s'),
@@ -524,16 +586,69 @@ class Visitors extends Security_Controller
 
         $id = $this->request->getPost('id');
         // $this->validate_lead_access($id);
+        $row = $this->db->query("SELECT * FROM rise_visitors where id = $id")->getRow();
+
+        if($row->status != 'Pending'){
+            echo json_encode(array("success" => false, 'message' => 'Record CAN NOT be Deleted once approved.'));
+            exit;
+        }
 
         if ($this->Visitors_model->delete($id)) {
+            $this->db->query("DELETE FROM rise_visitors_detail where visitor_id = $id");
+
             echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
         }
     }
 
-    /* list of leads, prepared for datatable  */
 
+    // get visitor details
+    public function visitor_details(){
+
+        $id = $this->request->getPost('id');
+
+        $visitor_info = $this->db->query("SELECT v.*,cb.image as created_avatar,ab.image as approved_avatar,rb.image as rejected_avatar,
+                        concat(cb.first_name,' ',cb.last_name) as created_by,concat(rb.first_name,' ',rb.last_name) as rejected_by,
+                        concat(ab.first_name,' ',ab.last_name) as approved_by FROM rise_visitors v 
+
+                        LEFT JOIN rise_visitors_detail vd on v.id = vd.visitor_id
+                        LEFT JOIN rise_users cb on v.created_by = cb.id
+                        LEFT JOIN rise_users ab on v.approved_by = ab.id
+                        LEFT JOIN rise_users rb on v.rejected_by = rb.id
+                        WHERE v.id = $id
+
+                    ")->getRow();
+
+        $visitor_details = $this->db->query("SELECT vd.* FROM rise_visitors v 
+        LEFT JOIN rise_visitors_detail vd on v.id = vd.visitor_id
+        WHERE visitor_id = $id
+        ")->getResult();
+
+        $data['visitor_info'] = $visitor_info;
+        $data['visitor_details'] =  $visitor_details;
+      
+
+        return $this->template->view('visitors/visitor_details',$data);
+    }
+
+    //update status for visitor
+    public function update_status(){
+        $id = $this->request->getPost('id');
+        $status = $this->request->getPost('leave_status_input');
+        $user_id = $this->login_user->id;
+
+        if($status == 'Rejected'){
+            $this->db->query("UPDATE rise_visitors SET status = '$status',rejected_by = $user_id WHERE id = $id");    
+        }else{
+            $this->db->query("UPDATE rise_visitors SET status = '$status',approved_by = $user_id WHERE id = $id");    
+        }
+
+        
+        echo json_encode(array("success" => true, "data" => null, 'message' => app_lang('record_updated')));
+    }
+
+    /* list of leads, prepared for datatable  */
     public function list_data()
     {
         $this->access_only_allowed_members();
@@ -674,7 +789,9 @@ class Visitors extends Security_Controller
 
         $link = "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
 
-        $row_data[] = modal_anchor(get_uri("visitors/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit",
+        $row_data[] = modal_anchor(get_uri("visitors/visitor_details"), "<i data-feather='info' class='icon-16'></i>", array("class" => "edit",
+            "title" => app_lang('show_info'), "data-post-id" => $data->id))
+            .modal_anchor(get_uri("visitors/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit",
             "title" => app_lang('edit_lead'), "data-post-id" => $data->id))
         . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_visitor'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("visitors/delete"), "data-action" => "delete-confirmation"))
         . $link;

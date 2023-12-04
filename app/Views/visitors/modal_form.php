@@ -1,13 +1,15 @@
 <?php echo form_open(get_uri("visitors/save"), array("id" => "lead-form", "class" => "general-form", "role" => "form")); ?>
-<div class="modal-body clearfix">
-    <div class="container-fluid">
-        <?php echo view("visitors/lead_form_fields"); ?>
+<div id="leaves-dropzone" class="post-dropzone">
+    <div class="modal-body clearfix">
+        <div class="container-fluid">
+            <?php echo view("visitors/visitor_form_fields"); ?>
+        </div>
     </div>
-</div>
 
-<div class="modal-footer">
-    <button type="button" class="btn btn-default" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('close'); ?></button>
-    <button type="submit" class="btn btn-primary"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('save'); ?></button>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('close'); ?></button>
+        <button type="submit" class="btn btn-primary"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('save'); ?></button>
+    </div>
 </div>
 <?php echo form_close(); ?>
 
@@ -23,32 +25,37 @@
 
             $('#add_visitors_table').show();
 
+            var actions = "<button type='button' class='btn btn-primary text-white mt-2 upload-file-button float-start me-auto btn-sm round' style='color:#7988a2;margin-right:10px !important;'><i data-feather='camera' class='icon-16'></i></button>";
+            actions += "<button type='button' class='btn btn-danger btn-sm mt-2  round ml-2 p-1 ' onclick='$(this).parent().parent().remove();k--;'><i data-feather='minus-circle' class='icon'></i></button>";
             $('#add_visitors_table tbody').append(
                 "<tr class=''>"+
                 "<td>" + k + "</td>"+
                     "<td><input type='text' class='form-control' data-rule-required data-msg-required='This field is required.' id='visitor_name_" + k + "' placeholder='Visitor Name' name='visitor_name[]'></td>"+
                     "<td><input type='text' class='form-control' data-rule-required data-msg-required='This field is required.' id='visitor_mobile_" + k + "' placeholder='Visitor Mobile'  name='visitor_mobile[]'></td>"+
                     "<td><input type='text' class='form-control' data-rule-required data-msg-required='This field is required.' id='vehicle_details_" + k + "' placeholder='Vehicle Details'  name='vehicle_details[]'></td>"+
-                    "<td style='width: 110px;'><button type='button' class='btn btn-danger btn-sm mt-2 float-end' onclick='$(this).parent().parent().remove();k--;'><i data-feather='minus-circle' class='icon'></i> Remove</button></td>"+
+                    "<td style='width: 110px;'>" + actions + "</td>"+
                 "</tr>"
             );
             k = k+1;
 
+
+            var uploadUrl = "<?php echo get_uri("visitors/upload_file"); ?>";
+            var validationUri = "<?php echo get_uri("visitors/validate_leaves_file"); ?>";
+
+            var dropzone = attachDropzoneWithForm("#leaves-dropzone", uploadUrl, validationUri);
+
+            feather.replace();
         });
 
         
+        $('.modal-dialog').removeClass('modal-lg').addClass('modal-xl');
+
         setDatePicker(".date");
         
         setTimePicker(".time");
 
-        $(".select2").select2();
-
-        function removeRow(el){
-            $(el).parent().parent().remove();
-            k = k-1;
-        }
         
-        $('.modal-dialog').removeClass('modal-lg').addClass('modal-xl');
+        
 
         //read details for visitor:
         
@@ -122,7 +129,7 @@
                         }, 500);
 
                     $("#lead-table").appTable({newData: result.data, dataId: result.id});
-                    $("#reload-kanban-button:visible").trigger("click");
+                    
                 }
             }
         });
