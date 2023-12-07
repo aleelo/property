@@ -1,6 +1,6 @@
 <div id="page-content" class="page-wrapper clearfix grid-button leads-view">
     <ul class="nav nav-tabs bg-white title" role="tablist">
-        <li class="title-tab leads-title-section"><h4 class="pl15 pt10 pr15"><?php echo app_lang("visitors_new"); ?></h4></li>
+        <li class="title-tab leads-title-section"><h4 class="pl15 pt10 pr15"><?php echo app_lang("access_requests"); ?></h4></li>
 
         <?php //echo view("visitors/tabs", array("active_tab" => "leads_list")); ?>
 
@@ -9,7 +9,7 @@
 
                 <?php //echo modal_anchor(get_uri("visitors/template_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_template'), array("class" => "btn btn-outline-light", "title" => app_lang('manage_labels'), "data-post-type" => "client")); ?>
                 <?php //echo modal_anchor(get_uri("visitors/import_modal_form"), "<i data-feather='upload' class='icon-16'></i> " . app_lang('import_leads'), array("class" => "btn btn-default", "title" => app_lang('import_leads'))); ?> 
-                <?php echo modal_anchor(get_uri("visitors/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_visitor'), array("class" => "btn btn-default", "title" => app_lang('add_visitor'))); ?>
+                <?php echo modal_anchor(get_uri("visitors/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_request'), array("class" => "btn btn-default", "title" => app_lang('add_access_request'))); ?>
             </div>
         </div>
     </ul>

@@ -15,12 +15,38 @@
                 <?php }?>
                 <tr>
                     <td> <?php echo app_lang('access_duration'); ?></td>
-                    <td><?php echo $visitor_info->access_duration; ?></td>
+                    <td>
+                        <?php 
+                        if($visitor_info->access_duration == 'hours'){
+                            $hours = (int)$visitor_info->total_hours;
+                            echo $visitor_info->access_type.' ('.$hours.' hours)'; 
+                        }else{
+                            
+                            echo $visitor_info->access_type.' ('.$visitor_info->total_days.' days)'; 
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <?php if($visitor_info->access_duration == 'multiple_days'){ ?>
+                <tr>
+                    <td> <?php echo app_lang('start_date'); ?></td>
+                    <td><?php echo $visitor_info->start_date; ?></td>
                 </tr>
                 <tr>
-                    <td> <?php echo app_lang('visit_date'); ?></td>
-                    <td><?php echo date("h:i a, F d, Y",strtotime(date_format(new DateTime($visitor_info->visit_date),'Y-m-d').' '.$visitor_info->visit_time)); ?></td>
+                    <td> <?php echo app_lang('end_date'); ?></td>
+                    <td><?php echo $visitor_info->end_date; ?></td>
                 </tr>
+                <?php }else{?>
+                    <tr>
+                        <td> <?php echo app_lang('date'); ?></td>
+                        <td><?php echo date("F d, Y",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d'))); ?></td>
+                    </tr>
+                <?php } ?>
+                <tr>
+                    <td> <?php echo app_lang('visit_time'); ?></td>
+                    <td><?php echo date("l, h:i a",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d').' '.$visitor_info->visit_time)); ?></td>
+                </tr>
+
                 <tr>
                     <td> <?php echo app_lang('status'); 
                     $bg = $visitor_info->status == 'Pending'?'warning': ($visitor_info->status == 'Approved'? 'primary' : 'danger');

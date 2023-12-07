@@ -529,6 +529,7 @@ class App extends BaseConfig {
     public $csrf_protection = true;
     public $temp_file_path = 'files/temp/';
     public $profile_image_path = 'files/profile_images/';
+    public $visitor_image_path = 'files/visitors/';
     public $timeline_file_path = 'files/timeline_files/';
     public $project_file_path = 'files/project_files/';
     public $system_file_path = 'files/system/';

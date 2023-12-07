@@ -38,6 +38,7 @@ class Left_menu {
             $access_subscription = get_array_value($permissions, "subscription");
             $access_proposal = get_array_value($permissions, "proposal");
             $access_order = get_array_value($permissions, "order");
+            $access_visitor = get_array_value($permissions, "visitor");
             $access_items = ($this->ci->login_user->is_admin || $access_invoice || $access_estimate);
 
             $client_message_users = get_setting("client_message_users");
@@ -56,9 +57,9 @@ class Left_menu {
                 $sidebar_menu["clients"] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
             }
 
-            if ($this->ci->login_user->is_admin) {
+            if ($this->ci->login_user->is_admin || $access_visitor) {
+                $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "visitors", "class" => "users");
             }
-            $sidebar_menu["visitors_new"] = array("name" => "visitors_new", "url" => "visitors", "class" => "users");
 
             if ($this->ci->login_user->is_admin || !get_array_value($this->ci->login_user->permissions, "do_not_show_projects")) {
                 $sidebar_menu["projects"] = array("name" => "projects", "url" => "projects/all_projects", "class" => "command");

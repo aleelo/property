@@ -63,7 +63,7 @@ class Visitors extends Security_Controller
     public function modal_form()
     {
         $lead_id = $this->request->getPost('id');
-        $this->validate_lead_access($lead_id);
+        // $this->validate_lead_access($lead_id);
         $view_data = $this->make_lead_modal_form_data($lead_id);
 
         return $this->template->view('visitors/modal_form', $view_data);
@@ -174,7 +174,7 @@ class Visitors extends Security_Controller
     {
         $id = $this->request->getPost('id');
         // $this->validate_lead_access($id);
-    
+
         $primary =  [
             "id" => "numeric",
             "name" => "required",
@@ -244,9 +244,9 @@ class Visitors extends Security_Controller
         }
 
         if($days > 2){
-            $access_type = 'Short Period';
-        }else{
             $access_type = 'Long Period';
+        }else{
+            $access_type = 'Short Period';
         }
 
         //get dept for login user
@@ -264,6 +264,7 @@ class Visitors extends Security_Controller
             "total_days" => $days,
             "total_hours" => $hours,
             "access_type" => $access_type,
+            "access_duration" => $this->request->getPost('access_duration'),
             "remarks" => $this->request->getPost('remarks'),
             "created_by" => $this->request->getPost('owner_id') ? $this->request->getPost('owner_id') : $user_id,
             "created_at" => date('Y-m-d H:i:s'),
@@ -274,18 +275,77 @@ class Visitors extends Security_Controller
         $webUrl = null;
 
         if (!$id) { 
-            
-            $save_id = $this->Visitors_model->ci_save($parent_input);
-
+        
             //save visitor details:
             $visitor_name = $this->request->getPost('visitor_name');
             $visitor_mobile = $this->request->getPost('visitor_mobile');
             $vehicle = $this->request->getPost('vehicle_details');
+                     
+            //validate files before saving any thing:
+            if ($_FILES) {
+
+                foreach($_FILES as $f=>$v){
+                    $j = 1;
+                    
+                    
+                    $visitor_image_file = get_array_value($_FILES, "visitor_image_file_".$j);
+                    $image_file_name = get_array_value($visitor_image_file, "tmp_name");
+                    $file_name = get_array_value($visitor_image_file, "name");
+                    $image_file_size = get_array_value($visitor_image_file, "size");
+                    $ext = pathinfo($file_name, PATHINFO_EXTENSION);
+                                    
+                    $size_kb = $image_file_size/1024;
+
+                    if ($image_file_name) {
+                        
+                        if(!starts_with($visitor_image_file['type'], 'image/')) {
+                            echo json_encode(array("success" => false, 'message' => 'Invalid file, upload image file, at row '.$j));
+                            exit();
+                        }elseif(!in_array($ext, array('png', 'jpg', 'jpeg'))) {
+                            echo json_encode(array("success" => false, 'message' => 'Invalid image extension, shoud be png or jpg, at row '.$j));
+                            exit();
+                        }elseif ($size_kb > 2048) {
+                            echo json_encode(array("success" => false, 'message' => app_lang('visitor_image_error_message').', at row '.$j));
+                            exit();
+                        
+                        }
+        
+                        
+                    }
+                    $j = $j + 1;
+                }
+            }
+            //end validate
+
+            $save_id = $this->Visitors_model->ci_save($parent_input);
 
             foreach($visitor_name as $k => $v){
+                $i = $k + 1;
+
+
                 $this->db->query("INSERT INTO rise_visitors_detail(visitor_name,mobile,vehicle_details,visitor_id)
                             VALUES('$visitor_name[$k]','$visitor_mobile[$k]','$vehicle[$k]',$save_id)");
-            }
+                $insert_id = $this->db->insertID();
+
+                if ($_FILES) {
+                            
+                    $visitor_image_file = get_array_value($_FILES,"visitor_image_file_".$i);
+                    $image_file_name = get_array_value($visitor_image_file, "tmp_name");
+                    $image_file_size = get_array_value($visitor_image_file, "size");
+
+        
+                    $visitor_image = serialize(move_temp_file("visitor.png", get_setting("visitor_image_path"), "", $image_file_name, "", "", false, $image_file_size));
+    
+                    //delete old file
+                    // if ($lead_info->image) {
+                    //     delete_app_files(get_setting("profile_image_path"), array(@unserialize($lead_info->image)));
+                    // }
+    
+                    $this->db->query("UPDATE rise_visitors_detail set image = '$visitor_image' where id = $insert_id");
+                    // echo json_encode(array("success" => true, 'message' => app_lang('profile_image_changed'), "reload_page" => true));
+                    }
+                }
+            
 
             $visitor_info = $this->db->query("SELECT v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v  
                     LEFT JOIN rise_users u on v.created_by = u.id  where v.id = $save_id")->getRow();
@@ -301,7 +361,8 @@ class Visitors extends Security_Controller
                                 'id'=>$index,
                                 'visitorName'=>$d->visitor_name,
                                 'visitorMobile'=>$d->mobile,
-                                'vehicle'=>$d->vehicle_details
+                                'vehicle'=>$d->vehicle_details,
+                                'image'=>$d->image
                             );
             }
 
@@ -311,7 +372,6 @@ class Visitors extends Security_Controller
             // die();
 
             $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Visitor'")->getRow();
-            $visit_date = date("Y-m-d",strtotime($this->request->getPost('visit_date')));
             
             $doc_visitor_data = [
                 'id'=>$save_id,
@@ -319,7 +379,7 @@ class Visitors extends Security_Controller
                 'template' => $template->path,
                 'folder' => $template->destination_folder,
                 'date' => date('Y-m-d'),
-                'visit_date' => $visit_date = date('h:i a, F d, Y',strtotime($visit_date.' '.$this->request->getPost('visit_time'))),
+                'visit_date' => date('h:i a, F d, Y',strtotime($start_date.' '.$this->request->getPost('visit_time'))),
                 'table' => $arr_table,
                 "created_at" => date('Y-m-d H:i:s')
             ];
@@ -377,7 +437,7 @@ class Visitors extends Security_Controller
             $input = array(
                 "name" => $this->request->getPost('name'),
                 "client_type" => $this->request->getPost('client_type'),
-                "visit_date" => $this->request->getPost('visit_date'),
+                "visit_date" => $start_date,
                 "visit_time" => $this->request->getPost('visit_time'),
                 "remarks" => $this->request->getPost('remarks'),
             );
@@ -496,6 +556,26 @@ class Visitors extends Security_Controller
                 'height' => '100',
                 'ratio' => false,
             ]);
+
+            if(count($data['table'])){
+                foreach($data['table'] as $t){
+                   
+                    if($t['image']){
+                        $image = @unserialize($t['image']);
+                        $image = $image['file_name'];
+                    }else{
+                        $image = 'avatar.jpg';
+                    }
+                    
+                    $template->setImageValue('avatar#'.$t['id'],
+                        [
+                            'path' => ROOTPATH . 'files/visitors/'.$image,
+                            'width' => '30',
+                            'height' => '30',
+                            'ratio' => false,
+                        ]);
+                }
+            }
 
         $template->saveAs($path_absolute);
 
@@ -766,7 +846,7 @@ class Visitors extends Security_Controller
          // client_type	name	created_by	visit_date	created_at	deleted	remarks
         $row_data = array(
             $data->id,
-            modal_anchor(get_uri("visitors/modal_form"),$data->name , array("class" => "edit","title" => app_lang('edit_visitor'), "data-post-id" => $data->id)),
+            modal_anchor(get_uri("visitors/visitor_details"),$data->name , array("class" => "edit","title" => app_lang('show_info'), "data-post-id" => $data->id)),
             // anchor(get_uri("visitors/view/" . $data->id), ),
             $data->client_type,
             date("h:i a, F d, Y",strtotime($visit_date.' '.$data->visit_time)),
@@ -791,8 +871,8 @@ class Visitors extends Security_Controller
 
         $row_data[] = modal_anchor(get_uri("visitors/visitor_details"), "<i data-feather='info' class='icon-16'></i>", array("class" => "edit",
             "title" => app_lang('show_info'), "data-post-id" => $data->id))
-            .modal_anchor(get_uri("visitors/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit",
-            "title" => app_lang('edit_lead'), "data-post-id" => $data->id))
+            //.modal_anchor(get_uri("visitors/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit",
+            //"title" => app_lang('edit_lead'), "data-post-id" => $data->id))
         . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_visitor'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("visitors/delete"), "data-action" => "delete-confirmation"))
         . $link;
 

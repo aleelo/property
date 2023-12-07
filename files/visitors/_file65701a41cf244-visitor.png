@@ -1,0 +1,2075 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Nov 18, 2023 at 09:52 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `epmdb`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `agreements`
+--
+
+CREATE TABLE `agreements` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `entityId` int(11) DEFAULT NULL,
+  `registeryNo` varchar(200) NOT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `agreementTitle` text DEFAULT NULL,
+  `agreementPurpose` text DEFAULT NULL,
+  `refNo` varchar(200) DEFAULT NULL,
+  `agreementDate` date DEFAULT NULL,
+  `agreementDescription` text DEFAULT NULL,
+  `agreementValue` varchar(30) DEFAULT NULL,
+  `agreementPlace` varchar(200) DEFAULT NULL,
+  `agreementDuration` varchar(200) DEFAULT NULL,
+  `obligations` text NOT NULL,
+  `rights` text NOT NULL,
+  `endorsedBy` varchar(255) NOT NULL,
+  `remarks` text DEFAULT NULL,
+  `userId` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `agreements`
+--
+
+INSERT INTO `agreements` (`id`, `entityId`, `registeryNo`, `GRegisteryNo`, `agreementTitle`, `agreementPurpose`, `refNo`, `agreementDate`, `agreementDescription`, `agreementValue`, `agreementPlace`, `agreementDuration`, `obligations`, `rights`, `endorsedBy`, `remarks`, `userId`, `created_at`, `updated_at`) VALUES
+(1, NULL, 'MRGB/XDM/DGD/00003/2020', 'MRGB/XDM/DG/00003/2020', 'Dibu Heshiin', 'Heshiis Nabadeed', 'WGX/002/2019', '2020-07-04', NULL, '1,500', 'Galgacyo', '3 Sannadood', 'one,\r\ntwo,\r\nthree', 'test test,\r\ntest,\r\ntest', 'Gobalka Banaadir', 'test,\r\ntrest', '1', '2020-07-14 03:18:38', '2020-07-14 03:18:38');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `degrees`
+--
+
+CREATE TABLE `degrees` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) NOT NULL,
+  `decreeTitle` text DEFAULT NULL,
+  `decreePurpose` text DEFAULT NULL,
+  `decreeDate` date DEFAULT NULL,
+  `judgedFor` varchar(255) DEFAULT NULL,
+  `judgedAgainst` varchar(255) DEFAULT NULL,
+  `judiciary` text DEFAULT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `refNo` varchar(200) NOT NULL,
+  `initiatedCourt` varchar(200) NOT NULL,
+  `fulfiledDate` date NOT NULL,
+  `jadgedForLowyer` varchar(200) NOT NULL,
+  `jadgedForRepresentative` varchar(200) NOT NULL,
+  `jadgedAgLowyer` varchar(200) NOT NULL,
+  `jadgedAgRepresentative` varchar(200) NOT NULL,
+  `remarks` text DEFAULT NULL,
+  `userId` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `degrees`
+--
+
+INSERT INTO `degrees` (`id`, `registeryNo`, `decreeTitle`, `decreePurpose`, `decreeDate`, `judgedFor`, `judgedAgainst`, `judiciary`, `GRegisteryNo`, `refNo`, `initiatedCourt`, `fulfiledDate`, `jadgedForLowyer`, `jadgedForRepresentative`, `jadgedAgLowyer`, `jadgedAgRepresentative`, `remarks`, `userId`, `created_at`, `updated_at`) VALUES
+(1, 'MRGB/XDM/DGD/00001/2020', 'Xukun Cusub', 'Ujeedo Xukun', '2020-07-13', 'Cali Maxamed Heyle', 'Ibrahim Moxamed Qaanso', 'Garuun Bidaar', 'MRGB/XDM/DG/00001/2020', '131323', 'Gobalka Banaadir', '2020-08-01', 'Cali Waasuge', 'Cabdirxman Cali Warsame', 'Maxamed Cabdi Jeyte', 'Fu\'aad Maxamed Cali', 'trest', '1', '2020-07-13 08:03:01', '2020-07-13 08:03:01');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `entities`
+--
+
+CREATE TABLE `entities` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `nickName` varchar(255) DEFAULT NULL,
+  `POB` varchar(255) DEFAULT NULL,
+  `DOB` date DEFAULT NULL,
+  `nationality` varchar(100) DEFAULT NULL,
+  `job` varchar(100) DEFAULT NULL,
+  `gender` varchar(100) NOT NULL,
+  `maritalStatus` varchar(100) NOT NULL,
+  `identityType` varchar(100) NOT NULL,
+  `cardId` varchar(100) DEFAULT NULL,
+  `address` varchar(200) DEFAULT NULL,
+  `phone` varchar(100) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `reason` varchar(200) NOT NULL,
+  `entityType` enum('Qof','Hay''ad') NOT NULL DEFAULT 'Qof',
+  `userId` varchar(200) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `entities`
+--
+
+INSERT INTO `entities` (`id`, `name`, `nickName`, `POB`, `DOB`, `nationality`, `job`, `gender`, `maritalStatus`, `identityType`, `cardId`, `address`, `phone`, `email`, `reason`, `entityType`, `userId`, `remarks`, `created_at`, `updated_at`) VALUES
+(1, 'Salaad Cilmin Faarax', 'Dadir', 'Mogadishu', '1990-06-13', 'Somalia', 'Civil Worker', 'Male', 'Single', 'Governmental', '123445', 'Huriwaa', '615817773', 'zakigurey@gmail.com', 'Hantida Maguurtada', 'Qof', '1', NULL, '2020-07-13 07:46:00', '2020-07-13 07:46:00'),
+(2, 'Cilmi Xuseen Xaashi', 'Shidane', 'Iskushuban', '1995-07-13', 'Somalia', 'Software Engineer', 'Male', 'Single', 'Governmental', '123445', 'Bosaso', '907415682', 'qarni@hotmail.com', 'Rahanta Maguurtada', 'Qof', '1', NULL, '2020-07-13 07:50:55', '2020-07-13 07:50:55'),
+(3, 'abdifatah mohamed', 'beeyste', 'mogadishu', '2021-09-18', 'Somalia', 'software developer', 'Male', 'Single', 'ngo', '2142342', 'hodan', '61535435', 'test@example.com', 'Rahanta Maguurtada', 'Qof', '1', NULL, '2021-09-18 02:45:05', '2021-09-18 02:45:05'),
+(4, 'cali jimcaale', 'jimcaale', 'mogadishu', '2021-09-18', 'Somalia', 'civil engineer', 'Male', 'Single', 'ngo', '2142342', 'hodan', '61535435', NULL, 'Hantida Maguurtada', 'Qof', '1', NULL, '2021-09-18 02:48:20', '2021-09-18 02:48:20'),
+(5, 'cabdullahi xaashi', 'xashiyare', 'mogadishu', '2021-09-22', NULL, 'business man', 'Male', 'Single', 'ngo', NULL, 'hodan', '61535435', 'test@example.com', 'Hantida Maguurtada', 'Qof', '1', NULL, '2021-09-18 02:58:21', '2021-09-18 02:58:21'),
+(6, 'Anas mohamed', 'n/a', 'mogadishu', '2021-10-08', 'Somalia', 'software developer', 'Male', 'Single', 'ngo', '2142342', 'N/A', '61535435', 'test@example.com', 'Hantida Maguurtada', 'Qof', '1', NULL, '2021-09-18 03:00:16', '2021-09-18 03:00:16'),
+(7, 'Caasho Cali Maxamuud', NULL, 'Muqdisho', '1988-01-01', 'Somalia', 'Gurijoog', 'Dhedig', 'Doob', 'Passport', 'P000454545', 'Wadajir', '0615817773', 'test@email.com', 'Rahanta Maguurtada', 'Qof', '6', NULL, '2021-09-18 05:44:20', '2021-11-20 02:47:03'),
+(8, 'Salaam Somali Bank', 'SSB', 'Muqdisho', '2010-01-01', 'Somalia', 'Manager', 'Male', 'Single', 'Passport', 'S0005555', 'Hodan', '615817773', 'info@ssb.so', 'Rahanta Maguurtada', 'Qof', '6', NULL, '2021-09-18 05:56:36', '2021-09-18 05:56:36'),
+(9, 'acasf', 'sdff', 'sfdsfds', '2021-09-19', 'Åland Islands', 'test', 'Lab', 'Doob', 'sdfs', '2432', 'wrwer', '6143443', 'test@example.com', 'Heshisyada Kirada', 'Qof', '1', NULL, '2021-09-19 08:00:49', '2021-09-19 08:00:49'),
+(10, 'alihaile', 'beeyste', 'mogadishu', '2021-09-22', 'Somalia', 'software developer', 'Lab', 'Doob', 'sdfs', '2142342', 'dgdfg', '6143443', 'Alihaile2020@gmail.com', 'Heshisyada Shirkadaha', 'Qof', '1', NULL, '2021-09-22 01:16:37', '2021-09-22 01:16:37'),
+(11, 'ali ahmed', 'n/a', 'mogadishu', '2021-09-22', 'Somalia', 'software developer', 'Lab', 'Doob', 'ngo', '2142342', 'dgdfg', '6143443', 'Alihaile2020@gmail.com', 'Hantida Maguurtada', 'Hay\'ad', '1', NULL, '2021-09-22 02:57:30', '2021-09-22 02:57:30'),
+(12, 'Dhahabshiil Bank', 'N/A', 'N/A', '2021-09-22', 'Somalia', 'Banking and comunity service', 'Lab', 'Doob', 'Institution', 'AC123445', 'Mogadishu', '+252615817773', NULL, 'Rahanta Maguurtada', 'Hay\'ad', '1', NULL, '2021-09-22 08:09:55', '2021-12-07 02:10:05'),
+(13, 'Zakarie Ali xaaji', 'zaki', 'Mogadishu', '1990-11-20', 'Somalia', 'software developer', 'Lab', 'Guur', 'Passport', '1142342', 'hodan', '+252615817773', 'zakigurey@gmail.com', 'Rahanta Maguurtada', 'Qof', '1', NULL, '2021-11-20 01:51:07', '2021-11-20 01:51:07');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `entitymatches`
+--
+
+CREATE TABLE `entitymatches` (
+  `id` bigint(20) NOT NULL,
+  `entityId` bigint(20) NOT NULL,
+  `registeryNo` varchar(200) NOT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `entityType` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `entitymatches`
+--
+
+INSERT INTO `entitymatches` (`id`, `entityId`, `registeryNo`, `GRegisteryNo`, `entityType`) VALUES
+(1, 1, 'MRGB/XDM/DGD/00001/2020', 'MRGB/XDM/DG/00001/2020', 'other'),
+(2, 2, 'MRGB/XDM/DGD/00001/2020', 'MRGB/XDM/DG/00001/2020', 'other'),
+(3, 2, 'MRGB/XDM/DGD/00002/2020', 'MRGB/XDM/DG/00002/2020', 'other'),
+(4, 1, 'MRGB/XDM/DGD/00003/2020', 'MRGB/XDM/DG/00003/2020', 'other'),
+(5, 2, 'MRGB/XDM/DGD/00003/2020', 'MRGB/XDM/DG/00003/2020', 'other'),
+(9, 1, 'MRGB/XDM/DGD/00005/2020', 'MRGB/XDM/DG/00005/2020', 'other'),
+(10, 2, 'MRGB/XDM/DGD/00005/2020', 'MRGB/XDM/DG/00005/2020', 'other'),
+(11, 2, 'MRGB/XDM/DGD/00006/2020', 'MRGB/XDM/DG/00006/2020', 'other'),
+(14, 3, 'MRGB/XDM/DGD/00004/2020', 'MRGB/XDM/DG/00004/2020', 'other'),
+(17, 4, 'MRGB/XDM/DGD/00005/2021', 'MRGB/XDM/DG/00046/2021', 'other'),
+(18, 6, 'MRGB/XDM/DGD/00005/2021', 'MRGB/XDM/DG/00046/2021', 'other'),
+(29, 1, 'MRGB/XDM/DGD/00006/2021', 'MRGB/XDM/DG/00059/2021', 'other'),
+(30, 3, 'MRGB/XDM/DGD/00006/2021', 'MRGB/XDM/DG/00059/2021', 'other'),
+(31, 5, 'MRGB/XDM/DGD/00006/2021', 'MRGB/XDM/DG/00059/2021', 'other'),
+(34, 1, 'MRGB/XDM/DGD/00007/2021', 'MRGB/XDM/DG/00060/2021', 'other'),
+(35, 2, 'MRGB/XDM/DGD/00007/2021', 'MRGB/XDM/DG/00060/2021', 'other'),
+(36, 4, 'MRGB/XDM/DQR/00011/2021', 'MRGB/XDM/DG/00065/2021', 'transfer'),
+(37, 5, 'MRGB/XDM/DQR/00011/2021', 'MRGB/XDM/DG/00065/2021', 'transfer'),
+(38, 4, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00065/2021', 'other'),
+(39, 5, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00065/2021', 'other'),
+(40, 1, 'MRGB/XDM/DQR/000041/2021', 'MRGB/XDM/DG/00066/2021', 'transfer');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inheritancerights`
+--
+
+CREATE TABLE `inheritancerights` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) NOT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `inheriting` varchar(255) DEFAULT NULL,
+  `inherited` varchar(255) DEFAULT NULL,
+  `refNo` varchar(200) DEFAULT NULL,
+  `inheritanceDate` date DEFAULT NULL,
+  `rightsType` text DEFAULT NULL,
+  `rightsDescription` text DEFAULT NULL,
+  `propertyDescription` text NOT NULL,
+  `propertyValue` varchar(200) DEFAULT NULL,
+  `relativeType` varchar(200) DEFAULT NULL,
+  `userId` varchar(200) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `initiatedParty` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `inheritancerights`
+--
+
+INSERT INTO `inheritancerights` (`id`, `registeryNo`, `GRegisteryNo`, `inheriting`, `inherited`, `refNo`, `inheritanceDate`, `rightsType`, `rightsDescription`, `propertyDescription`, `propertyValue`, `relativeType`, `userId`, `remarks`, `created_at`, `updated_at`, `initiatedParty`) VALUES
+(1, 'MRGB/XDM/DGD/00005/2020', 'MRGB/XDM/DG/00005/2020', 'Bashir Muuse Axmed', 'Maxamed Cabdi Warsame', '131323', '2020-07-16', 'N/A', 'kow,\r\nlabo,\r\nsadex', 'kow,\r\nlabo,\r\nsadex', '15,000', 'Heer 2aad', '1', NULL, '2020-07-15 07:32:23', '2020-07-15 07:32:23', 'Wasaaradda Arimaha Gudaha'),
+(2, 'MRGB/XDM/DGD/00006/2020', 'MRGB/XDM/DG/00006/2020', 'Bashir Muuse Axmed', 'Maxamed Cabdi Warsame', '131323', '2020-07-16', 'N/A', 'kow,\r\nlabo,\r\nsadex', 'kow,\r\nlabo,\r\nsadex', '15,000', 'Heer 2aad', '1', NULL, '2020-07-15 07:34:23', '2020-07-15 07:34:23', 'Wasaaradda Arimaha Gudaha');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `legals`
+--
+
+CREATE TABLE `legals` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) NOT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `entityId` int(11) DEFAULT NULL,
+  `legalType` varchar(200) DEFAULT NULL,
+  `legalOwner` varchar(200) DEFAULT NULL,
+  `representative` varchar(200) NOT NULL,
+  `legalName` text DEFAULT NULL,
+  `endorsedBy` varchar(255) NOT NULL,
+  `refNo` varchar(200) DEFAULT NULL,
+  `establishmentDate` date DEFAULT NULL,
+  `legalCenter` varchar(200) DEFAULT NULL,
+  `legalFounders` text DEFAULT NULL,
+  `legalCapital` varchar(100) DEFAULT NULL,
+  `userId` varchar(200) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `legals`
+--
+
+INSERT INTO `legals` (`id`, `registeryNo`, `GRegisteryNo`, `entityId`, `legalType`, `legalOwner`, `representative`, `legalName`, `endorsedBy`, `refNo`, `establishmentDate`, `legalCenter`, `legalFounders`, `legalCapital`, `userId`, `remarks`, `created_at`, `updated_at`) VALUES
+(1, 'MRGB/XDM/DGD/00002/2020', 'MRGB/XDM/DG/00002/2020', NULL, 'NGO', 'SaaMAgency', 'Abdullahi Shire Ibrahim', 'Xeer Bulsho', 'Wasaaradda Arimaha Gudaha', '131323', '1999-07-13', 'Muqdisho', 'Asad Cilmi farax,\r\nyasin xaji muuse,\r\nXuseen axmed weheliye', '120,00', '1', NULL, '2020-07-13 08:09:13', '2020-07-13 08:09:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `marriagerights`
+--
+
+CREATE TABLE `marriagerights` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) NOT NULL,
+  `GRegisteryNo` varchar(255) NOT NULL,
+  `husbandName` varchar(200) DEFAULT NULL,
+  `wifeName` varchar(200) DEFAULT NULL,
+  `refNo` varchar(200) DEFAULT NULL,
+  `marriageDate` date DEFAULT NULL,
+  `rightsType` text DEFAULT NULL,
+  `rightsDescription` text DEFAULT NULL,
+  `propertyDescription` text DEFAULT NULL,
+  `initiatedParty` varchar(255) NOT NULL,
+  `remarks` text DEFAULT NULL,
+  `userId` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `migrations`
+--
+
+CREATE TABLE `migrations` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `migration` varchar(191) NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `migrations`
+--
+
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1, '2014_10_12_000000_create_users_table', 1),
+(2, '2014_10_12_100000_create_password_resets_table', 1),
+(3, '2016_01_01_000000_add_voyager_user_fields', 1),
+(4, '2016_01_01_000000_create_data_types_table', 1),
+(5, '2016_05_19_173453_create_menu_table', 1),
+(6, '2016_10_21_190000_create_roles_table', 1),
+(7, '2016_10_21_190000_create_settings_table', 1),
+(8, '2016_11_30_135954_create_permission_table', 1),
+(9, '2016_11_30_141208_create_permission_role_table', 1),
+(10, '2016_12_26_201236_data_types__add__server_side', 1),
+(11, '2017_01_13_000000_add_route_to_menu_items_table', 1),
+(12, '2017_01_14_005015_create_translations_table', 1),
+(13, '2017_01_15_000000_make_table_name_nullable_in_permissions_table', 1),
+(14, '2017_03_06_000000_add_controller_to_data_types_table', 1),
+(15, '2017_04_21_000000_add_order_to_data_rows_table', 1),
+(16, '2017_07_05_210000_add_policyname_to_data_types_table', 1),
+(17, '2017_08_05_000000_add_group_to_settings_table', 1),
+(18, '2017_11_26_013050_add_user_role_relationship', 1),
+(19, '2017_11_26_015000_create_user_roles_table', 1),
+(20, '2018_03_11_000000_add_user_settings', 1),
+(21, '2018_03_14_000000_add_details_to_data_types_table', 1),
+(22, '2018_03_16_000000_make_settings_value_nullable', 1),
+(23, '2016_01_01_000000_create_pages_table', 2),
+(24, '2016_01_01_000000_create_posts_table', 2),
+(25, '2016_02_15_204651_create_categories_table', 2),
+(26, '2017_04_11_000000_alter_post_nullable_fields_table', 2),
+(27, '2019_04_29_155141_create_properties_table', 3),
+(28, '2019_04_30_084653_create_mortgages_table', 4),
+(29, '2019_06_18_142432_create_vehicles_table', 5),
+(30, '2019_06_18_082811_add_etity_time_stamp', 6),
+(31, '2019_06_18_111749_create_ownershps_table', 6),
+(32, '2019_07_17_082641_create_operators_table', 7),
+(33, '2021_12_08_141044_create_notifications_table', 8);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mortgages`
+--
+
+CREATE TABLE `mortgages` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) DEFAULT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `mortgagorId` int(11) DEFAULT NULL,
+  `mortgageeId` int(11) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `propertyId` varchar(111) DEFAULT NULL,
+  `propertyDescription` text DEFAULT NULL,
+  `givingProcess` text NOT NULL,
+  `mortgageInterval` varchar(200) NOT NULL,
+  `propertyValue` varchar(255) DEFAULT NULL,
+  `coowners` varchar(255) DEFAULT NULL,
+  `mortgageValue` varchar(50) DEFAULT NULL,
+  `approvedBy` varchar(100) DEFAULT NULL,
+  `issuedBy` varchar(100) DEFAULT NULL,
+  `mortgageOutStatus` varchar(50) DEFAULT NULL,
+  `mortgageOutDate` varchar(50) DEFAULT NULL,
+  `mortgageOutReason` text DEFAULT NULL,
+  `mortgageOutBy` int(11) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `userId` varchar(200) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `mortgages`
+--
+
+INSERT INTO `mortgages` (`id`, `registeryNo`, `GRegisteryNo`, `mortgagorId`, `mortgageeId`, `reason`, `propertyId`, `propertyDescription`, `givingProcess`, `mortgageInterval`, `propertyValue`, `coowners`, `mortgageValue`, `approvedBy`, `issuedBy`, `mortgageOutStatus`, `mortgageOutDate`, `mortgageOutReason`, `mortgageOutBy`, `remarks`, `userId`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'MRGB/XDM/DQR/000024/2021', 'MRGB/XDM/DG/00001/2020', 1, 2, 'Qaan ayu Galay', '123131', 'Saacad Kaasiyo ah', 'Waxa uu qaadan karaa Marka u Qaan baxo', '2 bilood', '3,500', 'salaad cilmi faarax,\r\ncilmi xaashi xuseen', '1,000', NULL, NULL, NULL, NULL, NULL, NULL, 'test', '1', 1, '2020-07-13 08:26:56', '2021-11-11 04:35:17'),
+(2, 'MRGB/XDM/DQR/000021/2021', 'MRGB/XDM/DG/00002/2020', 1, 2, 'Qaan ayu Galay', '123131', 'Saacad Kaasiyo ah', 'Waxa uu qaadan karaa Marka u Qaan baxo', '2 bilood', '3,500', 'salaad cilmi faarax,\r\ncilmi xaashi xuseen', '1,000', NULL, NULL, NULL, NULL, NULL, NULL, 'test', '1', 1, '2020-07-13 08:27:38', '2021-11-11 04:33:32'),
+(3, 'MRGB/XDM/DQR/000021/2021', 'MRGB/XDM/DG/00003/2020', 2, 1, 'Qaan ayu Galay', '123131', 'Saacad Kaasiyo ah', 'Waxa uu qaadan karaa Marka u Qaan baxo', '2 bilood', '3,500', 'salaad cilmi faarax,\r\ncilmi xaashi xuseen', '1,000', NULL, NULL, NULL, NULL, NULL, NULL, 'test', '1', 1, '2020-07-13 08:28:16', '2021-11-11 03:18:52'),
+(5, 'MRGB/XDM/DQR/000025/2021', 'MRGB/XDM/DG/00004/2020', 2, 1, 'Qaan ayu Galay', '1213453, 43242', 'Taleefan Sumsung ah', 'waxaa lasin doona marka u qaan boxo', '4 bilood', '3,000', 'cali,\r\njamac,\r\nxersi', '$150', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', 1, '2020-07-14 06:00:13', '2021-11-11 04:42:32'),
+(6, 'MRGB/XDM/DQR/00003/2021', 'MRGB/XDM/DG/00005/2021', 2, 2, 'test', '4444', 'Hagaag', '100', '10', '1000', '4444', '20000', NULL, NULL, NULL, NULL, NULL, NULL, 'hagaag', '1', 1, '2021-08-31 06:47:21', '2021-09-14 06:16:02'),
+(7, 'MRGB/XDM/DQR/000026/2021', 'MRGB/XDM/DG/00006/2021', 1, 2, 'test', '13213,3131,313', 'htests', 'test', '3 bilood', '4000', 'hebel iyo hebel', '1200', NULL, NULL, '2', '2021-12-21', 'test', 1, 'test', '1', 1, '2021-09-05 03:29:12', '2021-12-21 04:11:05'),
+(8, 'MRGB/XDM/DQR/00005/2021', 'MRGB/XDM/DG/00007/2021', 1, 2, 'has', 'fssdff', 'te', 'test', '45', '4500', 'sfsfs', '500', NULL, NULL, '2', '2021-12-21', 'test', 1, 'ters', '1', 1, '2021-09-14 07:38:13', '2021-12-21 04:05:21'),
+(9, 'MRGB/XDM/DQR/00006/2021', 'MRGB/XDM/DG/00008/2021', 1, 2, 'sfs', '342', 'dfsf', 'fssf', '3 bilood', '3234', 'sfsf', '2323', NULL, NULL, NULL, NULL, NULL, NULL, 'w', '3', 1, '2021-09-14 07:39:05', '2021-09-19 02:06:52'),
+(10, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00009/2021', 1, 2, 'Qaadasho deyn', 'Tr23544536', 'Dhul bannaan 20x20', '1000 bishii', '24', '24000', 'Cali', '50000', 'Ali Ahmed Ali', NULL, NULL, NULL, NULL, NULL, 'Tijaabo', '3', 1, '2021-09-14 08:25:56', '2021-12-07 02:48:02'),
+(11, 'MRGB/XDM/DQR/00008/2021', 'MRGB/XDM/DG/00003/2021', 2, 2, 'test', '4444', 'test', 'test', '24 months', '100,000', 'N/A', '20000', NULL, NULL, NULL, NULL, NULL, NULL, 'test', '3', 1, '2021-09-14 12:53:31', '2021-09-18 05:21:31'),
+(12, 'MRGB/XDM/DQR/000027/2021', 'MRGB/XDM/DG/00009/2021', 7, 8, 'Muraabaxo', 'L#54545HG', 'Dhul dhisan cabbirkiisu yahay 20x15', 'Bishii 1,000', '25 bilood', '25,000', 'N/A', '100,000', NULL, NULL, NULL, NULL, NULL, NULL, 'Tijaabo', '6', 1, '2021-09-18 06:03:47', '2021-11-11 07:27:15'),
+(13, 'MRGB/XDM/DQR/000021/2021', 'MRGB/XDM/DG/00048/2021', 3, 4, 'Deyn', '12442', 'tijaabp', '300 bishii', '4 bilood', '1,200', 'tijaabo', '5,000', NULL, NULL, '1', '2021-12-20', NULL, 1, 'tijaabo', '1', 1, '2021-09-25 02:18:22', '2021-12-21 03:09:18'),
+(14, 'MRGB/XDM/DGD/00026/2021', 'MRGB/XDM/DG/00071/2021', 3, 5, 'Qaan', '13213', 'Toyota Nissan', 'bil walba 3333', '24 bilood', '80000', 'N/A', '5000', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '3', 0, '2021-11-11 07:20:33', '2021-12-12 01:56:33'),
+(20, 'MRGB/XDM/DQR/000024/2021', 'MRGB/XDM/DG/00081/2021', 5, 1, 'Muraabaxo', '323243', 'Dhul boos ah 20x20', '300/month', '24', '5000', 'n/a', '40000', 'Ali Ahmed Ali', NULL, NULL, NULL, NULL, NULL, 'test description', '3', 0, '2021-12-08 04:34:22', '2021-12-11 05:19:34'),
+(21, NULL, 'MRGB/XDM/DG/00084/2021', 1, 3, 'Muraabaxo', '23424', 'Toyota Nissan Car', '200 bishi', '12', '4000', 'N/A', '7000', NULL, NULL, NULL, NULL, NULL, NULL, 'test rahan', '3', 0, '2021-12-09 07:41:33', '2021-12-09 07:41:33'),
+(22, NULL, 'MRGB/XDM/DG/00085/2021', 1, 3, 'Muraabaxo', '23424', 'Toyota Nissan Car', '200 bishi', '12', '4000', 'N/A', '7000', NULL, NULL, NULL, NULL, NULL, NULL, 'test rahan', '3', 0, '2021-12-09 07:43:15', '2021-12-09 07:43:15'),
+(23, NULL, 'MRGB/XDM/DG/00086/2021', 1, 3, 'Muraabaxo', '23424', 'Toyota Nissan Car', '200 bishi', '12', '4000', 'N/A', '7000', NULL, NULL, NULL, NULL, NULL, NULL, 'test rahan', '3', 0, '2021-12-09 07:45:05', '2021-12-09 07:45:05'),
+(24, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00087/2021', 3, 4, 'Deyn', '34234', 'Toyota Helux Car', '200 bishi', '12', '4000', 'N/A', '9000', 'Ali Ahmed Ali', NULL, NULL, NULL, NULL, NULL, 'test rahan', '3', 0, '2021-12-09 07:46:54', '2021-12-11 05:17:08'),
+(25, 'MRGB/XDM/DQR/0000241/2021', 'MRGB/XDM/DG/00089/2021', 5, 3, 'Muraabaxo', '342', 'n/a', '400/moth', '12', '10000', 'ali jaamac , cayni axmed', '120000', 'Saki Gurey', NULL, NULL, NULL, NULL, NULL, 'teest', '3', 1, '2021-12-11 06:09:11', '2021-12-21 06:13:16'),
+(26, NULL, 'MRGB/XDM/DG/00090/2021', 5, 3, 'Muraabaxo', '342', 'n/a', '400/moth', '12', '10000', 'ali jaamac , cayni axmed', '120000', NULL, NULL, NULL, NULL, NULL, NULL, 'teest', '3', 0, '2021-12-11 06:10:24', '2021-12-11 06:10:24'),
+(27, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00091/2021', 5, 3, 'Muraabaxo', '342', 'n/a', '400/moth', '12', '10000', 'ali jaamac , cayni axmed', '120000', 'Ali Ahmed Ali', NULL, NULL, NULL, NULL, NULL, 'teest', '3', 0, '2021-12-11 06:10:52', '2021-12-11 06:12:24'),
+(28, NULL, 'MRGB/XDM/DG/00094/2021', 2, 3, 'Muraabaxo', '242', 'n/a', 'tetest', '12', '13131', 'ali,jaamca', '12313', NULL, NULL, NULL, NULL, NULL, NULL, 'trest', '3', 0, '2021-12-11 06:27:58', '2021-12-11 06:27:58'),
+(29, 'MRGB/XDM/DQR/000074/2021', 'MRGB/XDM/DG/00096/2021', 3, 2, 'deyn', '33242', 'test rana', '200/month', '12', '2323', 'n/a', '123132', 'Saki Gurey', 'Bank: Salaam Bank', '1', '2021-12-21', 'test', 1, NULL, '3', 1, '2021-12-11 07:22:03', '2021-12-21 05:47:14'),
+(30, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00097/2021', 4, 3, 'Muraabaxo', '4444', 'test', 'test', '12', '100,000', 'stest', '40000', 'Saki Gurey', 'Bank: Salaam Bank', NULL, NULL, NULL, NULL, NULL, '3', 1, '2021-12-11 07:24:14', '2021-12-21 05:06:30'),
+(31, 'MRGB/XDM/DQR/000024/2021', 'MRGB/XDM/DG/00098/2021', 1, 2, 'test', '342', 'terst', 'test', '45', '80000', 'test', '50000', 'Saki Gurey', 'Bank: Salaam Bank', '1', '2021-12-21', 'test', 3, 'test', '3', 1, '2021-12-12 03:23:20', '2021-12-21 05:06:21'),
+(32, 'MRGB/XDM/DQR/000024/2021', 'MRGB/XDM/DG/00099/2021', 2, 3, 'Muraabaxo', '4444', 'test', 'test', '3 bilood', '10000', 'test', '40000', 'Saki Gurey', 'Bank: Salaam Bank', '1', NULL, NULL, NULL, 'test', '3', 1, '2021-12-12 05:04:11', '2021-12-21 05:24:29'),
+(33, 'MRGB/XDM/DGD/000112/2021', 'MRGB/XDM/DG/000100/2021', 2, 3, 'Muraabaxo', '2131', 'N/A', '300/month', '10 Bilood', '120000', 'ali , jamac', '1200', 'Saki Gurey', 'Notery: Banaadir Notary', '1', '2021-12-21', 'test', 2, NULL, '2', 1, '2021-12-21 05:49:25', '2021-12-21 06:24:09'),
+(34, 'MRGB/XDM/DQR/0000224/2021', 'MRGB/XDM/DG/00101/2021', 4, 1, 'test', '1231', 'test', '200 bishi', '12 months', '10000', 'ali, jama', '50000', 'Saki Gurey', 'Notery: Banaadir Notary', '1', '2021-12-21', 'trest', 2, NULL, '2', 1, '2021-12-21 07:24:12', '2021-12-21 07:26:29'),
+(35, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'Notery: Banaadir Notary', '2', '2021-12-29', NULL, 2, 'test', '2', 1, '2021-12-29 01:35:19', '2022-03-28 06:00:25');
+
+--
+-- Triggers `mortgages`
+--
+DELIMITER $$
+CREATE TRIGGER `after_delete_mortgages` AFTER DELETE ON `mortgages` FOR EACH ROW INSERT INTO `mortgages_deleted`(`registeryNo`, `GRegisteryNo`, `mortgagorId`, `mortgageeId`, `reason`, `propertyId`, `propertyDescription`, `givingProcess`, `mortgageInterval`, `propertyValue`, `coowners`, `mortgageValue`, `approvedBy`, `remarks`, `userId`, `status`, `created_at`, `updated_at`) VALUES (old.registeryNo,old.GRegisteryNo,old.mortgagorId,old.mortgageeId,old.reason,old.propertyId,old.propertyDescription,old.givingProcess,old.mortgageInterval,old.propertyValue,old.coowners,old.mortgageValue,old.approvedBy,old.remarks,old.userId,old.status,old.created_at,old.updated_at)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `after_insert_mortgages` AFTER INSERT ON `mortgages` FOR EACH ROW INSERT INTO `mortgages_log`(`registeryNo`, `GRegisteryNo`, `mortgagorId`, `mortgageeId`, `reason`, `propertyId`, `propertyDescription`, `givingProcess`, `mortgageInterval`, `propertyValue`, `coowners`, `mortgageValue`, `approvedBy`, `remarks`, `userId`, `status`, `created_at`, `updated_at`) VALUES (new.registeryNo,new.GRegisteryNo,new.mortgagorId,new.mortgageeId,new.reason,new.propertyId,new.propertyDescription,new.givingProcess,new.mortgageInterval,new.propertyValue,new.coowners,new.mortgageValue,new.approvedBy,new.remarks,new.userId,new.status,new.created_at,new.updated_at)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `after_update_mortgages` AFTER UPDATE ON `mortgages` FOR EACH ROW UPDATE  `mortgages_log`
+SET `registeryNo` = new.registeryNo, `GRegisteryNo`=new.GRegisteryNo, `mortgagorId`=new.mortgagorId, `mortgageeId`=new.mortgageeId, `reason`=new.reason, `propertyId`=new.propertyId, `propertyDescription`=new.propertyDescription, `givingProcess`=new.givingProcess, `mortgageInterval`=new.mortgageInterval, `propertyValue`=new.propertyValue, `coowners`=new.coowners, `mortgageValue`=new.mortgageValue, `approvedBy`=new.approvedBy, `remarks`=new.remarks,`status`=new.status
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mortgages_deleted`
+--
+
+CREATE TABLE `mortgages_deleted` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) DEFAULT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `mortgagorId` int(11) DEFAULT NULL,
+  `mortgageeId` int(11) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `propertyId` varchar(111) DEFAULT NULL,
+  `propertyDescription` text DEFAULT NULL,
+  `givingProcess` text NOT NULL,
+  `mortgageInterval` varchar(200) NOT NULL,
+  `propertyValue` varchar(255) DEFAULT NULL,
+  `coowners` varchar(255) DEFAULT NULL,
+  `mortgageValue` varchar(50) DEFAULT NULL,
+  `approvedBy` varchar(100) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `userId` varchar(200) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `mortgages_deleted`
+--
+
+INSERT INTO `mortgages_deleted` (`id`, `registeryNo`, `GRegisteryNo`, `mortgagorId`, `mortgageeId`, `reason`, `propertyId`, `propertyDescription`, `givingProcess`, `mortgageInterval`, `propertyValue`, `coowners`, `mortgageValue`, `approvedBy`, `remarks`, `userId`, `status`, `created_at`, `updated_at`) VALUES
+(21, NULL, 'MRGB/XDM/DG/00080/2021', 3, 2, 'Muraabaxo', '324', 'Boos 20x20 ah', '200/month', '24', '4000', 'n/a', '40000', NULL, 'test', '3', 0, '2021-12-08 03:57:17', '2021-12-08 03:57:17');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mortgages_log`
+--
+
+CREATE TABLE `mortgages_log` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) DEFAULT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `mortgagorId` int(11) DEFAULT NULL,
+  `mortgageeId` int(11) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `propertyId` varchar(111) DEFAULT NULL,
+  `propertyDescription` text DEFAULT NULL,
+  `givingProcess` text NOT NULL,
+  `mortgageInterval` varchar(200) NOT NULL,
+  `propertyValue` varchar(255) DEFAULT NULL,
+  `coowners` varchar(255) DEFAULT NULL,
+  `mortgageValue` varchar(50) DEFAULT NULL,
+  `approvedBy` varchar(100) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `userId` varchar(200) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `mortgages_log`
+--
+
+INSERT INTO `mortgages_log` (`id`, `registeryNo`, `GRegisteryNo`, `mortgagorId`, `mortgageeId`, `reason`, `propertyId`, `propertyDescription`, `givingProcess`, `mortgageInterval`, `propertyValue`, `coowners`, `mortgageValue`, `approvedBy`, `remarks`, `userId`, `status`, `created_at`, `updated_at`) VALUES
+(15, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-08 04:34:22', '2021-12-08 04:34:22'),
+(16, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-09 07:41:33', '2021-12-09 07:41:33'),
+(17, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-09 07:43:15', '2021-12-09 07:43:15'),
+(18, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-09 07:45:05', '2021-12-09 07:45:05'),
+(19, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-09 07:46:54', '2021-12-09 07:46:54'),
+(20, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-11 06:09:11', '2021-12-11 06:09:11'),
+(21, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-11 06:10:24', '2021-12-11 06:10:24'),
+(22, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-11 06:10:52', '2021-12-11 06:10:52'),
+(23, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-11 06:27:58', '2021-12-11 06:27:58'),
+(24, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-11 07:22:03', '2021-12-11 07:22:03'),
+(25, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-11 07:24:14', '2021-12-11 07:24:14'),
+(26, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-12 03:23:20', '2021-12-12 03:23:20'),
+(27, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '3', 1, '2021-12-12 05:04:11', '2021-12-12 05:04:11'),
+(28, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '2', 1, '2021-12-21 05:49:25', '2021-12-21 05:49:25'),
+(29, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '2', 1, '2021-12-21 07:24:12', '2021-12-21 07:24:12'),
+(30, 'MRGB/XDM/DGD/000111/2021', 'MRGB/XDM/DG/00102/2021', 4, 3, 'test', '1212', 'n/a', '200 bishii', '12', '50000', 'n/a', '5000', 'Ali Ahmed Ali', 'test', '2', 1, '2021-12-29 01:35:19', '2021-12-29 01:35:19');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` char(36) NOT NULL,
+  `type` varchar(191) NOT NULL,
+  `notifiable_type` varchar(191) NOT NULL,
+  `notifiable_id` bigint(20) UNSIGNED NOT NULL,
+  `data` text NOT NULL,
+  `read_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('032f9751-bcff-4809-aef7-e169b1224c10', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":34,\"registeryNo\":\"MRGB\\/XDM\\/DQR\\/0000224\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00101\\/2021\",\"mortgagorId\":4,\"mortgageeId\":1,\"reason\":\"test\",\"propertyId\":\"1231\",\"propertyDescription\":\"test\",\"givingProcess\":\"200 bishi\",\"mortgageInterval\":\"12 months\",\"propertyValue\":\"10000\",\"coowners\":\"ali, jama\",\"mortgageValue\":\"50000\",\"approvedBy\":\"Saki Gurey\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-21\",\"mortgageOutReason\":\"trest\",\"mortgageOutBy\":2,\"remarks\":null,\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-21 13:24:12\",\"updated_at\":\"2021-12-21 13:25:47\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/34\"}]', '2021-12-29 01:05:33', '2021-12-21 07:25:47', '2021-12-29 01:05:33'),
+('0353f2ba-9b7f-481f-bb9b-88fccdf3ced5', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:57:17\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:57:17', '2021-12-29 07:57:17'),
+('0c9d6444-aac0-499e-a7dc-dffe4b83f2cd', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":33,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000112\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/000100\\/2021\",\"mortgagorId\":2,\"mortgageeId\":3,\"reason\":\"Muraabaxo\",\"propertyId\":\"2131\",\"propertyDescription\":\"N\\/A\",\"givingProcess\":\"300\\/month\",\"mortgageInterval\":\"10 Bilood\",\"propertyValue\":\"120000\",\"coowners\":\"ali , jamac\",\"mortgageValue\":\"1200\",\"approvedBy\":\"Saki Gurey\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-21\",\"mortgageOutReason\":\"test\",\"mortgageOutBy\":2,\"remarks\":null,\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-21 11:49:25\",\"updated_at\":\"2021-12-21 12:19:29\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/33\"}]', '2021-12-21 06:20:09', '2021-12-21 06:19:29', '2021-12-21 06:20:09'),
+('15bba32a-f6fc-4ed6-9b45-2467b87bc3b5', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 14:05:24\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 08:05:24', '2021-12-29 08:05:24'),
+('236da446-6819-4256-90f0-b631c2bd6369', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"test\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 14:04:16\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 08:04:16', '2021-12-29 08:04:16'),
+('24710212-7dca-4f62-a8cf-26a948e7a833', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"tijaabo\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 07:40:32\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', '2021-12-29 01:41:02', '2021-12-29 01:40:32', '2021-12-29 01:41:02'),
+('280f252a-042c-454d-b762-44066804b49d', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":33,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000112\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/000100\\/2021\",\"mortgagorId\":2,\"mortgageeId\":3,\"reason\":\"Muraabaxo\",\"propertyId\":\"2131\",\"propertyDescription\":\"N\\/A\",\"givingProcess\":\"300\\/month\",\"mortgageInterval\":\"10 Bilood\",\"propertyValue\":\"120000\",\"coowners\":\"ali , jamac\",\"mortgageValue\":\"1200\",\"approvedBy\":\"Saki Gurey\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-21\",\"mortgageOutReason\":\"test\",\"mortgageOutBy\":2,\"remarks\":null,\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-21 11:49:25\",\"updated_at\":\"2021-12-21 12:19:29\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/33\"}]', NULL, '2021-12-21 06:19:29', '2021-12-21 06:19:29'),
+('286a2126-1eaa-4998-8b70-485d5043fa8d', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:57:17\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:57:17', '2021-12-29 07:57:17'),
+('31224800-e1e5-4c31-a95d-35064ef9820c', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:49:18\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:49:19', '2021-12-29 07:49:19'),
+('398be5e3-53bf-4537-872e-657a0d076184', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":34,\"registeryNo\":\"MRGB\\/XDM\\/DQR\\/0000224\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00101\\/2021\",\"mortgagorId\":4,\"mortgageeId\":1,\"reason\":\"test\",\"propertyId\":\"1231\",\"propertyDescription\":\"test\",\"givingProcess\":\"200 bishi\",\"mortgageInterval\":\"12 months\",\"propertyValue\":\"10000\",\"coowners\":\"ali, jama\",\"mortgageValue\":\"50000\",\"approvedBy\":\"Saki Gurey\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-21\",\"mortgageOutReason\":\"trest\",\"mortgageOutBy\":2,\"remarks\":null,\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-21 13:24:12\",\"updated_at\":\"2021-12-21 13:25:47\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/34\"}]', '2021-12-21 07:26:50', '2021-12-21 07:25:47', '2021-12-21 07:26:50'),
+('4f522993-d10d-4b45-98dc-ffa740acc238', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:46:48\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:46:48', '2021-12-29 07:46:48'),
+('5db78ba5-263a-4ece-bf0a-0e1c56985540', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:46:48\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:46:48', '2021-12-29 07:46:48'),
+('5fb24ab4-5ffe-407e-b14d-7ebe83fed221', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:46:48\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:46:48', '2021-12-29 07:46:48'),
+('6e0d12d7-5e04-474d-b943-b4f4c394ef1a', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"tijaabo\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 07:40:32\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 01:40:32', '2021-12-29 01:40:32'),
+('71983127-8487-462d-bbd3-4aadbe9da493', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 14:05:24\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', '2022-03-28 05:58:27', '2021-12-29 08:05:24', '2022-03-28 05:58:27'),
+('78e21a9d-a3fc-4791-b3b6-9e764633c32f', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":33,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000112\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/000100\\/2021\",\"mortgagorId\":2,\"mortgageeId\":3,\"reason\":\"Muraabaxo\",\"propertyId\":\"2131\",\"propertyDescription\":\"N\\/A\",\"givingProcess\":\"300\\/month\",\"mortgageInterval\":\"10 Bilood\",\"propertyValue\":\"120000\",\"coowners\":\"ali , jamac\",\"mortgageValue\":\"1200\",\"approvedBy\":\"Saki Gurey\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-21\",\"mortgageOutReason\":\"by ali\",\"mortgageOutBy\":2,\"remarks\":null,\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-21 11:49:25\",\"updated_at\":\"2021-12-21 12:02:17\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/33\"}]', '2021-12-29 01:06:08', '2021-12-21 06:02:17', '2021-12-29 01:06:08'),
+('8a84f468-0f33-4264-bb91-759b7555e15a', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"mortgagorId\":\"4\",\"mortgageeId\":\"3\",\"propertyDescription\":\"n\\/a\",\"reason\":\"test\",\"propertyId\":\"1212\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"propertyValue\":\"50000\",\"mortgageInterval\":\"12\",\"givingProcess\":\"200 bishii\",\"issuedBy\":\"Notery: Banaadir Notary\",\"remarks\":\"test\",\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"updated_at\":\"2021-12-29 07:35:19\",\"created_at\":\"2021-12-29 07:35:19\",\"id\":35},\"type\":\"Rahan\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 01:35:20', '2021-12-29 01:35:20'),
+('93c309ba-456b-469a-8b4b-8a4486cb500f', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:49:18\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:49:19', '2021-12-29 07:49:19'),
+('965ddaab-a394-488d-8e6d-9f15c64f7625', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"transferedFromId\":\"Abdifitaah mohmed yusuf\",\"transferedToId\":\"Farxaan axmed ceynte\",\"reason\":\"siismo\",\"ownershipType\":\"asal\",\"titleDeedNo\":\"BBS32\\/36\\/21\",\"lotNo\":\"222\",\"district\":\"CabdiCasiis\",\"refNo\":\"2423432\",\"transferDate\":\"2021-12-30\",\"issuedBy\":\"Notery: Banaadir Notary\",\"address\":null,\"propertyType\":\"Dhul Banaan\",\"propertySize\":\"20x15\",\"propertyValue\":\"50000\",\"remarks\":null,\"transferedFromWakil\":1,\"transferedToWakil\":0,\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00103\\/2021\",\"updated_at\":\"2021-12-30 13:36:23\",\"created_at\":\"2021-12-30 13:36:23\",\"id\":18},\"type\":\"Kalawareejin\",\"src\":\"admin\\/transfers\\/18\"}]', NULL, '2021-12-30 07:36:25', '2021-12-30 07:36:25'),
+('9aa2a573-e524-47b6-a5cf-7a17bd45b061', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":34,\"registeryNo\":\"MRGB\\/XDM\\/DQR\\/0000224\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00101\\/2021\",\"mortgagorId\":4,\"mortgageeId\":1,\"reason\":\"test\",\"propertyId\":\"1231\",\"propertyDescription\":\"test\",\"givingProcess\":\"200 bishi\",\"mortgageInterval\":\"12 months\",\"propertyValue\":\"10000\",\"coowners\":\"ali, jama\",\"mortgageValue\":\"50000\",\"approvedBy\":\"Saki Gurey\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-21\",\"mortgageOutReason\":\"trest\",\"mortgageOutBy\":2,\"remarks\":null,\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-21 13:24:12\",\"updated_at\":\"2021-12-21 13:25:47\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/34\"}]', NULL, '2021-12-21 07:25:47', '2021-12-21 07:25:47'),
+('9cc77ffd-a2b1-4206-a296-da162504f13f', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"mortgagorId\":\"4\",\"mortgageeId\":\"3\",\"propertyDescription\":\"n\\/a\",\"reason\":\"test\",\"propertyId\":\"1212\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"propertyValue\":\"50000\",\"mortgageInterval\":\"12\",\"givingProcess\":\"200 bishii\",\"issuedBy\":\"Notery: Banaadir Notary\",\"remarks\":\"test\",\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"updated_at\":\"2021-12-29 07:35:19\",\"created_at\":\"2021-12-29 07:35:19\",\"id\":35},\"type\":\"Rahan\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 01:35:20', '2021-12-29 01:35:20'),
+('9f58fa50-4f7e-44f4-9a53-7b5a444225d0', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:57:17\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:57:17', '2021-12-29 07:57:17'),
+('a13b6541-8da6-4256-a8fd-007e3bc06b21', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"mortgagorId\":\"4\",\"mortgageeId\":\"1\",\"propertyDescription\":\"test\",\"reason\":\"test\",\"propertyId\":\"1231\",\"coowners\":\"ali, jama\",\"mortgageValue\":\"50000\",\"propertyValue\":\"10000\",\"mortgageInterval\":\"12 months\",\"givingProcess\":\"200 bishi\",\"issuedBy\":\"Notery: Banaadir Notary\",\"remarks\":null,\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00101\\/2021\",\"updated_at\":\"2021-12-21 13:24:12\",\"created_at\":\"2021-12-21 13:24:12\",\"id\":34},\"type\":\"Rahan\",\"src\":\"admin\\/mortgages\\/34\"}]', NULL, '2021-12-21 07:24:12', '2021-12-21 07:24:12'),
+('a9088123-aa2a-4548-8f93-1278bb4c7ea0', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"test\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 14:01:57\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 08:01:57', '2021-12-29 08:01:57'),
+('aed7ef12-bf9c-4820-bb90-012af7244ffa', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"mortgagorId\":\"4\",\"mortgageeId\":\"3\",\"propertyDescription\":\"n\\/a\",\"reason\":\"test\",\"propertyId\":\"1212\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"propertyValue\":\"50000\",\"mortgageInterval\":\"12\",\"givingProcess\":\"200 bishii\",\"issuedBy\":\"Notery: Banaadir Notary\",\"remarks\":\"test\",\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"updated_at\":\"2021-12-29 07:35:19\",\"created_at\":\"2021-12-29 07:35:19\",\"id\":35},\"type\":\"Rahan\",\"src\":\"admin\\/mortgages\\/35\"}]', '2021-12-29 01:36:18', '2021-12-29 01:35:20', '2021-12-29 01:36:18'),
+('af59ffcd-bc08-4c59-a49d-65c2099fb361', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:49:18\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:49:19', '2021-12-29 07:49:19'),
+('b17c766c-d27f-4c99-946e-f02f2a98b950', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"mortgagorId\":\"4\",\"mortgageeId\":\"1\",\"propertyDescription\":\"test\",\"reason\":\"test\",\"propertyId\":\"1231\",\"coowners\":\"ali, jama\",\"mortgageValue\":\"50000\",\"propertyValue\":\"10000\",\"mortgageInterval\":\"12 months\",\"givingProcess\":\"200 bishi\",\"issuedBy\":\"Notery: Banaadir Notary\",\"remarks\":null,\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00101\\/2021\",\"updated_at\":\"2021-12-21 13:24:12\",\"created_at\":\"2021-12-21 13:24:12\",\"id\":34},\"type\":\"Rahan\",\"src\":\"admin\\/mortgages\\/34\"}]', '2021-12-29 01:05:43', '2021-12-21 07:24:12', '2021-12-29 01:05:43'),
+('b38c4e6d-f851-426e-b7cb-363b736d0a99', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"rahan kasaaris tijaabo ah\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:44:26\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:44:27', '2021-12-29 07:44:27'),
+('b3af59cc-c222-4e4c-a9e3-33c8938f3fda', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"rahan kasaaris tijaabo ah\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:44:26\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 07:44:26', '2021-12-29 07:44:26'),
+('b4e7ca04-8262-4cfd-b502-5add53faaf9b', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"transferedFromId\":\"Abdifitaah mohmed yusuf\",\"transferedToId\":\"Farxaan axmed ceynte\",\"reason\":\"siismo\",\"ownershipType\":\"asal\",\"titleDeedNo\":\"BBS32\\/36\\/21\",\"lotNo\":\"222\",\"district\":\"CabdiCasiis\",\"refNo\":\"2423432\",\"transferDate\":\"2021-12-30\",\"issuedBy\":\"Notery: Banaadir Notary\",\"address\":null,\"propertyType\":\"Dhul Banaan\",\"propertySize\":\"20x15\",\"propertyValue\":\"50000\",\"remarks\":null,\"transferedFromWakil\":1,\"transferedToWakil\":0,\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00103\\/2021\",\"updated_at\":\"2021-12-30 13:36:23\",\"created_at\":\"2021-12-30 13:36:23\",\"id\":18},\"type\":\"Kalawareejin\",\"src\":\"admin\\/transfers\\/18\"}]', NULL, '2021-12-30 07:36:25', '2021-12-30 07:36:25'),
+('bcab6476-ac28-4a3e-8ab5-7ff72a0c230b', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"mortgagorId\":\"4\",\"mortgageeId\":\"1\",\"propertyDescription\":\"test\",\"reason\":\"test\",\"propertyId\":\"1231\",\"coowners\":\"ali, jama\",\"mortgageValue\":\"50000\",\"propertyValue\":\"10000\",\"mortgageInterval\":\"12 months\",\"givingProcess\":\"200 bishi\",\"issuedBy\":\"Notery: Banaadir Notary\",\"remarks\":null,\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00101\\/2021\",\"updated_at\":\"2021-12-21 13:24:12\",\"created_at\":\"2021-12-21 13:24:12\",\"id\":34},\"type\":\"Rahan\",\"src\":\"admin\\/mortgages\\/34\"}]', '2021-12-21 07:24:29', '2021-12-21 07:24:12', '2021-12-21 07:24:29'),
+('bd37c9ad-4fd0-41a5-8ffc-71c04742e352', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"test\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 14:04:16\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 08:04:16', '2021-12-29 08:04:16'),
+('c529761d-fa29-4b41-b812-3e72dd4087b3', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":33,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000112\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/000100\\/2021\",\"mortgagorId\":2,\"mortgageeId\":3,\"reason\":\"Muraabaxo\",\"propertyId\":\"2131\",\"propertyDescription\":\"N\\/A\",\"givingProcess\":\"300\\/month\",\"mortgageInterval\":\"10 Bilood\",\"propertyValue\":\"120000\",\"coowners\":\"ali , jamac\",\"mortgageValue\":\"1200\",\"approvedBy\":\"Saki Gurey\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-21\",\"mortgageOutReason\":\"by ali\",\"mortgageOutBy\":2,\"remarks\":null,\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-21 11:49:25\",\"updated_at\":\"2021-12-21 12:02:17\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/33\"}]', NULL, '2021-12-21 06:02:18', '2021-12-21 06:02:18'),
+('c59bb3c6-c366-4cab-a450-17ce934da4b3', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":33,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000112\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/000100\\/2021\",\"mortgagorId\":2,\"mortgageeId\":3,\"reason\":\"Muraabaxo\",\"propertyId\":\"2131\",\"propertyDescription\":\"N\\/A\",\"givingProcess\":\"300\\/month\",\"mortgageInterval\":\"10 Bilood\",\"propertyValue\":\"120000\",\"coowners\":\"ali , jamac\",\"mortgageValue\":\"1200\",\"approvedBy\":\"Saki Gurey\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-21\",\"mortgageOutReason\":\"test\",\"mortgageOutBy\":2,\"remarks\":null,\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-21 11:49:25\",\"updated_at\":\"2021-12-21 12:19:29\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/33\"}]', '2021-12-29 01:06:04', '2021-12-21 06:19:29', '2021-12-29 01:06:04'),
+('ca8adf91-a627-4db6-9f12-89088ca73043', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 1, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"tijaabo\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 07:40:32\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 01:40:32', '2021-12-29 01:40:32'),
+('d2f4f863-4af3-485f-bee9-a96cb82e5475', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"mortgagorId\":\"2\",\"mortgageeId\":\"3\",\"propertyDescription\":\"N\\/A\",\"reason\":\"Muraabaxo\",\"propertyId\":\"2131\",\"coowners\":\"ali , jamac\",\"mortgageValue\":\"1200\",\"propertyValue\":\"120000\",\"mortgageInterval\":\"10 Bilood\",\"givingProcess\":\"300\\/month\",\"issuedBy\":\"Notery: Banaadir Notary\",\"remarks\":null,\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/000100\\/2021\",\"updated_at\":\"2021-12-21 11:49:25\",\"created_at\":\"2021-12-21 11:49:25\",\"id\":33},\"type\":\"Rahan\",\"src\":\"admin\\/mortgages\\/33\"}]', '2021-12-29 01:06:12', '2021-12-21 05:49:26', '2021-12-29 01:06:12'),
+('e4d406f5-b36a-4ab1-a113-74cf2483566c', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":null,\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 14:05:24\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 08:05:24', '2021-12-29 08:05:24'),
+('e6bf39c3-033f-461e-8331-38e4d521c162', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"mortgagorId\":\"2\",\"mortgageeId\":\"3\",\"propertyDescription\":\"N\\/A\",\"reason\":\"Muraabaxo\",\"propertyId\":\"2131\",\"coowners\":\"ali , jamac\",\"mortgageValue\":\"1200\",\"propertyValue\":\"120000\",\"mortgageInterval\":\"10 Bilood\",\"givingProcess\":\"300\\/month\",\"issuedBy\":\"Notery: Banaadir Notary\",\"remarks\":null,\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/000100\\/2021\",\"updated_at\":\"2021-12-21 11:49:25\",\"created_at\":\"2021-12-21 11:49:25\",\"id\":33},\"type\":\"Rahan\",\"src\":\"admin\\/mortgages\\/33\"}]', NULL, '2021-12-21 05:49:26', '2021-12-21 05:49:26'),
+('f18c83dd-5e6f-4596-bc16-ecde90c71655', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"test\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 14:04:16\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', '2022-03-28 06:02:06', '2021-12-29 08:04:16', '2022-03-28 06:02:06'),
+('f37840ac-68f1-4313-8d05-eebdba7d68fb', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"registeryNo\":null,\"transferedFromId\":\"Abdifitaah mohmed yusuf\",\"transferedToId\":\"Farxaan axmed ceynte\",\"reason\":\"siismo\",\"ownershipType\":\"asal\",\"titleDeedNo\":\"BBS32\\/36\\/21\",\"lotNo\":\"222\",\"district\":\"CabdiCasiis\",\"refNo\":\"2423432\",\"transferDate\":\"2021-12-30\",\"issuedBy\":\"Notery: Banaadir Notary\",\"address\":null,\"propertyType\":\"Dhul Banaan\",\"propertySize\":\"20x15\",\"propertyValue\":\"50000\",\"remarks\":null,\"transferedFromWakil\":1,\"transferedToWakil\":0,\"userId\":2,\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00103\\/2021\",\"updated_at\":\"2021-12-30 13:36:23\",\"created_at\":\"2021-12-30 13:36:23\",\"id\":18},\"type\":\"Kalawareejin\",\"src\":\"admin\\/transfers\\/18\"}]', '2021-12-30 07:38:21', '2021-12-30 07:36:25', '2021-12-30 07:38:21'),
+('f694b6e8-2305-4353-a390-f11c65a08e0b', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"rahan kasaaris tijaabo ah\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 13:44:26\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', '2021-12-30 02:05:35', '2021-12-29 07:44:27', '2021-12-30 02:05:35'),
+('f7d6c07c-cbb4-4446-9c8a-6c2524982ec4', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 3, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"test\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 14:01:57\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 08:01:57', '2021-12-29 08:01:57'),
+('fe478a08-1b12-48d6-9605-9e0f92aca6a3', 'App\\Notifications\\NotifyAdminNotication', 'App\\User', 5, '[{\"user\":{\"id\":2,\"name\":\"Saadaal\",\"email\":\"Saadal@gmail.com\",\"email_verified_at\":null,\"password_blank\":\"123\",\"roleId\":2,\"isAdmin\":0,\"operatorId\":2,\"created_at\":\"2019-04-30 00:52:48\",\"updated_at\":\"2021-12-21 09:03:56\"},\"entity\":{\"id\":35,\"registeryNo\":\"MRGB\\/XDM\\/DGD\\/000111\\/2021\",\"GRegisteryNo\":\"MRGB\\/XDM\\/DG\\/00102\\/2021\",\"mortgagorId\":4,\"mortgageeId\":3,\"reason\":\"test\",\"propertyId\":\"1212\",\"propertyDescription\":\"n\\/a\",\"givingProcess\":\"200 bishii\",\"mortgageInterval\":\"12\",\"propertyValue\":\"50000\",\"coowners\":\"n\\/a\",\"mortgageValue\":\"5000\",\"approvedBy\":\"Ali Ahmed Ali\",\"issuedBy\":\"Notery: Banaadir Notary\",\"mortgageOutStatus\":2,\"mortgageOutDate\":\"2021-12-29\",\"mortgageOutReason\":\"test\",\"mortgageOutBy\":2,\"remarks\":\"test\",\"userId\":\"2\",\"status\":1,\"created_at\":\"2021-12-29 07:35:19\",\"updated_at\":\"2021-12-29 14:01:57\"},\"type\":\"Rahan Kasaaris\",\"src\":\"admin\\/mortgages\\/35\"}]', NULL, '2021-12-29 08:01:57', '2021-12-29 08:01:57');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `operators`
+--
+
+CREATE TABLE `operators` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `operatorName` varchar(191) DEFAULT NULL,
+  `contactName` varchar(191) DEFAULT NULL,
+  `phone` varchar(191) DEFAULT NULL,
+  `email` varchar(191) DEFAULT NULL,
+  `district` varchar(191) NOT NULL,
+  `legalStracture` varchar(191) NOT NULL,
+  `operatorType` varchar(191) NOT NULL,
+  `userId` varchar(191) DEFAULT NULL,
+  `remarks` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `operators`
+--
+
+INSERT INTO `operators` (`id`, `created_at`, `updated_at`, `operatorName`, `contactName`, `phone`, `email`, `district`, `legalStracture`, `operatorType`, `userId`, `remarks`) VALUES
+(1, '2020-07-14 08:00:29', '2020-07-14 08:00:29', 'Salaam Bank', 'Salaad Cilmin Faarax', '615817773', 'zakigurey@gmail.com', 'CabdiCasiis', 'Limited', 'Bank', '1', 'test'),
+(2, '2021-09-18 05:30:05', '2021-09-18 05:30:05', 'Banaadir Notary', 'Cumar Cali Faarax', '0615817773', 'zakigurey@gmail.com', 'Hoda', 'Merger', 'Notery', '1', 'N/A'),
+(3, '2021-09-21 04:38:24', '2021-09-21 04:38:24', 'cali axmed warsame', 'alihaile', '6143443', 'Alihaile2020@gmail.com', 'CabdiCasiis', 'Merger', 'Notery', '1', NULL),
+(4, '2021-09-21 04:38:47', '2021-09-21 04:38:47', 'cali axmed warsame', 'alihaile', '6143443', 'Alihaile2020@gmail.com', 'CabdiCasiis', 'Merger', 'Notery', '1', NULL),
+(5, '2021-09-21 05:00:44', '2021-12-07 02:09:39', 'cali axmed warsame', 'acasf', '6143443', NULL, 'CabdiCasiis', 'Partinership', 'Notery', '1', NULL),
+(6, '2021-09-21 05:19:34', '2021-09-21 05:19:34', 'IBS Bank', 'alihaile', '6143443', 'Alihaile2020@gmail.com', 'CabdiCasiis', 'Partinership', 'Bank', '1', NULL),
+(7, '2021-09-21 05:21:37', '2021-09-21 05:21:37', 'cali axmed warsame', 'alihaile', '6143443', 'Alihaile2020@gmail.com', 'CabdiCasiis', 'Partinership', 'Court', '1', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ownerships`
+--
+
+CREATE TABLE `ownerships` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) DEFAULT NULL,
+  `GRegisteryNo` varchar(100) NOT NULL,
+  `entityId` int(11) DEFAULT NULL,
+  `ownershipType` varchar(100) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `docDate` date DEFAULT NULL,
+  `documentFrom` varchar(100) DEFAULT NULL,
+  `refNo` varchar(100) DEFAULT NULL,
+  `lotNo` varchar(500) NOT NULL,
+  `district` varchar(100) DEFAULT NULL,
+  `sector` varchar(100) DEFAULT NULL,
+  `branch` varchar(100) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `propertyType` varchar(100) DEFAULT NULL,
+  `propertySize` varchar(200) DEFAULT NULL,
+  `propertyValue` varchar(50) DEFAULT NULL,
+  `approvedBy` varchar(100) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `userId` varchar(200) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `ownerships`
+--
+
+INSERT INTO `ownerships` (`id`, `registeryNo`, `GRegisteryNo`, `entityId`, `ownershipType`, `reason`, `docDate`, `documentFrom`, `refNo`, `lotNo`, `district`, `sector`, `branch`, `address`, `propertyType`, `propertySize`, `propertyValue`, `approvedBy`, `remarks`, `userId`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'MRGB/XDM/DGD/00011/2021', '', 1, 'asal', 'siismo', '0000-00-00', '134343', 'WGX/002/2019', '', 'Howlwadaag', 'Axmed Gurey', 'Laanta Koowaad', 'Wadajir, soabe area', 'Dhul', '30x25', '20,000', NULL, NULL, '1', 1, '2020-07-14 08:03:54', '2021-11-11 03:17:59'),
+(2, 'MRGB/XDM/DGD/00002/2021', '', 1, 'asal', 'beec', '2021-09-05', 'agency', '2423432', '', 'Dharkeeynleey', 'Xanan Bulsho ', 'Laanta Seddexaad', 'waxay kutaal Goofka shiraaye agtiisa', 'dhul', '20x13', NULL, NULL, 'test', '1', 1, '2021-09-05 06:04:54', '2021-09-14 14:01:41'),
+(3, 'MRGB/XDM/DGD/00003/2021', 'MRGB/XDM/DG/00005/2021', 1, 'gacankale', 'sikale', '2021-09-14', 'agency', '2423432', '', 'Howlwadaag', 'Sayidka', 'Laanta Seddexaad', 'N/A', 'dhul', '20x13', '40,000', NULL, NULL, '3', 1, '2021-09-14 13:39:30', '2021-09-14 13:47:50'),
+(4, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00049/2021', 5, 'asal', 'siismo', '2021-09-26', 'Dowladda hoose', 'BBS25/34/43', '7676,\r\n5435,\r\n4535', 'Boondheere', 'Nasiib Bundo', 'Laanta Seddexaad', 'Laanta sedaxaad, cali jeyte diriskiis', 'dhul', '20x15', '240,000', NULL, NULL, '1', 0, '2021-09-26 04:22:21', '2021-12-15 01:16:39'),
+(5, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00062/2021', 2, 'asal', 'Asal', '2021-09-28', 'Dowladda hoose', 'BBS25/34/46', '454,565,676', 'Dayniile', 'Barwaaqo', 'Laanta Seddexaad', 'test', 'dhul', '20x15', '50,000', 'Saki Gurey', 'test', '1', 1, '2021-09-28 06:20:14', '2021-12-15 01:17:35'),
+(6, 'MRGB/XDM/DGD/00013/2021', 'MRGB/XDM/DG/00073/2021', 1, 'asal', 'Asal', '2021-11-20', 'Dowladda Hoose ee Xamar', 'Ref11/255/2018', '23424', 'Boondheere', 'Yusuf Al-koney', 'Laanta Seddexaad', 'test', 'Dhul Bannaan', '20x15', '50000', 'Ali Ahmed Ali', 'ses', '1', 1, '2021-11-20 10:28:28', '2021-12-30 07:36:57');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `password_resets`
+--
+
+CREATE TABLE `password_resets` (
+  `email` varchar(191) NOT NULL,
+  `token` varchar(191) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `password_resets`
+--
+
+INSERT INTO `password_resets` (`email`, `token`, `created_at`) VALUES
+('zakigurey@gmail.com', '$2y$10$eXYHhfHaEIyuG1cMyPMppeEartNPYO7zHyEhXpP3BOQbTFkLaO0la', '2020-07-19 08:15:31'),
+('Alihaile2020@gmail.com', '$2y$10$2t9yd.xh3375ZktzyAqa6uWLUOSI92nCqj1.s.PwHOFY9w/J6k0eS', '2021-11-13 01:57:57');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties`
+--
+
+CREATE TABLE `properties` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) NOT NULL,
+  `GRegisteryNo` varchar(100) NOT NULL,
+  `grantorName` varchar(191) NOT NULL,
+  `granteeName` varchar(191) NOT NULL,
+  `saleDate` date NOT NULL,
+  `titleDeedNo` varchar(191) NOT NULL,
+  `lotNo` varchar(191) NOT NULL,
+  `refNo` varchar(191) NOT NULL,
+  `district` varchar(191) NOT NULL,
+  `propertyType` varchar(191) NOT NULL,
+  `propertySize` varchar(191) NOT NULL,
+  `saleValue` varchar(191) NOT NULL,
+  `longitude` varchar(191) NOT NULL,
+  `latitude` varchar(191) NOT NULL,
+  `previousOwners` varchar(191) NOT NULL,
+  `remarks` text DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 0,
+  `userId` bigint(20) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `properties`
+--
+
+INSERT INTO `properties` (`id`, `registeryNo`, `GRegisteryNo`, `grantorName`, `granteeName`, `saleDate`, `titleDeedNo`, `lotNo`, `refNo`, `district`, `propertyType`, `propertySize`, `saleValue`, `longitude`, `latitude`, `previousOwners`, `remarks`, `status`, `userId`, `created_at`, `updated_at`) VALUES
+(1, 'MRGB/XDM/DGD/00001/2020', '', '1', '2', '2020-07-18', '1231312', '123123', '11233', 'Dharkeeynleey', 'Dhul', '30x25', '10,000,000', '35', '23', 'Majiraan Milkilayaal hore', NULL, 1, 2, '2020-07-18 06:14:07', '2020-07-18 06:14:07'),
+(2, 'MRGB/XDM/DGD/00002/2021', '', '1', '1', '2021-08-31', '4542', '222', 'fghgj', 'CabdiCasiis', 'dhul', 'hhh', '200', 'N/a', 'N/A', 'sALAAD', 'hAGAAG', 1, 1, '2021-08-31 06:46:07', '2021-08-31 06:46:07'),
+(3, 'MRGB/XDM/DGD/00003/2021', 'MRGB/XDM/DG/00001/2021', '1', '2', '2021-09-14', '4542', '222', '2423432', 'Boondheere', 'dhul', '20x13', '50,000', 'N/a', 'N/A', 'N/A', 'test', 1, 1, '2021-09-14 10:14:37', '2021-09-14 11:29:55'),
+(5, 'MRGB/XDM/DGD/00004/2021', 'MRGB/XDM/DG/00001/2021', '1', '1', '2021-09-14', '4542', '222', '2423432', 'Shangaani', 'dhul', '20x13', '70,000', 'N/a', 'N/A', 'N/A', 'test', 0, 3, '2021-09-14 11:38:46', '2021-09-14 11:38:46'),
+(6, 'MRGB/XDM/DGD/00005/2021', 'MRGB/XDM/DG/00001/2021', '2', '1', '2021-09-14', '4542', '222', '2423432', 'Shangaani', 'dhul', '20x13', '70,000', 'N/a', 'N/A', 'N/A', NULL, 0, 3, '2021-09-14 11:41:30', '2021-09-14 11:41:30'),
+(7, 'MRGB/XDM/DGD/00006/2021', 'MRGB/XDM/DG/00002/2021', '2', '1', '2021-09-14', '4542', '222', '2423432', 'Shangaani', 'dhul', '20x13', '70,000', 'N/a', 'N/A', 'N/A', NULL, 0, 3, '2021-09-14 11:46:12', '2021-09-14 11:46:12'),
+(8, 'MRGB/XDM/DGD/00007/2021', 'MRGB/XDM/DG/00004/2021', '1', '2', '2021-09-14', '4542', '222', '2423432', 'Xamar Jajab', 'dhul', '20x13', '70,000', 'N/a', 'N/A', 'N/A', NULL, 0, 3, '2021-09-14 12:55:02', '2021-09-14 12:55:02');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `propertycases`
+--
+
+CREATE TABLE `propertycases` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) NOT NULL,
+  `accusing` int(11) DEFAULT NULL,
+  `accused` int(11) DEFAULT NULL,
+  `caseType` varchar(200) DEFAULT NULL,
+  `courtName` varchar(200) DEFAULT NULL,
+  `refNo` varchar(200) DEFAULT NULL,
+  `caseStartDate` date DEFAULT NULL,
+  `caseEndDate` date DEFAULT NULL,
+  `accusingLowyer` varchar(200) NOT NULL,
+  `accusedLowyer` varchar(200) NOT NULL,
+  `accusingRepresentative` varchar(200) NOT NULL,
+  `accusedRepresentative` varchar(200) NOT NULL,
+  `judgesDescription` text DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `userId` varchar(200) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `propertycases`
+--
+
+INSERT INTO `propertycases` (`id`, `registeryNo`, `accusing`, `accused`, `caseType`, `courtName`, `refNo`, `caseStartDate`, `caseEndDate`, `accusingLowyer`, `accusedLowyer`, `accusingRepresentative`, `accusedRepresentative`, `judgesDescription`, `remarks`, `userId`, `created_at`, `updated_at`) VALUES
+(1, 'MRGB/XDM/DGD/00001/2020', 1, 2, 'Dacwad Madani ah', 'G.banaadir', NULL, '2020-07-13', '2020-08-01', 'ali hersi adan', 'ashraf cabdi xayle', 'warsame cabdi jeyte', 'Abdullahi Shire Cigaal', 'Garuun Bidaar', 'test', '1', '2020-07-13 08:06:08', '2020-07-13 08:06:08'),
+(2, 'MRGB/XDM/DGD/00002/2020', 1, 2, 'Dacwad Madani ah', 'G.banaadir', NULL, '2020-07-14', '2020-08-01', 'ali hersi adan', 'ashraf cabdi xayle', 'warsame cabdi jeyte', 'Muxumad cali Warfaa', 'Garuun Bidaar', NULL, '1', '2020-07-14 02:59:43', '2020-07-14 02:59:43');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rentagreements`
+--
+
+CREATE TABLE `rentagreements` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) NOT NULL,
+  `renterId` int(11) DEFAULT NULL,
+  `renteeId` int(11) DEFAULT NULL,
+  `agreementTitle` text DEFAULT NULL,
+  `agreementPurpose` varchar(200) DEFAULT NULL,
+  `agreementDescription` text DEFAULT NULL,
+  `agreementPlace` varchar(200) DEFAULT NULL,
+  `agreementDate` date DEFAULT NULL,
+  `refNo` varchar(200) DEFAULT NULL,
+  `rentValue` decimal(10,0) DEFAULT NULL,
+  `endDate` date DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `userId` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `rentagreements`
+--
+
+INSERT INTO `rentagreements` (`id`, `registeryNo`, `renterId`, `renteeId`, `agreementTitle`, `agreementPurpose`, `agreementDescription`, `agreementPlace`, `agreementDate`, `refNo`, `rentValue`, `endDate`, `remarks`, `userId`, `created_at`, `updated_at`) VALUES
+(1, 'MRGB/XDM/DGD/00001/2020', 1, 2, 'Dibu Heshiin', 'Dibu Heshiisin', 'Tijaabo', 'Galgacyo', '2020-07-16', 'WGX/002/2019', 130, '2020-08-02', NULL, '1', '2020-07-14 03:20:15', '2020-07-14 03:20:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `roles`
+--
+
+CREATE TABLE `roles` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(191) NOT NULL,
+  `display_name` varchar(191) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `roles`
+--
+
+INSERT INTO `roles` (`id`, `name`, `display_name`, `created_at`, `updated_at`) VALUES
+(1, 'Admin', 'Adminstrator', '2021-09-06 08:02:37', '2021-09-06 08:02:37'),
+(2, 'employee', 'Employee', '2021-09-06 08:02:49', '2021-11-18 02:23:27');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sqns`
+--
+
+CREATE TABLE `sqns` (
+  `id` bigint(20) NOT NULL,
+  `DG` varchar(100) NOT NULL,
+  `digits` bigint(20) NOT NULL,
+  `length` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `sqns`
+--
+
+INSERT INTO `sqns` (`id`, `DG`, `digits`, `length`, `created_at`, `updated_at`) VALUES
+(1, 'MRGB/XDM/DG/00103/2021', 103, 5, '2021-09-14 14:11:57', '2021-09-14 14:11:57');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblbranches`
+--
+
+CREATE TABLE `tblbranches` (
+  `BranchID` int(11) NOT NULL,
+  `BranchName` varchar(50) DEFAULT NULL,
+  `DivissionID` int(11) DEFAULT NULL,
+  `Remarks` varchar(500) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblbranches`
+--
+
+INSERT INTO `tblbranches` (`BranchID`, `BranchName`, `DivissionID`, `Remarks`) VALUES
+(1, 'Laanta Koowaad', 1, 'Yusuf Al-koney'),
+(2, 'Laanta Koowaad', 2, 'Nasiib Bundo'),
+(3, 'Laanta Koowaad', 3, 'Siinaay'),
+(4, 'Laanta Koowaad', 4, 'Dal jirka'),
+(5, 'Laanta Koowaad', 5, 'Dhagax Buur'),
+(6, 'Laanta Koowaad', 6, 'Jenral Neero'),
+(7, 'Laanta Koowaad', 7, 'Lowya Cadde'),
+(8, 'Laanta Koowaad', 8, 'Gaarisa'),
+(9, 'Laanta Koowaad', 9, 'Tawakal'),
+(10, 'Laanta Koowaad', 10, 'Barwaaqo'),
+(11, 'Laanta Koowaad', 11, 'Raadeerka'),
+(12, 'Laanta Koowaad', 12, 'Kur Damac'),
+(13, 'Laanta Koowaad', 13, 'Dhama Yasi'),
+(14, 'Laanta Koowaad', 14, 'Xanan Bulsho '),
+(15, 'Laanta Koowaad', 15, 'Dhagax Tuur'),
+(16, 'Laanta Koowaad', 16, 'Saacid Royaale'),
+(17, 'Laanta Koowaad', 17, 'Barwaaqo'),
+(18, 'Laanta Koowaad', 18, 'Waxar Cadde'),
+(19, 'Laanta Koowaad', 19, 'Gubadley'),
+(20, 'Laanta Koowaad', 20, 'Ceelcade'),
+(21, 'Laanta Koowaad', 21, 'Bandarwadaag'),
+(22, 'Laanta Koowaad', 22, 'Ceel Cirfiid'),
+(23, 'Laanta Koowaad', 23, 'Taleex'),
+(24, 'Laanta Koowaad', 24, 'Axmed Gurey'),
+(25, 'Laanta Koowaad', 25, 'Kacaa'),
+(26, 'Laanta Koowaad', 26, 'Oktobar'),
+(27, 'Laanta Koowaad', 27, 'Saqaawu Dii'),
+(28, 'Laanta Koowaad', 28, 'Axmed Gurey'),
+(29, 'Laanta Koowaad', 29, 'Sayidka'),
+(30, 'Laanta Koowaad', 30, 'Xawa Taaka'),
+(31, 'Laanta Koowaad', 31, 'Wajeer'),
+(32, 'Laanta Koowaad', 32, 'Jabuuti'),
+(33, 'Laanta Koowaad', 33, 'Nagayle'),
+(34, 'Laanta Koowaad', 34, 'Faanoole'),
+(35, 'Laanta Koowaad', 35, 'Jamhuuriya'),
+(36, 'Laanta Koowaad', 36, 'Barwaaqo'),
+(37, 'Laanta Koowaad', 37, 'Cumar Fiyasko'),
+(38, 'Laanta Koowaad', 38, 'Abaadir'),
+(39, 'Laanta Koowaad', 39, 'Shimbiraale'),
+(40, 'Laanta Koowaad', 40, 'Jabuuti'),
+(41, 'Laanta Koowaad', 41, 'Mooyaale'),
+(42, 'Laanta Koowaad', 42, 'Midnimo'),
+(43, 'Laanta Koowaad', 43, 'Howd'),
+(44, 'Laanta Koowaad', 44, 'Saqaawu Dii'),
+(45, 'Laanta Koowaad', 45, 'Axmed Gurey'),
+(46, 'Laanta Koowaad', 46, 'Xalane'),
+(47, 'Laanta Koowaad', 47, 'Calasow Dheer'),
+(48, 'Laanta Koowaad', 48, 'Hanti Wadaag'),
+(49, 'Laanta Koowaad', 49, 'Horseed'),
+(50, 'Laanta Koowaad', 50, 'Oktobar'),
+(51, 'Laanta Koowaad', 51, '1da May'),
+(52, 'Laanta Koowaad', 52, 'Ganaral Daud'),
+(53, 'Laanta Koowaad', 53, 'Xawa Taaka'),
+(54, 'Laanta Koowaad', 54, 'Xalane'),
+(55, 'Laanta Koowaad', 55, 'Tima Cadde'),
+(56, 'Laanta Koowaad', 56, 'Ganaral Daud'),
+(57, 'Laanta Koowaad', 57, 'Hanti Wadaag'),
+(58, 'Laanta Koowaad', 58, 'Horseed'),
+(59, 'Laanta Koowaad', 59, 'Barwaaqo'),
+(60, 'Laanta Koowaad', 60, 'Xamar Bile'),
+(61, 'Laanta Koowaad', 61, 'Gahayr'),
+(62, 'Laanta Koowaad', 62, 'Horseed'),
+(63, 'Laanta Koowaad', 63, '1da May'),
+(64, 'Laanta Koowaad', 64, 'Ganaral Daud'),
+(65, 'Laanta Koowaad', 65, 'banimo'),
+(66, 'Laanta Koowaad', 66, 'Kacaa'),
+(67, 'Laanta Koowaad', 67, 'Horseed'),
+(68, 'Laanta Koowaad', 68, 'Hilaac'),
+(69, 'Laanta Koowaad', 69, 'Heega'),
+(70, 'Laanta Koowaad', 70, 'Horseed'),
+(71, 'Laanta Koowaad', 71, 'Towfiiq'),
+(72, 'Laanta Koowaad', 72, 'Tawakal'),
+(73, 'Laanta Koowaad', 73, '1da Luuliyo'),
+(74, 'Laanta Koowaad', 74, 'Juungal'),
+(75, 'Laanta Labaad', 1, 'Yusuf Al-koney'),
+(76, 'Laanta Labaad', 2, 'Nasiib Bundo'),
+(77, 'Laanta Labaad', 3, 'Siinaay'),
+(78, 'Laanta Labaad', 4, 'Dal jirka'),
+(79, 'Laanta Labaad', 5, 'Dhagax Buur'),
+(80, 'Laanta Labaad', 6, 'Jenral Neero'),
+(81, 'Laanta Labaad', 7, 'Lowya Cadde'),
+(82, 'Laanta Labaad', 8, 'Gaarisa'),
+(83, 'Laanta Labaad', 9, 'Tawakal'),
+(84, 'Laanta Labaad', 10, 'Barwaaqo'),
+(85, 'Laanta Labaad', 11, 'Raadeerka'),
+(86, 'Laanta Labaad', 12, 'Kur Damac'),
+(87, 'Laanta Labaad', 13, 'Dhama Yasi'),
+(88, 'Laanta Labaad', 14, 'Xanan Bulsho '),
+(89, 'Laanta Labaad', 15, 'Dhagax Tuur'),
+(90, 'Laanta Labaad', 16, 'Saacid Royaale'),
+(91, 'Laanta Labaad', 17, 'Barwaaqo'),
+(92, 'Laanta Labaad', 18, 'Waxar Cadde'),
+(93, 'Laanta Labaad', 19, 'Gubadley'),
+(94, 'Laanta Labaad', 20, 'Ceelcade'),
+(95, 'Laanta Labaad', 21, 'Bandarwadaag'),
+(96, 'Laanta Labaad', 22, 'Ceel Cirfiid'),
+(97, 'Laanta Labaad', 23, 'Taleex'),
+(98, 'Laanta Labaad', 24, 'Axmed Gurey'),
+(99, 'Laanta Labaad', 25, 'Kacaa'),
+(100, 'Laanta Labaad', 26, 'Oktobar'),
+(101, 'Laanta Labaad', 27, 'Saqaawu Dii'),
+(102, 'Laanta Labaad', 28, 'Axmed Gurey'),
+(103, 'Laanta Labaad', 29, 'Sayidka'),
+(104, 'Laanta Labaad', 30, 'Xawa Taaka'),
+(105, 'Laanta Labaad', 31, 'Wajeer'),
+(106, 'Laanta Labaad', 32, 'Jabuuti'),
+(107, 'Laanta Labaad', 33, 'Nagayle'),
+(108, 'Laanta Labaad', 34, 'Faanoole'),
+(109, 'Laanta Labaad', 35, 'Jamhuuriya'),
+(110, 'Laanta Labaad', 36, 'Barwaaqo'),
+(111, 'Laanta Labaad', 37, 'Cumar Fiyasko'),
+(112, 'Laanta Labaad', 38, 'Abaadir'),
+(113, 'Laanta Labaad', 39, 'Shimbiraale'),
+(114, 'Laanta Labaad', 40, 'Jabuuti'),
+(115, 'Laanta Labaad', 41, 'Mooyaale'),
+(116, 'Laanta Labaad', 42, 'Midnimo'),
+(117, 'Laanta Labaad', 43, 'Howd'),
+(118, 'Laanta Labaad', 44, 'Saqaawu Dii'),
+(119, 'Laanta Labaad', 45, 'Axmed Gurey'),
+(120, 'Laanta Labaad', 46, 'Xalane'),
+(121, 'Laanta Labaad', 47, 'Calasow Dheer'),
+(122, 'Laanta Labaad', 48, 'Hanti Wadaag'),
+(123, 'Laanta Labaad', 49, 'Horseed'),
+(124, 'Laanta Labaad', 50, 'Oktobar'),
+(125, 'Laanta Labaad', 51, '1da May'),
+(126, 'Laanta Labaad', 52, 'Ganaral Daud'),
+(127, 'Laanta Labaad', 53, 'Xawa Taaka'),
+(128, 'Laanta Labaad', 54, 'Xalane'),
+(129, 'Laanta Labaad', 55, 'Tima Cadde'),
+(130, 'Laanta Labaad', 56, 'Ganaral Daud'),
+(131, 'Laanta Labaad', 57, 'Hanti Wadaag'),
+(132, 'Laanta Labaad', 58, 'Horseed'),
+(133, 'Laanta Labaad', 59, 'Barwaaqo'),
+(134, 'Laanta Labaad', 60, 'Xamar Bile'),
+(135, 'Laanta Labaad', 61, 'Gahayr'),
+(136, 'Laanta Labaad', 62, 'Horseed'),
+(137, 'Laanta Labaad', 63, '1da May'),
+(138, 'Laanta Labaad', 64, 'Ganaral Daud'),
+(139, 'Laanta Labaad', 65, 'banimo'),
+(140, 'Laanta Labaad', 66, 'Kacaa'),
+(141, 'Laanta Labaad', 67, 'Horseed'),
+(142, 'Laanta Labaad', 68, 'Hilaac'),
+(143, 'Laanta Labaad', 69, 'Heega'),
+(144, 'Laanta Labaad', 70, 'Horseed'),
+(145, 'Laanta Labaad', 71, 'Towfiiq'),
+(146, 'Laanta Labaad', 72, 'Tawakal'),
+(147, 'Laanta Labaad', 73, '1da Luuliyo'),
+(148, 'Laanta Labaad', 74, 'Juungal'),
+(149, 'Laanta Seddexaad', 1, 'Yusuf Al-koney'),
+(150, 'Laanta Seddexaad', 2, 'Nasiib Bundo'),
+(151, 'Laanta Seddexaad', 3, 'Siinaay'),
+(152, 'Laanta Seddexaad', 4, 'Dal jirka'),
+(153, 'Laanta Seddexaad', 5, 'Dhagax Buur'),
+(154, 'Laanta Seddexaad', 6, 'Jenral Neero'),
+(155, 'Laanta Seddexaad', 7, 'Lowya Cadde'),
+(156, 'Laanta Seddexaad', 8, 'Gaarisa'),
+(157, 'Laanta Seddexaad', 9, 'Tawakal'),
+(158, 'Laanta Seddexaad', 10, 'Barwaaqo'),
+(159, 'Laanta Seddexaad', 11, 'Raadeerka'),
+(160, 'Laanta Seddexaad', 12, 'Kur Damac'),
+(161, 'Laanta Seddexaad', 13, 'Dhama Yasi'),
+(162, 'Laanta Seddexaad', 14, 'Xanan Bulsho '),
+(163, 'Laanta Seddexaad', 15, 'Dhagax Tuur'),
+(164, 'Laanta Seddexaad', 16, 'Saacid Royaale'),
+(165, 'Laanta Seddexaad', 17, 'Barwaaqo'),
+(166, 'Laanta Seddexaad', 18, 'Waxar Cadde'),
+(167, 'Laanta Seddexaad', 19, 'Gubadley'),
+(168, 'Laanta Seddexaad', 20, 'Ceelcade'),
+(169, 'Laanta Seddexaad', 21, 'Bandarwadaag'),
+(170, 'Laanta Seddexaad', 22, 'Ceel Cirfiid'),
+(171, 'Laanta Seddexaad', 23, 'Taleex'),
+(172, 'Laanta Seddexaad', 24, 'Axmed Gurey'),
+(173, 'Laanta Seddexaad', 25, 'Kacaa'),
+(174, 'Laanta Seddexaad', 26, 'Oktobar'),
+(175, 'Laanta Seddexaad', 27, 'Saqaawu Dii'),
+(176, 'Laanta Seddexaad', 28, 'Axmed Gurey'),
+(177, 'Laanta Seddexaad', 29, 'Sayidka'),
+(178, 'Laanta Seddexaad', 30, 'Xawa Taaka'),
+(179, 'Laanta Seddexaad', 31, 'Wajeer'),
+(180, 'Laanta Seddexaad', 32, 'Jabuuti'),
+(181, 'Laanta Seddexaad', 33, 'Nagayle'),
+(182, 'Laanta Seddexaad', 34, 'Faanoole'),
+(183, 'Laanta Seddexaad', 35, 'Jamhuuriya'),
+(184, 'Laanta Seddexaad', 36, 'Barwaaqo'),
+(185, 'Laanta Seddexaad', 37, 'Cumar Fiyasko'),
+(186, 'Laanta Seddexaad', 38, 'Abaadir'),
+(187, 'Laanta Seddexaad', 39, 'Shimbiraale'),
+(188, 'Laanta Seddexaad', 40, 'Jabuuti'),
+(189, 'Laanta Seddexaad', 41, 'Mooyaale'),
+(190, 'Laanta Seddexaad', 42, 'Midnimo'),
+(191, 'Laanta Seddexaad', 43, 'Howd'),
+(192, 'Laanta Seddexaad', 44, 'Saqaawu Dii'),
+(193, 'Laanta Seddexaad', 45, 'Axmed Gurey'),
+(194, 'Laanta Seddexaad', 46, 'Xalane'),
+(195, 'Laanta Seddexaad', 47, 'Calasow Dheer'),
+(196, 'Laanta Seddexaad', 48, 'Hanti Wadaag'),
+(197, 'Laanta Seddexaad', 49, 'Horseed'),
+(198, 'Laanta Seddexaad', 50, 'Oktobar'),
+(199, 'Laanta Seddexaad', 51, '1da May'),
+(200, 'Laanta Seddexaad', 52, 'Ganaral Daud'),
+(201, 'Laanta Seddexaad', 53, 'Xawa Taaka'),
+(202, 'Laanta Seddexaad', 54, 'Xalane'),
+(203, 'Laanta Seddexaad', 55, 'Tima Cadde'),
+(204, 'Laanta Seddexaad', 56, 'Ganaral Daud'),
+(205, 'Laanta Seddexaad', 57, 'Hanti Wadaag'),
+(206, 'Laanta Seddexaad', 58, 'Horseed'),
+(207, 'Laanta Seddexaad', 59, 'Barwaaqo'),
+(208, 'Laanta Seddexaad', 60, 'Xamar Bile'),
+(209, 'Laanta Seddexaad', 61, 'Gahayr'),
+(210, 'Laanta Seddexaad', 62, 'Horseed'),
+(211, 'Laanta Seddexaad', 63, '1da May'),
+(212, 'Laanta Seddexaad', 64, 'Ganaral Daud'),
+(213, 'Laanta Seddexaad', 65, 'banimo'),
+(214, 'Laanta Seddexaad', 66, 'Kacaa'),
+(215, 'Laanta Seddexaad', 67, 'Horseed'),
+(216, 'Laanta Seddexaad', 68, 'Hilaac'),
+(217, 'Laanta Seddexaad', 69, 'Heega'),
+(218, 'Laanta Seddexaad', 70, 'Horseed'),
+(219, 'Laanta Seddexaad', 71, 'Towfiiq'),
+(220, 'Laanta Seddexaad', 72, 'Tawakal'),
+(221, 'Laanta Seddexaad', 73, '1da Luuliyo'),
+(222, 'Laanta Seddexaad', 74, 'Juungal'),
+(223, 'Laanta Afaraad', 1, 'Yusuf Al-koney'),
+(224, 'Laanta Afaraad', 2, 'Nasiib Bundo'),
+(225, 'Laanta Afaraad', 3, 'Siinaay'),
+(226, 'Laanta Afaraad', 4, 'Dal jirka'),
+(227, 'Laanta Afaraad', 5, 'Dhagax Buur'),
+(228, 'Laanta Afaraad', 6, 'Jenral Neero'),
+(229, 'Laanta Afaraad', 7, 'Lowya Cadde'),
+(230, 'Laanta Afaraad', 8, 'Gaarisa'),
+(231, 'Laanta Afaraad', 9, 'Tawakal'),
+(232, 'Laanta Afaraad', 10, 'Barwaaqo'),
+(233, 'Laanta Afaraad', 11, 'Raadeerka'),
+(234, 'Laanta Afaraad', 12, 'Kur Damac'),
+(235, 'Laanta Afaraad', 13, 'Dhama Yasi'),
+(236, 'Laanta Afaraad', 14, 'Xanan Bulsho '),
+(237, 'Laanta Afaraad', 15, 'Dhagax Tuur'),
+(238, 'Laanta Afaraad', 16, 'Saacid Royaale'),
+(239, 'Laanta Afaraad', 17, 'Barwaaqo'),
+(240, 'Laanta Afaraad', 18, 'Waxar Cadde'),
+(241, 'Laanta Afaraad', 19, 'Gubadley'),
+(242, 'Laanta Afaraad', 20, 'Ceelcade'),
+(243, 'Laanta Afaraad', 21, 'Bandarwadaag'),
+(244, 'Laanta Afaraad', 22, 'Ceel Cirfiid'),
+(245, 'Laanta Afaraad', 23, 'Taleex'),
+(246, 'Laanta Afaraad', 24, 'Axmed Gurey'),
+(247, 'Laanta Afaraad', 25, 'Kacaa'),
+(248, 'Laanta Afaraad', 26, 'Oktobar'),
+(249, 'Laanta Afaraad', 27, 'Saqaawu Dii'),
+(250, 'Laanta Afaraad', 28, 'Axmed Gurey'),
+(251, 'Laanta Afaraad', 29, 'Sayidka'),
+(252, 'Laanta Afaraad', 30, 'Xawa Taaka'),
+(253, 'Laanta Afaraad', 31, 'Wajeer'),
+(254, 'Laanta Afaraad', 32, 'Jabuuti'),
+(255, 'Laanta Afaraad', 33, 'Nagayle'),
+(256, 'Laanta Afaraad', 34, 'Faanoole'),
+(257, 'Laanta Afaraad', 35, 'Jamhuuriya'),
+(258, 'Laanta Afaraad', 36, 'Barwaaqo'),
+(259, 'Laanta Afaraad', 37, 'Cumar Fiyasko'),
+(260, 'Laanta Afaraad', 38, 'Abaadir'),
+(261, 'Laanta Afaraad', 39, 'Shimbiraale'),
+(262, 'Laanta Afaraad', 40, 'Jabuuti'),
+(263, 'Laanta Afaraad', 41, 'Mooyaale'),
+(264, 'Laanta Afaraad', 42, 'Midnimo'),
+(265, 'Laanta Afaraad', 43, 'Howd'),
+(266, 'Laanta Afaraad', 44, 'Saqaawu Dii'),
+(267, 'Laanta Afaraad', 45, 'Axmed Gurey'),
+(268, 'Laanta Afaraad', 46, 'Xalane'),
+(269, 'Laanta Afaraad', 47, 'Calasow Dheer'),
+(270, 'Laanta Afaraad', 48, 'Hanti Wadaag'),
+(271, 'Laanta Afaraad', 49, 'Horseed'),
+(272, 'Laanta Afaraad', 50, 'Oktobar'),
+(273, 'Laanta Afaraad', 51, '1da May'),
+(274, 'Laanta Afaraad', 52, 'Ganaral Daud'),
+(275, 'Laanta Afaraad', 53, 'Xawa Taaka'),
+(276, 'Laanta Afaraad', 54, 'Xalane'),
+(277, 'Laanta Afaraad', 55, 'Tima Cadde'),
+(278, 'Laanta Afaraad', 56, 'Ganaral Daud'),
+(279, 'Laanta Afaraad', 57, 'Hanti Wadaag'),
+(280, 'Laanta Afaraad', 58, 'Horseed'),
+(281, 'Laanta Afaraad', 59, 'Barwaaqo'),
+(282, 'Laanta Afaraad', 60, 'Xamar Bile'),
+(283, 'Laanta Afaraad', 61, 'Gahayr'),
+(284, 'Laanta Afaraad', 62, 'Horseed'),
+(285, 'Laanta Afaraad', 63, '1da May'),
+(286, 'Laanta Afaraad', 64, 'Ganaral Daud'),
+(287, 'Laanta Afaraad', 65, 'banimo'),
+(288, 'Laanta Afaraad', 66, 'Kacaa'),
+(289, 'Laanta Afaraad', 67, 'Horseed'),
+(290, 'Laanta Afaraad', 68, 'Hilaac'),
+(291, 'Laanta Afaraad', 69, 'Heega'),
+(292, 'Laanta Afaraad', 70, 'Horseed'),
+(293, 'Laanta Afaraad', 71, 'Towfiiq'),
+(294, 'Laanta Afaraad', 72, 'Tawakal'),
+(295, 'Laanta Afaraad', 73, '1da Luuliyo'),
+(296, 'Laanta Afaraad', 74, 'Juungal');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbldistricts`
+--
+
+CREATE TABLE `tbldistricts` (
+  `DistrictID` int(11) NOT NULL,
+  `DistrictName` varchar(50) DEFAULT NULL,
+  `Remarks` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbldistricts`
+--
+
+INSERT INTO `tbldistricts` (`DistrictID`, `DistrictName`, `Remarks`) VALUES
+(1, 'Boondheere', 'Boondheere'),
+(2, 'CabdiCasiis', 'CabdiCasiis'),
+(3, 'Dayniile', 'Dayniile'),
+(4, 'Dharkeeynleey', 'Dharkeeynleey'),
+(5, 'Heliwaa', 'Heliwaa'),
+(6, 'Hoda', 'Hoda'),
+(7, 'Howlwadaag', 'Howlwadaag'),
+(8, 'Kaara', 'Kaara'),
+(9, 'Kaxda', 'Kaxda'),
+(10, 'Shangaani', 'Shangaani'),
+(11, 'Shibis', 'Shibis'),
+(12, 'Waaberi', 'Waaberi'),
+(13, 'Wadajir', 'Wadajir'),
+(14, 'Wartanabadda', 'Wartanabadda'),
+(15, 'Xamar Jajab', 'Xamar Jajab'),
+(16, 'XamarWeyne', 'XamarWeyne'),
+(17, 'Yaaqshiid', 'Yaaqshiid');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbldivisions`
+--
+
+CREATE TABLE `tbldivisions` (
+  `DivisionID` bigint(20) NOT NULL,
+  `DistrictID` int(11) DEFAULT NULL,
+  `DivisionName` varchar(50) DEFAULT NULL,
+  `Remarks` varchar(500) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbldivisions`
+--
+
+INSERT INTO `tbldivisions` (`DivisionID`, `DistrictID`, `DivisionName`, `Remarks`) VALUES
+(1, 1, 'Yusuf Al-koney', 'Yusuf Al-koney'),
+(2, 1, 'Nasiib Bundo', 'Nasiib Bundo'),
+(3, 1, 'Siinaay', 'Siinaay'),
+(4, 1, 'Dal jirka', 'Dal jirka'),
+(5, 2, 'Dhagax Buur', 'Dhagax Buur'),
+(6, 2, 'Jenral Neero', 'Jenral Neero'),
+(7, 2, 'Lowya Cadde', 'Lowya Cadde'),
+(8, 2, 'Gaarisa', 'Gaarisa'),
+(9, 3, 'Tawakal', 'Tawakal'),
+(10, 3, 'Barwaaqo', 'Barwaaqo'),
+(11, 3, 'Raadeerka', 'Raadeerka'),
+(12, 3, 'Kur Damac', 'Kur Damac'),
+(13, 4, 'Dhama Yasi', 'Dhama Yasi'),
+(14, 4, 'Xanan Bulsho ', 'Xanan Bulsho '),
+(15, 4, 'Dhagax Tuur', 'Dhagax Tuur'),
+(16, 4, 'Saacid Royaale', 'Saacid Royaale'),
+(17, 5, 'Barwaaqo', 'Barwaaqo'),
+(18, 5, 'Waxar Cadde', 'Waxar Cadde'),
+(19, 5, 'Gubadley', 'Gubadley'),
+(20, 5, 'Ceelcade', 'Ceelcade'),
+(21, 5, 'Bandarwadaag', 'Bandarwadaag'),
+(22, 5, 'Ceel Cirfiid', 'Ceel Cirfiid'),
+(23, 6, 'Taleex', 'Taleex'),
+(24, 6, 'Axmed Gurey', 'Axmed Gurey'),
+(25, 6, 'Kacaa', 'Kacaa'),
+(26, 6, 'Oktobar', 'Oktobar'),
+(27, 7, 'Saqaawu Dii', 'Saqaawu Dii'),
+(28, 7, 'Axmed Gurey', 'Axmed Gurey'),
+(29, 7, 'Sayidka', 'Sayidka'),
+(30, 7, 'Xawa Taaka', 'Xawa Taaka'),
+(31, 8, 'Wajeer', 'Wajeer'),
+(32, 8, 'Jabuuti', 'Jabuuti'),
+(33, 8, 'Nagayle', 'Nagayle'),
+(34, 8, 'Faanoole', 'Faanoole'),
+(35, 8, 'Jamhuuriya', 'Jamhuuriya'),
+(36, 9, 'Barwaaqo', 'Barwaaqo'),
+(37, 9, 'Cumar Fiyasko', 'Cumar Fiyasko'),
+(38, 9, 'Abaadir', 'Abaadir'),
+(39, 9, 'Shimbiraale', 'Shimbiraale'),
+(40, 10, 'Jabuuti', 'Jabuuti'),
+(41, 10, 'Mooyaale', 'Mooyaale'),
+(42, 10, 'Midnimo', 'Midnimo'),
+(43, 10, 'Howd', 'Howd'),
+(44, 11, 'Saqaawu Dii', 'Saqaawu Dii'),
+(45, 11, 'Axmed Gurey', 'Axmed Gurey'),
+(46, 11, 'Xalane', 'Xalane'),
+(47, 11, 'Calasow Dheer', 'Calasow Dheer'),
+(48, 12, 'Hanti Wadaag', 'Hanti Wadaag'),
+(49, 12, 'Horseed', 'Horseed'),
+(50, 12, 'Oktobar', 'Oktobar'),
+(51, 12, '1da May', '1da May'),
+(52, 13, 'Ganaral Daud', 'Ganaral Daud'),
+(53, 13, 'Xawa Taaka', 'Xawa Taaka'),
+(54, 13, 'Xalane', 'Xalane'),
+(55, 13, 'Tima Cadde', 'Tima Cadde'),
+(56, 14, 'Ganaral Daud', 'Ganaral Daud'),
+(57, 14, 'Hanti Wadaag', 'Hanti Wadaag'),
+(58, 14, 'Horseed', 'Horseed'),
+(59, 14, 'Barwaaqo', 'Barwaaqo'),
+(60, 14, 'Xamar Bile', 'Xamar Bile'),
+(61, 15, 'Gahayr', 'Gahayr'),
+(62, 15, 'Horseed', 'Horseed'),
+(63, 15, '1da May', '1da May'),
+(64, 15, 'Ganaral Daud', 'Ganaral Daud'),
+(65, 16, 'banimo', 'banimo'),
+(66, 16, 'Kacaa', 'Kacaa'),
+(67, 16, 'Horseed', 'Horseed'),
+(68, 16, 'Hilaac', 'Hilaac'),
+(69, 17, 'Heega', 'Heega'),
+(70, 17, 'Horseed', 'Horseed'),
+(71, 17, 'Towfiiq', 'Towfiiq'),
+(72, 17, 'Tawakal', 'Tawakal'),
+(73, 17, '1da Luuliyo', '1da Luuliyo'),
+(74, 17, 'Juungal', 'Juungal');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transfers`
+--
+
+CREATE TABLE `transfers` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) DEFAULT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `transferedFromId` varchar(200) DEFAULT NULL,
+  `transferedToId` varchar(200) DEFAULT NULL,
+  `ownershipType` varchar(255) DEFAULT NULL,
+  `transferedToWakil` varchar(4) DEFAULT NULL,
+  `transferedFromWakil` varchar(4) DEFAULT NULL,
+  `lotNo` varchar(111) DEFAULT NULL,
+  `titleDeedNo` varchar(255) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `refNo` varchar(255) DEFAULT NULL,
+  `transferDate` date DEFAULT NULL,
+  `issuedBy` varchar(200) NOT NULL,
+  `district` varchar(255) DEFAULT NULL,
+  `sector` varchar(255) DEFAULT NULL,
+  `branch` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `propertyType` varchar(255) DEFAULT NULL,
+  `propertySize` varchar(200) DEFAULT NULL,
+  `propertyValue` varchar(255) DEFAULT NULL,
+  `approvedBy` varchar(100) DEFAULT NULL,
+  `userId` varchar(200) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `transfers`
+--
+
+INSERT INTO `transfers` (`id`, `registeryNo`, `GRegisteryNo`, `transferedFromId`, `transferedToId`, `ownershipType`, `transferedToWakil`, `transferedFromWakil`, `lotNo`, `titleDeedNo`, `reason`, `refNo`, `transferDate`, `issuedBy`, `district`, `sector`, `branch`, `address`, `propertyType`, `propertySize`, `propertyValue`, `approvedBy`, `userId`, `remarks`, `status`, `created_at`, `updated_at`) VALUES
+(5, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00059/2021', 'cali', 'cabdi', 'asal', '0', '0', '222', 'BBS32/36/21', 'siismo', '2423432', '2021-11-10', 'Bank: Salaam Bank', 'CabdiCasiis', 'Lowya Cadde', 'Laanta Seddexaad', 'test', 'Dhul Banaan', '20x15', '100,000', 'Ali Ahmed Ali', '1', NULL, 0, '2021-09-26 07:51:17', '2021-12-11 05:54:45'),
+(6, NULL, 'MRGB/XDM/DG/00060/2021', '4,6', '2,5', 'asal', NULL, NULL, '232,343,453', 'BBS32/36/24', 'siismo', 'S3423/2021', '2021-11-10', '', 'CabdiCasiis', 'Dhagax Buur', 'Laanta Koowaad', 'cabdi casiis, xaafada shiirkole, udhow guriga xaaji baaste', 'dhul', '20x15', '70,000', 'Ali Ahmed Ali', '1', NULL, 1, '2021-09-27 04:57:33', '2021-12-11 05:42:45'),
+(7, NULL, 'MRGB/XDM/DG/00065/2021', '3,5', '5,6', 'asal', NULL, NULL, '232,343,453', 'BBS32/36/25', 'siismo', 'S3423/2021', '2021-11-10', '', 'Dharkeeynleey', 'Saacid Royaale', 'Laanta Seddexaad', 'hodan', 'dhul', '20x15', '100,000', 'Ali Ahmed Ali', '1', NULL, 0, '2021-09-28 08:10:41', '2021-12-11 05:52:44'),
+(8, 'MRGB/XDM/DQR/000024/2021', 'MRGB/XDM/DG/00066/2021', '4,6', '3,5', 'asal', NULL, NULL, '4543', 'BBS32/36/21', 'beec', '2423432', '2021-11-10', '', 'Boondheere', 'Yusuf Al-koney', 'Laanta Koowaad', 'dgdfg', 'Guri', '20x18', '70,000', 'Saki Gurey', '3', NULL, 0, '2021-11-07 01:20:00', '2021-12-11 05:52:20'),
+(9, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00068/2021', 'cali faarax jimcale', 'cabdifitaax cali warsame', 'asal', '1', '0', '123', '4333', 'siismo', 'BBS25/34/43', '2021-11-10', '', 'Boondheere', NULL, NULL, 'hodan', 'Dhul Banaan', '20x15', '70,000', 'Ali Ahmed Ali', '3', NULL, 0, '2021-11-07 03:01:25', '2021-12-11 05:35:19'),
+(10, NULL, 'MRGB/XDM/DG/00069/2021', 'Abdifitaah mohmed yusuf', 'Farxaan axmed ceynte', 'asal', '0', '1', '232,343,453', 'BBS32/36/21', 'Dhaxal', '2423432', NULL, '', 'Dayniile', NULL, NULL, 'hodan', 'Guri', '20x18', NULL, 'Ali Ahmed Ali', '3', NULL, 0, '2021-11-10 02:35:28', '2021-12-11 05:50:24'),
+(14, NULL, 'MRGB/XDM/DG/00088/2021', 'Axmed faarax jimcale', 'maxamed cali faarax', 'asal', '0', '1', '222', '4542', 'siismo', '2423432', '2021-12-11', 'Bank: Salaam Bank', 'Boondheere', NULL, NULL, NULL, 'Dhul Banaan', '20x18', '40000', NULL, '3', NULL, 0, '2021-12-11 06:07:25', '2021-12-11 06:07:25'),
+(15, NULL, 'MRGB/XDM/DG/00092/2021', 'Abdifitaah mohmed yusuf', 'Axmed cali warsame', 'asal', '1', '0', '232,343,453', '13213', 'siismo', 'BBS25/34/43', '2021-12-11', 'Bank: Salaam Bank', 'Dayniile', NULL, NULL, NULL, 'Dhul Banaan', '20x15', '50000', NULL, '3', NULL, 0, '2021-12-11 06:13:27', '2021-12-11 06:13:27'),
+(16, NULL, 'MRGB/XDM/DG/00093/2021', 'Abdifitaah mohmed yusuf', 'Axmed cali warsame', 'asal', '1', '0', '232,343,453', '13213', 'siismo', 'BBS25/34/43', '2021-12-11', 'Bank: Salaam Bank', 'Dayniile', NULL, NULL, NULL, 'Dhul Banaan', '20x15', '50000', NULL, '3', NULL, 0, '2021-12-11 06:13:47', '2021-12-11 06:13:47'),
+(17, 'MRGB/XDM/DGD/00011/2021', 'MRGB/XDM/DG/00095/2021', 'Maxamad adan xassan', 'Farxaan axmed ceynte', 'asal', '0', '0', '1321', 'BBS32/36/24', 'siismo', 'BBS25/46/1985 - Lot436', '2021-12-11', 'Bank: Salaam Bank', 'Dayniile', NULL, NULL, 'New Bosaso', 'Dhul Banaan', '20x15', '80000', 'Saki Gurey', '3', NULL, 1, '2021-12-11 06:29:02', '2022-09-21 02:41:46'),
+(18, 'MRGB/XDM/DGD/00013/2021', 'MRGB/XDM/DG/00103/2021', 'Abdifitaah mohmed yusuf', 'Farxaan axmed ceynte', 'asal', '0', '1', '222', 'BBS32/36/21', 'siismo', '2423432', '2021-12-30', 'Notery: Banaadir Notary', 'CabdiCasiis', NULL, NULL, NULL, 'Dhul Banaan', '20x15', '50000', 'Ali Ahmed Ali', '2', NULL, 1, '2021-12-30 07:36:23', '2021-12-30 07:38:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transfers_deleted`
+--
+
+CREATE TABLE `transfers_deleted` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) DEFAULT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `transferedFromId` varchar(200) DEFAULT NULL,
+  `transferedToId` varchar(200) DEFAULT NULL,
+  `ownershipType` varchar(255) DEFAULT NULL,
+  `transferedToWakil` varchar(4) DEFAULT NULL,
+  `transferedFromWakil` varchar(4) DEFAULT NULL,
+  `lotNo` varchar(111) DEFAULT NULL,
+  `titleDeedNo` varchar(255) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `refNo` varchar(255) DEFAULT NULL,
+  `transferDate` date DEFAULT NULL,
+  `issuedBy` varchar(200) NOT NULL,
+  `district` varchar(255) DEFAULT NULL,
+  `sector` varchar(255) DEFAULT NULL,
+  `branch` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `propertyType` varchar(255) DEFAULT NULL,
+  `propertySize` varchar(200) DEFAULT NULL,
+  `propertyValue` varchar(255) DEFAULT NULL,
+  `approvedBy` varchar(100) DEFAULT NULL,
+  `userId` varchar(200) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `transfers_deleted`
+--
+
+INSERT INTO `transfers_deleted` (`id`, `registeryNo`, `GRegisteryNo`, `transferedFromId`, `transferedToId`, `ownershipType`, `transferedToWakil`, `transferedFromWakil`, `lotNo`, `titleDeedNo`, `reason`, `refNo`, `transferDate`, `issuedBy`, `district`, `sector`, `branch`, `address`, `propertyType`, `propertySize`, `propertyValue`, `approvedBy`, `userId`, `remarks`, `status`, `created_at`, `updated_at`) VALUES
+(12, 'MRGB/XDM/DQR/000024/2021', 'MRGB/XDM/DG/00072/2021', 'cali faarax jimcale', 'maxamed cali faarax', 'asal', '0', '1', '4543', '13213', 'beec', '2423432', '2021-11-18', 'Notery: Banaadir Notary', 'Dharkeeynleey', NULL, NULL, NULL, 'Dhul Banaan', '20x15', '70000', NULL, '2', NULL, 1, '2021-11-18 01:42:24', '2021-12-07 02:07:32'),
+(13, 'MRGB/XDM/DQR/000024/2021', 'MRGB/XDM/DG/00083/2021', 'Abdifitaah mohmed yusuf', 'Maxamed cali faarax', 'asal', '1', '0', 'lot433', 'BBS32/36/21', 'siismo', '34/43', '2021-12-08', 'Bank: Salaam Bank', 'Boondheere', NULL, NULL, NULL, 'Dhul Banaan', '20x18', '50000', 'Ali Ahmed Ali', '3', 'test description', 0, '2021-12-08 05:49:11', '2021-12-08 05:49:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transfers_log`
+--
+
+CREATE TABLE `transfers_log` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) DEFAULT NULL,
+  `GRegisteryNo` varchar(200) NOT NULL,
+  `transferedFromId` varchar(200) DEFAULT NULL,
+  `transferedToId` varchar(200) DEFAULT NULL,
+  `ownershipType` varchar(255) DEFAULT NULL,
+  `transferedToWakil` varchar(4) DEFAULT NULL,
+  `transferedFromWakil` varchar(4) DEFAULT NULL,
+  `lotNo` varchar(111) DEFAULT NULL,
+  `titleDeedNo` varchar(255) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `refNo` varchar(255) DEFAULT NULL,
+  `transferDate` date DEFAULT NULL,
+  `issuedBy` varchar(200) NOT NULL,
+  `district` varchar(255) DEFAULT NULL,
+  `sector` varchar(255) DEFAULT NULL,
+  `branch` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `propertyType` varchar(255) DEFAULT NULL,
+  `propertySize` varchar(200) DEFAULT NULL,
+  `propertyValue` varchar(255) DEFAULT NULL,
+  `approvedBy` varchar(100) DEFAULT NULL,
+  `userId` varchar(200) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `transfers_log`
+--
+
+INSERT INTO `transfers_log` (`id`, `registeryNo`, `GRegisteryNo`, `transferedFromId`, `transferedToId`, `ownershipType`, `transferedToWakil`, `transferedFromWakil`, `lotNo`, `titleDeedNo`, `reason`, `refNo`, `transferDate`, `issuedBy`, `district`, `sector`, `branch`, `address`, `propertyType`, `propertySize`, `propertyValue`, `approvedBy`, `userId`, `remarks`, `status`, `created_at`, `updated_at`) VALUES
+(12, 'MRGB/XDM/DGD/00013/2021', 'MRGB/XDM/DG/00103/2021', 'Abdifitaah mohmed yusuf', 'Farxaan axmed ceynte', 'asal', '0', '1', '222', 'BBS32/36/21', 'siismo', '2423432', '2021-12-30', 'Notery: Banaadir Notary', 'CabdiCasiis', NULL, NULL, NULL, 'Dhul Banaan', '20x15', '50000', 'Ali Ahmed Ali', '3', NULL, 1, '2021-12-08 05:49:11', '2021-12-30 07:38:37'),
+(13, 'MRGB/XDM/DGD/00013/2021', 'MRGB/XDM/DG/00103/2021', 'Abdifitaah mohmed yusuf', 'Farxaan axmed ceynte', 'asal', '0', '1', '222', 'BBS32/36/21', 'siismo', '2423432', '2021-12-30', 'Notery: Banaadir Notary', 'CabdiCasiis', NULL, NULL, NULL, 'Dhul Banaan', '20x15', '50000', 'Ali Ahmed Ali', '3', NULL, 1, '2021-12-11 06:07:25', '2021-12-30 07:38:37'),
+(14, 'MRGB/XDM/DGD/00013/2021', 'MRGB/XDM/DG/00103/2021', 'Abdifitaah mohmed yusuf', 'Farxaan axmed ceynte', 'asal', '0', '1', '222', 'BBS32/36/21', 'siismo', '2423432', '2021-12-30', 'Notery: Banaadir Notary', 'CabdiCasiis', NULL, NULL, NULL, 'Dhul Banaan', '20x15', '50000', 'Ali Ahmed Ali', '3', NULL, 1, '2021-12-11 06:13:27', '2021-12-30 07:38:37'),
+(15, 'MRGB/XDM/DGD/00013/2021', 'MRGB/XDM/DG/00103/2021', 'Abdifitaah mohmed yusuf', 'Farxaan axmed ceynte', 'asal', '0', '1', '222', 'BBS32/36/21', 'siismo', '2423432', '2021-12-30', 'Notery: Banaadir Notary', 'CabdiCasiis', NULL, NULL, NULL, 'Dhul Banaan', '20x15', '50000', 'Ali Ahmed Ali', '3', NULL, 1, '2021-12-11 06:13:47', '2021-12-30 07:38:37'),
+(16, 'MRGB/XDM/DGD/00013/2021', 'MRGB/XDM/DG/00103/2021', 'Abdifitaah mohmed yusuf', 'Farxaan axmed ceynte', 'asal', '0', '1', '222', 'BBS32/36/21', 'siismo', '2423432', '2021-12-30', 'Notery: Banaadir Notary', 'CabdiCasiis', NULL, NULL, NULL, 'Dhul Banaan', '20x15', '50000', 'Ali Ahmed Ali', '3', NULL, 1, '2021-12-11 06:29:02', '2021-12-30 07:38:37'),
+(17, 'MRGB/XDM/DGD/00013/2021', 'MRGB/XDM/DG/00103/2021', 'Abdifitaah mohmed yusuf', 'Farxaan axmed ceynte', 'asal', '0', '1', '222', 'BBS32/36/21', 'siismo', '2423432', '2021-12-30', 'Notery: Banaadir Notary', 'CabdiCasiis', NULL, NULL, NULL, 'Dhul Banaan', '20x15', '50000', 'Ali Ahmed Ali', '2', NULL, 1, '2021-12-30 07:36:23', '2021-12-30 07:38:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transfer_entity`
+--
+
+CREATE TABLE `transfer_entity` (
+  `id` bigint(20) NOT NULL,
+  `entityId` bigint(20) NOT NULL,
+  `registeryNo` varchar(100) NOT NULL,
+  `GRegisteryNo` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(191) NOT NULL,
+  `email` varchar(191) NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(191) NOT NULL,
+  `password_blank` varchar(100) NOT NULL,
+  `roleId` int(11) DEFAULT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `isAdmin` tinyint(1) NOT NULL DEFAULT 0,
+  `operatorId` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `password_blank`, `roleId`, `remember_token`, `isAdmin`, `operatorId`, `created_at`, `updated_at`) VALUES
+(1, 'Saki Gurey', 'zakigurey@gmail.com', NULL, '$2y$10$Igq5ndnpKLwEYy/yG2xP/OL/okT6U/SK25zegQJC5H8FcNciMbatG', 'Hagaag252', 1, 'OUF5e1J99uKez0IMuLCkGg82rtbnbLCb0DRUFZ53B1htNzfr6A6HPJ7cueRt', 1, 1, '2019-04-27 10:59:30', '2021-09-29 04:47:48'),
+(2, 'Saadaal', 'Saadal@gmail.com', NULL, '$2y$10$fdIRQakEdabgDJ.TfR9U7.rwoizHUMO3jwPKldPr5/9VqzSCcWxsu', '123', 2, NULL, 0, 2, '2019-04-29 18:52:48', '2021-12-21 03:03:56'),
+(3, 'Ali Ahmed Ali', 'Alihaile2020@gmail.com', NULL, '$2y$10$UAN2VC3kwwa3SjGB170NHuInW.W/4X6IfXeIj97.k1/95ArhZ3932', '123', 1, 'xNZLoYNkDM0GfzcETG8yjHIxQhvV9ZJHOEo9lkkLPivVMcWvair6T2jzJf2o', 1, 1, '2019-07-20 02:18:33', '2021-11-18 01:35:57'),
+(5, 'Shafeec', 'Shafeec2020@gmail.com', NULL, '$2y$10$3TN29m3NW1f3rvsoJk/Ysub61Td/fh4zAztfF8vqXiTp0js970dEO', '123', 1, NULL, 1, 1, '2019-08-25 07:42:27', '2021-09-29 04:48:30'),
+(6, 'Cumar Cali Faarax', 'sakigurey@gmail.com', NULL, '$2y$10$KogHAmd56h9aYl8AbcSOr.owgzmhlOGYcAAuvGKTY/AmnMTaPmgGy', 'Hagaag252', 2, NULL, 0, 2, '2021-09-18 05:31:23', '2021-09-29 04:48:36');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vehicles`
+--
+
+CREATE TABLE `vehicles` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `registeryNo` varchar(200) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `entityId` varchar(191) NOT NULL,
+  `vehicleType` varchar(191) NOT NULL,
+  `palletNo` varchar(191) DEFAULT NULL,
+  `refNo` varchar(191) DEFAULT NULL,
+  `propertyId` varchar(191) DEFAULT NULL,
+  `vehicleDescription` varchar(191) DEFAULT NULL,
+  `propertyValue` varchar(191) DEFAULT NULL,
+  `workZone` varchar(191) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `userId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `vehicles`
+--
+
+INSERT INTO `vehicles` (`id`, `registeryNo`, `created_at`, `updated_at`, `entityId`, `vehicleType`, `palletNo`, `refNo`, `propertyId`, `vehicleDescription`, `propertyValue`, `workZone`, `remarks`, `userId`) VALUES
+(1, 'MRGB/XDM/DGD/00001/2020', '2020-07-13 07:54:03', '2020-07-13 07:54:03', '2', 'baabuur', '231313232', '131323', 'AG3131', 'Hoomey', '10,000', 'Xamar', 'Hoomey Qalin ah', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `w_countries`
+--
+
+CREATE TABLE `w_countries` (
+  `country_id` int(11) NOT NULL,
+  `country_code` varchar(255) NOT NULL,
+  `country_name` varchar(255) NOT NULL,
+  `country_flag` varchar(255) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `w_countries`
+--
+
+INSERT INTO `w_countries` (`country_id`, `country_code`, `country_name`, `country_flag`) VALUES
+(1, '+93', 'Afghanistan', 'flag_1500831780.gif'),
+(2, '+355', 'Albania', 'flag_1500831815.gif'),
+(3, 'DZ', 'Algeria', ''),
+(4, 'DS', 'American Samoa', ''),
+(5, 'AD', 'Andorra', ''),
+(6, 'AO', 'Angola', ''),
+(7, 'AI', 'Anguilla', ''),
+(8, 'AQ', 'Antarctica', ''),
+(9, 'AG', 'Antigua and Barbuda', ''),
+(10, 'AR', 'Argentina', ''),
+(11, 'AM', 'Armenia', ''),
+(12, 'AW', 'Aruba', ''),
+(13, 'AU', 'Australia', ''),
+(14, 'AT', 'Austria', ''),
+(15, 'AZ', 'Azerbaijan', ''),
+(16, 'BS', 'Bahamas', ''),
+(17, 'BH', 'Bahrain', ''),
+(18, 'BD', 'Bangladesh', ''),
+(19, 'BB', 'Barbados', ''),
+(20, 'BY', 'Belarus', ''),
+(21, 'BE', 'Belgium', ''),
+(22, 'BZ', 'Belize', ''),
+(23, 'BJ', 'Benin', ''),
+(24, 'BM', 'Bermuda', ''),
+(25, 'BT', 'Bhutan', ''),
+(26, 'BO', 'Bolivia', ''),
+(27, 'BA', 'Bosnia and Herzegovina', ''),
+(28, 'BW', 'Botswana', ''),
+(29, 'BV', 'Bouvet Island', ''),
+(30, 'BR', 'Brazil', ''),
+(31, 'IO', 'British Indian Ocean Territory', ''),
+(32, 'BN', 'Brunei Darussalam', ''),
+(33, 'BG', 'Bulgaria', ''),
+(34, 'BF', 'Burkina Faso', ''),
+(35, 'BI', 'Burundi', ''),
+(36, 'KH', 'Cambodia', ''),
+(37, 'CM', 'Cameroon', ''),
+(38, 'CA', 'Canada', ''),
+(39, 'CV', 'Cape Verde', ''),
+(40, 'KY', 'Cayman Islands', ''),
+(41, 'CF', 'Central African Republic', ''),
+(42, 'TD', 'Chad', ''),
+(43, 'CL', 'Chile', ''),
+(44, 'CN', 'China', ''),
+(45, 'CX', 'Christmas Island', ''),
+(46, 'CC', 'Cocos (Keeling) Islands', ''),
+(47, 'CO', 'Colombia', ''),
+(48, 'KM', 'Comoros', ''),
+(49, 'CG', 'Congo', ''),
+(50, 'CK', 'Cook Islands', ''),
+(51, 'CR', 'Costa Rica', ''),
+(52, 'HR', 'Croatia (Hrvatska)', ''),
+(53, 'CU', 'Cuba', ''),
+(54, 'CY', 'Cyprus', ''),
+(55, 'CZ', 'Czech Republic', ''),
+(56, 'DK', 'Denmark', ''),
+(57, 'DJ', 'Djibouti', ''),
+(58, 'DM', 'Dominica', ''),
+(59, 'DO', 'Dominican Republic', ''),
+(60, 'TP', 'East Timor', ''),
+(61, 'EC', 'Ecuador', ''),
+(62, 'EG', 'Egypt', ''),
+(63, 'SV', 'El Salvador', ''),
+(64, 'GQ', 'Equatorial Guinea', ''),
+(65, 'ER', 'Eritrea', ''),
+(66, 'EE', 'Estonia', ''),
+(67, 'ET', 'Ethiopia', ''),
+(68, 'FK', 'Falkland Islands (Malvinas)', ''),
+(69, 'FO', 'Faroe Islands', ''),
+(70, 'FJ', 'Fiji', ''),
+(71, 'FI', 'Finland', ''),
+(72, 'FR', 'France', ''),
+(73, 'FX', 'France, Metropolitan', ''),
+(74, 'GF', 'French Guiana', ''),
+(75, 'PF', 'French Polynesia', ''),
+(76, 'TF', 'French Southern Territories', ''),
+(77, 'GA', 'Gabon', ''),
+(78, 'GM', 'Gambia', ''),
+(79, 'GE', 'Georgia', ''),
+(80, 'DE', 'Germany', ''),
+(81, 'GH', 'Ghana', ''),
+(82, 'GI', 'Gibraltar', ''),
+(83, 'GK', 'Guernsey', ''),
+(84, 'GR', 'Greece', ''),
+(85, 'GL', 'Greenland', ''),
+(86, 'GD', 'Grenada', ''),
+(87, 'GP', 'Guadeloupe', ''),
+(88, 'GU', 'Guam', ''),
+(89, 'GT', 'Guatemala', ''),
+(90, 'GN', 'Guinea', ''),
+(91, 'GW', 'Guinea-Bissau', ''),
+(92, 'GY', 'Guyana', ''),
+(93, 'HT', 'Haiti', ''),
+(94, 'HM', 'Heard and Mc Donald Islands', ''),
+(95, 'HN', 'Honduras', ''),
+(96, 'HK', 'Hong Kong', ''),
+(97, 'HU', 'Hungary', ''),
+(98, 'IS', 'Iceland', ''),
+(99, 'IN', 'India', ''),
+(100, 'IM', 'Isle of Man', ''),
+(101, 'ID', 'Indonesia', ''),
+(102, 'IR', 'Iran (Islamic Republic of)', ''),
+(103, 'IQ', 'Iraq', ''),
+(104, 'IE', 'Ireland', ''),
+(105, 'IL', 'Israel', ''),
+(106, 'IT', 'Italy', ''),
+(107, 'CI', 'Ivory Coast', ''),
+(108, 'JE', 'Jersey', ''),
+(109, 'JM', 'Jamaica', ''),
+(110, 'JP', 'Japan', ''),
+(111, 'JO', 'Jordan', ''),
+(112, 'KZ', 'Kazakhstan', ''),
+(113, 'KE', 'Kenya', ''),
+(114, 'KI', 'Kiribati', ''),
+(115, 'KP', 'Korea, Democratic People\'s Republic of', ''),
+(116, 'KR', 'Korea, Republic of', ''),
+(117, 'XK', 'Kosovo', ''),
+(118, 'KW', 'Kuwait', ''),
+(119, 'KG', 'Kyrgyzstan', ''),
+(120, 'LA', 'Lao People\'s Democratic Republic', ''),
+(121, 'LV', 'Latvia', ''),
+(122, 'LB', 'Lebanon', ''),
+(123, 'LS', 'Lesotho', ''),
+(124, 'LR', 'Liberia', ''),
+(125, 'LY', 'Libyan Arab Jamahiriya', ''),
+(126, 'LI', 'Liechtenstein', ''),
+(127, 'LT', 'Lithuania', ''),
+(128, 'LU', 'Luxembourg', ''),
+(129, 'MO', 'Macau', ''),
+(130, 'MK', 'Macedonia', ''),
+(131, 'MG', 'Madagascar', ''),
+(132, 'MW', 'Malawi', ''),
+(133, 'MY', 'Malaysia', ''),
+(134, 'MV', 'Maldives', ''),
+(135, 'ML', 'Mali', ''),
+(136, 'MT', 'Malta', ''),
+(137, 'MH', 'Marshall Islands', ''),
+(138, 'MQ', 'Martinique', ''),
+(139, 'MR', 'Mauritania', ''),
+(140, 'MU', 'Mauritius', ''),
+(141, 'TY', 'Mayotte', ''),
+(142, 'MX', 'Mexico', ''),
+(143, 'FM', 'Micronesia, Federated States of', ''),
+(144, 'MD', 'Moldova, Republic of', ''),
+(145, 'MC', 'Monaco', ''),
+(146, 'MN', 'Mongolia', ''),
+(147, 'ME', 'Montenegro', ''),
+(148, 'MS', 'Montserrat', ''),
+(149, 'MA', 'Morocco', ''),
+(150, 'MZ', 'Mozambique', ''),
+(151, 'MM', 'Myanmar', ''),
+(152, 'NA', 'Namibia', ''),
+(153, 'NR', 'Nauru', ''),
+(154, 'NP', 'Nepal', ''),
+(155, 'NL', 'Netherlands', ''),
+(156, 'AN', 'Netherlands Antilles', ''),
+(157, 'NC', 'New Caledonia', ''),
+(158, 'NZ', 'New Zealand', ''),
+(159, 'NI', 'Nicaragua', ''),
+(160, 'NE', 'Niger', ''),
+(161, 'NG', 'Nigeria', ''),
+(162, 'NU', 'Niue', ''),
+(163, 'NF', 'Norfolk Island', ''),
+(164, 'MP', 'Northern Mariana Islands', ''),
+(165, 'NO', 'Norway', ''),
+(166, 'OM', 'Oman', ''),
+(167, 'PK', 'Pakistan', ''),
+(168, 'PW', 'Palau', ''),
+(169, 'PS', 'Palestine', ''),
+(170, 'PA', 'Panama', ''),
+(171, 'PG', 'Papua New Guinea', ''),
+(172, 'PY', 'Paraguay', ''),
+(173, 'PE', 'Peru', ''),
+(174, 'PH', 'Philippines', ''),
+(175, 'PN', 'Pitcairn', ''),
+(176, 'PL', 'Poland', ''),
+(177, 'PT', 'Portugal', ''),
+(178, 'PR', 'Puerto Rico', ''),
+(179, 'QA', 'Qatar', ''),
+(180, 'RE', 'Reunion', ''),
+(181, 'RO', 'Romania', ''),
+(182, 'RU', 'Russian Federation', ''),
+(183, 'RW', 'Rwanda', ''),
+(184, 'KN', 'Saint Kitts and Nevis', ''),
+(185, 'LC', 'Saint Lucia', ''),
+(186, 'VC', 'Saint Vincent and the Grenadines', ''),
+(187, 'WS', 'Samoa', ''),
+(188, 'SM', 'San Marino', ''),
+(189, 'ST', 'Sao Tome and Principe', ''),
+(190, 'SA', 'Saudi Arabia', ''),
+(191, 'SN', 'Senegal', ''),
+(192, 'RS', 'Serbia', ''),
+(193, 'SC', 'Seychelles', ''),
+(194, 'SL', 'Sierra Leone', ''),
+(195, 'SG', 'Singapore', ''),
+(196, 'SK', 'Slovakia', ''),
+(197, 'SI', 'Slovenia', ''),
+(198, 'SB', 'Solomon Islands', ''),
+(199, 'SO', 'Somalia', ''),
+(200, 'ZA', 'South Africa', ''),
+(201, 'GS', 'South Georgia South Sandwich Islands', ''),
+(202, 'ES', 'Spain', ''),
+(203, 'LK', 'Sri Lanka', ''),
+(204, 'SH', 'St. Helena', ''),
+(205, 'PM', 'St. Pierre and Miquelon', ''),
+(206, 'SD', 'Sudan', ''),
+(207, 'SR', 'Suriname', ''),
+(208, 'SJ', 'Svalbard and Jan Mayen Islands', ''),
+(209, 'SZ', 'Swaziland', ''),
+(210, 'SE', 'Sweden', ''),
+(211, 'CH', 'Switzerland', ''),
+(212, 'SY', 'Syrian Arab Republic', ''),
+(213, 'TW', 'Taiwan', ''),
+(214, 'TJ', 'Tajikistan', ''),
+(215, 'TZ', 'Tanzania, United Republic of', ''),
+(216, 'TH', 'Thailand', ''),
+(217, 'TG', 'Togo', ''),
+(218, 'TK', 'Tokelau', ''),
+(219, 'TO', 'Tonga', ''),
+(220, 'TT', 'Trinidad and Tobago', ''),
+(221, 'TN', 'Tunisia', ''),
+(222, 'TR', 'Turkey', ''),
+(223, 'TM', 'Turkmenistan', ''),
+(224, 'TC', 'Turks and Caicos Islands', ''),
+(225, 'TV', 'Tuvalu', ''),
+(226, 'UG', 'Uganda', ''),
+(227, 'UA', 'Ukraine', ''),
+(228, 'AE', 'United Arab Emirates', ''),
+(229, 'GB', 'United Kingdom', ''),
+(230, 'US', 'United States', ''),
+(231, 'UM', 'United States minor outlying islands', ''),
+(232, 'UY', 'Uruguay', ''),
+(233, 'UZ', 'Uzbekistan', ''),
+(234, 'VU', 'Vanuatu', ''),
+(235, 'VA', 'Vatican City State', ''),
+(236, 'VE', 'Venezuela', ''),
+(237, 'VN', 'Vietnam', ''),
+(238, 'VG', 'Virgin Islands (British)', ''),
+(239, 'VI', 'Virgin Islands (U.S.)', ''),
+(240, 'WF', 'Wallis and Futuna Islands', ''),
+(241, 'EH', 'Western Sahara', ''),
+(242, 'YE', 'Yemen', ''),
+(243, 'ZR', 'Zaire', ''),
+(244, 'ZM', 'Zambia', ''),
+(245, 'ZW', 'Zimbabwe', '');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `agreements`
+--
+ALTER TABLE `agreements`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `degrees`
+--
+ALTER TABLE `degrees`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `entities`
+--
+ALTER TABLE `entities`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `entitymatches`
+--
+ALTER TABLE `entitymatches`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `inheritancerights`
+--
+ALTER TABLE `inheritancerights`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `legals`
+--
+ALTER TABLE `legals`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `marriagerights`
+--
+ALTER TABLE `marriagerights`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `migrations`
+--
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `mortgages`
+--
+ALTER TABLE `mortgages`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `mortgages_deleted`
+--
+ALTER TABLE `mortgages_deleted`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `mortgages_log`
+--
+ALTER TABLE `mortgages_log`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `notifications_notifiable_type_notifiable_id_index` (`notifiable_type`,`notifiable_id`);
+
+--
+-- Indexes for table `operators`
+--
+ALTER TABLE `operators`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `ownerships`
+--
+ALTER TABLE `ownerships`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `properties`
+--
+ALTER TABLE `properties`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `propertycases`
+--
+ALTER TABLE `propertycases`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `rentagreements`
+--
+ALTER TABLE `rentagreements`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `roles_name_unique` (`name`);
+
+--
+-- Indexes for table `sqns`
+--
+ALTER TABLE `sqns`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `INDEX_DG_UNIQUE` (`DG`);
+
+--
+-- Indexes for table `tblbranches`
+--
+ALTER TABLE `tblbranches`
+  ADD PRIMARY KEY (`BranchID`);
+
+--
+-- Indexes for table `tbldistricts`
+--
+ALTER TABLE `tbldistricts`
+  ADD PRIMARY KEY (`DistrictID`);
+
+--
+-- Indexes for table `tbldivisions`
+--
+ALTER TABLE `tbldivisions`
+  ADD PRIMARY KEY (`DivisionID`);
+
+--
+-- Indexes for table `transfers`
+--
+ALTER TABLE `transfers`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `transfers_deleted`
+--
+ALTER TABLE `transfers_deleted`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `transfers_log`
+--
+ALTER TABLE `transfers_log`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `transfer_entity`
+--
+ALTER TABLE `transfer_entity`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `users_email_unique` (`email`);
+
+--
+-- Indexes for table `vehicles`
+--
+ALTER TABLE `vehicles`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `w_countries`
+--
+ALTER TABLE `w_countries`
+  ADD PRIMARY KEY (`country_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `agreements`
+--
+ALTER TABLE `agreements`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `degrees`
+--
+ALTER TABLE `degrees`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `entities`
+--
+ALTER TABLE `entities`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `entitymatches`
+--
+ALTER TABLE `entitymatches`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
+-- AUTO_INCREMENT for table `inheritancerights`
+--
+ALTER TABLE `inheritancerights`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `legals`
+--
+ALTER TABLE `legals`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `marriagerights`
+--
+ALTER TABLE `marriagerights`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
+-- AUTO_INCREMENT for table `mortgages`
+--
+ALTER TABLE `mortgages`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+
+--
+-- AUTO_INCREMENT for table `mortgages_deleted`
+--
+ALTER TABLE `mortgages_deleted`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `mortgages_log`
+--
+ALTER TABLE `mortgages_log`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `operators`
+--
+ALTER TABLE `operators`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `ownerships`
+--
+ALTER TABLE `ownerships`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `properties`
+--
+ALTER TABLE `properties`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `propertycases`
+--
+ALTER TABLE `propertycases`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `rentagreements`
+--
+ALTER TABLE `rentagreements`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `sqns`
+--
+ALTER TABLE `sqns`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `transfers`
+--
+ALTER TABLE `transfers`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `transfers_deleted`
+--
+ALTER TABLE `transfers_deleted`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `transfers_log`
+--
+ALTER TABLE `transfers_log`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `vehicles`
+--
+ALTER TABLE `vehicles`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `w_countries`
+--
+ALTER TABLE `w_countries`
+  MODIFY `country_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=246;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -47,7 +47,19 @@ $lang["delete_visitor"] = "Delete Visitor";
 $lang["edit_visitor"] = "Edit Visitor";
 $lang["two_days"] = "Two Days";
 $lang["access_duration"] = "Access Duration";
-$lang["show_info"] = "Show Information";
+$lang["show_info"] = "Show Request Information";
+$lang["access_request"] = "Access Request";
+$lang["access_requests"] = "Access Requests";
+$lang["add_access_request"] = "Add Access Request";
+$lang["add_access"] = "Add Access";
+$lang["add_request"] = "Add Request";
+$lang["can_access_visitors_information"] = "Can access visitors information";
+$lang["yes_all_visitors"] = "Yes, all visitors information";
+$lang["yes_only_own_visitors"] = "Yes, only own visitor's information";
+
+$lang["can_access_requests_information"] = "Can manage access request information";
+$lang["yes_all_requests"] = "Yes, all access request information";
+$lang["yes_only_own_requests"] = "Yes, only own access request information";
 
 
 ///
@@ -1370,14 +1382,14 @@ $lang["recurring_task_created_via_cron_job"] = "Recurring task created via Cron 
 $lang["notification_recurring_task_created_via_cron_job"] = "New task created";
 $lang["repeat_type"] = "Repeat type";
 $lang["lead_status"] = "Document status";
-$lang["add_lead_status"] = "Add lead status";
-$lang["edit_lead_status"] = "Edit lead status";
-$lang["delete_lead_status"] = "Delete lead status";
+$lang["add_lead_status"] = "Add document status";
+$lang["edit_lead_status"] = "Edit document status";
+$lang["delete_lead_status"] = "Delete document status";
 $lang["owner"] = "Owner";
 $lang["make_client"] = "Make client";
 $lang["client_contacts"] = "Client contacts";
 $lang["lead_contacts"] = "Document contacts";
-$lang["add_a_lead"] = "Add a lead";
+$lang["add_a_lead"] = "Add a document";
 $lang["source"] = "Source";
 $lang["lead_source"] = "Document source";
 $lang["add_lead_source"] = "Add document source";
@@ -1389,8 +1401,8 @@ $lang["do_not_merge"] = "Do not merge";
 $lang["merge_custom_fields_help_message"] = "If there is any similar custom fields exists for %s, this values will be added to those. Otherwise, this will create new custom fields for %s and add values to those.";
 $lang["lead_created"] = "Document created";
 $lang["notification_lead_created"] = "Created a new document.";
-$lang["client_created_from_lead"] = "Client created from lead";
-$lang["notification_client_created_from_lead"] = "Converted a lead to client.";
+$lang["client_created_from_lead"] = "Client created from document";
+$lang["notification_client_created_from_lead"] = "Converted a document to client.";
 $lang["project_deadline"] = "Project deadline";
 $lang["task_deadline"] = "Task deadline";
 $lang["event_type"] = "Event type";
@@ -1436,7 +1448,7 @@ $lang["the_invoices_id_must_be_larger_then_last_invoice_id"] = "The invoices ID 
 
 $lang["client_dashboard_help_message"] = "This will be the default dashboard for all clients. Please note that, the information you're seeing here in the widgets, isn't any actual infromation of clients.";
 
-$lang["send_to_lead"] = "Send to lead";
+$lang["send_to_lead"] = "Send to document";
 $lang["lead"] = "Document";
 $lang["leads"] = "Documents";
 $lang["add_lead"] = "Add Document";
@@ -1691,8 +1703,8 @@ $lang["copy_sub_tasks"] = "Copy sub tasks";
 
 $lang["can_update_only_assigned_tasks_status"] = "Can update only assigned tasks status";
 
-$lang["import_leads"] = "Import leads";
-$lang["import_lead_error_contact_name"] = "Contact first name and last name is both required to add a lead contact.";
+$lang["import_leads"] = "Import documents";
+$lang["import_lead_error_contact_name"] = "Contact first name and last name is both required to add a document contact.";
 
 $lang["deadline_must_be_equal_or_greater_than_start_date"] = "Deadline must be equal or greater than Start date.";
 
@@ -1827,8 +1839,8 @@ $lang["notification_order_status_updated"] = "Order status has been updated.";
 
 $lang["add_more_items"] = "Add more items";
 
-$lang["yes_only_own_leads"] = "Yes, only own leads";
-$lang["yes_all_leads"] = "Yes, all leads";
+$lang["yes_only_own_leads"] = "Yes, only own Documents";
+$lang["yes_all_leads"] = "Yes, all Documents";
 
 $lang["yes_only_own_clients"] = "Yes, only own clients";
 $lang["yes_all_clients"] = "Yes, all clients";
@@ -1863,6 +1875,7 @@ $lang["open_tickets_list"] = "Open tickets list";
 
 $lang["login_attempt_failed"] = "Login attempt failed";
 $lang["profile_image_error_message"] = "The image should be 200x200px.";
+$lang["visitor_image_error_message"] = "The image should be less than 2MB.";
 
 $lang["re_captcha_info_text"] = "Before you logout, please open a new browser and make sure the reCaptcha is working.";
 $lang["yes_assigned_tickets_only"] = "Yes, assigned tickets only";
@@ -1971,7 +1984,7 @@ $lang["all_tasks"] = "All tasks";
 $lang["user_roles"] = "User Roles";
 $lang["edit_user_role"] = "Edit user role";
 
-$lang["total_leads"] = "Total leads";
+$lang["total_leads"] = "Total Documents";
 
 $lang["copy_link"] = "Copy link";
 $lang["copy_comment_link"] = "Copy comment link";
@@ -2031,7 +2044,7 @@ $lang["add_new_project_member"] = "Add new project member";
 
 $lang["field_type_time"] = "Time";
 $lang["client_can_assign_tasks"] = "Client can assign tasks?";
-$lang["can_create_lead_from_public_form"] = "Can create lead from public form";
+$lang["can_create_lead_from_public_form"] = "Can create Document from public form";
 $lang["lead_html_form_code"] = "Document creation HTML form code";
 
 $lang["enable_comments_on_estimates"] = "Enable comments on estimates";
@@ -2277,7 +2290,7 @@ $lang["other"] = "Other";
 $lang["print_estimate"] = "Print estimate";
 
 $lang["the_person_who_will_manage_this_client"] = "The person who'll manage this client.";
-$lang["the_person_who_will_manage_this_lead"] = "The person who'll manage this lead.";
+$lang["the_person_who_will_manage_this_lead"] = "The person who'll manage this Document.";
 
 $lang["language_key"] = "Language Key";
 $lang["left_menu_language_key_recommendation_help_text"] = "Recommended to use any prefix like left_menu_";
@@ -2297,7 +2310,7 @@ $lang["no_announcement_yet"] = "No announcement yet!";
 $lang["team_members_overview"] = "Employees Overview";
 $lang["on_leave_today"] = "On leave today";
 
-$lang["enable_embedded_form_to_get_leads"] = "Enable embedded form to get leads";
+$lang["enable_embedded_form_to_get_leads"] = "Enable embedded form to get documents";
 $lang["please_submit_the_form"] = "Please submit the form";
 $lang["show_in_embedded_form"] = "Show in embedded form";
 

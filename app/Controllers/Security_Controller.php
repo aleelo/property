@@ -125,6 +125,10 @@ class Security_Controller extends App_Controller {
 
     //access only allowed team members
     protected function access_only_allowed_members() {
+
+        // var_dump($this->module_group);
+        // var_dump($this->access_type);
+        // die();
         if ($this->access_type === "all") {
             return true; //can access if user has permission
         } else if ($this->module_group === "ticket" && ($this->access_type === "specific" || $this->access_type === "assigned_only")) {

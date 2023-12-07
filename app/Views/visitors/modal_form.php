@@ -25,8 +25,18 @@
 
             $('#add_visitors_table').show();
 
-            var actions = "<button type='button' class='btn btn-primary text-white mt-2 upload-file-button float-start me-auto btn-sm round' style='color:#7988a2;margin-right:10px !important;'><i data-feather='camera' class='icon-16'></i></button>";
+            //upload button
+            var actions = "<div class='d-inline m-2' data-bs-toggle='tooltip' title='<?php echo app_lang("upload"); ?> Image' data-placement='right'>"+
+               "<input type='file' name='visitor_image_file_"+ k +"' id='visitor_image_file_upload_"+ k +"' class='no-outline hidden-input-file upload' onChange='$(this).next().show();'>" +
+               "<span style='position: absolute;margin-left: 15px;font-weight: bold;margin-top: -3px;border: solid 1px lightseagreen;border-radius: 50px;padding: 1px;width: 8px;height: 8px;background: lightseagreen;display:none;' class='file-indicator'></span>"+
+                "<label for='visitor_image_file_upload_"+ k +"' class='clickable'>"+
+                    "<span class='btn btn-primary btn-sm ml2 round mt-2'><i data-feather='camera' class='icon-16'></i></span>"+
+                "</label>"+
+            "</div>";
+
+            //remove button
             actions += "<button type='button' class='btn btn-danger btn-sm mt-2  round ml-2 p-1 ' onclick='$(this).parent().parent().remove();k--;'><i data-feather='minus-circle' class='icon'></i></button>";
+
             $('#add_visitors_table tbody').append(
                 "<tr class=''>"+
                 "<td>" + k + "</td>"+
@@ -36,15 +46,16 @@
                     "<td style='width: 110px;'>" + actions + "</td>"+
                 "</tr>"
             );
-            k = k+1;
 
-
-            var uploadUrl = "<?php echo get_uri("visitors/upload_file"); ?>";
-            var validationUri = "<?php echo get_uri("visitors/validate_leaves_file"); ?>";
-
-            var dropzone = attachDropzoneWithForm("#leaves-dropzone", uploadUrl, validationUri);
+          
 
             feather.replace();
+
+            // $('.upload').on('change', function(){
+            //     $('#file-indicator_'+k).show();
+            // });
+
+            k = k+1;
         });
 
         
