@@ -44,8 +44,10 @@ class Documents extends Security_Controller
 
     public function index()
     {
-        $this->access_only_allowed_members();
-        $this->check_module_availability("module_lead");
+        
+       $this->check_access('lead');
+        // $this->access_only_allowed_members();
+        // $this->check_module_availability("module_lead");
 
         $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
         $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("leads", $this->login_user->is_admin, $this->login_user->user_type);
@@ -463,7 +465,7 @@ class Documents extends Security_Controller
 
     public function list_data()
     {
-        $this->access_only_allowed_members();
+        $created_by = $this->check_access('lead');
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
 
         // $show_own_leads_only_user_id = $this->show_own_leads_only_user_id();
@@ -513,20 +515,20 @@ class Documents extends Security_Controller
             $result = $this->db->query("select d.*,t.name as template,concat(u.first_name,' ',u.last_name) user from rise_documents d 
             LEFT JOIN rise_users u on d.created_by = u.id 
             LEFT JOIN rise_templates t on d.template = t.id 
-            where $where order by $order_by $limit_offset");
+            where d.created_by LIKE '$created_by' and $where order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_documents where deleted=0")->getRow()->affected;
+            $total_rows =$this->db->query("select count(*) as affected from rise_documents where created_by LIKE '$created_by' and deleted=0")->getRow()->affected;
             $result = array();
 
         } else {
             $result = $this->db->query("select d.*,t.name as template,concat(u.first_name,' ',u.last_name) user from rise_documents d 
             LEFT JOIN rise_users u on d.created_by = u.id 
             LEFT JOIN rise_templates t on d.template = t.id  
-            where d.deleted=0");
+            where d.created_by LIKE '$created_by' and  d.deleted=0");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_documents where deleted=0")->getRow()->affected;
+            $total_rows =$this->db->query("select count(*) as affected from rise_documents where created_by LIKE '$created_by' and  deleted=0")->getRow()->affected;
             $result = array();
         }
 

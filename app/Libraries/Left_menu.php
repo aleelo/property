@@ -218,7 +218,7 @@ class Left_menu {
             $module_knowledge_base = get_setting("module_knowledge_base") == "1" ? true : false;
 
             //prepere the help and suppor menues
-            if ($module_help || $module_knowledge_base) {
+            if (($module_help || $module_knowledge_base) && $manage_help_and_knowledge_base) {
 
                 $help_knowledge_base_menues = array();
                 $main_url = "help";

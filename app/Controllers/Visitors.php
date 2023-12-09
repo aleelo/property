@@ -46,6 +46,8 @@ class Visitors extends Security_Controller
     {
         $this->access_only_allowed_members();
         $this->check_module_availability("module_visitor");
+        
+        $this->check_access('visitor');
 
         $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
         $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("leads", $this->login_user->is_admin, $this->login_user->user_type);
@@ -63,7 +65,8 @@ class Visitors extends Security_Controller
     public function modal_form()
     {
         $lead_id = $this->request->getPost('id');
-        // $this->validate_lead_access($lead_id);
+        $created_by = $this->check_access('visitor');
+
         $view_data = $this->make_lead_modal_form_data($lead_id);
 
         return $this->template->view('visitors/modal_form', $view_data);
@@ -735,7 +738,9 @@ class Visitors extends Security_Controller
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
 
         // $show_own_leads_only_user_id = $this->show_own_leads_only_user_id();
-       
+        
+        // app_redirect("forbidden");
+        $created_by = $this->check_access('visitor');
         $options = append_server_side_filtering_commmon_params([]);
 
 
@@ -779,19 +784,19 @@ class Visitors extends Security_Controller
 
             $result = $this->db->query("select v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v 
             LEFT JOIN rise_users u on v.created_by = u.id 
-            where $where order by $order_by $limit_offset");
+            where $where and v.created_by LIKE '$created_by' order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_visitors where deleted=0")->getRow()->affected;
+            $total_rows =$this->db->query("select count(*) as affected from rise_visitors where created_by LIKE '$created_by' and deleted=0")->getRow()->affected;
             $result = array();
 
         } else {
             $result = $this->db->query("select v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v 
             LEFT JOIN rise_users u on v.created_by = u.id 
-            where v.deleted=0");
+            where v.created_by LIKE '$created_by' and v.deleted=0");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_visitors where deleted=0")->getRow()->affected;
+            $total_rows =$this->db->query("select count(*) as affected from rise_visitors where created_by LIKE '$created_by' and deleted=0")->getRow()->affected;
             $result = array();
         }
 

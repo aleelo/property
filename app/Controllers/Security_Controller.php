@@ -782,9 +782,35 @@ class Security_Controller extends App_Controller {
         }
     }
 
+    public function check_access($name = null){
+        
+        $this->check_module_availability('module_'.$name);
+        
+        $permissions = $this->login_user->permissions;
+
+        $perm = get_array_value($permissions, $name);
+        
+        if ($this->login_user->is_admin || $perm == "all") {
+            $created_by = '%';
+        } else if ($perm == "own") {
+            $created_by = $this->login_user->id;
+        }else{
+            
+            app_redirect("forbidden");
+        }
+
+        return $created_by;
+
+    }
+
     protected function can_access_this_lead($lead_id = 0) {
         $permissions = $this->login_user->permissions;
 
+        // var_dump(get_array_value($permissions, "lead"));
+        // var_dump($lead_id);
+        // var_dump(!$lead_id);
+        // die();
+        
         if ($this->login_user->is_admin) {
             return true;
         } else if (get_array_value($permissions, "lead") == "all") {
@@ -792,8 +818,9 @@ class Security_Controller extends App_Controller {
         } else if (!$lead_id && get_array_value($permissions, "lead")) {
             return true;
         } else if ($lead_id) {
-            $lead_info = $this->Clients_model->get_one($lead_id);
-            if ($lead_info->id && get_array_value($permissions, "lead") == "own" && $lead_info->owner_id == $this->login_user->id) {
+            $lead_info = $this->Documents_model->get_one($lead_id); 
+            
+            if ($lead_info->id && get_array_value($permissions, "lead") == "own" && $lead_info->created_by == $this->login_user->id) {
                 return true;
             }
         }
@@ -802,6 +829,12 @@ class Security_Controller extends App_Controller {
     protected function show_own_leads_only_user_id() {
         if ($this->login_user->user_type === "staff") {
             return get_array_value($this->login_user->permissions, "lead") == "own" ? $this->login_user->id : false;
+        }
+    }
+
+    protected function get_own_user_id($permission = null) {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, $permission) == "own" ? $this->login_user->id : false;
         }
     }
 
