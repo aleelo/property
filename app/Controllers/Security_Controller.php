@@ -853,9 +853,9 @@ class Security_Controller extends App_Controller {
 
     //prepare the dropdown list of roles
     protected function _get_roles_dropdown() {
-        $role_dropdown = array(
-            "0" => app_lang('team_member')
-        );
+        // $role_dropdown = array(
+        //     "0" => app_lang('team_member')
+        // );
 
         if ($this->login_user->is_admin) {
             $role_dropdown["admin"] = app_lang('admin'); //static role
