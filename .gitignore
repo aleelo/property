@@ -132,3 +132,4 @@ nb-configuration.xml
 /.phpunit.*.cache
 
 /.php-cs-fixe
+files/visitors/

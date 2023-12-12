@@ -8,6 +8,9 @@ use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use chillerlan\QRCode\Output\QRImageWithLogo;
+use PhpOffice\PhpWord\Element\Table;
+use PhpOffice\PhpWord\SimpleType\Border;
+use PhpOffice\PhpWord\SimpleType\TblWidth;
 
 class Visitors extends Security_Controller
 {
@@ -330,7 +333,7 @@ class Visitors extends Security_Controller
                             VALUES('$visitor_name[$k]','$visitor_mobile[$k]','$vehicle[$k]',$save_id)");
                 $insert_id = $this->db->insertID();
 
-                if ($_FILES) {
+                if (get_array_value($_FILES,"visitor_image_file_".$i)) {
                             
                     $visitor_image_file = get_array_value($_FILES,"visitor_image_file_".$i);
                     $image_file_name = get_array_value($visitor_image_file, "tmp_name");
@@ -356,6 +359,7 @@ class Visitors extends Security_Controller
             $detail_info = $this->db->query("SELECT vd.* from rise_visitors v left join rise_visitors_detail vd on v.id=vd.visitor_id where v.id = $save_id")->getResult();
 
             $arr_table = [];
+            $image_block = [];
             $index = 0;
 
             foreach($detail_info as $d){
@@ -365,6 +369,11 @@ class Visitors extends Security_Controller
                                 'visitorName'=>$d->visitor_name,
                                 'visitorMobile'=>$d->mobile,
                                 'vehicle'=>$d->vehicle_details,
+                                'image'=>$d->image
+                            );
+                $image_block[] = array(
+                                'id'=>$index,
+                                'name'=>$d->visitor_name,
                                 'image'=>$d->image
                             );
             }
@@ -384,6 +393,7 @@ class Visitors extends Security_Controller
                 'date' => date('Y-m-d'),
                 'visit_date' => date('h:i a, F d, Y',strtotime($start_date.' '.$this->request->getPost('visit_time'))),
                 'table' => $arr_table,
+                'images_table' => $image_block,
                 "created_at" => date('Y-m-d H:i:s')
             ];
     
@@ -506,9 +516,9 @@ class Visitors extends Security_Controller
         require_once ROOTPATH . 'vendor/autoload.php';
 
         // Creating the new document...
-
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
         $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'Views/documents/'.$data['template']);
-
+       
         $ext = pathinfo(APPPATH.'Views/documents/'.$data['template'],PATHINFO_EXTENSION);
         $save_as_name = $data['id'].'_'.date('m').'_'.date('Y').'.'.$ext;
         
@@ -530,6 +540,8 @@ class Visitors extends Security_Controller
             'id',
             $data['table']
         );
+
+
 
         $options = new QROptions([
             'eccLevel' => EccLevel::H,
@@ -560,24 +572,69 @@ class Visitors extends Security_Controller
                 'ratio' => false,
             ]);
 
-            if(count($data['table'])){
-                foreach($data['table'] as $t){
+            // if(count($data['images_table'])){
+            //     foreach($data['table'] as $t){
                    
-                    if($t['image']){
-                        $image = @unserialize($t['image']);
-                        $image = $image['file_name'];
-                    }else{
-                        $image = 'avatar.jpg';
-                    }
+            //         if($t['image']){
+            //             $image = @unserialize($t['image']);
+            //             $image = $image['file_name'];
+            //         }else{
+            //             $image = 'avatar.jpg';
+            //         }
                     
-                    $template->setImageValue('avatar#'.$t['id'],
-                        [
-                            'path' => ROOTPATH . 'files/visitors/'.$image,
-                            'width' => '30',
-                            'height' => '30',
-                            'ratio' => false,
-                        ]);
+            //         $template->setImageValue('avatar#'.$t['id'],
+            //             [
+            //                 'path' => ROOTPATH . 'files/visitors/'.$image,
+            //                 'width' => '30',
+            //                 'height' => '30',
+            //                 'ratio' => false,
+            //             ]);
+            //     }
+            // }
+
+            if(count($data['images_table'])){
+
+                    $main_table = new Table(['borderSize' => 12, 'borderColor' => '4691f9', 
+                                'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 
+                                'cellSpacing' => 120]);
+
+                    $rowStyle = ['cantSplit' => false];
+                    $main_table->addRow(null);
+                   $k = 1;
+                foreach($data['images_table'] as $t){
+                            
+                    if($k == 4){
+                        $main_table->addRow(null);
+                    }
+
+                    $img_cell = $main_table->addCell(3000);//, ['borderColor' => '4691f9','borderSize'=>6]
+                    $img_cell->addText('${avatar#'.$k.'}');
+                    // $img_cell->addImage('http://localhost/rise/files/visitors/'.$image, ['width' => 80, 'height' => 80]);
+                    
+                    $img_cell->addText($t['id'].'. '.$t['name']);
+
+                    $k = $k+1;
                 }
+
+                $template->setComplexBlock('images_table',$main_table);
+                    $k = 1;
+                foreach($data['images_table'] as $t){
+                     if($t['image']){
+                         $image = @unserialize($t['image']);
+                         $image = $image['file_name'];
+                     }else{
+                         $image = 'avatar.jpg';
+                     }
+
+                     $template->setImageValue('avatar#'.$k,
+                                 [
+                                     'path' => ROOTPATH . 'files/visitors/'.$image,
+                                     'width' => '100',
+                                     'height' => '100',
+                                     'ratio' => false,
+                                 ]);
+                    $k = $k+1;
+                    }
             }
 
         $template->saveAs($path_absolute);

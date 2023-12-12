@@ -1189,7 +1189,8 @@ $lang["available_widgets"] = "Available Widgets";
 $lang["your_selected_widgets_will_be_appear_here"] = "Your selected widgets will be appear here";
 $lang["drag_and_drop_widgets_here"] = "Drag and drop widgets here";
 $lang["no_more_widgets_available"] = "No more widgets available";
-$lang["invalid_widget_access"] = "You don't have permission to access this widget";
+// $lang["invalid_widget_access"] = "You don't have permission to access this widget";
+$lang["invalid_widget_access"] = "You don't have permission to access this section";
 
 $lang["dashboard_title"] = "Dashboard title";
 $lang["edit_dashboard"] = "Edit dashboard";
