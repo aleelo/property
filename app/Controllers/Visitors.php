@@ -602,12 +602,12 @@ class Visitors extends Security_Controller
                     $main_table->addRow(null);
                    $k = 1;
                 foreach($data['images_table'] as $t){
-                            
-                    if($k == 4){
+                           $j = $k-1; 
+                    if($j%4 == 0 && $j != 0){
                         $main_table->addRow(null);
                     }
 
-                    $img_cell = $main_table->addCell(3000);//, ['borderColor' => '4691f9','borderSize'=>6]
+                    $img_cell = $main_table->addCell(2000);//, ['borderColor' => '4691f9','borderSize'=>6]
                     $img_cell->addText('${avatar#'.$k.'}');
                     // $img_cell->addImage('http://localhost/rise/files/visitors/'.$image, ['width' => 80, 'height' => 80]);
                     
