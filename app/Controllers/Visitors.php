@@ -49,14 +49,15 @@ class Visitors extends Security_Controller
     {
         $this->access_only_allowed_members();
         $this->check_module_availability("module_visitor");
+        $role = $this->get_user_role();
+        $view_data['can_add_requests'] = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin'; 
+
         
-        $this->check_access('visitor');
+        // $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
+        // $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("leads", $this->login_user->is_admin, $this->login_user->user_type);
 
-        $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
-        $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("leads", $this->login_user->is_admin, $this->login_user->user_type);
-
-        $view_data['lead_statuses'] = $this->Lead_status_model->get_details()->getResult();
-        $view_data['lead_sources'] = $this->Lead_source_model->get_details()->getResult();
+        // $view_data['lead_statuses'] = $this->Lead_status_model->get_details()->getResult();
+        // $view_data['lead_sources'] = $this->Lead_source_model->get_details()->getResult();
         $view_data['owners_dropdown'] = $this->_get_owners_dropdown("filter");
         $view_data['labels_dropdown'] = json_encode($this->make_labels_dropdown("client", "", true));
 
@@ -68,7 +69,6 @@ class Visitors extends Security_Controller
     public function modal_form()
     {
         $lead_id = $this->request->getPost('id');
-        $created_by = $this->check_access('visitor');
 
         $view_data = $this->make_lead_modal_form_data($lead_id);
 
@@ -738,7 +738,7 @@ class Visitors extends Security_Controller
         // $this->validate_lead_access($id);
         $row = $this->db->query("SELECT * FROM rise_visitors where id = $id")->getRow();
 
-        if($row->status != 'Pending'){
+        if($row->status == 'Approved'){
             echo json_encode(array("success" => false, 'message' => 'Record CAN NOT be Deleted once approved.'));
             exit;
         }
@@ -757,6 +757,10 @@ class Visitors extends Security_Controller
     public function visitor_details(){
 
         $id = $this->request->getPost('id');
+
+        $res = $this->check_access('visitor');
+        $role = get_array_value($res, 'role');
+        $data['can_approve_requests'] = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin'; 
 
         $visitor_info = $this->db->query("SELECT v.*,cb.image as created_avatar,ab.image as approved_avatar,rb.image as rejected_avatar,
                         concat(cb.first_name,' ',cb.last_name) as created_by,concat(rb.first_name,' ',rb.last_name) as rejected_by,
@@ -902,6 +906,10 @@ class Visitors extends Security_Controller
 
     private function _make_row($data)
     {
+        
+        $role = $this->get_user_role();
+        $can_add_requests = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin'; 
+
         //primary contact
         // $image_url = get_avatar($data->contact_avatar);
         // $contact = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->primary_contact";
@@ -947,12 +955,13 @@ class Visitors extends Security_Controller
         $webUrl = empty($doc) ? '' : $doc->webUrl;
 
         $link = "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
-
+        $delLink = $can_add_requests == true ? js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_visitor'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("visitors/delete"), "data-action" => "delete-confirmation")) : '';
+        
         $row_data[] = modal_anchor(get_uri("visitors/visitor_details"), "<i data-feather='info' class='icon-16'></i>", array("class" => "edit",
             "title" => app_lang('show_info'), "data-post-id" => $data->id))
             //.modal_anchor(get_uri("visitors/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit",
             //"title" => app_lang('edit_lead'), "data-post-id" => $data->id))
-        . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_visitor'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("visitors/delete"), "data-action" => "delete-confirmation"))
+        . $delLink
         . $link;
 
         return $row_data;

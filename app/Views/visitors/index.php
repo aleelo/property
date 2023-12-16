@@ -9,7 +9,7 @@
 
                 <?php //echo modal_anchor(get_uri("visitors/template_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_template'), array("class" => "btn btn-outline-light", "title" => app_lang('manage_labels'), "data-post-type" => "client")); ?>
                 <?php //echo modal_anchor(get_uri("visitors/import_modal_form"), "<i data-feather='upload' class='icon-16'></i> " . app_lang('import_leads'), array("class" => "btn btn-default", "title" => app_lang('import_leads'))); ?> 
-                <?php echo modal_anchor(get_uri("visitors/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_request'), array("class" => "btn btn-default", "title" => app_lang('add_access_request'))); ?>
+                <?php echo $can_add_requests == true ? modal_anchor(get_uri("visitors/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_request'), array("class" => "btn btn-default", "title" => app_lang('add_access_request'))) : ''; ?>
             </div>
         </div>
     </ul>

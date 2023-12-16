@@ -121,7 +121,7 @@
     <!-- <?php //if ($visitor_info->status === "Pending" && $login_user->id === $visitor_info->applicant_id) { ?>
         <button data-status="canceled" type="submit" class="btn btn-danger btn-sm update-leave-status"><span data-feather="x-circle" class="icon-16"></span> <?php echo app_lang('cancel'); ?></button>
     <?php //} ?>    -->
-    <?php if ($visitor_info->status === "Pending") { ?>
+    <?php if ($visitor_info->status === "Pending" && $can_approve_requests) { ?>
         <button data-status="Rejected" type="submit" class="btn btn-danger btn-sm update-leave-status"><span data-feather="x-circle" class="icon-16"></span> <?php echo app_lang('reject'); ?></button>
         <button data-status="Approved" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('approve'); ?></button>
     <?php } ?>

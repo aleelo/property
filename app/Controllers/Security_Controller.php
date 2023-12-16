@@ -896,7 +896,7 @@ class Security_Controller extends App_Controller {
         return $role == "admin";
     }
 
-    protected function get_user_role() {
+    public function get_user_role() {
         $user = $this->login_user;
 
         if($user->is_admin){

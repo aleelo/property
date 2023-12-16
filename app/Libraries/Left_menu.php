@@ -47,6 +47,7 @@ class Left_menu {
 
             $manage_help_and_knowledge_base = ($this->ci->login_user->is_admin || get_array_value($permissions, "help_and_knowledge_base"));
             $access_timeline = ($this->ci->login_user->is_admin || get_array_value($permissions, "timeline_permission") !== "no");
+            $role = $this->ci->get_user_role();
 
             if (get_setting("module_event") == "1") {
                 $sidebar_menu["events"] = array("name" => "events", "url" => "events", "class" => "calendar");
@@ -57,7 +58,7 @@ class Left_menu {
                 $sidebar_menu["clients"] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
             }
 
-            if ($this->ci->login_user->is_admin || $access_visitor) {
+            if ($this->ci->login_user->is_admin || $access_visitor && ($role != "Employee")) {
                 $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "visitors", "class" => "users");
             }
 
@@ -67,7 +68,7 @@ class Left_menu {
 
             $sidebar_menu["tasks"] = array("name" => "tasks", "url" => "tasks/all_tasks", "class" => "check-circle");
 
-            if (get_setting("module_lead") == "1" && ($this->ci->login_user->is_admin || $access_lead)) {
+            if (get_setting("module_lead") == "1" && ($this->ci->login_user->is_admin || $access_lead) && ($role != "Employee")) {
                 //was leads changed to: 'documents'
                 $sidebar_menu["leads"] = array("name" => "leads", "url" => "documents", "class" => "layers");
             }

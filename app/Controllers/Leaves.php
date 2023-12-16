@@ -619,19 +619,23 @@ class Leaves extends Security_Controller {
 
         $doc = $this->db->query("SELECT d.webUrl FROM rise_leave_document l left join rise_documents d on l.document_id = d.id where l.leave_id = $data->id")->getRow();
 
-        $actions = modal_anchor(get_uri("leaves/application_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('application_details'), "data-post-id" => $data->id));
-        $webUrl = empty($doc) ? '' : $doc->webUrl;
-        $actions .= "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
-
         //checking the user permissiton to show/hide reject and approve button
+        $actions= '';
+        $role = $this->get_user_role();
+        $can_approve_leaves = $role == 'admin' || $role == 'Administrator' || $role != 'Employee' ;
+
         $can_manage_application = false;
-        if ($this->access_type === "all") {
+        if ($this->access_type === "all" && $can_approve_leaves) {
             $can_manage_application = true;
-        } else if (array_search($data->applicant_id, $this->allowed_members) && $data->applicant_id !== $this->login_user->id) {
+            $actions = modal_anchor(get_uri("leaves/application_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('application_details'), "data-post-id" => $data->id));
+        } else if (array_search($data->applicant_id, $this->allowed_members) && $data->applicant_id !== $this->login_user->id && ($can_approve_leaves)) {
             $can_manage_application = true;
         }
 
-        if ($this->can_delete_leave_application() && $can_manage_application) {
+        $webUrl = empty($doc) ? '' : $doc->webUrl;
+        $actions .= "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
+
+        if ($this->can_delete_leave_application() && $can_manage_application && $can_approve_leaves) {
             $actions .= js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("leaves/delete"), "data-action" => "delete-confirmation"));
         }
 
@@ -703,6 +707,7 @@ class Leaves extends Security_Controller {
             "id" => "required|numeric"
         ));
 
+        
         $applicaiton_id = $this->request->getPost('id');
         $info = $this->Leave_applications_model->get_details_info($applicaiton_id);
         if (!$info) {
