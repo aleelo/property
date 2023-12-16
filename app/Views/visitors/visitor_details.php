@@ -86,7 +86,7 @@
             <table class="table dataTable display b-t">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th style="width:20px">ID</th>
                         <th>Visitor Name</th>
                         <th>Mobile</th>
                         <th>Vehicle Details</th>
@@ -98,7 +98,7 @@
                     <?php foreach ($visitor_details as $d){?>
                         <tr>
                             <td><?php echo $i; ?></td>
-                            <td><?php echo $d->visitor_name; ?></td>
+                            <td><img width="50" src="<?php echo get_visitor_avatar($d->image);?>" class="rounded" style="margin-right: 10px;" /><span><?php echo $d->visitor_name; ?></span></td>
                             <td><?php echo $d->mobile; ?></td>
                             <td><?php echo $d->vehicle_details; ?></td>
                         </tr>

@@ -86,6 +86,34 @@ if (!function_exists('get_avatar')) {
 }
 
 /**
+ * get the url of visitor avatar
+ * 
+ * @param string $image_name
+ * @return url of the avatar of given image reference
+ */
+if (!function_exists('get_visitor_avatar')) {
+
+    function get_visitor_avatar($image = "") {
+        if ($image === "system_bot") {
+            return base_url("assets/images/avatar-bot.jpg");
+        } else if ($image === "bitbucket") {
+            return base_url("assets/images/bitbucket_logo.png");
+        } else if ($image === "github") {
+            return base_url("assets/images/github_logo.png");
+        } else if ($image) {
+            $file = @unserialize($image);
+            if (is_array($file)) {
+                return get_source_url_of_file($file, get_setting("visitor_image_path") . "/", "thumbnail");
+            } else {
+                return base_url(get_setting("visitor_image_path")) . "/" . $image;
+            }
+        } else {
+            return base_url("assets/images/avatar.jpg");
+        }
+    }
+
+}
+/**
  * link the css files 
  * 
  * @param array $array

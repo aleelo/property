@@ -36,6 +36,10 @@ class Leaves extends Security_Controller {
     function index($tab = "") {
         $this->check_module_availability("module_leave");
 
+        $role = $this->get_user_role();
+
+        $view_data['can_assign_leaves'] = $role == 'admin' || $role == 'Administrator' || $role != 'Employee';
+
         $view_data["can_manage_all_leaves"] = $this->login_user->is_admin || $this->access_type === "all";
         $view_data['tab'] = clean_data($tab);
 
@@ -523,6 +527,7 @@ class Leaves extends Security_Controller {
             "reason" => $this->request->getPost('reason'),
             "created_by" => $this->login_user->id,
             "created_at" => $now,
+            "department_id" => $this->get_user_department_id(),
             "total_hours" => $hours,
             "total_days" => $days,
             "files" => serialize($new_files)

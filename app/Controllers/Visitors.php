@@ -257,8 +257,6 @@ class Visitors extends Security_Controller
 
         //get dept for login user
         $user_id = $this->login_user->id;
-        $job_info = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user_id")->getRow();
-        
         // `document_title`,`created_by`, `ref_number`, `depertment`, `template`, `item_id`, `created_at`
         $parent_input = array(
             "name" => $this->request->getPost('name'),
@@ -271,6 +269,7 @@ class Visitors extends Security_Controller
             "total_hours" => $hours,
             "access_type" => $access_type,
             "access_duration" => $this->request->getPost('access_duration'),
+            "department_id" => $this->get_user_department_id(),
             "remarks" => $this->request->getPost('remarks'),
             "created_by" => $this->request->getPost('owner_id') ? $this->request->getPost('owner_id') : $user_id,
             "created_at" => date('Y-m-d H:i:s'),
@@ -371,11 +370,15 @@ class Visitors extends Security_Controller
                                 'vehicle'=>$d->vehicle_details,
                                 'image'=>$d->image
                             );
-                $image_block[] = array(
-                                'id'=>$index,
-                                'name'=>$d->visitor_name,
-                                'image'=>$d->image
-                            );
+                            
+                if($d->image){
+
+                    $image_block[] = array(
+                        'id'=>$index,
+                        'name'=>$d->visitor_name,
+                        'image'=>$d->image
+                    );
+                }
             }
 
             // var_dump($visitor_info);
@@ -400,7 +403,7 @@ class Visitors extends Security_Controller
             $doc_data = [
                 'document_title' =>'Visitors Request - '.$this->request->getPost('name'),
                 'ref_number' =>$template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
-                "depertment" => $job_info->department_id,
+                "depertment" => $this->get_user_department_id(),
                 "template" => $template->id,
                 "created_by" => $this->login_user->id,
                 "created_at" => date('Y-m-d H:i:s')
@@ -594,47 +597,54 @@ class Visitors extends Security_Controller
 
             if(count($data['images_table'])){
 
-                    $main_table = new Table(['borderSize' => 12, 'borderColor' => '4691f9', 
+                    $main_table = new Table(['borderSize' => 0, 'borderColor' => '4691f9', 
                                 'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 
                                 'cellSpacing' => 120]);
 
                     $rowStyle = ['cantSplit' => false];
                     $main_table->addRow(null);
                    $k = 1;
-                foreach($data['images_table'] as $t){
-                           $j = $k-1; 
-                    if($j%4 == 0 && $j != 0){
-                        $main_table->addRow(null);
+                   foreach($data['images_table'] as $t){
+                        if($t['image']){
+                            $j = $k-1; 
+                        if($j%4 == 0 && $j != 0){
+                            $main_table->addRow(null);
+                        }
+
+                        $img_cell = $main_table->addCell(2000, ['borderColor' => '4691f9','borderSize'=>6,'borderBottomColor'=>'4691f9']);//
+                        $img_cell->addText('${avatar#'.$k.'}');
+                        // $img_cell->addImage('http://localhost/rise/files/visitors/'.$image, ['width' => 80, 'height' => 80]);
+                        
+                        $img_cell->addText($t['id'].'. '.$t['name']);
+
+                        $k = $k+1;
                     }
-
-                    $img_cell = $main_table->addCell(2000);//, ['borderColor' => '4691f9','borderSize'=>6]
-                    $img_cell->addText('${avatar#'.$k.'}');
-                    // $img_cell->addImage('http://localhost/rise/files/visitors/'.$image, ['width' => 80, 'height' => 80]);
-                    
-                    $img_cell->addText($t['id'].'. '.$t['name']);
-
-                    $k = $k+1;
                 }
 
                 $template->setComplexBlock('images_table',$main_table);
-                    $k = 1;
+               
+                $k = 1;
                 foreach($data['images_table'] as $t){
-                     if($t['image']){
-                         $image = @unserialize($t['image']);
-                         $image = $image['file_name'];
-                     }else{
-                         $image = 'avatar.jpg';
-                     }
-
-                     $template->setImageValue('avatar#'.$k,
-                                 [
-                                     'path' => ROOTPATH . 'files/visitors/'.$image,
-                                     'width' => '100',
-                                     'height' => '100',
-                                     'ratio' => false,
-                                 ]);
-                    $k = $k+1;
+                        
+                        if($t['image']){
+                            $image = @unserialize($t['image']);
+                            $image = $image['file_name'];
+                        }else{
+                            $image = 'avatar.jpg';
+                        }
+                        if($t['image'] && $image != 'avatar.jpg'){
+                            $template->setImageValue('avatar#'.$k,
+                                        [
+                                            'path' => ROOTPATH . 'files/visitors/'.$image,
+                                            'width' => '100',
+                                            'height' => '100',
+                                            'ratio' => false,
+                                        ]);
+                            $k = $k+1;
+                        }
                     }
+            }else{
+                $template->setValue('images_table','');
             }
 
         $template->saveAs($path_absolute);
@@ -796,8 +806,13 @@ class Visitors extends Security_Controller
 
         // $show_own_leads_only_user_id = $this->show_own_leads_only_user_id();
         
-        // app_redirect("forbidden");
-        $created_by = $this->check_access('visitor');
+        $result = $this->check_access('visitor');
+
+        $role = get_array_value($result,'role');
+        $department_id = get_array_value($result,'department_id');
+        $created_by = get_array_value($result,'created_by');
+
+        // die($this->login_user->is_admin);
         $options = append_server_side_filtering_commmon_params([]);
 
 
@@ -841,19 +856,21 @@ class Visitors extends Security_Controller
 
             $result = $this->db->query("select v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v 
             LEFT JOIN rise_users u on v.created_by = u.id 
-            where $where and v.created_by LIKE '$created_by' order by $order_by $limit_offset");
+            LEFT JOIN rise_team_member_job_info j on v.created_by = j.user_id 
+            where $where and v.created_by LIKE '$created_by' and v.department_id LIKE '$department_id' order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_visitors where created_by LIKE '$created_by' and deleted=0")->getRow()->affected;
+            $total_rows =$this->db->query("select count(*) as affected from rise_visitors where created_by LIKE '$created_by' and department_id LIKE '$department_id' and deleted=0")->getRow()->affected;
             $result = array();
 
         } else {
             $result = $this->db->query("select v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v 
             LEFT JOIN rise_users u on v.created_by = u.id 
-            where v.created_by LIKE '$created_by' and v.deleted=0");
+            LEFT JOIN rise_team_member_job_info j on v.created_by = j.user_id 
+            where v.created_by LIKE '$created_by' and v.department_id LIKE '$department_id' and v.deleted=0");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_visitors where created_by LIKE '$created_by' and deleted=0")->getRow()->affected;
+            $total_rows =$this->db->query("select count(*) as affected from rise_visitors where created_by LIKE '$created_by' and department_id LIKE '$department_id' and deleted=0")->getRow()->affected;
             $result = array();
         }
 
@@ -963,15 +980,9 @@ class Visitors extends Security_Controller
             "path" => "required",
         ));
 
-        $user_id = $this->login_user->id;
-        $job_info = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user_id")->getRow();
-        // var_dump($user_id);
-        // var_dump($job_info);
-        // die();
-
         $data = array(
             "name" => $this->request->getPost('name'),
-            "department" => $job_info->department_id,
+            "department" => $this->get_user_department_id(),
             "ref_prefix" => $this->request->getPost('ref_prefix'),
             "destination_folder" => $this->request->getPost('destination_folder'),
             "path" => $this->request->getPost('path'),

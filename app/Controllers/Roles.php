@@ -147,6 +147,8 @@ class Roles extends Security_Controller {
             "title" => "required"
         ));
 
+        // var_dump($this->get_user_role());
+        
         $id = $this->request->getPost('id');
         $copy_settings = $this->request->getPost('copy_settings');
         $data = array(
@@ -427,6 +429,7 @@ class Roles extends Security_Controller {
 
     //load the user roles view
     function user_roles() {
+       
         return $this->template->rander("roles/user_roles/index");
     }
 
@@ -436,6 +439,7 @@ class Roles extends Security_Controller {
             "status" => $this->request->getPost("status"),
             "user_type" => "staff"
         );
+
 
         if (!$this->login_user->is_admin) {
             $options["non_admin_users_only"] = true;

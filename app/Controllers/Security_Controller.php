@@ -782,15 +782,26 @@ class Security_Controller extends App_Controller {
         }
     }
 
+    public function get_user_department_id(){
+        $user_id = $this->login_user->id;
+        $job_info = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user_id")->getRow();
+        
+        return $job_info->department_id;
+    }
+
     public function check_access($name = null){
         
         $this->check_module_availability('module_'.$name);
-        
+        $role = $this->get_user_role();
+        $dept_id = $this->get_user_department_id();
         $permissions = $this->login_user->permissions;
 
         $perm = get_array_value($permissions, $name);
         
-        if ($this->login_user->is_admin || $perm == "all") {
+        if ($this->login_user->is_admin || $role == 'Administrator' || $perm == "all") {
+            $created_by = '%';
+            $dept_id = '%';
+        } else if ($role == 'Director' || $role == 'Access Control' || $role == 'Secretary') {
             $created_by = '%';
         } else if ($perm == "own") {
             $created_by = $this->login_user->id;
@@ -799,7 +810,12 @@ class Security_Controller extends App_Controller {
             app_redirect("forbidden");
         }
 
-        return $created_by;
+        $data['role'] = $role;
+        $data['created_by'] = $created_by;
+        $data['department_id'] = $dept_id;
+        // die($created_by);
+
+        return $data;
 
     }
 
@@ -878,6 +894,17 @@ class Security_Controller extends App_Controller {
 
     protected function is_admin_role($role) {
         return $role == "admin";
+    }
+
+    protected function get_user_role() {
+        $user = $this->login_user;
+
+        if($user->is_admin){
+            return 'admin';
+        }
+        
+        $role = $this->Roles_model->get_one($user->role_id);
+        return $role->title;
     }
 
     //make it public function to access from helper functions

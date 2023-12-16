@@ -192,16 +192,12 @@ class Documents extends Security_Controller
             "template" => "required",
         ));
         $template_id = $this->request->getPost('template');
-    
-        //get dept for login user
-        $user_id = $this->login_user->id;
-        $job_info = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user_id")->getRow();
-        
+           
         // `document_title`,`created_by`, `ref_number`, `depertment`, `template`, `item_id`, `created_at`
         $input = array(
             "document_title" => $this->request->getPost('document_title'),
             "ref_number" => $this->request->getPost('ref_number'),
-            "depertment" => $job_info->department_id,
+            "depertment" => $this->get_user_department_id(),
             "template" => $template_id,
             "item_id" => $this->request->getPost('zip'),
             "created_by" => $this->request->getPost('owner_id') ? $this->request->getPost('owner_id') : $this->login_user->id,
@@ -465,11 +461,16 @@ class Documents extends Security_Controller
 
     public function list_data()
     {
-        $created_by = $this->check_access('lead');
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
 
         // $show_own_leads_only_user_id = $this->show_own_leads_only_user_id();
        
+        $result = $this->check_access('lead');//here means documents for us.
+
+        $role = get_array_value($result,'role');
+        $department_id = get_array_value($result,'department_id');
+        $created_by = get_array_value($result,'created_by');
+        
         $options = append_server_side_filtering_commmon_params([]);
 
 
@@ -512,23 +513,25 @@ class Documents extends Security_Controller
                 $where .= " )";
             }
 
-            $result = $this->db->query("select d.*,t.name as template,concat(u.first_name,' ',u.last_name) user from rise_documents d 
+            $result = $this->db->query("select d.*,t.name as template,dp.nameSo as depertment,concat(u.first_name,' ',u.last_name) user from rise_documents d 
             LEFT JOIN rise_users u on d.created_by = u.id 
             LEFT JOIN rise_templates t on d.template = t.id 
-            where d.created_by LIKE '$created_by' and $where order by $order_by $limit_offset");
+            LEFT JOIN departments dp on d.depertment = dp.id 
+            where d.created_by LIKE '$created_by' and d.depertment LIKE '$department_id' and $where order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_documents where created_by LIKE '$created_by' and deleted=0")->getRow()->affected;
+            $total_rows =$this->db->query("select count(*) as affected from rise_documents where created_by LIKE '$created_by' and depertment LIKE '$department_id' and deleted=0")->getRow()->affected;
             $result = array();
 
         } else {
-            $result = $this->db->query("select d.*,t.name as template,concat(u.first_name,' ',u.last_name) user from rise_documents d 
+            $result = $this->db->query("select d.*,t.name as template,dp.nameSo as depertment,concat(u.first_name,' ',u.last_name) user from rise_documents d 
             LEFT JOIN rise_users u on d.created_by = u.id 
             LEFT JOIN rise_templates t on d.template = t.id  
-            where d.created_by LIKE '$created_by' and  d.deleted=0");
+            LEFT JOIN departments dp on d.depertment = dp.id 
+            where d.created_by LIKE '$created_by' and d.depertment LIKE '$department_id' and  d.deleted=0");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_documents where created_by LIKE '$created_by' and  deleted=0")->getRow()->affected;
+            $total_rows =$this->db->query("select count(*) as affected from rise_documents where created_by LIKE '$created_by' and depertment LIKE '$department_id' and  deleted=0")->getRow()->affected;
             $result = array();
         }
 

@@ -9,7 +9,8 @@
                 }
                 ?>
                 <?php echo modal_anchor(get_uri("leaves/apply_leave_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('apply_leave'), array("class" => "btn btn-default", "title" => app_lang('apply_leave'))); ?>
-                <?php echo modal_anchor(get_uri("leaves/assign_leave_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('assign_leave'), array("class" => "btn btn-default", "title" => app_lang('assign_leave'))); ?>
+
+                <?php  echo $can_assign_leaves == true ? modal_anchor(get_uri("leaves/assign_leave_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('assign_leave'), array("class" => "btn btn-default", "title" => app_lang('assign_leave'))) : '' ;?>
             </div>
         </div>
         <ul id="leaves-tabs" data-bs-toggle="ajax-tab" class="nav nav-tabs bg-white inner" role="tablist">
