@@ -186,9 +186,6 @@ class Leaves extends Security_Controller {
         $applicant_id = $this->login_user->id;
 
         $leave_data = clean_data($leave_data);
-
-        $save_id = $this->Leave_applications_model->ci_save($leave_data);
-
         
         $webUrl = null;
 
@@ -201,7 +198,7 @@ class Leaves extends Security_Controller {
         }
 
         //hasn't full access? allow to update only specific member's record, excluding loged in user's own record
-        $this->access_only_allowed_members($leave_data['applicant_id']);
+        // $this->access_only_allowed_members($leave_data['applicant_id']);
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
 
@@ -622,7 +619,7 @@ class Leaves extends Security_Controller {
         //checking the user permissiton to show/hide reject and approve button
         $actions= '';
         $role = $this->get_user_role();
-        $can_approve_leaves = $role == 'admin' || $role == 'Administrator' || $role != 'Employee' ;
+        $can_approve_leaves = $role != 'Employee';
 
         $can_manage_application = false;
         if ($this->access_type === "all" && $can_approve_leaves) {

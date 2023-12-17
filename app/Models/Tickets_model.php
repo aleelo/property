@@ -19,6 +19,28 @@ class Tickets_model extends Crud_model {
         $project_table = $this->db->prefixTable("projects");
         $task_table = $this->db->prefixTable("tasks");
 
+        $Users_model = model("App\Models\Users_model");
+        $login_user_id = $Users_model->login_user_id();
+        $user = $Users_model->get_access_info($login_user_id);
+
+        $Roles_model = model("App\Models\Roles_model");
+        
+        $r = $Roles_model->get_one($user->role_id);
+
+        if($user->is_admin){
+            $role = 'Admin';
+        }else{
+            $role = $r->title;
+        }
+
+        // die($role);
+
+        if($role != 'Employee'){
+            $created_by = '%';
+        }else{
+            $created_by = $user->id;
+        }
+
         $where = "";
         $id = $this->_get_clean_value($options, "id");
         if ($id) {
@@ -160,7 +182,7 @@ class Tickets_model extends Crud_model {
         LEFT JOIN $project_table ON $project_table.id= $tickets_table.project_id
         LEFT JOIN $task_table ON $task_table.id= $tickets_table.task_id
         $join_custom_fieds    
-        WHERE $tickets_table.deleted=0 $where $custom_fields_where
+        WHERE $tickets_table.deleted=0 and ($tickets_table.created_by LIKE '$created_by' OR $tickets_table.assigned_to LIKE '$created_by') $where $custom_fields_where
         $order $limit_offset";
 
         $raw_query = $this->db->query($sql);

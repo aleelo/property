@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Controllers\Security_Controller;
+
 class Users_model extends Crud_model {
 
     protected $table = null;
 
     function __construct() {
+        
         $this->table = 'users';
         parent::__construct($this->table);
     }
@@ -136,6 +139,29 @@ class Users_model extends Crud_model {
         $team_member_job_info_table = $this->db->prefixTable('team_member_job_info');
         $clients_table = $this->db->prefixTable('clients');
         $roles_table = $this->db->prefixTable('roles');
+        
+        
+        $Users_model = model("App\Models\Users_model");
+        $login_user_id = $Users_model->login_user_id();
+        $user = $Users_model->get_access_info($login_user_id);
+
+        $Roles_model = model("App\Models\Roles_model");
+        
+        $r = $Roles_model->get_one($user->role_id);
+
+        if($user->is_admin){
+            $role = 'Admin';
+        }else{
+            $role = $r->title;
+        }
+
+        // die($role);
+
+        if($role != 'Employee'){
+            $created_by = '%';
+        }else{
+            $created_by = $user->id;
+        }
 
         $where = "";
         $id = $this->_get_clean_value($options, "id");
@@ -266,7 +292,7 @@ class Users_model extends Crud_model {
         LEFT JOIN $clients_table ON $clients_table.id=$users_table.client_id
         LEFT JOIN $roles_table ON $roles_table.id=$users_table.role_id
         $join_custom_fieds    
-        WHERE $users_table.deleted=0 $where $custom_fields_where
+        WHERE $users_table.deleted=0 and $users_table.id LIKE '$created_by' $where $custom_fields_where
         $order $limit_offset";
 
         $raw_query = $this->db->query($sql);

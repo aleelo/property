@@ -138,6 +138,28 @@ class Tasks_model extends Crud_model {
         $subscriptions_table = $this->db->prefixTable("subscriptions");
         $expenses_table = $this->db->prefixTable('expenses');
 
+        $Users_model = model("App\Models\Users_model");
+        $login_user_id = $Users_model->login_user_id();
+        $user = $Users_model->get_access_info($login_user_id);
+
+        $Roles_model = model("App\Models\Roles_model");
+        
+        $r = $Roles_model->get_one($user->role_id);
+
+        if($user->is_admin){
+            $role = 'Admin';
+        }else{
+            $role = $r->title;
+        }
+
+        // die($role);
+
+        if($role != 'Employee'){
+            $created_by = '%';
+        }else{
+            $created_by = $user->id;
+        }
+
         $where = "";
 
         $id = $this->_get_clean_value($options, "id");
@@ -431,7 +453,7 @@ class Tasks_model extends Crud_model {
         LEFT JOIN (SELECT $notifications_table.task_id FROM $notifications_table WHERE $notifications_table.deleted=0 AND $notifications_table.event='project_task_commented' AND !FIND_IN_SET('$unread_status_user_id', $notifications_table.read_by) AND $notifications_table.user_id!=$unread_status_user_id  GROUP BY $notifications_table.task_id) AS notification_table ON notification_table.task_id = $tasks_table.id
         $extra_left_join 
         $join_custom_fieds 
-        WHERE $tasks_table.deleted=0 $where $custom_fields_where 
+        WHERE $tasks_table.deleted=0 and ($tasks_table.collaborators IN ($user->id) OR $tasks_table.assigned_to LIKE '$created_by') $where $custom_fields_where 
         $order $limit_offset";
 
         $raw_query = $this->db->query($sql);

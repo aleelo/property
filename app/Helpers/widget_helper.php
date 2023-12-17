@@ -1246,7 +1246,7 @@ if (!function_exists('total_leads_widget')) {
         $view_data["total"] = $Clients_model->count_total_leads(array("show_own_leads_only_user_id" => $show_own_leads_only_user_id));
 
         $template = new Template();
-        return $template->view('leads/total_leads_widget', $view_data, $returen_as_data);
+        return $template->view('documents/total_leads_widget', $view_data, $returen_as_data);
     }
 
 }
@@ -1767,7 +1767,7 @@ if (!function_exists('leads_overview_widget')) {
         $view_data["converted_to_client"] = $ci->Clients_model->get_lead_statistics($options)->converted_to_client;
 
         $template = new Template();
-        return $template->view("leads/leads_overview_widget", $view_data);
+        return $template->view("documents/leads_overview_widget", $view_data);
     }
 
 }

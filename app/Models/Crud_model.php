@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Controllers\Security_Controller;
 use CodeIgniter\Model;
 use stdClass;
 
 //extend from this model to execute basic db operations
 class Crud_model extends Model {
 
+    protected $sc = null;
     protected $table;
     protected $table_without_prefix;    
     protected $db;
@@ -27,6 +29,8 @@ class Crud_model extends Model {
         $this->db = $db ? $db : db_connect('default');
         $this->db->query("SET sql_mode = ''");
         $this->use_table($table,$prefix);
+        
+        // $this->sc = new Security_Controller();
     }
 
     protected function use_table($table,$prefix=false) {
