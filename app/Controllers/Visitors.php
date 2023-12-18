@@ -857,7 +857,7 @@ class Visitors extends Security_Controller
                 $where .= " OR v.created_at LIKE '%$search_by%' ESCAPE '!' ";
                 $where .= " )";
             }
-
+// die('dept id: '.$department_id);
             $result = $this->db->query("select v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v 
             LEFT JOIN rise_users u on v.created_by = u.id 
             LEFT JOIN rise_team_member_job_info j on v.created_by = j.user_id 

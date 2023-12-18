@@ -2821,7 +2821,7 @@ class Tasks extends Security_Controller {
         $view_data['task_statuses'] = $this->Task_status_model->get_details()->getResult();
 
         $view_data['projects_dropdown'] = json_encode($projects_dropdown);
-        $view_data['can_create_tasks'] = $this->can_create_tasks();
+        $view_data['can_create_tasks'] = $this->can_create_tasks();// && $this->get_user_role() != 'Employee';
         $view_data['priorities_dropdown'] = $this->_get_priorities_dropdown_list($priority_id);
         $view_data['contexts_dropdown'] = json_encode($this->_get_accessible_contexts_dropdown());
         $view_data["has_all_projects_restricted_role"] = $this->has_all_projects_restricted_role();
