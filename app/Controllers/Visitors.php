@@ -78,7 +78,7 @@ class Visitors extends Security_Controller
                                     LEFT JOIN departments d on d.id = v.department_id 
                                     WHERE v.id = $id
                                     ")->getRow();
-                                    
+
         $view_data['visitor_details'] = $this->db->query("SELECT vd.* from rise_visitors v left join rise_visitors_detail vd on v.id=vd.visitor_id where v.id = $id")->getResult();
 
         return $this->template->rander('visitors/visitor_qr_code', $view_data);
@@ -204,7 +204,7 @@ class Visitors extends Security_Controller
             "id" => "numeric",
             "name" => "required",
             'visitor_name'=>'required',
-            'visitor_mobile'=>'required',
+            // 'visitor_mobile'=>'required',
             'document_title'=>'required',
         ];
 
@@ -214,9 +214,9 @@ class Visitors extends Security_Controller
             'visitor_name'=>[
                 'required' => 'Please add at least one visitor details.'
             ],
-            'visitor_mobile'=>[
-                'required' => 'Visitor mobile is required.'
-            ],
+            // 'visitor_mobile'=>[
+            //     'required' => 'Visitor mobile is required.'
+            // ],
             'document_title'=>[
                 'required' => 'Document title is required.'
             ]

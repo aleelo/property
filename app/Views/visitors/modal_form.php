@@ -41,8 +41,8 @@
                 "<tr class=''>"+
                 "<td>" + k + "</td>"+
                     "<td><input type='text' class='form-control' data-rule-required data-msg-required='This field is required.' id='visitor_name_" + k + "' placeholder='Visitor Name' name='visitor_name[]'></td>"+
-                    "<td><input type='text' class='form-control' data-rule-required data-msg-required='This field is required.' id='visitor_mobile_" + k + "' placeholder='Visitor Mobile'  name='visitor_mobile[]'></td>"+
-                    "<td><input type='text' class='form-control' data-rule-required data-msg-required='This field is required.' id='vehicle_details_" + k + "' placeholder='Vehicle Details'  name='vehicle_details[]'></td>"+
+                    "<td><input type='text' class='form-control'  id='visitor_mobile_" + k + "' placeholder='Visitor Mobile'  name='visitor_mobile[]'></td>"+
+                    "<td><input type='text' class='form-control'  id='vehicle_details_" + k + "' placeholder='Vehicle Details'  name='vehicle_details[]'></td>"+
                     "<td style='width: 110px;'>" + actions + "</td>"+
                 "</tr>"
             );
