@@ -224,21 +224,6 @@
         </div>
     </div>
 </div>
-<!-- <div id="upload-area hide">
-    <div class="form-group">
-        <div class="row">
-            <?php
-            // echo view("includes/multi_file_uploader", array(
-            //     "upload_url" => get_uri("leaves/upload_excel_file"),
-            //     "validation_url" => get_uri("visitors/validate_file"),
-            //     "max_files" => 1,
-            //     "hide_description" => true,
-            //     "disable_button_type" => true
-            // ));
-            ?>
-        </div>
-    </div>
-</div> -->
 
 <div class="form-group">
     <div class="row">
@@ -252,6 +237,27 @@
                 "value" => $model_info->visit_time ? $model_info->visit_time : "",
                 "class" => "form-control time",
                 "placeholder" => app_lang('visit_time'),
+                "data-rule-required" => true,
+                "data-msg-required" => app_lang("field_required"),
+            ),);
+            ?>
+
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="row">
+        <label for="document_title" class="<?php echo 'col-3'; ?>"><?php echo app_lang('document_title'); ?></label>
+       
+        <div class="col-9">
+            <?php
+            echo form_input(array(
+                "id" => "document_title",
+                "name" => "document_title",
+                "value" => $model_info->document_title ? $model_info->document_title : "",
+                "class" => "form-control",
+                "placeholder" => 'Ujeedo: Sodeeyn Marti Gaar ah: - '.app_lang('document_title'),
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),
             ),);

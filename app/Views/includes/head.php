@@ -85,5 +85,14 @@
     <?php app_hooks()->do_action('app_hook_head_extension'); ?>
     
     <?php echo view("includes/custom_head"); ?>
-
+   
+   <style type="text/css">
+    @media (max-width: 768px){
+        .col-xs-12 {
+            flex: 0 0 auto;
+            width: 100% !important;
+        }
+        
+    }
+</style>
 </head>

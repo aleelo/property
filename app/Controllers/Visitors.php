@@ -64,8 +64,27 @@ class Visitors extends Security_Controller
         return $this->template->rander("visitors/index", $view_data);
     }
 
-    /* load lead add/edit modal */
+    /** QR Code for Access requests */
+    public function show_visitor_qrcode($id = 0){
 
+        $view_data['visitor_info'] = $this->db->query("SELECT v.*,cb.image as created_avatar,ab.image as approved_avatar,rb.image as rejected_avatar,
+                                    concat(cb.first_name,' ',cb.last_name) as created_by,concat(rb.first_name,' ',rb.last_name) as rejected_by,
+                                    concat(ab.first_name,' ',ab.last_name) as approved_by,d.nameSo as department  FROM rise_visitors v 
+
+                                    LEFT JOIN rise_visitors_detail vd on v.id = vd.visitor_id
+                                    LEFT JOIN rise_users cb on v.created_by = cb.id
+                                    LEFT JOIN rise_users ab on v.approved_by = ab.id
+                                    LEFT JOIN rise_users rb on v.rejected_by = rb.id                                                    
+                                    LEFT JOIN departments d on d.id = v.department_id 
+                                    WHERE v.id = $id
+                                    ")->getRow();
+                                    
+        $view_data['visitor_details'] = $this->db->query("SELECT vd.* from rise_visitors v left join rise_visitors_detail vd on v.id=vd.visitor_id where v.id = $id")->getResult();
+
+        return $this->template->rander('visitors/visitor_qr_code', $view_data);
+    }
+
+    /* load lead add/edit modal */
     public function modal_form()
     {
         $lead_id = $this->request->getPost('id');
@@ -186,7 +205,7 @@ class Visitors extends Security_Controller
             "name" => "required",
             'visitor_name'=>'required',
             'visitor_mobile'=>'required',
-            // 'vehicle_details'=>'required',
+            'document_title'=>'required',
         ];
 
         $rules = array_merge($primary); 
@@ -197,6 +216,9 @@ class Visitors extends Security_Controller
             ],
             'visitor_mobile'=>[
                 'required' => 'Visitor mobile is required.'
+            ],
+            'document_title'=>[
+                'required' => 'Document title is required.'
             ]
         ]);
     
@@ -262,6 +284,7 @@ class Visitors extends Security_Controller
             "name" => $this->request->getPost('name'),
             "client_type" => $this->request->getPost('client_type'),
             "visit_time" => $this->request->getPost('visit_time'),
+            "document_title" => $this->request->getPost('document_title'),
             "start_date" => $start_date,
             "visit_date" => $start_date,
             "end_date" => $end_date,
@@ -397,6 +420,8 @@ class Visitors extends Security_Controller
                 'visit_date' => date('h:i a, F d, Y',strtotime($start_date.' '.$this->request->getPost('visit_time'))),
                 'table' => $arr_table,
                 'images_table' => $image_block,
+                "document_title" => $visitor_info->document_title,
+                "remarks" => $this->request->getPost('remarks'),
                 "created_at" => date('Y-m-d H:i:s')
             ];
     
@@ -519,7 +544,7 @@ class Visitors extends Security_Controller
         require_once ROOTPATH . 'vendor/autoload.php';
 
         // Creating the new document...
-        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+        // $phpWord = new \PhpOffice\PhpWord\PhpWord();
         $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'Views/documents/'.$data['template']);
        
         $ext = pathinfo(APPPATH.'Views/documents/'.$data['template'],PATHINFO_EXTENSION);
@@ -536,8 +561,17 @@ class Visitors extends Security_Controller
             'ref' => $data['ref_number'],
             'date' => date('Y-m-d',strtotime($data['created_at'])),
             'visitDate' => $data['visit_date'],
+            'documentTitle'=>$data['document_title'],
 
         ]);
+
+        if($data['remarks']){
+            $template->setValue('remarksTitle','Faahfaahin Dheeri ah:');
+            $template->setValue('remarks',$data['remarks']);
+        }else{
+            $template->setValue('remarksTitle','');
+            $template->setValue('remarks','');
+        }
 
         $template->cloneRowAndSetValues(
             'id',
@@ -597,7 +631,7 @@ class Visitors extends Security_Controller
 
             if(count($data['images_table'])){
 
-                    $main_table = new Table(['borderSize' => 0, 'borderColor' => '4691f9', 
+                    $main_table = new Table(['borderSize' => 0, 'borderColor' => 'ffffff', 
                                 'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 
                                 'cellSpacing' => 120]);
 
