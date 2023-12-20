@@ -89,26 +89,29 @@ class Leaves extends Security_Controller {
 
         $webUrl = null;
 
-        $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $applicant_id")->getRow();
-        $leave_info = $this->db->query("SELECT t.* FROM rise_leave_applications l left join rise_leave_types t on t.id=l.leave_type_id where l.applicant_id = $applicant_id")->getRow();
-
-        if(!$user_info){
-            
-            echo json_encode(array("success" => false, 'message' => 'Information is missing'.', Please fill your User & Job information'));
-        }
-
         //hasn't full access? allow to update only specific member's record, excluding loged in user's own record
         $this->access_only_allowed_members($leave_data['applicant_id']);
 
+        $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $applicant_id")->getRow();
+       
+        if(!$user_info){
+            
+            echo json_encode(array("success" => false, 'message' => 'Information is missing, Please fill your User & Job information'));
+        }
+
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
+        $leave_info = $this->db->query("SELECT t.*,l.id,l.uuid FROM rise_leave_applications l 
+        
+        left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
 
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
 
-        // var_dump($user_info);
-        // var_dump($applicant_id);
+        // var_dump($leave_info);
+        // var_dump($save_id);
         // die();
 
         $doc_leave_data = [
+            'uuid' => $leave_info->uuid,
             'id'=>$save_id,
             'employee'=>$user_info->first_name.' '.$user_info->last_name,
             'jobtitle'=>$user_info->job_title_so,
@@ -176,6 +179,19 @@ class Leaves extends Security_Controller {
         }
     }
 
+    public function show_leave_qrcode($id=0) {
+        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
+        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason FROM rise_leave_applications l 
+        
+        LEFT JOIN rise_users a on l.applicant_id = a.id
+        LEFT JOIN rise_users cb on l.applicant_id = cb.id
+        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
+        left join rise_leave_types t on t.id=l.leave_type_id where l.uuid = '$id'")->getRow();
+        
+        $view_data['leave_info'] = $leave_info;
+
+        return $this->template->rander('leaves/leave_qr_code',$view_data);
+    }
     /* save: apply leave */
 
     function apply_leave() {
@@ -362,7 +378,7 @@ class Leaves extends Security_Controller {
 
         //   $options->outputType = ;
 
-        $qrcode = (new QRCode($options))->render($webUrl);//->getQRMatrix(current_url())
+        $qrcode = (new QRCode($options))->render('leaves/show_leave_qrcode/'.$data['uuid']);//->getQRMatrix(current_url())
 
         // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
 
@@ -519,6 +535,7 @@ class Leaves extends Security_Controller {
 
         $now = get_current_utc_time();
         $leave_data = array(
+            'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             "leave_type_id" => $this->request->getPost('leave_type_id'),
             "start_date" => $start_date,
             "end_date" => $end_date,

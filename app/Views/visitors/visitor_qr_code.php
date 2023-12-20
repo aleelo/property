@@ -8,17 +8,17 @@
                 <div class="table-responsive mb15">
                     <table class="table dataTable display b-t">
                         <tr>
-                            <td class=""> <?php echo app_lang('client_type'); ?></td>
+                            <th class=""> <?php echo app_lang('client_type'); ?></th>
                             <td><?php echo $visitor_info->client_type; ?></td>
                         </tr>
                         <?php if ($visitor_info->client_type != 'person'){?>
                             <tr>
-                                <td class=""> <?php echo app_lang('company_name'); ?></td>
+                                <th class=""> <?php echo app_lang('company_name'); ?></th>
                                 <td><?php echo $visitor_info->name; ?></td>
                             </tr>
                         <?php }?>
                         <tr>
-                            <td> <?php echo app_lang('access_duration'); ?></td>
+                            <th> <?php echo app_lang('access_duration'); ?></th>
                             <td>
                                 <?php 
                                 if($visitor_info->access_duration == 'hours'){
@@ -33,7 +33,7 @@
                         </tr>
                         <?php if($visitor_info->access_duration == 'multiple_days'){ ?>
                         <tr>
-                            <td> <?php echo app_lang('start_date'); ?></td>
+                            <th> <?php echo app_lang('start_date'); ?></th>
                             <td><?php echo $visitor_info->start_date; ?></td>
                         </tr>
                         <tr>
@@ -47,20 +47,20 @@
                             </tr>
                         <?php } ?>
                         <tr>
-                            <td> <?php echo app_lang('visit_time'); ?></td>
+                            <th> <?php echo app_lang('visit_time'); ?></th>
                             <td><?php echo date("l, h:i a",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d').' '.$visitor_info->visit_time)); ?></td>
                         </tr>
 
                         <tr>
-                            <td> <?php echo app_lang('status'); 
+                            <th> <?php echo app_lang('status'); 
                             $bg = $visitor_info->status == 'Pending'?'warning': ($visitor_info->status == 'Approved'? 'primary' : 'danger');
                             
-                            ?></td>
+                            ?></th>
                             <td><span class='badge bg-<?php echo $bg; ?>'> <?php echo $visitor_info->status; ?></span></td>
                         </tr>
                         <?php if ($visitor_info->status === "Rejected") { ?>
                             <tr>
-                                <td> <?php echo app_lang('rejected_by'); ?></td>
+                                <th> <?php echo app_lang('rejected_by'); ?></th>
                                 <td><?php
                                     $image_url = get_avatar($visitor_info->rejected_avatar);
                                     echo "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span><span>" . $visitor_info->rejected_by . "</span>";
@@ -70,7 +70,7 @@
                         <?php } ?>
                         <?php if ($visitor_info->status === "Approved") { ?>
                             <tr>
-                                <td> <?php echo app_lang('approved_by'); ?></td>
+                                <th> <?php echo app_lang('approved_by'); ?></th>
                                 <td><?php
                                     $image_url = get_avatar($visitor_info->approved_avatar);
                                     echo "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span><span>" . $visitor_info->approved_by . "</span>";
@@ -79,7 +79,7 @@
                             </tr>
                         <?php } ?>
                         <tr>
-                            <td> <?php echo app_lang('remarks'); ?></td>
+                            <th> <?php echo app_lang('remarks'); ?></th>
                             <td><?php echo nl2br($visitor_info->remarks ? $visitor_info->remarks : ""); ?></td>
                         </tr>
                     </table>
