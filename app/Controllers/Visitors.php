@@ -592,7 +592,7 @@ class Visitors extends Security_Controller
             'logoSpaceHeight' => 17,
             'logoSpaceWidth' => 17,
             'scale' => 20,
-            'version' => 7,
+            'version' => QRCode::VERSION_AUTO,
 
           ]);
 
