@@ -474,6 +474,7 @@ class Documents extends Security_Controller
         $options = append_server_side_filtering_commmon_params([]);
 
 
+        $extraWhere = " AND t.destination_folder NOT LIKE 'Visitor' AND t.destination_folder NOT LIKE 'Leave'";
         //by this, we can handel the server side or client side from the app table prams.
         if (get_array_value($options, "server_side")) {
             $order_by = $options['order_by'];
@@ -513,14 +514,17 @@ class Documents extends Security_Controller
                 $where .= " )";
             }
 
+
             $result = $this->db->query("select d.*,t.name as template,dp.nameSo as depertment,concat(u.first_name,' ',u.last_name) user from rise_documents d 
             LEFT JOIN rise_users u on d.created_by = u.id 
             LEFT JOIN rise_templates t on d.template = t.id 
             LEFT JOIN departments dp on d.depertment = dp.id 
-            where d.created_by LIKE '$created_by' and d.depertment LIKE '$department_id' and $where order by $order_by $limit_offset");
+            where d.created_by LIKE '$created_by' and d.depertment LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_documents where created_by LIKE '$created_by' and depertment LIKE '$department_id' and deleted=0")->getRow()->affected;
+            $total_rows =$this->db->query("select count(*) as affected from rise_documents d
+            LEFT JOIN rise_templates t on d.template = t.id 
+            where created_by LIKE '$created_by' and depertment LIKE '$department_id' and d.deleted=0 $extraWhere")->getRow()->affected;
             $result = array();
 
         } else {
@@ -528,10 +532,12 @@ class Documents extends Security_Controller
             LEFT JOIN rise_users u on d.created_by = u.id 
             LEFT JOIN rise_templates t on d.template = t.id  
             LEFT JOIN departments dp on d.depertment = dp.id 
-            where d.created_by LIKE '$created_by' and d.depertment LIKE '$department_id' and  d.deleted=0");
+            where d.created_by LIKE '$created_by' and d.depertment LIKE '$department_id' and  d.deleted=0 $extraWhere");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_documents where created_by LIKE '$created_by' and depertment LIKE '$department_id' and  deleted=0")->getRow()->affected;
+            $total_rows =$this->db->query("select count(*) as affected from rise_documents d
+            LEFT JOIN rise_templates t on d.template = t.id 
+            where created_by LIKE '$created_by' and depertment LIKE '$department_id' and  d.deleted=0 $extraWhere")->getRow()->affected;
             $result = array();
         }
 
