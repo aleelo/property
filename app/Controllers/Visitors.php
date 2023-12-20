@@ -69,17 +69,19 @@ class Visitors extends Security_Controller
 
         $view_data['visitor_info'] = $this->db->query("SELECT v.*,cb.image as created_avatar,ab.image as approved_avatar,rb.image as rejected_avatar,
                                     concat(cb.first_name,' ',cb.last_name) as created_by,concat(rb.first_name,' ',rb.last_name) as rejected_by,
-                                    concat(ab.first_name,' ',ab.last_name) as approved_by,d.nameSo as department  FROM rise_visitors v 
+                                    concat(ab.first_name,' ',ab.last_name) as approved_by,d.nameSo as department,rd.ref_number  FROM rise_visitors v 
 
                                     LEFT JOIN rise_visitors_detail vd on v.id = vd.visitor_id
                                     LEFT JOIN rise_users cb on v.created_by = cb.id
                                     LEFT JOIN rise_users ab on v.approved_by = ab.id
                                     LEFT JOIN rise_users rb on v.rejected_by = rb.id                                                    
                                     LEFT JOIN departments d on d.id = v.department_id 
-                                    WHERE v.id = $id
+                                    LEFT JOIN rise_visitor_document dv on v.id = dv.visitor_id 
+                                    LEFT JOIN rise_documents rd on rd.id = dv.document_id 
+                                    WHERE v.uuid = '$id'
                                     ")->getRow();
-
-        $view_data['visitor_details'] = $this->db->query("SELECT vd.* from rise_visitors v left join rise_visitors_detail vd on v.id=vd.visitor_id where v.id = $id")->getResult();
+        $visitor_id = $view_data['visitor_info']->id;
+        $view_data['visitor_details'] = $this->db->query("SELECT vd.* from rise_visitors v left join rise_visitors_detail vd on v.id=vd.visitor_id where v.id = $visitor_id")->getResult();
 
         return $this->template->rander('visitors/visitor_qr_code', $view_data);
     }
@@ -281,6 +283,7 @@ class Visitors extends Security_Controller
         $user_id = $this->login_user->id;
         // `document_title`,`created_by`, `ref_number`, `depertment`, `template`, `item_id`, `created_at`
         $parent_input = array(
+            'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             "name" => $this->request->getPost('name'),
             "client_type" => $this->request->getPost('client_type'),
             "visit_time" => $this->request->getPost('visit_time'),
@@ -413,6 +416,7 @@ class Visitors extends Security_Controller
             
             $doc_visitor_data = [
                 'id'=>$save_id,
+                'uuid'=>$visitor_info->uuid,
                 'ref_number'=> $template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
                 'template' => $template->path,
                 'folder' => $template->destination_folder,
@@ -594,7 +598,7 @@ class Visitors extends Security_Controller
 
         //   $options->outputType = ;
 
-        $qrcode = (new QRCode($options))->render(get_uri('documents'));//->getQRMatrix(current_url())
+        $qrcode = (new QRCode($options))->render(get_uri('visitors/show_visitor_qrcode/'.$data['uuid']));//->getQRMatrix(current_url())
 
         // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
 
