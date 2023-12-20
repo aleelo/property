@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Libraries\Excel_import;
 use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
@@ -592,7 +593,7 @@ class Visitors extends Security_Controller
             'logoSpaceHeight' => 17,
             'logoSpaceWidth' => 17,
             'scale' => 20,
-            'version' => QRCode::VERSION_AUTO,
+            'version' => Version::AUTO,
 
           ]);
 

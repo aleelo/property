@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
@@ -355,7 +356,7 @@ class Leaves extends Security_Controller {
             'logoSpaceHeight' => 17,
             'logoSpaceWidth' => 17,
             'scale' => 20,
-            'version' => 7,
+            'version' => Version::AUTO,
 
         ]);
 

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Libraries\Excel_import;
 use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
@@ -178,8 +179,21 @@ class Documents extends Security_Controller
         return $accessToken;
 
     }
-    /* insert or update a lead */
 
+    /** show document QR CODE */
+    public function show_document_code($id=0){
+        
+        $doc = $this->db->query("select d.*,t.name as template,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d 
+        LEFT JOIN rise_users u on d.created_by = u.id 
+        LEFT JOIN rise_templates t on d.template = t.id 
+        where d.deleted=0 and d.uuid =$id");
+    
+        $view_data['document'] = $doc->getRow();
+
+
+    }
+
+    /* insert or update a lead */
     public function save()
     {
         $id = $this->request->getPost('id');
@@ -195,6 +209,7 @@ class Documents extends Security_Controller
            
         // `document_title`,`created_by`, `ref_number`, `depertment`, `template`, `item_id`, `created_at`
         $input = array(
+            'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             "document_title" => $this->request->getPost('document_title'),
             "ref_number" => $this->request->getPost('ref_number'),
             "depertment" => $this->get_user_department_id(),
@@ -339,7 +354,7 @@ class Documents extends Security_Controller
             'logoSpaceHeight' => 17,
             'logoSpaceWidth' => 17,
             'scale' => 20,
-            'version' => 7,
+            'version' => Version::AUTO,
 
           ]);
 
