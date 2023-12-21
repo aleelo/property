@@ -801,7 +801,7 @@ class Security_Controller extends App_Controller {
         if ($this->login_user->is_admin || $role == 'Administrator' || $perm == "all") {
             $created_by = '%';
             $dept_id = '%';
-        } else if ($role == 'Director' || $role == 'Access Control' || $role == 'Secretary') {
+        } else if ($role == 'Director' || $role == 'Access Control' || $role == 'Secretary' || $role == 'HRM') {
             $created_by = '%';
         } else if ($perm == "own") {
             $created_by = $this->login_user->id;
