@@ -101,8 +101,7 @@ class Leaves extends Security_Controller {
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
         $leave_info = $this->db->query("SELECT t.*,l.id,l.uuid FROM rise_leave_applications l 
-        
-        left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
+                        left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
 
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
 
@@ -160,12 +159,20 @@ class Leaves extends Security_Controller {
             $webUrl = $data["webUrl"];
             $itemId = $data["id"];
 
+            $drive_ref = $data['parentReference'];
+            $driveId = $drive_ref['driveId'];
+
             //update item id and web url for document
-            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number']);
+            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number'],'drive_info'=>@serialize($drive_ref));
             
             $this->Documents_model->ci_save($u_data, $doc->id);
 
-            // echo $webUrl;
+            //convert doc to pdf using graph api:
+
+            // $res = $this->saveAsPDF($driveId,$itemId);
+
+
+            // var_dump($res);
             // die();
 
         }
@@ -177,6 +184,41 @@ class Leaves extends Security_Controller {
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
+    }
+
+    public function saveAsPDF($driveId,$itemId) {
+
+    
+        $pdfApi = "https://graph.microsoft.com/v1.0/items/$itemId/content?format=pdf";///drives/$driveId
+        $curl = curl_init();
+        $accessToken = $this->AccesToken();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $pdfApi,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $accessToken,
+            ),
+        ));
+
+        $json = curl_exec($curl);
+
+        curl_close($curl);
+
+        // var_dump($itemId);
+        // var_dump($driveId);
+        // var_dump($accessToken);
+        // die();
+        
+        // Decode the JSON response into an associative array
+        $data = json_decode($json, true);
+
+        return $data;
     }
 
     public function show_leave_qrcode($id=0) {
@@ -207,8 +249,7 @@ class Leaves extends Security_Controller {
         $webUrl = null;
 
         $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where j.user_id = $applicant_id")->getRow();
-        $leave_info = $this->db->query("SELECT t.* FROM rise_leave_applications l left join rise_leave_types t on t.id=l.leave_type_id where l.applicant_id = $applicant_id")->getRow();
-
+      
         if(!$user_info){
             
             echo json_encode(array("success" => false, 'message' => 'Information is missing'.', Please fill your User & Job information'));
@@ -219,9 +260,13 @@ class Leaves extends Security_Controller {
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
 
+        $leave_info = $this->db->query("SELECT t.*,l.id,l.uuid FROM rise_leave_applications l 
+                        left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
+
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
 
         $doc_leave_data = [
+            'uuid' => $leave_info->uuid,
             'id'=>$save_id,
             'employee'=>$user_info->first_name.' '.$user_info->last_name,
             'jobtitle'=>$user_info->job_title_so,

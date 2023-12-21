@@ -448,8 +448,8 @@ class Visitors extends Security_Controller
             $token = $this->AccesToken();  
             $data = $this->uploadDoc($token,$doc_visitor_data,$path);   
             
-            // var_dump($data);
-            // die();
+            var_dump($data['parentReference']);
+            die();
 
             if (isset($data['error'])) {
 
@@ -468,9 +468,10 @@ class Visitors extends Security_Controller
                 // Get the web URL of the file from the array
                 $webUrl = $data["webUrl"];
                 $itemId = $data["id"];
+                $drive_ref = $data['parentReference'];
 
                 //update item id and web url
-                $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_data['ref_number']);
+                $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_data['ref_number'],'drive_info'=>@serialize($drive_ref));
                 
                 $this->Documents_model->ci_save($u_data, $doc->id);
 

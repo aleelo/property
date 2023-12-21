@@ -270,9 +270,10 @@ class Documents extends Security_Controller
                 // Get the web URL of the file from the array
                 $webUrl = $data["webUrl"];
                 $itemId = $data["id"];
+                $drive_ref = $data['parentReference'];
 
                 //update item id and web url
-                $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$input['ref_number']);
+                $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$input['ref_number'],'drive_info'=>@serialize($drive_ref));
                 
                 $this->Documents_model->ci_save($u_data, $doc->getRow()->id);
 
