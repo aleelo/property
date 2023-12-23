@@ -798,12 +798,12 @@ class Security_Controller extends App_Controller {
 
         $perm = get_array_value($permissions, $name);
         
-        if ($this->login_user->is_admin || $role == 'Administrator' || $perm == "all") {
+        if ($this->login_user->is_admin || $role == 'Administrator'  || $role == 'Access Control' || $role == 'HRM' || $perm == "all") {
             $created_by = '%';
             $dept_id = '%';
-        } else if ($role == 'Director' || $role == 'Access Control' || $role == 'Secretary' || $role == 'HRM') {
+        } else if ($role == 'Director'|| $role == 'Secretary') {
             $created_by = '%';
-        } else if ($perm == "own") {
+        } else if ($perm == "own" || $role == 'Employee') {
             $created_by = $this->login_user->id;
         }else{
             
