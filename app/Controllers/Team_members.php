@@ -375,7 +375,20 @@ class Team_members extends Security_Controller {
 
     //prepare team member list row
     private function _make_row($data, $custom_fields) {
-        $image_url = get_avatar($data->image);
+        // $image_url = get_avatar($data->image);
+        if($data->image){
+            
+            $a = explode(':"',$data->image)[2];
+            $b = explode('"',$a)[0];
+            $image_url = base_url().'/files/profile_images/'.$b;
+        }else{
+            $image_url = '';
+        }
+        
+        // var_dump($a);
+        // var_dump($image_url);
+        // die();
+
         $user_avatar = "<span class='avatar avatar-xs'><img src='$image_url' alt='...'></span>";
         $full_name = $data->first_name . " " . $data->last_name . " ";
 
