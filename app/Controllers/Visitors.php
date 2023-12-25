@@ -901,7 +901,6 @@ class Visitors extends Security_Controller
             // die('dept id: '.$department_id);
             $result = $this->db->query("select v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v 
             LEFT JOIN rise_users u on v.created_by = u.id 
-            LEFT JOIN rise_team_member_job_info j on v.created_by = j.user_id 
             where $where and v.created_by LIKE '$created_by' and v.department_id LIKE '$department_id' order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
@@ -911,7 +910,6 @@ class Visitors extends Security_Controller
         } else {
             $result = $this->db->query("select v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v 
             LEFT JOIN rise_users u on v.created_by = u.id 
-            LEFT JOIN rise_team_member_job_info j on v.created_by = j.user_id 
             where v.created_by LIKE '$created_by' and v.department_id LIKE '$department_id' and v.deleted=0");
 
             $list_data = $result->getResult();
