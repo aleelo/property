@@ -897,7 +897,8 @@ class Visitors extends Security_Controller
                 $where .= " OR v.created_at LIKE '%$search_by%' ESCAPE '!' ";
                 $where .= " )";
             }
-// die('dept id: '.$department_id);
+        
+            // die('dept id: '.$department_id);
             $result = $this->db->query("select v.*,concat(u.first_name,' ',u.last_name) user from rise_visitors v 
             LEFT JOIN rise_users u on v.created_by = u.id 
             LEFT JOIN rise_team_member_job_info j on v.created_by = j.user_id 
@@ -994,7 +995,12 @@ class Visitors extends Security_Controller
 
         $webUrl = empty($doc) ? '' : $doc->webUrl;
 
-        $link = "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
+        if($data->status == 'Approved'){
+
+            $link = "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
+        }else{
+            $link = '';
+        }
         $delLink = $can_add_requests == true ? js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_visitor'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("visitors/delete"), "data-action" => "delete-confirmation")) : '';
         
         $row_data[] = modal_anchor(get_uri("visitors/visitor_details"), "<i data-feather='info' class='icon-16'></i>", array("class" => "edit",
