@@ -76,7 +76,16 @@ if (!function_exists('get_avatar')) {
             if (is_array($file)) {
                 return get_source_url_of_file($file, get_setting("profile_image_path") . "/", "thumbnail");
             } else {
-                return base_url(get_setting("profile_image_path")) . "/" . $image;
+                
+                if(str_contains($image, "{")){
+                    $a = explode(':"',$image)[2];
+                    $b = explode('"',$a)[0];
+                    $image_url = base_url().'/files/profile_images/'.$b;
+                    return $image_url;
+                }else{
+
+                    return base_url(get_setting("profile_image_path")) . "/" . $image;
+                }
             }
         } else {
             return base_url("assets/images/avatar.jpg");
@@ -84,6 +93,31 @@ if (!function_exists('get_avatar')) {
     }
 
 }
+
+/**
+ * get the url of user avatar
+ * 
+ * @param string $image_name
+ * @return url of the avatar of given image reference
+ */
+if (!function_exists('get_profile_image')) {
+
+    function get_profile_image($image = "") {
+       // $image_url = get_avatar($data->image);
+        if($image){
+                
+            $a = explode(':"',$image)[2];
+            $b = explode('"',$a)[0];
+            $image_url = base_url().'/files/profile_images/'.$b;
+
+            return $image_url;
+        } else {
+            return base_url("assets/images/avatar.jpg");
+        }
+    }
+
+}
+
 
 /**
  * get the url of visitor avatar
