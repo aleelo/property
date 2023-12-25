@@ -448,8 +448,8 @@ class Visitors extends Security_Controller
             $token = $this->AccesToken();  
             $data = $this->uploadDoc($token,$doc_visitor_data,$path);   
             
-            var_dump($data['parentReference']);
-            die();
+            // var_dump($data['parentReference']);
+            // die();
 
             if (isset($data['error'])) {
 
