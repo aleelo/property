@@ -949,7 +949,7 @@ class Visitors extends Security_Controller
     {
         
         $role = $this->get_user_role();
-        $can_add_requests = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin'; 
+        $can_add_requests = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin' || $role == 'HRM'; 
 
         //primary contact
         // $image_url = get_avatar($data->contact_avatar);
