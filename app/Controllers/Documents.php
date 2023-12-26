@@ -180,20 +180,6 @@ class Documents extends Security_Controller
 
     }
 
-    /** show document QR CODE */
-    public function show_document_qrcode($id=0){
-        
-        $doc = $this->db->query("select d.*,t.name as template,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d 
-        LEFT JOIN rise_users u on d.created_by = u.id 
-        LEFT JOIN rise_templates t on d.template = t.id 
-        where d.deleted=0 and d.uuid ='$id'");
-    
-        $view_data['document'] = $doc->getRow();
-
-
-        return $this->template->rander('documents/document_qr_code',$view_data);
-    }
-
     /* insert or update a lead */
     public function save()
     {
@@ -363,7 +349,7 @@ class Documents extends Security_Controller
 
         //   $options->outputType = ;
 
-        $qrcode = (new QRCode($options))->render(get_uri('documents/show_document_qrcode/'.$data['uuid']));//->getQRMatrix(current_url())
+        $qrcode = (new QRCode($options))->render(get_uri('visitors_info/show_document_qrcode/'.$data['uuid']));//->getQRMatrix(current_url())
 
         // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
 
