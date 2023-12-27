@@ -96,7 +96,7 @@
                     <?php $i = 1;?>
 
                     <?php foreach ($visitor_details as $d){?>
-                        <tr>
+                        <tr style="vertical-align: middle;">
                             <td><?php echo $i; ?></td>
                             <td><img width="50" src="<?php echo get_visitor_avatar($d->image);?>" class="rounded" style="margin-right: 10px;" /><span><?php echo $d->visitor_name; ?></span></td>
                             <td><?php echo $d->mobile; ?></td>
@@ -125,6 +125,9 @@
         <button data-status="Rejected" type="submit" class="btn btn-danger btn-sm update-leave-status"><span data-feather="x-circle" class="icon-16"></span> <?php echo app_lang('reject'); ?></button>
         <button data-status="Approved" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('approve'); ?></button>
     <?php } ?>
+    <?php if ($visitor_info->status === "Approved" && $can_approve_requests) { ?>
+        <a target="_blank" type="submit" href="<?php echo get_uri("visitors/access_request_pdf/".$visitor_info->uuid);?>" class="btn btn-danger btn-sm update-leave-status"><span data-feather="x-circle" class="icon-16"></span> <?php echo 'Show PDF'; ?></a>
+      <?php } ?>
 </div>
 <?php echo form_close(); ?>
 

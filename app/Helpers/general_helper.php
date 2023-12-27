@@ -967,6 +967,52 @@ if (!function_exists('prepare_order_pdf')) {
 }
 
 /**
+ * get all data to make an order
+ * 
+ * @param emtimate making data $order_data
+ * @return array
+ */
+if (!function_exists('prepare_pdf')) {
+
+    function prepare_pdf($path,$data, $mode = "download") {
+        $pdf = new Pdf();
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        $pdf->SetCellPadding(1.5);
+        $pdf->setImageScale(1.42);
+        $pdf->AddPage();
+
+        if ($data) {
+
+            $data["mode"] = clean_data($mode);
+
+            $html = view("$path", $data);
+            if ($mode != "html") {
+                $pdf->writeHTML($html, true, false, true, false, '');
+            }
+
+            $data_info = get_array_value($data, "visitor_info");
+            $pdf_file_name = "access_info_".$data_info->id.".pdf";
+
+            if ($mode === "download") {
+                $pdf->Output($pdf_file_name, "D");
+            } else if ($mode === "send_email") {
+                $temp_download_path = getcwd() . "/" . get_setting("temp_file_path") . $pdf_file_name;
+                $pdf->Output($temp_download_path, "F");
+                return $temp_download_path;
+            } else if ($mode === "view") {
+                // $pdf->writeHTML($html, true, false, true, false, '');
+                $pdf->SetTitle($pdf_file_name);
+                $pdf->Output($pdf_file_name, "I");
+                exit;
+            } else if ($mode === "html") {
+                return $html;
+            }
+        }
+    }
+
+}
+/**
  * 
  * get invoice number
  * @param Int $invoice_id

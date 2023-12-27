@@ -9,6 +9,8 @@ use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use chillerlan\QRCode\Output\QRImageWithLogo;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\SimpleType\Border;
 use PhpOffice\PhpWord\SimpleType\TblWidth;
@@ -521,6 +523,80 @@ class Visitors extends Security_Controller
         return json_encode($detail_info);
     }
 
+    public function access_request_pdf($id=0) {
+
+        require_once ROOTPATH . 'vendor/autoload.php';
+
+        if($id){
+        
+            if (@ob_get_length())
+                @ob_clean();
+
+            $visitor_info = $this->db->query("SELECT v.*,cb.image as created_avatar FROM rise_visitors v 
+
+                            LEFT JOIN rise_visitors_detail vd on v.id = vd.visitor_id
+                            LEFT JOIN rise_users cb on v.created_by = cb.id
+                            WHERE v.uuid = '$id'
+
+                        ")->getRow();
+            if($visitor_info){
+                
+                $visitor_details = $this->db->query("SELECT vd.* FROM rise_visitors v 
+                LEFT JOIN rise_visitors_detail vd on v.id = vd.visitor_id
+                WHERE visitor_id = $visitor_info->id
+                ")->getResult();
+
+            }else{
+                $visitor_details = [];
+            }
+
+            $qr = '<img width="150" src="'.(new QRCode)->render(get_uri('visitors_info/show_visitor_qrcode/'.$visitor_info->uuid)).'" alt="Show Access Info" />';
+            $data['visitor_details'] = $visitor_details;
+            $data['visitor_info'] = $visitor_info;
+            $data['qrcode'] = $qr;
+
+            //download pdf:
+            $this->get_access_pdf('visitors/access_request_pdf', $data);
+            // prepare_pdf('visitors/access_request_pdf',$data,'view');
+            // return $this->template->view('visitors/access_request_pdf',$data);
+
+        } else {
+            show_404();
+        }
+    }
+
+    public function get_access_pdf($path,$data,$mode='view'){
+
+        $data_info = get_array_value($data, "visitor_info");
+        $pdf_file_name = "access_info_".$data_info->id.".pdf";
+       
+        $options = new Options([
+            'enable_remote' => true,
+            'chroot',base_url('files/visitors'),
+        ]);
+        
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+        $options = $dompdf->getOptions();
+        $dompdf->setOptions($options);
+        
+        // var_dump($options->get('chroot'));
+        // die();
+
+        $html = view($path,$data);
+        $dompdf->loadHtml($html);
+        
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream($pdf_file_name,['Attachment'=>0]);
+    }
+
     // Creates the Document Using the Provided Template
     public function createDoc($data =array())
     {
@@ -812,6 +888,16 @@ class Visitors extends Security_Controller
 
         if($status == 'Rejected'){
             $this->db->query("UPDATE rise_visitors SET status = '$status',rejected_by = $user_id WHERE id = $id");    
+        }elseif($status == 'show-pdf'){
+            
+            $visitor_info = $this->db->query("SELECT * FROM rise_visitors WHERE id = $id")->getRow();
+            // show pdf:
+            if($visitor_info){
+
+                $this->access_request_pdf($visitor_info->uuid);
+            }else{
+                show_404();
+            }
         }else{
             $this->db->query("UPDATE rise_visitors SET status = '$status',approved_by = $user_id WHERE id = $id");    
         }
