@@ -126,7 +126,7 @@
         <button data-status="Approved" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('approve'); ?></button>
     <?php } ?>
     <?php if ($visitor_info->status === "Approved" && $can_approve_requests) { ?>
-        <a target="_blank" type="submit" href="<?php echo get_uri("visitors/access_request_pdf/".$visitor_info->uuid);?>" class="btn btn-danger btn-sm update-leave-status"><span data-feather="x-circle" class="icon-16"></span> <?php echo 'Show PDF'; ?></a>
+        <a target="_blank" type="submit" href="<?php echo get_uri("visitors/access_request_pdf/".$visitor_info->uuid);?>" class="btn btn-success btn-sm"><span data-feather="file" class="icon-16"></span> <?php echo 'Show PDF'; ?></a>
       <?php } ?>
 </div>
 <?php echo form_close(); ?>

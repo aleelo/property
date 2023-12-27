@@ -47,12 +47,12 @@
 
                         </div>
                         <table class="table dataTable display b-t" style="margin-top: 20px;width:100%;">
-                            <thead>
-                                <tr>
-                                    <th style="width:20px">ID</th>
-                                    <th>Visitor Name</th>
-                                    <th>Mobile</th>
-                                    <th>Vehicle Details</th>
+                            <thead style="padding: 3px;margin: 0px;">
+                                <tr style="padding: 3px;margin: 0px;">
+                                    <th style="width:20px;padding: 3px;margin: 0px;">ID</th>
+                                    <th style="padding: 3px;margin: 0px;">Visitor Name</th>
+                                    <th style="padding: 3px;margin: 0px;">Mobile</th>
+                                    <th style="padding: 3px;margin: 0px;">Vehicle Details</th>
                                 </tr>
                             </thead>
                             <tbody>

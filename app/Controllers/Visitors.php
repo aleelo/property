@@ -1011,7 +1011,7 @@ class Visitors extends Security_Controller
     {
         
         $role = $this->get_user_role();
-        $can_add_requests = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin' || $role == 'HRM'; 
+        $can_add_requests = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin'; 
 
         //primary contact
         // $image_url = get_avatar($data->contact_avatar);
@@ -1057,7 +1057,7 @@ class Visitors extends Security_Controller
 
         $webUrl = empty($doc) ? '' : $doc->webUrl;
 
-        if($data->status == 'Approved'){
+        if($data->status == 'Pending' && $can_add_requests){
 
             $link = "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
         }else{
