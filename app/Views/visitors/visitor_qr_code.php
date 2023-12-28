@@ -22,81 +22,27 @@
                     <!-- `client_type`, `access_duration`, `image`, `name`, `created_by`, `visit_date`, `visit_time`, `created_at`, `deleted`, `remarks`, `status` -->
                     <div class="table-responsive mb15">
                         <table class="table dataTable display b-t">
-                            <tr>
-                                <th class=""> <?php echo app_lang('client_type'); ?></th>
-                                <td><?php echo $visitor_info->client_type; ?></td>
-                            </tr>
-                            <?php if ($visitor_info->client_type != 'person'){?>
-                                <tr>
-                                    <th class=""> <?php echo app_lang('company_name'); ?></th>
-                                    <td><?php echo $visitor_info->name; ?></td>
-                                </tr>
-                            <?php }?>
-                            <tr>
-                                <th> <?php echo app_lang('access_duration'); ?></th>
-                                <td>
-                                    <?php 
-                                    if($visitor_info->access_duration == 'hours'){
-                                        $hours = (int)$visitor_info->total_hours;
-                                        echo $visitor_info->access_type.' ('.$hours.' hours)'; 
-                                    }else{
-                                        
-                                        echo $visitor_info->access_type.' ('.$visitor_info->total_days.' days)'; 
-                                    }
-                                    ?>
-                                </td>
-                            </tr>
+                            
                             <?php if($visitor_info->access_duration == 'multiple_days'){ ?>
                             <tr>
-                                <th> <?php echo app_lang('start_date'); ?></th>
+                                <th> <?php echo 'Taariikh Bilaaw'; ?></th>
                                 <td><?php echo $visitor_info->start_date; ?></td>
                             </tr>
                             <tr>
-                                <td> <?php echo app_lang('end_date'); ?></td>
+                                <th> <?php echo 'Taariikh Dhamaad'; ?></th>
                                 <td><?php echo $visitor_info->end_date; ?></td>
                             </tr>
                             <?php }else{?>
                                 <tr>
-                                    <td> <?php echo app_lang('date'); ?></td>
+                                    <th> <?php echo 'Taarikhda'; ?></th>
                                     <td><?php echo date("F d, Y",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d'))); ?></td>
                                 </tr>
                             <?php } ?>
                             <tr>
-                                <th> <?php echo app_lang('visit_time'); ?></th>
-                                <td><?php echo date("l, h:i a",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d').' '.$visitor_info->visit_time)); ?></td>
+                                <th> <?php echo 'Waqtiga'; ?></th>
+                                <td><?php echo date("h:i a",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d').' '.$visitor_info->visit_time)); ?></td>
                             </tr>
 
-                            <tr>
-                                <th> <?php echo app_lang('status'); 
-                                $bg = $visitor_info->status == 'Pending'?'warning': ($visitor_info->status == 'Approved'? 'primary' : 'danger');
-                                
-                                ?></th>
-                                <td><span class='badge bg-<?php echo $bg; ?>'> <?php echo $visitor_info->status; ?></span></td>
-                            </tr>
-                            <?php if ($visitor_info->status === "Rejected") { ?>
-                                <tr>
-                                    <th> <?php echo app_lang('rejected_by'); ?></th>
-                                    <td><?php
-                                        $image_url = get_avatar($visitor_info->rejected_avatar);
-                                        echo "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span><span>" . $visitor_info->rejected_by . "</span>";
-                                        ?>
-                                    </td>
-                                </tr>
-                            <?php } ?>
-                            <?php if ($visitor_info->status === "Approved") { ?>
-                                <tr>
-                                    <th> <?php echo app_lang('approved_by'); ?></th>
-                                    <td><?php
-                                        $image_url = get_avatar($visitor_info->approved_avatar);
-                                        echo "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span><span>" . $visitor_info->approved_by . "</span>";
-                                        ?>
-                                    </td>
-                                </tr>
-                            <?php } ?>
-                            <tr>
-                                <th> <?php echo app_lang('remarks'); ?></th>
-                                <td><?php echo nl2br($visitor_info->remarks ? $visitor_info->remarks : ""); ?></td>
-                            </tr>
                         </table>
                     </div>
 
@@ -115,10 +61,10 @@
                         <table class="table dataTable display b-t">
                             <thead>
                                 <tr>
-                                    <th style="width:20px">ID</th>
-                                    <th>Visitor Name</th>
-                                    <th>Mobile</th>
-                                    <th>Vehicle Details</th>
+                                    <th style="width:20px">#</th>
+                                    <th>Magaca</th>
+                                    <th>Telefoon</th>
+                                    <th>Xogta Gaadiidka</th>
                                 </tr>
                             </thead>
                             <tbody>

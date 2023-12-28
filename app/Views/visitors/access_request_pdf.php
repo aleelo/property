@@ -59,23 +59,23 @@
                         <div class="text-center mb-4">
                             <?php echo $qrcode;?>
                             <div style="margin-top: -15px; margin-bottom: 20px;">
-                                <span class="text-info" style="font-size: 34px; font-weight: bold">#<?php echo $visitor_info->id; ?></span>
+                                <span class="text-info" style="font-size: 24px; font-weight: bold">#<?php echo $visitor_info->id; ?></span>
                             </div>
                         </div>
                         <div class="d-flex flex-column justify-content-center mt-3 font-arial mb-3">     
                                 <div class="d-flex justify-content-between mb-4" style="display:flex;justify-content: space-between;text-align: center;margin-left: 70px;">
-                                    <span style="margin-right: 100px;"><b>Date:</b> <?php echo date_format(new DateTime($visitor_info->created_at),'Y-m-d');?></span>
-                                    <span style=""><b>Time:</b> <?php echo date("l, h:i a",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d').' '.$visitor_info->visit_time)); ?></span>
+                                    <span style="margin-right: 100px;"><b>Taariikhda:</b> <?php echo date_format(new DateTime($visitor_info->created_at),'Y-m-d');?></span>
+                                    <span style=""><b>Waqtiga:</b> <?php echo date("h:i a",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d').' '.$visitor_info->visit_time)); ?></span>
                                 </div>
 
                         </div>
                         <table class="table dataTable display b-t" style="margin-top: 20px;width:100%;">
                             <thead style="padding: 3px;margin: 0px;">
                                 <tr style="padding: 3px;margin: 0px;">
-                                    <th style="width:20px;padding: 3px;margin: 0px;">ID</th>
-                                    <th style="padding: 3px;margin: 0px;">Visitor Name</th>
-                                    <th style="padding: 3px;margin: 0px;">Mobile</th>
-                                    <th style="padding: 3px;margin: 0px;">Vehicle Details</th>
+                                    <th style="width:20px;padding: 3px;margin: 0px;">#</th>
+                                    <th style="padding: 3px;margin: 0px;">Magaca</th>
+                                    <th style="padding: 3px;margin: 0px;">Telefoon</th>
+                                    <th style="padding: 3px;margin: 0px;">Xogta Gaadiidka</th>
                                 </tr>
                             </thead>
                             <tbody>
