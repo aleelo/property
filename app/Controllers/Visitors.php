@@ -872,7 +872,8 @@ class Visitors extends Security_Controller
     public function access_search() {
 
         $today = date('Y-m-d');
-        $visitors = $this->db->query("SELECT *,(select count(*) from rise_visitors_detail vd where v.id = vd.visitor_id) as count FROM rise_visitors v WHERE start_date like '$today' limit 20")->getResult();
+        $visitors = $this->db->query("SELECT *,(select count(*) from rise_visitors_detail vd where v.id = vd.visitor_id) as count 
+        FROM rise_visitors v WHERE (end_date >= '$today') order by v.id desc limit 10")->getResult();
         
         $data['visitors'] = $visitors;
 
@@ -880,12 +881,14 @@ class Visitors extends Security_Controller
     }
 
     public function get_visitors_suggestion() {
+        $search = $this->request->getPost('search');
+        // die('s:'.$search);
         $today = date('Y-m-d');
-        $result = $this->db->query("SELECT * FROM rise_visitors WHERE start_date like '$today' limit 20")->getResult();
+        $result = $this->db->query("SELECT * FROM rise_visitors WHERE (end_date >= '$today') and id like '%$search%'  order by visit_time desc limit 10")->getResult();
 
         $result_array = array();
         foreach ($result as $v) {
-            $result_array[] = array("value" => $v->uuid, "label" => date("l, h:i a",strtotime(date_format(new DateTime($v->start_date),'Y-m-d').' '.$v->visit_time)).' - '.$v->document_title.' - '.$v->client_type);
+            $result_array[] = array("value" => $v->uuid, "label" => $v->id .' - '.date("l, h:i a",strtotime(date_format(new DateTime($v->start_date),'Y-m-d').' '.$v->visit_time)).' - '.$v->document_title.' - '.$v->client_type);
         }
 
         return json_encode($result_array);

@@ -15,7 +15,7 @@
         $count = 0;
         if(count($visitors)){
             foreach ($visitors as $visitor) {
-                if ($count % 3 === 0) {
+                if ($count % 4 === 0) {
                     echo "<div class='row'>";
                 }
                 $count++;
