@@ -46,7 +46,10 @@ class Documents extends Security_Controller
     public function index()
     {
         
-       $this->check_access('lead');
+       $res = $this->check_access('lead');
+       $role = get_array_value($res,'role');
+       $can_add_template = $role == 'admin' || $role == 'Administrator';
+       $view_data["can_add_template"] = $can_add_template;
         // $this->access_only_allowed_members();
         // $this->check_module_availability("module_lead");
 
