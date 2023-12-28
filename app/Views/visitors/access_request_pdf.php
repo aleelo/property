@@ -48,9 +48,9 @@
                         $header = 'data:image/' . $type . ';base64,' . base64_encode($data);
 
                         ?>
-                    <img src="<?php echo $header?>" width="600">
+                    <img src="<?php echo $header?>"  style="width:100%;">
              </div>
-            <div class="card-title text-center border-bottom"><h4 class="fw-bold">Ogolaanshaha soo gelista </h4></div>
+            <div class="card-title text-center border-bottom mt-3 text-info"><h4 class="fw-bold">Ogolaanshaha soo gelista </h4></div>
               
             <div class="modal-body">
                 <div class="row">

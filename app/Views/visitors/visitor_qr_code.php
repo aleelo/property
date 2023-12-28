@@ -7,7 +7,15 @@
 
     <div class=" d-flex justify-content-center">
         <div class="card col-md-5 col-xs-12 mt-3 shadow-lg">
-            <div class="card-title text-center"><h4 class="fw-bold">Xogta Ogolaashiyaha soo gelista #<?php echo $visitor_info->id; ?></h4></div>
+        <div class="" style="text-align: center">
+                    <?php 
+
+                        $path = get_uri('assets/images/ict_header.png');
+                       
+                        ?>
+                    <img src="<?php echo $path?>" style="width:100%;">
+             </div>
+            <div class="card-title text-center mt-3 text-info"><h4 class="fw-bold">Xogta Ogolaashiyaha soo gelista #<?php echo $visitor_info->id; ?></h4></div>
                 
             <div class="modal-body">
                 <div class="row">
