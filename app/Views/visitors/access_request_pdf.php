@@ -39,8 +39,19 @@
 
     <div class=" d-flex justify-content-center">
         <div class="card col-md-5 col-xs-12 mt-3 shadow-lg">
+            <div class="" style="text-align: center">
+                    <?php 
+
+                        $path = $domain.'assets/images/ict_header.png';
+                        $type = pathinfo($path, PATHINFO_EXTENSION);
+                        $data = file_get_contents($path);
+                        $header = 'data:image/' . $type . ';base64,' . base64_encode($data);
+
+                        ?>
+                    <img src="<?php echo $header?>" width="600">
+             </div>
             <div class="card-title text-center border-bottom"><h4 class="fw-bold">Ogolaanshaha soo gelista </h4></div>
-                
+              
             <div class="modal-body">
                 <div class="row">
               
