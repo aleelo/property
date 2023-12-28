@@ -584,6 +584,7 @@ class Visitors extends Security_Controller
         
         // var_dump($options->get('chroot'));
         // die();
+        // file_get_contents('visitors/',$dompdf->output());
 
         $html = view($path,$data);
         $dompdf->loadHtml($html);

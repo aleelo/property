@@ -322,10 +322,48 @@ class Leaves extends Security_Controller {
         }
     }
 
+
     /**
      * start document functions
      */
-    // get access token
+    
+     
+    public function get_leave_pdf($path,$data,$mode='view'){
+
+        $data_info = get_array_value($data, "visitor_info");
+        $pdf_file_name = "access_info_".$data_info->id.".pdf";
+       
+        $options = new Options([
+            'enable_remote' => true,
+            'isRemoteEnabled' => true,
+            'chroot',base_url('files/visitors'),
+        ]);
+        
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+        $options = $dompdf->getOptions();
+        $dompdf->setOptions($options);
+        
+        // var_dump($options->get('chroot'));
+        // die();
+        // file_get_contents('visitors/',$dompdf->output());
+
+        $html = view($path,$data);
+        $dompdf->loadHtml($html);
+        
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream($pdf_file_name,['Attachment'=>0]);
+        exit();
+    }
+
+     // get access token
      public function AccesToken()
      {
  
