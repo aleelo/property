@@ -82,17 +82,15 @@
                                         $data = file_get_contents($path);
                                         $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
                                     }else{
-                                        $image = 'avatar.jpg';
-                                        
-                                        $path = $domain.'files/visitors/'.$image;
-                                        $type = pathinfo($path, PATHINFO_EXTENSION);
-                                        $data = file_get_contents($path);
-                                        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                                        $image = '';
                                     }
                                     ?>
                                     <tr style="vertical-align: top;">
                                         <td><?php echo $i; ?></td>
-                                        <td ><img  width="50" src="<?php echo $base64;?>" class="rounded" style="margin-right: 10px;" />
+                                        <td >
+                                        <?php if($image){?>
+                                            <img  width="50" src="<?php echo $base64;?>" class="rounded" style="margin-right: 10px;" />
+                                            <?php }?>
                                         <span  style="vertical-align: top;"><?php echo $d->visitor_name; ?></span></td>
                                         <td><?php echo $d->mobile;?></td>
                                         <td><?php echo $d->vehicle_details; ?></td>
