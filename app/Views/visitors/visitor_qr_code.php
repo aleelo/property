@@ -7,7 +7,7 @@
 
     <div class=" d-flex justify-content-center">
         <div class="card col-md-5 col-xs-12 mt-3 shadow-lg">
-            <div class="card-title text-center"><h4 class="fw-bold">Access Request Information #<?php echo $visitor_info->id; ?></h4></div>
+            <div class="card-title text-center"><h4 class="fw-bold">Xogta Ogolaashiyaha soo gelista #<?php echo $visitor_info->id; ?></h4></div>
                 
             <div class="modal-body">
                 <div class="row">
@@ -93,30 +93,14 @@
                     </div>
 
                     <div class="table-responsive mb15">
-                        <h3 class="text-info m-3 mb-1 text-center mb-4">Access Information</h3>
+                        <h3 class="text-info m-3 mb-1 text-center mb-4">Xogta xubnaha Soo Deynta</h3>
                         <div class="d-flex flex-column justify-content-center mt-3 font-arial mb-3">
                             <div class=" col-9 mx-auto" style="font-size: 16px;letter-spacing: 0.8px;line-height: 1.8;">
                                     
-                                <div class="d-flex justify-content-between mb-4">
-                                    <span class=""><b>Tix:</b> <?php echo $visitor_info->ref_number?></span>
-                                    <span class=""><b>Date:</b> <?php echo date_format(new DateTime($visitor_info->created_at),'Y-m-d');?></span>
-                                </div>
-
-                                <p>
-                                <b>Ku:</b> Heeganka Sare ee Madaxtooyada JFS.<br>
-                                <b>Og:</b> Agaasimaha Teknoolajiyadda & Amniga ee Madaxtooyada JFS.
-                                </p>
-
-                                <p>
-                                <b>UJEEDO: SOO DEYN MARTI GAAR AH - <?php echo $visitor_info->document_title; ?></b>
-                                </p>
-
-                                <p style="white-space: nowrap;">
-                                Waxaan si xushmad & qadarin mudan kaga codsanaynaa Heeganka Sare ee <br>
-                                Madaxtooyada JFS inaad noosoo fududeysaan marti shir ku leh Xafiiska Amniga<br>
-                                Qaranka JFS, <b>( <?php echo date("l, h:i a",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d').' '.$visitor_info->visit_time)); ?> )</b>, martidas oo u bahan so deyn irdaha laga galo<br>
-                                Madaxtooyada J.F.S. (Ceelgaabta, Kashmir, Radio Muqdisho & Gate 1).<br>
-                                </p>
+                                <!-- <div class="d-flex justify-content-between mb-4">
+                                    <span class=""><b>Tix:</b> <?php //echo $visitor_info->ref_number?></span>
+                                    <span class=""><b>Date:</b> <?php //echo date_format(new DateTime($visitor_info->created_at),'Y-m-d');?></span>
+                                </div> -->
                                 
                             </div>
                         </div>
