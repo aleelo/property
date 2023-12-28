@@ -9,6 +9,7 @@ use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use chillerlan\QRCode\Output\QRImageWithLogo;
+use DateTime;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use PhpOffice\PhpWord\Element\Table;
@@ -556,8 +557,8 @@ class Visitors extends Security_Controller
             $data['qrcode'] = $qr;
 
             //download pdf:
-            $this->get_access_pdf('visitors/access_request_pdf', $data);
-            // prepare_pdf('visitors/access_request_pdf',$data,'view');
+            // $this->get_access_pdf('visitors/access_request_pdf', $data);
+            prepare_pdf('visitors/access_request_pdf',$data,'view');           
             // return $this->template->view('visitors/access_request_pdf',$data);
 
         } else {
@@ -572,6 +573,7 @@ class Visitors extends Security_Controller
        
         $options = new Options([
             'enable_remote' => true,
+            'isRemoteEnabled' => true,
             'chroot',base_url('files/visitors'),
         ]);
         
@@ -595,6 +597,7 @@ class Visitors extends Security_Controller
 
         // Output the generated PDF to Browser
         $dompdf->stream($pdf_file_name,['Attachment'=>0]);
+        exit();
     }
 
     // Creates the Document Using the Provided Template
@@ -846,7 +849,47 @@ class Visitors extends Security_Controller
         }
     }
 
+    public function search_results($id= 0) {
 
+        $visitor_info = $this->db->query("SELECT v.*,cb.image as created_avatar,ab.image as approved_avatar,rb.image as rejected_avatar,
+                        concat(cb.first_name,' ',cb.last_name) as created_by,concat(rb.first_name,' ',rb.last_name) as rejected_by,
+                        concat(ab.first_name,' ',ab.last_name) as approved_by FROM rise_visitors v 
+
+                        LEFT JOIN rise_visitors_detail vd on v.id = vd.visitor_id
+                        LEFT JOIN rise_users cb on v.created_by = cb.id
+                        LEFT JOIN rise_users ab on v.approved_by = ab.id
+                        LEFT JOIN rise_users rb on v.rejected_by = rb.id
+                        WHERE v.uuid = '$id'")->getRow();
+                    
+        $visitor_details = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $visitor_info->id")->getResult();
+
+        $view_data["scroll_to_content"] = true;
+        $view_data["visitor_info"] = $visitor_info;
+        $view_data["visitor_details"] = $visitor_details;
+        return $this->template->rander('visitors/search_result',$view_data);
+    }
+
+    public function access_search() {
+
+        $today = date('Y-m-d');
+        $visitors = $this->db->query("SELECT *,(select count(*) from rise_visitors_detail vd where v.id = vd.visitor_id) as count FROM rise_visitors v WHERE start_date like '$today' limit 20")->getResult();
+        
+        $data['visitors'] = $visitors;
+
+        return $this->template->rander('visitors/todays_access_search',$data);
+    }
+
+    public function get_visitors_suggestion() {
+        $today = date('Y-m-d');
+        $result = $this->db->query("SELECT * FROM rise_visitors WHERE start_date like '$today' limit 20")->getResult();
+
+        $result_array = array();
+        foreach ($result as $v) {
+            $result_array[] = array("value" => $v->uuid, "label" => date("l, h:i a",strtotime(date_format(new DateTime($v->start_date),'Y-m-d').' '.$v->visit_time)).' - '.$v->document_title.' - '.$v->client_type);
+        }
+
+        return json_encode($result_array);
+    }
     // get visitor details
     public function visitor_details(){
 

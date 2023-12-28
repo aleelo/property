@@ -4,6 +4,10 @@
         <div class="table-responsive mb15">
             <table class="table dataTable display b-t">
                 <tr>
+                    <td class=""> <?php echo app_lang('document_title'); ?></td>
+                    <td><?php echo $visitor_info->document_title; ?></td>
+                </tr>
+                <tr>
                     <td class=""> <?php echo app_lang('client_type'); ?></td>
                     <td><?php echo $visitor_info->client_type; ?></td>
                 </tr>

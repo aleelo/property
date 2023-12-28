@@ -3,20 +3,31 @@
     <head>
         <?php 
         
-        
+    $domain = $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'];
+    $domain = preg_replace('/index.php.*/', '', $domain);
+    $domain = strtolower($domain);
+    if(str_contains($domain,'localhost')) {
+        $prefix = '/rise/';
+        $domain = 'http://' . $domain;
+    }else{
+        $prefix = '';
+        $domain = 'https://' . $domain;
+    }
+
+    // die($domain);
     $css_files = array(
         // "/rise/assets/bootstrap/css/bootstrap.min.css",
-        "/rise/assets/js/select2/select2.css", //don't combine this css because of the images path
-        "/rise/assets/js/select2/select2-bootstrap.min.css",
-        "/rise/assets/css/app.all.css",
+        "assets/js/select2/select2.css", //don't combine this css because of the images path
+        "assets/js/select2/select2-bootstrap.min.css",
+        "assets/css/app.all.css",
     );
 
-    array_push($css_files, "/rise/assets/css/custom-style.css"); //add to last. custom style should not be merged
+    array_push($css_files, "assets/css/custom-style.css"); //add to last. custom style should not be merged
 
 
     echo "<style type='text/css'>";
     foreach ($css_files as $uri) {
-        echo file_get_contents("http://localhost" . $uri);
+        echo file_get_contents($domain . $uri);
         // echo "<link rel='stylesheet' type='text/css' href='" . base_url($uri) . "?v=3' />";
     }
     // echo file_get_contents("http://localhost/rise/assets/bootstrap/css/bootstrap.min.css");
@@ -27,7 +38,7 @@
 
     <div class=" d-flex justify-content-center">
         <div class="card col-md-5 col-xs-12 mt-3 shadow-lg">
-            <div class="card-title text-center border-bottom"><h4 class="fw-bold">Access Request Information #<?php echo $visitor_info->id; ?></h4></div>
+            <div class="card-title text-center border-bottom"><h4 class="fw-bold">Ogolaanshaha soo gelista </h4></div>
                 
             <div class="modal-body">
                 <div class="row">
@@ -65,14 +76,15 @@
                                         $file = @unserialize($d->image);
                                         $image = get_array_value($file,'file_name');
                                         // $image =$image;
-                                        $path = 'http://localhost/rise/files/visitors/'.$image;
+                                        
+                                        $path = $domain.'files/visitors/'.$image;
                                         $type = pathinfo($path, PATHINFO_EXTENSION);
                                         $data = file_get_contents($path);
                                         $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
                                     }else{
                                         $image = 'avatar.jpg';
                                         
-                                        $path = 'http://localhost/rise/files/visitors/'.$image;
+                                        $path = $domain.'files/visitors/'.$image;
                                         $type = pathinfo($path, PATHINFO_EXTENSION);
                                         $data = file_get_contents($path);
                                         $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);

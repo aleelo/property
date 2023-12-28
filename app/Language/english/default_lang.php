@@ -53,6 +53,7 @@ $lang["access_requests"] = "Access Requests";
 $lang["add_access_request"] = "Add Access Request";
 $lang["add_access"] = "Add Access";
 $lang["add_request"] = "Add Request";
+$lang["search_todays_access_requests"] = "Search todays access requests";
 $lang["can_access_visitors_information"] = "Can access visitors information";
 $lang["yes_all_visitors"] = "Yes, all visitors information";
 $lang["yes_only_own_visitors"] = "Yes, only own visitor's information";
