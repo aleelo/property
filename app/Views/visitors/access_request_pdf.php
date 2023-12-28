@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <title>Ogolaanshaha soo gelista</title>
         <?php 
         
     $domain = $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'];
