@@ -59,7 +59,9 @@ class Left_menu {
             }
 
             if ($this->ci->login_user->is_admin || $access_visitor && ($role != "Employee")) {
-                $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "visitors", "class" => "users");
+                $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "#", "class" => "users");
+                $sidebar_menu["access_list"] = array("name" => "access_list", "url" => "visitors", "class" => "users");
+                $sidebar_menu["access_search"] = array("name" => "access_search", "url" => "visitors/access_search", "class" => "users");
             }
 
             if ($this->ci->login_user->is_admin || !get_array_value($this->ci->login_user->permissions, "do_not_show_projects")) {
