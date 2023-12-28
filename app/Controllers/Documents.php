@@ -100,10 +100,11 @@ class Documents extends Security_Controller
         //get custom fields
         $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("leads", $lead_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
 
-        $templates = $this->Templates_model->get_all();
+        $dept_id = $this->get_user_department_id();
+        $templates = $this->db->query("SELECT * FROM rise_templates where department = $dept_id")->getResult();
         $temp_array =[];
 
-        foreach($templates->getResult() as $t){
+        foreach($templates as $t){
             $temp_array[$t->id] = $t->name;
         }
 
@@ -657,7 +658,7 @@ class Documents extends Security_Controller
 
         $data = array(
             "name" => $this->request->getPost('name'),
-            "department" => $job_info->department_id,
+            "department" => $this->request->getPost('department'), //$job_info->department_id,
             "ref_prefix" => $this->request->getPost('ref_prefix'),
             "destination_folder" => $this->request->getPost('destination_folder'),
             "path" => $this->request->getPost('path'),
