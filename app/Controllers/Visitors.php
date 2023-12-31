@@ -412,6 +412,7 @@ class Visitors extends Security_Controller
             ];
     
             $doc_data = [
+                'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
                 'document_title' =>'Visitors Request - '.$this->request->getPost('name'),
                 'ref_number' =>$template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
                 "depertment" => $this->get_user_department_id(),

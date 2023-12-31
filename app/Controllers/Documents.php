@@ -335,6 +335,7 @@ class Documents extends Security_Controller
         $template->setValues([
 
             'ref' => $data['ref_number'],
+            'title' => $data['document_title'],
             'date' => date('Y-m-d',strtotime($data['created_at'])),
 
         ]);

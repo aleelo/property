@@ -123,6 +123,7 @@ class Leaves extends Security_Controller {
         ];
 
         $doc_data = [
+            'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             'document_title' =>'Leave - '.$user_info->first_name.' '.$user_info->last_name,
             'ref_number' =>$template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
             "depertment" => $user_info->department_id,
@@ -189,7 +190,7 @@ class Leaves extends Security_Controller {
     public function saveAsPDF($driveId,$itemId) {
 
     
-        $pdfApi = "https://graph.microsoft.com/v1.0/items/$itemId/content?format=pdf";///drives/$driveId
+        $pdfApi = "https://graph.microsoft.com/v1.0/drive/items/$itemId/content?format=pdf";///drives/$driveId
         $curl = curl_init();
         $accessToken = $this->AccesToken();
         curl_setopt_array($curl, array(
@@ -266,6 +267,7 @@ class Leaves extends Security_Controller {
         ];
 
         $doc_data = [
+            'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             'document_title' =>'Leave - '.$user_info->first_name.' '.$user_info->last_name,
             'ref_number' =>$template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
             "depertment" => $user_info->department_id,
@@ -463,8 +465,17 @@ class Leaves extends Security_Controller {
                 'ratio' => false,
             ]);
 
+        //save as docx
         $template->saveAs($path_absolute);
+        //save as pdf
+        // \PhpOffice\PhpWord\Settings::setPdfRendererPath('vendor/dompdf/dompdf');
+        // \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
 
+        // $phpWord = \PhpOffice\PhpWord\IOFactory::load($path_absolute);
+        // $xmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord,'PDF');
+        // $xmlWriter->save(APPPATH . 'Views/documents/' . $data['id'].'_'.date('m').'_'.date('Y').'.pdf');
+
+        $save_as_name2 = $data['id'].'_'.date('m').'_'.date('Y').'.pdf';
 
         return $save_as_name;
 
@@ -502,6 +513,12 @@ class Leaves extends Security_Controller {
 
         if(file_exists(APPPATH.'Views/documents/'.$path)){
             unlink(APPPATH.'Views/documents/'.$path);
+        }
+
+        //delete .docx file also
+        $file_name = pathinfo($path,PATHINFO_FILENAME);
+        if(file_exists(APPPATH.'Views/documents/'.$file_name.'.docx')){
+            unlink(APPPATH.'Views/documents/'.$file_name.'.docx');
         }
 
         return $data;
