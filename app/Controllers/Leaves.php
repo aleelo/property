@@ -104,6 +104,8 @@ class Leaves extends Security_Controller {
                         left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
 
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
+        $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template->id");
+        $sqn = $this->db->query("SELECT lpad(max(sqn),4,0) as sqn FROM rise_templates where id = $template->id")->getRow()->sqn;
 
         // var_dump($leave_info);
         // var_dump($save_id);
@@ -125,7 +127,7 @@ class Leaves extends Security_Controller {
         $doc_data = [
             'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             'document_title' =>'Leave - '.$user_info->first_name.' '.$user_info->last_name,
-            'ref_number' =>$template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
+            'ref_number' =>$template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('Y'),
             "depertment" => $user_info->department_id,
             "template" => $template->id,
             "created_by" => $this->login_user->id,
@@ -252,6 +254,8 @@ class Leaves extends Security_Controller {
                         left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
 
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
+        $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template->id");
+        $sqn = $this->db->query("SELECT lpad(max(sqn),4,0) as sqn FROM rise_templates where id = $template->id")->getRow()->sqn;
 
         $doc_leave_data = [
             'uuid' => $leave_info->uuid,
@@ -269,7 +273,7 @@ class Leaves extends Security_Controller {
         $doc_data = [
             'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             'document_title' =>'Leave - '.$user_info->first_name.' '.$user_info->last_name,
-            'ref_number' =>$template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
+            'ref_number' =>$template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('Y'),
             "depertment" => $user_info->department_id,
             "template" => $template->id,
             "created_by" => $this->login_user->id,

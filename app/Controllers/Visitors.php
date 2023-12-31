@@ -395,6 +395,8 @@ class Visitors extends Security_Controller
             // die();
 
             $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Visitor'")->getRow();
+            $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template->id");
+            $sqn = $this->db->query("SELECT lpad(max(sqn),4,0) as sqn FROM rise_templates where id = $template->id")->getRow()->sqn;
             
             $doc_visitor_data = [
                 'id'=>$save_id,
@@ -414,7 +416,7 @@ class Visitors extends Security_Controller
             $doc_data = [
                 'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
                 'document_title' =>'Visitors Request - '.$this->request->getPost('name'),
-                'ref_number' =>$template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
+                'ref_number' =>$template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('Y'),
                 "depertment" => $this->get_user_department_id(),
                 "template" => $template->id,
                 "created_by" => $this->login_user->id,
