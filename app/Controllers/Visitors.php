@@ -401,7 +401,7 @@ class Visitors extends Security_Controller
             $doc_visitor_data = [
                 'id'=>$save_id,
                 'uuid'=>$visitor_info->uuid,
-                'ref_number'=> $template->ref_prefix.'/'.$save_id.'/'.date('m').'/'.date('Y'),
+                'ref_number'=> $template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('Y'),
                 'template' => $template->path,
                 'folder' => $template->destination_folder,
                 'date' => date('Y-m-d'),
