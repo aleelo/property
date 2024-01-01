@@ -193,7 +193,7 @@ class Documents extends Security_Controller
         $this->validate_submitted_data(array(
             "id" => "numeric",
             "document_title" => "required",
-            "ref_number" => "required",
+            // "ref_number" => "required",
             "template" => "required",
         ));
         $template_id = $this->request->getPost('template');

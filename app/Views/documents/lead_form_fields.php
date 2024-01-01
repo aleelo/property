@@ -26,13 +26,13 @@
         </label>
         <div class="col-9">
             <?php
-            echo form_input(array(
-                "id" => "ref_number",
-                "name" => "ref_number",
-                "value" => $model_info->ref_number,
-                "class" => "form-control",
-                "placeholder" => app_lang('ref_number')
-            ));
+            // echo form_input(array(
+            //     "id" => "ref_number",
+            //     "name" => "ref_number",
+            //     "value" => $model_info->ref_number,
+            //     "class" => "form-control",
+            //     "placeholder" => app_lang('ref_number')
+            // ));
             ?>
         </div>
     </div> -->
