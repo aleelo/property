@@ -401,7 +401,7 @@ class Visitors extends Security_Controller
             $doc_visitor_data = [
                 'id'=>$save_id,
                 'uuid'=>$visitor_info->uuid,
-                'ref_number'=> $template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('Y'),
+                'ref_number'=> $template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('y'),
                 'template' => $template->path,
                 'folder' => $template->destination_folder,
                 'date' => date('Y-m-d'),
@@ -416,7 +416,7 @@ class Visitors extends Security_Controller
             $doc_data = [
                 'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
                 'document_title' =>'Visitors Request - '.$this->request->getPost('name'),
-                'ref_number' =>$template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('Y'),
+                'ref_number' =>$template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('y'),
                 "depertment" => $this->get_user_department_id(),
                 "template" => $template->id,
                 "created_by" => $this->login_user->id,
