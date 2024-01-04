@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Libraries\Google_calendar_events;
+use DateTime;
 
 class Events extends Security_Controller {
 
@@ -248,6 +249,15 @@ class Events extends Security_Controller {
                 echo json_encode(array("success" => true, 'message' => app_lang('record_saved')));
             }
 
+            //add outlook calendar events:
+            $data['start_date']=$this->request->getPost('start_date');
+            $data['end_date']=$this->request->getPost('end_date');
+            $data['start_time']=$this->request->getPost('start_time');
+            $data['end_time']=$this->request->getPost('end_time');
+
+            $r = $this->add_outlook_calendar_event($data);
+           
+
             if ($share_with) {
                 if ($id) {
                     //the event modified and shared with others, log the notificaiton
@@ -260,6 +270,126 @@ class Events extends Security_Controller {
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
+    }
+    /**
+     * add outlook calendar events:
+     */
+    public function add_outlook_calendar_event($data = array()) {
+
+
+        $outlookUrl = "https://graph.microsoft.com/v1.0/users/admin@presidency.gov.so/calendars/AAMkAGZmZGQ2ZTVlLTFlZTMtNGIxMy05ODk0LWUxODQ5YjFiZDVhNgBGAAAAAACuUPq20ewrQrIOWwF2OJ5zBwChCXytIvPMSL3vLveJk1VoAAAAAAEGAAChCXytIvPMSL3vLveJk1VoAAFeg8ozAAA=/events";
+
+        $title = $data['title'];
+        $description = $data['description'];
+        $start_date = $data['start_date'];
+        $end_date = $data['end_date'];
+        $start_time = $data['start_time'];
+        $end_time = $data['end_time'];
+        $location = $data['location'];
+    
+        $start_date = (new DateTime($start_date.' '.$start_time))->format('Y-m-d h:i:s');
+        $end_date = (new DateTime($end_date.' '.$end_time))->format('Y-m-d h:i:s');
+        $description = $description;
+        
+        $body = '{
+            "subject": "'.$title.'",
+            "body": {
+                "contentType": "HTML",
+                "content": "'.$description.'"
+            },
+            "start": {
+                "dateTime": "'.$start_date.'",
+                "timeZone": "Africa/Nairobi"
+            },
+            "end": {
+                "dateTime": "'.$end_date.'",
+                "timeZone": "Africa/Nairobi"
+            },
+            "location": {
+                "displayName":"'.$location.'"
+            },
+            "attendees": [
+                {
+                "emailAddress": {
+                    "address":"sakigurey@presidency.gov.so",
+                    "name": "Saki Gurey"
+                },
+                "type": "required"
+                }
+            ],
+            "allowNewTimeProposals": true
+            }';
+                
+        $accessToken = $this->AccesToken();
+                
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $outlookUrl,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => $body,
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'Authorization: Bearer '.$accessToken
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+               
+        // Decode the JSON response into an associative array
+        $data = json_decode($response, true);
+        
+        // echo $data;
+        // die();
+        return $data;
+    }
+
+    
+    public function AccesToken()
+    {
+        $appid = getenv('AZURE_APP_ID'); //"a70c275e-7713-46eb-8a09-6d5a7c3b823d";
+        $tennantid = getenv('AZURE_TENANT_ID'); //"695822cd-3aaa-446d-aac2-3ebb02854b8a";
+        $secret = getenv('AZURE_SECRET_ID'); //"e54c00ad-6cfd-4113-b46f-5a3de239d13b";
+        $env = getenv('ENVIRONMENT'); //ENVIRONMENT
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://login.microsoftonline.com/'.$tennantid.'/oauth2/v2.0/token?Content-Type=application%2Fx-www-form-urlencoded',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => 'client_id='.$appid.'&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret='.$secret.'&grant_type=client_credentials',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/x-www-form-urlencoded',
+                'Cookie: fpc=AvtPK5Dz759HgjJgzmeSAChRGrKTAQAAAIgG3NwOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd',
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($response, true);
+        // var_dump($data);
+        // die();
+        // Get the web URL of the file from the array
+        $accessToken = $data["access_token"];
+
+        curl_close($curl);
+        return $accessToken;
+
     }
 
     //delete/undo an event

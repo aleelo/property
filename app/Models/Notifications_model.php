@@ -918,31 +918,31 @@ class Notifications_model extends Crud_model {
                  (SELECT CONCAT($users_table.first_name, ' ', $users_table.last_name) FROM $users_table WHERE $users_table.id=$notifications_table.to_user_id) AS to_user_name,
                  (SELECT $clients_table.company_name FROM $clients_table WHERE $clients_table.id=$notifications_table.lead_id) AS lead_title,
                  FIND_IN_SET($user_id, $notifications_table.read_by) as is_read    
-        FROM $notifications_table
-        LEFT JOIN $projects_table ON $projects_table.id=$notifications_table.project_id
-        LEFT JOIN $project_comments_table ON $project_comments_table.id=$notifications_table.project_comment_id
-        LEFT JOIN $project_files_table ON $project_files_table.id=$notifications_table.project_file_id
-        LEFT JOIN $tasks_table ON $tasks_table.id=$notifications_table.task_id
-        LEFT JOIN $contracts_table ON $contracts_table.id=$notifications_table.contract_id
-        LEFT JOIN $estimates_table ON $estimates_table.id=$notifications_table.estimate_id
-        LEFT JOIN $proposals_table ON $proposals_table.id=$notifications_table.proposal_id
-        LEFT JOIN $leave_applications_table ON $leave_applications_table.id=$notifications_table.leave_id
-        LEFT JOIN $tickets_table ON $tickets_table.id=$notifications_table.ticket_id
-        LEFT JOIN $ticket_comments_table ON $ticket_comments_table.id=$notifications_table.ticket_comment_id
-        LEFT JOIN $posts_table ON $posts_table.id=$notifications_table.post_id
-        LEFT JOIN $subscriptions_table ON $subscriptions_table.id=$notifications_table.subscription_id
-        LEFT JOIN $users_table ON $users_table.id=$notifications_table.user_id
-        LEFT JOIN $activity_logs_table ON $activity_logs_table.id=$notifications_table.activity_log_id
-        LEFT JOIN $invoice_payments_table ON $invoice_payments_table.id=$notifications_table.invoice_payment_id  
-        LEFT JOIN $invoices_table ON $invoices_table.id=$notifications_table.invoice_id
-        LEFT JOIN $events_table ON $events_table.id=$notifications_table.event_id
-        LEFT JOIN $announcements_table ON $announcements_table.id=$notifications_table.announcement_id
-        LEFT JOIN $estimate_comments_table ON $estimate_comments_table.id=$notifications_table.estimate_comment_id
-        LEFT JOIN $clients_table ON $clients_table.id=$notifications_table.client_id
-        LEFT JOIN $expenses_table ON $expenses_table.id=$notifications_table.expense_id
-        LEFT JOIN (SELECT $clients_table.id, $clients_table.company_name FROM $clients_table) AS lead_table ON lead_table.id=$notifications_table.lead_id
-        WHERE $notifications_table.deleted=0 AND FIND_IN_SET($user_id, $notifications_table.notify_to) != 0
-        ORDER BY $notifications_table.id DESC LIMIT $offset, $limit";
+                 FROM $notifications_table
+                 LEFT JOIN $projects_table ON $projects_table.id=$notifications_table.project_id
+                 LEFT JOIN $project_comments_table ON $project_comments_table.id=$notifications_table.project_comment_id
+                 LEFT JOIN $project_files_table ON $project_files_table.id=$notifications_table.project_file_id
+                 LEFT JOIN $tasks_table ON $tasks_table.id=$notifications_table.task_id
+                 LEFT JOIN $contracts_table ON $contracts_table.id=$notifications_table.contract_id
+                 LEFT JOIN $estimates_table ON $estimates_table.id=$notifications_table.estimate_id
+                 LEFT JOIN $proposals_table ON $proposals_table.id=$notifications_table.proposal_id
+                 LEFT JOIN $leave_applications_table ON $leave_applications_table.id=$notifications_table.leave_id
+                 LEFT JOIN $tickets_table ON $tickets_table.id=$notifications_table.ticket_id
+                 LEFT JOIN $ticket_comments_table ON $ticket_comments_table.id=$notifications_table.ticket_comment_id
+                 LEFT JOIN $posts_table ON $posts_table.id=$notifications_table.post_id
+                 LEFT JOIN $subscriptions_table ON $subscriptions_table.id=$notifications_table.subscription_id
+                 LEFT JOIN $users_table ON $users_table.id=$notifications_table.user_id
+                 LEFT JOIN $activity_logs_table ON $activity_logs_table.id=$notifications_table.activity_log_id
+                 LEFT JOIN $invoice_payments_table ON $invoice_payments_table.id=$notifications_table.invoice_payment_id  
+                 LEFT JOIN $invoices_table ON $invoices_table.id=$notifications_table.invoice_id
+                 LEFT JOIN $events_table ON $events_table.id=$notifications_table.event_id
+                 LEFT JOIN $announcements_table ON $announcements_table.id=$notifications_table.announcement_id
+                 LEFT JOIN $estimate_comments_table ON $estimate_comments_table.id=$notifications_table.estimate_comment_id
+                 LEFT JOIN $clients_table ON $clients_table.id=$notifications_table.client_id
+                 LEFT JOIN $expenses_table ON $expenses_table.id=$notifications_table.expense_id
+                 LEFT JOIN (SELECT $clients_table.id, $clients_table.company_name FROM $clients_table) AS lead_table ON lead_table.id=$notifications_table.lead_id
+                 WHERE $notifications_table.deleted=0 AND FIND_IN_SET($user_id, $notifications_table.notify_to) != 0
+                 ORDER BY $notifications_table.id DESC LIMIT $offset, $limit";
 
         $data = new \stdClass();
         $data->result = $this->db->query($sql)->getResult();
