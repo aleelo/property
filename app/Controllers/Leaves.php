@@ -85,7 +85,7 @@ class Leaves extends Security_Controller {
         $leave_data['created_by'] = $this->login_user->id;
         $leave_data['checked_by'] = $this->login_user->id;
         $leave_data['checked_at'] = $leave_data['created_at'];
-        $leave_data['status'] = "approved";
+        // $leave_data['status'] = "approved";
 
         $webUrl = null;
 
@@ -231,7 +231,7 @@ class Leaves extends Security_Controller {
         $leave_data['applicant_id'] = $this->login_user->id;
         $leave_data['created_by'] = 0;
         $leave_data['checked_at'] = "0000:00:00";
-        $leave_data['status'] = "pending";
+        // $leave_data['status'] = "pending";
         $applicant_id = $this->login_user->id;
 
         $leave_data = clean_data($leave_data);
@@ -774,18 +774,22 @@ class Leaves extends Security_Controller {
     private function _prepare_leave_info($data) {
         $image_url = get_avatar($data->applicant_avatar);
         $data->applicant_meta = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt=''></span>" . $data->applicant_name;
+        $style = '';
 
         if (isset($data->status)) {
             if ($data->status === "pending") {
                 $status_class = "bg-warning";
             } else if ($data->status === "approved") {
-                $status_class = "bg-success";
+                $status_class = "badge bg-success";//btn-success
+            } else if ($data->status === "active") {
+                $status_class = "";//btn-success
+                $style = "background-color:#a7abbf;";
             } else if ($data->status === "rejected") {
                 $status_class = "bg-danger";
             } else {
                 $status_class = "bg-dark";
             }
-            $data->status_meta = "<span class='badge $status_class'>" . app_lang($data->status) . "</span>";
+            $data->status_meta = "<span style='$style' class='badge $status_class'>" . app_lang($data->status) . "</span>";
         }
 
         if (isset($data->start_date)) {
@@ -855,6 +859,13 @@ class Leaves extends Security_Controller {
         $status = $this->request->getPost('status');
         $now = get_current_utc_time();
 
+        $role = $this->get_user_role();
+        if($role === "HRM" && $status === "approved"){
+            $status = 'approved';
+        }elseif($role == "Director" && $status === "approved"){
+            $status = 'pending';
+        }
+
         $leave_data = array(
             "checked_by" => $this->login_user->id,
             "checked_at" => $now,
@@ -873,9 +884,9 @@ class Leaves extends Security_Controller {
         }
 
         //user can update only the applications where status = pending
-        if ($applicatoin_info->status != "pending" || !($status === "approved" || $status === "rejected" || $status === "canceled")) {
-            app_redirect("forbidden");
-        }
+        // if (($applicatoin_info->status != "pending" || $applicatoin_info->status != "active") || !($status === "approved" || $status === "rejected" || $status === "canceled")) {
+        //     app_redirect("forbidden");
+        // }
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data, $applicaiton_id);
         if ($save_id) {
@@ -883,7 +894,9 @@ class Leaves extends Security_Controller {
             $notification_options = array("leave_id" => $applicaiton_id, "to_user_id" => $applicatoin_info->applicant_id);
 
             if ($status == "approved") {
-                log_notification("leave_approved", $notification_options);
+                log_notification("leave_approved_HR", $notification_options);//leave_approved
+            } else if ($status == "pending") {
+                log_notification("leave_approved_Director", $notification_options);
             } else if ($status == "rejected") {
                 log_notification("leave_rejected", $notification_options);
             } else if ($status == "canceled") {
