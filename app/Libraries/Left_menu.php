@@ -131,8 +131,6 @@ class Left_menu {
                 $sidebar_menu["prospects"] = array("name" => "prospects", "url" => "estimates", "class" => "anchor", "submenu" => $prospects_submenu);
             }
 
-
-
             if (get_setting("module_note") == "1") {
                 $sidebar_menu["notes"] = array("name" => "notes", "url" => "notes", "class" => "book");
             }
@@ -141,14 +139,16 @@ class Left_menu {
                 $sidebar_menu["messages"] = array("name" => "messages", "url" => "messages", "class" => "message-circle", "badge" => count_unread_message(), "badge_class" => "bg-primary");
             }
 
-
-
             $team_submenu = array();
 
+            //Employees List
             if (get_array_value($this->ci->login_user->permissions, "hide_team_members_list") != "1") {
                 $team_submenu["team_members"] = array("name" => "team_members", "url" => "team_members", "class" => "users");//team_members
             }
 
+            if (get_array_value($this->ci->login_user->permissions, "hide_team_members_list") != "1" && $role != "Employee") {
+                $team_submenu["employee_cards"] = array("name" => "employee_cards", "url" => "team_members/cards_list", "class" => "users");//team_members                
+            }
 
             if (get_setting("module_attendance") == "1" && ($this->ci->login_user->is_admin || $access_timecard)) {
                 $team_submenu["attendance"] = array("name" => "attendance", "url" => "attendance", "class" => "clock");
@@ -156,14 +156,11 @@ class Left_menu {
                 $team_submenu["attendance"] = array("name" => "attendance", "url" => "attendance/attendance_info", "class" => "clock");
             }
 
-
             if (get_setting("module_leave") == "1" && ($this->ci->login_user->is_admin || $access_leave)) {
                 $team_submenu["leaves"] = array("name" => "leaves", "url" => "leaves", "class" => "log-out");
             } else if (get_setting("module_leave") == "1") {
                 $team_submenu["leaves"] = array("name" => "leaves", "url" => "leaves/leave_info", "class" => "log-out");
             }
-
-
 
             if (get_setting("module_timeline") == "1" && $access_timeline) {
                 $team_submenu["timeline"] = array("name" => "timeline", "url" => "timeline", "class" => "send");
@@ -175,6 +172,7 @@ class Left_menu {
             }
 
 
+            //Employees
             if (count($team_submenu)) {
                 $sidebar_menu["team"] = array("name" => "team", "url" => "team_members", "class" => "users", "submenu" => $team_submenu);
             }

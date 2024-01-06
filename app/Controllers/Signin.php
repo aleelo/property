@@ -156,32 +156,35 @@ class Signin extends App_Controller
 
     public function aad_callback()
     {
-        // die('callback');
         // replace # with ?
 
         echo '
             <script>
-            url = window.location.href;
+                        
+                url = window.location.href;
 
-            i=url.indexOf("#");
+                i=url.indexOf("#");
 
-            if(i>0) {
+                if(i>0) {
 
-            url=url.replace("#","?");
+                url=url.replace("#","?");
 
-            window.location.href=url;}
+                window.location.href=url;
+            }
 
             </script>
 
              ';
-             
-        //    echo array_key_exists('access_token', $_GET);
-        //    die();    
 
-        if (array_key_exists('access_token', $_GET)) {
+        //    echo array_key_exists('access_token', $_GET);
+        //    var_dump($_GET);
+        //    die();    
+        // sleep(1);
+           $token_exists = array_key_exists('access_token', $_GET);
+
+        if ($token_exists == 1 && $token_exists == true) {
 
             $this->session->set('aad_token', $_GET['access_token']);
-            // $_SESSION['t'] = $_GET['access_token'];
 
             $t = $this->session->get('aad_token');
             // die('token: '.$t);
@@ -199,7 +202,6 @@ class Signin extends App_Controller
             $rez = json_decode(curl_exec($ch), 1);
 
             curl_close($ch);
-           
             // echo 'result=' . var_dump($rez);
             // die();
 
@@ -223,7 +225,7 @@ class Signin extends App_Controller
 
                 } else {
 
-                    die('Get: inside ' . var_dump($_GET));
+                    // die('Get: inside ' . var_dump($_GET));
 
                     //user with email not found ie. authentication failed
                     array_push($this->signin_validation_errors, app_lang("authentication_failed") . ', User Not Found');

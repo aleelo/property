@@ -174,6 +174,7 @@ $lang["edit_team_member"] = "Edit employee";
 $lang["delete_team_member"] = "Delete employee";
 $lang["team_member"] = "Employee";
 $lang["team_members"] = "Employees List";
+$lang["employee_cards"] = "Employees Cards";
 $lang["active_members"] = "Active employees";
 $lang["inactive_members"] = "Inactive employees";
 $lang["first_name"] = "First name";
