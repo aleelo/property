@@ -114,6 +114,8 @@ class Users_model extends Crud_model {
             if ($client_result->resultID->num_rows !== 1) {
                 return false;
             }
+        }else{
+            return true;
         }
     }
 

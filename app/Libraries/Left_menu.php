@@ -147,7 +147,7 @@ class Left_menu {
             }
 
             if (get_array_value($this->ci->login_user->permissions, "hide_team_members_list") != "1" && $role != "Employee") {
-                $team_submenu["employee_cards"] = array("name" => "employee_cards", "url" => "team_members/cards_list", "class" => "users");//team_members                
+                $team_submenu["card_holders"] = array("name" => "card_holders", "url" => "cardholders", "class" => "users");//team_members                
             }
 
             if (get_setting("module_attendance") == "1" && ($this->ci->login_user->is_admin || $access_timecard)) {
