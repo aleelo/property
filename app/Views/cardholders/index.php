@@ -1,7 +1,7 @@
 <div id="page-content" class="page-wrapper clearfix">
     <div class="card">
         <div class="page-title clearfix">
-            <h1><?php echo app_lang('team_members'); ?></h1>
+            <h1><?php echo app_lang('card_holders_list'); ?></h1>
             <div class="title-button-group">
                 <div class="btn-group" role="group">
                     <button type="button" class="btn btn-default btn-sm active me-0"  title="<?php echo app_lang('list_view'); ?>"><i data-feather="menu" class="icon-16"></i></button>
@@ -9,8 +9,8 @@
                 </div>
                 <?php
                 if ($login_user->is_admin || get_array_value($login_user->permissions, "can_add_or_invite_new_team_members")) {
-                    echo modal_anchor(get_uri("cardholders/invitation_modal"), "<i data-feather='mail' class='icon-16'></i> " . app_lang('send_invitation'), array("class" => "btn btn-default", "title" => app_lang('send_invitation')));
-                    echo modal_anchor(get_uri("cardholders/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_team_member'), array("class" => "btn btn-default", "title" => app_lang('add_team_member')));
+                    // echo modal_anchor(get_uri("cardholders/invitation_modal"), "<i data-feather='mail' class='icon-16'></i> " . app_lang('send_invitation'), array("class" => "btn btn-default", "title" => app_lang('send_invitation')));
+                    // echo modal_anchor(get_uri("cardholders/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_team_member'), array("class" => "btn btn-default", "title" => app_lang('add_team_member')));
                 }
                 ?>
             </div>
@@ -33,6 +33,7 @@
         if ("<?php echo $login_user->is_admin; ?>") {
             visibleDelete = true;
         }
+        // `photo`, `CID`, `type`, `fullName`, `department`, `titleEng`, `titleSom`, `cardId`, `user_id`, `expireDate`, 
 
         $("#team_member-table").appTable({
             source: '<?php echo_uri("cardholders/list_data/") ?>',
@@ -41,9 +42,11 @@
             filterDropdown: [<?php echo $custom_field_filters; ?>],
             columns: [
                 {title: '', "class": "w50 text-center all"},
-                {title: "<?php echo app_lang("name") ?>", "class": "w200 all"},
-                {title: "<?php echo app_lang("job_title") ?>", "class": "w15p"},
-                {visible: visibleContact, title: "<?php echo app_lang("email") ?>", "class": "w20p"},
+                {title: "<?php echo app_lang("name") ?>", "class": "w20p all"},
+                {title: "<?php echo app_lang("type") ?>", "class": "w15p"},
+                {title: "<?php echo app_lang("CID") ?>", "class": "w15p"},
+                {title: "<?php echo app_lang("job_title_en") ?>", "class": "w15p"},
+                {title: "<?php echo app_lang("job_title_so") ?>", "class": "w15p"},
                 {visible: visibleContact, title: "<?php echo app_lang("card_number") ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("status") ?>", "class": "w15p"}
 <?php echo $custom_field_headers; ?>,

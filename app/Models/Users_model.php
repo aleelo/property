@@ -312,6 +312,136 @@ class Users_model extends Crud_model {
         }
     }
 
+    function get_cardholder_details($options = array()) {
+        $users_table = $this->db->prefixTable('users');
+        $cardholders_table = $this->db->prefixTable('cardholders');
+        $clients_table = $this->db->prefixTable('clients');
+        $roles_table = $this->db->prefixTable('roles');
+        
+        
+        $Users_model = model("App\Models\Users_model");
+        $login_user_id = $Users_model->login_user_id();
+        $user = $Users_model->get_access_info($login_user_id);
+
+        $Roles_model = model("App\Models\Roles_model");
+        
+        $r = $Roles_model->get_one($user->role_id);
+
+        if($user->is_admin){
+            $role = 'Admin';
+        }else{
+            $role = $r->title;
+        }
+
+        // die($role);
+
+        if($role != 'Employee'){
+            $created_by = '%';
+        }else{
+            $created_by = $user->id;
+        }
+
+        $where = "";
+        $id = $this->_get_clean_value($options, "id");
+        $status = $this->_get_clean_value($options, "status");
+        $user_type = $this->_get_clean_value($options, "user_type");
+
+        if ($id) {
+            $where .= " AND $cardholders_table.id=$id";
+        }
+        if ($status === "active") {
+            $where .= " AND $cardholders_table.status='active'";
+        } else if ($status === "inactive") {
+            $where .= " AND $cardholders_table.status='inactive'";
+        }
+
+        // $quick_filter = $this->_get_clean_value($options, "quick_filter");
+        // if ($quick_filter) {
+        //     // $where .= $this->make_quick_filter_query($quick_filter, $cardholders_table);
+        // }
+
+        // $client_groups = $this->_get_clean_value($options, "client_groups");
+        // if ($client_groups) {
+        //     $client_groups_where = $this->prepare_allowed_client_groups_query($clients_table, $client_groups);
+        //     if ($client_groups_where) {
+        //         $where .= " AND $users_table.client_id IN(SELECT $clients_table.id FROM $clients_table WHERE $clients_table.deleted=0 $client_groups_where)";
+        //     }
+        // }
+
+        // $custom_field_type = "team_members";
+        // if ($user_type === "client") {
+        //     $custom_field_type = "client_contacts";
+        // } else if ($user_type === "lead") {
+        //     $custom_field_type = "lead_contacts";
+        // }
+
+        $limit_offset = "";
+        $limit = $this->_get_clean_value($options, "limit");
+        if ($limit) {
+            $skip = $this->_get_clean_value($options, "skip");
+            $offset = $skip ? $skip : 0;
+            $limit_offset = " LIMIT $limit OFFSET $offset ";
+        }
+        // `photo`, `CID`, `type`, `fullName`, `department`, `titleEng`, `titleSom`, `cardId`, `user_id`, `expireDate`, 
+
+        $available_order_by_list = array(
+            "fullName" => $cardholders_table . ".fullName",
+            "CID" => $cardholders_table . ".CID",
+            "type" => $cardholders_table . ".type",
+            "titleEng" => $cardholders_table . ".titleEng",
+            "titleSom" => $cardholders_table . ".titleSom",
+            "cardId" => $cardholders_table . ".cardId",
+            "status" => $cardholders_table . ".status"
+        );
+
+        $order_by = get_array_value($available_order_by_list, $this->_get_clean_value($options, "order_by"));
+
+        $order = "ORDER BY $cardholders_table.fullName";
+
+        if ($order_by) {
+            $order_dir = $this->_get_clean_value($options, "order_dir");
+            $order = " ORDER BY $order_by $order_dir ";
+        }
+
+        $search_by = get_array_value($options, "search_by");
+        if ($search_by) {
+            $search_by = $this->db->escapeLikeString($search_by);
+
+            $where .= " AND (";
+            $where .= " $cardholders_table.titleEng LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $cardholders_table.titleSom LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $cardholders_table.CID LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $clients_table.type LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $cardholders_table.fullName LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $cardholders_table.cardId LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $cardholders_table.status LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " )";
+        }
+        
+        //prepare full query string 
+        // LEFT JOIN $clients_table ON $clients_table.id=$cardholders_table.client_id
+        // LEFT JOIN $roles_table ON $roles_table.id=$cardholders_table.role_id
+        // LEFT JOIN $cardholders_table ON $cardholders_table.user_id=$cardholders_table.id
+        $sql = "SELECT SQL_CALC_FOUND_ROWS $cardholders_table.* FROM $cardholders_table
+           
+        WHERE $cardholders_table.deleted=0  $where 
+        $order $limit_offset";//and $users_table.id LIKE '$created_by'
+
+        $raw_query = $this->db->query($sql);
+
+        $total_rows = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow();
+
+        if ($limit) {
+            return array(
+                "data" => $raw_query->getResult(),
+                "recordsTotal" => $total_rows->found_rows,
+                "recordsFiltered" => $total_rows->found_rows,
+            );
+        } else {
+            return $raw_query;
+        }
+    }
+    
     function is_email_exists($email, $id = 0, $client_id = 0) {
         $users_table = $this->db->prefixTable('users');
         $id = $id ? $this->db->escapeString($id) : $id;

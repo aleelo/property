@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-class Team_members extends Security_Controller {
+class Cardholders extends Security_Controller {
 
     function __construct() {
         parent::__construct();
@@ -352,7 +352,7 @@ class Team_members extends Security_Controller {
             "custom_field_filter" => $this->prepare_custom_field_filter_values("team_members", $this->login_user->is_admin, $this->login_user->user_type)
         );
 
-        $list_data = $this->Users_model->get_details($options)->getResult();
+        $list_data = $this->Users_model->get_cardholder_details($options)->getResult();
         $result = array();
         foreach ($list_data as $data) {
             $result[] = $this->_make_row($data, $custom_fields);
@@ -387,12 +387,15 @@ class Team_members extends Security_Controller {
 
         //check contact info view permissions
         $show_cotact_info = $this->can_view_team_members_contact_info();
+        // `photo`, `CID`, `type`, `fullName`, `department`, `titleEng`, `titleSom`, `cardId`, `user_id`, `expireDate`, 
 
         $row_data = array(
             $user_avatar,
             get_team_member_profile_link($data->id, $full_name),
-            $data->titleSo,
-            $show_cotact_info ? $data->email : "",
+            $data->type,
+            $data->CID,
+            $data->titleSom,
+            $data->titleEng,
             $data->cardId,
             $data->status
         );
@@ -422,12 +425,12 @@ class Team_members extends Security_Controller {
 
         $id = $this->request->getPost('id');
 
-        $user_info = $this->Users_model->get_one($id);
-        if (!$this->_can_delete_team_member($user_info)) {
-            app_redirect("forbidden");
-        }
+        // $user_info = $this->Users_model->get_one($id);
+        // if (!$this->_can_delete_team_member($user_info)) {
+        //     app_redirect("forbidden");
+        // }
 
-        if ($this->Users_model->delete($id)) {
+        if ($this->db->query("DELETE FROM rise_cardholders where id = $id")) {
             echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
@@ -549,7 +552,7 @@ class Team_members extends Security_Controller {
             }
 
             //we don't have any specific id to view. show the list of team_member
-            $view_data['team_members'] = $this->Users_model->get_details(array("user_type" => "staff", "status" => "active"))->getResult();
+            $view_data['cardholders'] = $this->Users_model->get_cardholder_details(array("user_type" => "staff", "status" => "active"))->getResult();
             return $this->template->rander("cardholders/profile_card", $view_data);
         }
     }
