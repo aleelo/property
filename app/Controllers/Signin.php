@@ -176,7 +176,7 @@ class Signin extends App_Controller
 
              ';
 
-           echo array_key_exists('access_token', $_GET);
+          // echo array_key_exists('access_token', $_GET);
         //    var_dump($_GET);
         //    die();    
         // sleep(1);
