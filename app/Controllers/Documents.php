@@ -246,8 +246,8 @@ class Documents extends Security_Controller
             //upload to sharepoint
             $data = $this->uploadDoc($token, $input, $docPath);
 
-            // var_dump($data);
-            // die();
+            var_dump($data);
+            die();
 
             if (isset($data['error'])) {
 
