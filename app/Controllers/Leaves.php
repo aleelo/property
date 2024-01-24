@@ -458,7 +458,7 @@ class Leaves extends Security_Controller {
 
         //   $options->outputType = ;
 
-        $qrcode = (new QRCode($options))->render('visitors_info/show_leave_qrcode/'.$data['uuid']);//->getQRMatrix(current_url())
+        $qrcode = (new QRCode($options))->render(get_uri('visitors_info/show_leave_qrcode/'.$data['uuid']));//->getQRMatrix(current_url())
 
         // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
 
