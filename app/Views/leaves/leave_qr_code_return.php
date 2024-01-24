@@ -20,6 +20,10 @@
                     background-color: #fcab73 !important;
                     color: white;
                 }
+                
+                .hprint{
+                    display: none;
+                }
 
                 table.dataTable.display tbody th, table.dataTable.display tbody td {
                     border-top: 1px solid #f2f2f2;
@@ -130,6 +134,11 @@
 
                             ]);
                             echo "<img style='border-radius: 7px;border: 1px solid #db620e;' width='150' src=". (new chillerlan\QRCode\QRCode($options))->render(get_uri('visitors_info/show_leave_qrcode_return/'.$leave_info->uuid))." alt='Scan to see' />";?>
+                    </div>
+
+                    
+                    <div class="d-flex justify-content-start mb-3 hprint">
+                        <a class="btn btn-primary text-white ml10 hprint" href="<?php echo get_uri('visitors_info/show_leave_qrcode/'.$leave_info->uuid);?>"> Back</a>
                     </div>
 
                 </div>
