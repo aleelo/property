@@ -129,7 +129,7 @@
                                 'version' => chillerlan\QRCode\Common\Version::AUTO,
 
                             ]);
-                            echo "<img style='border-radius: 7px;border: 1px solid #db620e;' width='150' src=". (new chillerlan\QRCode\QRCode($options))->render(get_uri('visitors_info/show_leave_qrcode/'.$leave_info->uuid))." alt='Scan to see' />";?>
+                            echo "<img style='border-radius: 7px;border: 1px solid #db620e;' width='150' src=". (new chillerlan\QRCode\QRCode($options))->render(get_uri('visitors_info/show_leave_qrcode_return/'.$leave_info->uuid))." alt='Scan to see' />";?>
                     </div>
 
                 </div>
