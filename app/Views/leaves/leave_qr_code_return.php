@@ -5,6 +5,7 @@
         <style>
             table.dataTable.display tbody th, table.dataTable.display tbody td {
                 border-top: 1px solid #f2f2f2;
+                padding-left: 20px !important;
                 background-color: #fcab73 !important;
                 color: white;
             }
@@ -22,6 +23,7 @@
 
                 table.dataTable.display tbody th, table.dataTable.display tbody td {
                     border-top: 1px solid #f2f2f2;
+                    padding-left: 20px !important;
                     background-color: #fcab73 !important;
                     color: white;
                 }
