@@ -289,9 +289,9 @@ class Documents extends Security_Controller
             $updated = $this->Documents_model->ci_save($input, $id);
             //get document row
             $doc = $this->db->query("select d.*,t.name as template,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d 
-            LEFT JOIN rise_users u on d.created_by = u.id 
-            LEFT JOIN rise_templates t on d.template = t.id 
-            where d.deleted=0 and d.id =$id");
+                    LEFT JOIN rise_users u on d.created_by = u.id 
+                    LEFT JOIN rise_templates t on d.template = t.id 
+                    where d.deleted=0 and d.id =$id");
         }
 
         if ($save_id || $updated) {

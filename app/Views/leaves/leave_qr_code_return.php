@@ -5,24 +5,24 @@
         <style>
             table.dataTable.display tbody th, table.dataTable.display tbody td {
                 border-top: 1px solid #f2f2f2;
-                background-color: #73c7fc !important;
+                background-color: #fcab73 !important;
                 color: white;
             }
 
             .qrcode-style{
-                background-color: #73c7fc !important;
+                background-color: #fcab73 !important;
                 color: white;
             }
 
             @media print {
                 .qrcode-style {
-                    background-color: #73c7fc !important;
+                    background-color: #fcab73 !important;
                     color: white;
                 }
 
                 table.dataTable.display tbody th, table.dataTable.display tbody td {
                     border-top: 1px solid #f2f2f2;
-                    background-color: #73c7fc !important;
+                    background-color: #fcab73 !important;
                     color: white;
                 }
             }
@@ -34,7 +34,7 @@
         <div class="card col-md-4 col-xs-12 mt-3 shadow-lg qrcode-style">
             <div class="card-title text-center">
                 <h4 class="fw-bold">Leave Information #<?php echo $leave_info->id; ?></h4>
-                <h4 class="fw-bold mt-1">NOLO OSTO</h4>
+                <h4 class="fw-bold mt-1">PASSPORT CELIN</h4>
         </div>
                 
             <div class="modal-body">
@@ -127,7 +127,7 @@
                                 'version' => chillerlan\QRCode\Common\Version::AUTO,
 
                             ]);
-                            echo "<img style='border-radius: 7px;border: 1px solid #1f8bf2;' width='150' src=". (new chillerlan\QRCode\QRCode($options))->render(get_uri('visitors_info/show_leave_qrcode/'.$leave_info->uuid))." alt='Scan to see' />";?>
+                            echo "<img style='border-radius: 7px;border: 1px solid #db620e;' width='150' src=". (new chillerlan\QRCode\QRCode($options))->render(get_uri('visitors_info/show_leave_qrcode/'.$leave_info->uuid))." alt='Scan to see' />";?>
                     </div>
 
                 </div>
