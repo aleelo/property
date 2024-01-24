@@ -138,7 +138,8 @@
 
                     
                     <div class="d-flex justify-content-start mb-3 hprint">
-                        <a class="btn btn-primary text-white ml10 hprint" href="<?php echo get_uri('visitors_info/show_leave_qrcode/'.$leave_info->uuid);?>"> Back</a>
+                        <a class="btn btn-primary text-white ml10 hprint" href="<?php echo get_uri('visitors_info/show_leave_qrcode/'.$leave_info->uuid);?>"> 
+                        <i data-feather='arrow-left' class='icon-16'></i> Back</a>
                     </div>
 
                 </div>
@@ -151,6 +152,7 @@
         $(document).ready(function () {
 
         $('#js-init-chat-icon').hide();
+        feather.replace();
 
         });
         

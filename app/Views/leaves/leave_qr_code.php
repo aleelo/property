@@ -135,7 +135,8 @@
                     </div>
 
                     <div class="d-flex justify-content-end mb-3 hprint">
-                        <a class="btn btn-warning text-white mr10 hprint" href="<?php echo get_uri('visitors_info/show_leave_qrcode_return/'.$leave_info->uuid);?>"> Passport Celin</a>
+                        <a class="btn btn-warning text-white mr10 hprint" href="<?php echo get_uri('visitors_info/show_leave_qrcode_return/'.$leave_info->uuid);?>">
+                        <i data-feather='file' class='icon-16 '></i> Passport Celin</a>
                     </div>
                 </div>
             </div>
@@ -147,6 +148,7 @@
         $(document).ready(function () {
 
         $('#js-init-chat-icon').hide();
+        feather.replace();
 
         });
         
