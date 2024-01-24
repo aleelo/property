@@ -70,16 +70,16 @@
                         <?php if($leave_info->duration == 1){ ?>
                         <tr>
                             <th> <?php echo app_lang('date'); ?></th>
-                            <td><?php echo date_format(new DateTime($leave_info->start_date),'l, F d,Y'); ?></td>
+                            <td><?php echo date_format(new DateTime($leave_info->start_date),'M d,Y'); ?></td>
                         </tr>
                         <?php }else{ ?>
                             <tr>
                                 <th> <?php echo app_lang('start_date'); ?></th>
-                                <td><?php echo date_format(new DateTime($leave_info->start_date),'l, F d,Y'); ?></td>
+                                <td><?php echo date_format(new DateTime($leave_info->start_date),'M d,Y'); ?></td>
                             </tr>
                             <tr>
                                 <th> <?php echo app_lang('end_date'); ?></th>
-                                <td><?php echo date_format(new DateTime($leave_info->end_date),'l,F d,Y'); ?></td>
+                                <td><?php echo date_format(new DateTime($leave_info->end_date),'M d,Y'); ?></td>
                             </tr>
                         <?php }?>
                         <tr>
