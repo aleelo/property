@@ -31,7 +31,7 @@
                     color: white;
                 }
 
-                #search-card{
+                #search-card1{
                     width: 400px;
                     margin-left:auto;margin-right: auto;
                     margin-left: -150px;
@@ -68,7 +68,7 @@
         <?php echo form_close() ?>
 
         <?php if(!empty($leave_info)){ ?>
-        <div class="card col-xs-12 mt-3 shadow-lg " style="background-color: #73c7fc !important;color: white;" id="search-card">
+        <div class="card col-xs-12 mt-3 shadow-lg " style="background-color: #73c7fc !important;color: white;" id="search-card1">
 
             <div class="card-title text-center">
                 <h4 class="fw-bold">Leave Information #<?php echo $leave_info->id; ?></h4>
@@ -172,7 +172,7 @@
             </div>
         </div>
         <?php }else{ ?>
-            <div class="shadow d-flex justify-content-center col-xs-12 mt-3 mb-3 " id="search-card">
+            <div class="shadow d-flex justify-content-center col-xs-12 mt-3 mb-3 " id="search-card1">
                 <p class="p10 m10 fs-3">No result to show</p>
             </div>
             <?php } ?>
@@ -197,7 +197,7 @@ $('#leave-nolosto-form').on('submit', function(e){
             type: 'POST',
             success: function (res) {
             //    console.log(result.success);
-                $("#search-card").html(res.result);
+                $("#search-card1").html(res.result);
 
 
                 feather.replace();
