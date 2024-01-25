@@ -391,7 +391,7 @@ class Leaves extends Security_Controller {
         LEFT JOIN rise_users cb on l.applicant_id = cb.id
         LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
         left join rise_leave_types t on t.id=l.leave_type_id 
-        where ( l.id = '$search' or l.uuid = '$search' or e.employee_id = '$search' or  a.phone = '$search' or  a.email = '$search'  or  a.passport_no = '$search') limit 1")->getRow();
+        where ( l.id = '$search' or l.uuid = '$search' or concat(a.first_name,' ',a.last_name) = '$search'  or e.employee_id = '$search' or  a.phone = '$search' or  a.email = '$search'  or  a.passport_no = '$search') limit 1")->getRow();
         
         $view_data['leave_info'] = $leave_info;
         $view_data['search'] = $search;
@@ -425,7 +425,7 @@ class Leaves extends Security_Controller {
         LEFT JOIN rise_users cb on l.applicant_id = cb.id
         LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
         left join rise_leave_types t on t.id=l.leave_type_id 
-        where ( l.id = '$search' or l.uuid = '$search' or e.employee_id = '$search' or  a.phone = '$search' or  a.email = '$search'  or  a.passport_no = '$search') limit 1")->getRow();
+        where ( l.id = '$search' or l.uuid = '$search' or concat(a.first_name,' ',a.last_name) = '$search' or e.employee_id = '$search' or  a.phone = '$search' or  a.email = '$search'  or  a.passport_no = '$search') limit 1")->getRow();
         
         $view_data['leave_info'] = $leave_info;
         $view_data['search'] = $search;
