@@ -34,7 +34,7 @@
                         
                         <tr>
                             <th> <?php echo app_lang('duration'); ?></th>
-                            <td><?php echo $leave_info->duration.' days'; ?></td>
+                            <td><?php echo (int)$leave_info->duration.' days'; ?></td>
                         </tr>
 
                         <?php if($leave_info->duration == 1){ ?>
