@@ -384,14 +384,14 @@ class Leaves extends Security_Controller {
     public function leave_nolosto_search_form() {
         $search = $this->request->getPost('searchTerm') ?? 0;
         // die($search);
-        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
+        $leave_info = $search != 0 ? $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
         a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason FROM rise_leave_applications l 
         
         LEFT JOIN rise_users a on l.applicant_id = a.id
         LEFT JOIN rise_users cb on l.applicant_id = cb.id
         LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
         left join rise_leave_types t on t.id=l.leave_type_id 
-        where ( l.id = '$search' or l.uuid = '$search' or concat(a.first_name,' ',a.last_name) = '$search'  or e.employee_id = '$search' or  a.phone = '$search' or  a.email = '$search'  or  a.passport_no = '$search') limit 1")->getRow();
+        where ( l.id = '$search' or l.uuid = '$search' or concat(a.first_name,' ',a.last_name) = '$search'  or e.employee_id = '$search' or  a.phone = '$search' or  a.email = '$search'  or  a.passport_no = '$search') limit 1")->getRow() : '';
         
         $view_data['leave_info'] = $leave_info;
         $view_data['search'] = $search;
@@ -418,14 +418,14 @@ class Leaves extends Security_Controller {
     public function leave_return_search_form() {
         $search = $this->request->getPost('searchTerm') ?? 0;
         // die($search);
-        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
+        $leave_info = $search != 0 ? $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
         a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason FROM rise_leave_applications l 
         
         LEFT JOIN rise_users a on l.applicant_id = a.id
         LEFT JOIN rise_users cb on l.applicant_id = cb.id
         LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
         left join rise_leave_types t on t.id=l.leave_type_id 
-        where ( l.id = '$search' or l.uuid = '$search' or concat(a.first_name,' ',a.last_name) = '$search' or e.employee_id = '$search' or  a.phone = '$search' or  a.email = '$search'  or  a.passport_no = '$search') limit 1")->getRow();
+        where ( l.id = '$search' or l.uuid = '$search' or concat(a.first_name,' ',a.last_name) = '$search' or e.employee_id = '$search' or  a.phone = '$search' or  a.email = '$search'  or  a.passport_no = '$search') limit 1")->getRow() : '';
         
         $view_data['leave_info'] = $leave_info;
         $view_data['search'] = $search;
