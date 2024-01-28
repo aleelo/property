@@ -27,6 +27,9 @@
                 }
             }
            
+            #search-container1 {
+                width: 440px;
+            }
             @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 * {
@@ -275,10 +278,14 @@ h2,h3,h4,h5,h6,p{
     width: 200px;
 }
 
+#search-container1 {
+        width: 100%;
+    }
+
 }
         </style>
 
-    <div class=" search-container" style="margin-left:auto;margin-right: auto;width:440px;" id="search-container1">
+    <div class=" search-container" style="margin-left:auto;margin-right: auto;" id="search-container1">
 
         <?php echo form_open(get_uri("leaves/leave_nolosto_search"), array("id" => "leave-nolosto-form", "class" => "general-form", "role" => "form","method"=>"POST")); ?>
             <div class="shadow d-flex align-item-center col-xs-12 mt-3">

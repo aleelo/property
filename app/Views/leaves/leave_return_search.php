@@ -29,7 +29,11 @@
                 /* background-color: #fff; */
             }
 
-            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+            #search-container {
+                width: 440px;
+            }
+
+     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 * {
     margin: 0;
@@ -277,10 +281,15 @@ h2,h3,h4,h5,h6,p{
     width: 200px;
 }
 
+
+#search-container {
+    width: 100%;
+}
+
 }
         </style>
 
-    <div class=" col-md-4 search-container" style="margin-left:auto;margin-right: auto;width: 440px;" id="search-container">
+    <div class=" col-md-4 search-container" style="margin-left:auto;margin-right: auto;" id="search-container">
 
         <?php echo form_open(get_uri("leaves/leave_return_search"), array("id" => "leave-return-form", "class" => "general-form", "role" => "form","method"=>"POST")); ?>
             <div class="shadow d-flex align-item-center col-xs-12 mt-3" style="">
