@@ -29,7 +29,7 @@
                                 <div class="d-flex text-center align-items-center">
                                     <div class="flex-shrink-0">
                                         <span class="avatar">
-                                            <img src="<?php echo get_avatar($leave_info->applicant_avatar); ?>" alt="..." />
+                                            <img src="<?php echo get_avatar($leave_info->applicant_avatar); ?>" alt="..." style="width: 90px;height: 100px;"/>
                                         </span>
                                     </div>
                                     <div class="ps-2 pt5">
