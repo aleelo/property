@@ -385,7 +385,7 @@ class Leaves extends Security_Controller {
         $search = $this->request->getPost('searchTerm') ?? 0;
         // die($search);
         $leave_info = empty($search) ? '' :  $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
-        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason FROM rise_leave_applications l 
+        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no FROM rise_leave_applications l 
         
         LEFT JOIN rise_users a on l.applicant_id = a.id
         LEFT JOIN rise_users cb on l.applicant_id = cb.id
@@ -419,7 +419,7 @@ class Leaves extends Security_Controller {
         $search = $this->request->getPost('searchTerm') ?? 0;
         // die($search);
         $leave_info = empty($search) ? '' : $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
-        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason FROM rise_leave_applications l 
+        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no FROM rise_leave_applications l 
         
         LEFT JOIN rise_users a on l.applicant_id = a.id
         LEFT JOIN rise_users cb on l.applicant_id = cb.id

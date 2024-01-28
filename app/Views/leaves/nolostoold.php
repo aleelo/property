@@ -1,42 +1,9 @@
-
-    <style>
-        #return-table.dataTable.display tbody th, #return-table.dataTable.display tbody td {
-            border-top: 1px solid #f2f2f2;
-            padding-left: 40px !important;
-            background-color: #fcab73 !important;
-            color: white;
-        }
-
-        .qrcode-style{
-            background-color: #fcab73 !important;
-            color: white;
-        }
-
-        @media print {
-            .qrcode-style {
-                background-color: #fcab73 !important;
-                color: white;
-            }
-            
-            .hprint{
-                display: none;
-            }
-
-            #return-table.dataTable.display tbody th, #return-table.dataTable.display tbody td {
-                border-top: 1px solid #f2f2f2;
-                padding-left: 40px !important;
-                background-color: #fcab73 !important;
-                color: white;
-            }
-        }
-    </style>
-
-    <div class=" d-flex justify-content-center">
-        <div class="card col-md-4 col-xs-12 mt-3 shadow-lg " style="background-color: #fcab73 !important;color: white;">
+<div class=" d-flex justify-content-center">
+        <div class="card col-md-4 col-xs-12 mt-3 shadow-lg qrcode-style">
             <div class="card-title text-center">
                 <h4 class="fw-bold">Leave Information #<?php echo $leave_info->id; ?></h4>
-                <h4 class="fw-bold mt-1">PASSPORT CELIN</h4>
-            </div>
+                <h4 class="fw-bold mt-1">NOLO OSTO</h4>
+        </div>
                 
             <div class="modal-body">
                 <div class="row">
@@ -57,7 +24,7 @@
                     </div>
                     <!-- `client_type`, `access_duration`, `image`, `name`, `created_by`, `visit_date`, `visit_time`, `created_at`, `deleted`, `remarks`, `status` -->
                     <div class="table-responsive mb15">
-                        <table class="table dataTable display b-t" id="return-table">
+                        <table class="table dataTable display b-t">
                         <tr>
                             <th class=""> <?php echo app_lang('leave_type'); ?></th>
                             <td><?php echo $leave_info->leave_type; ?></td>
@@ -128,11 +95,15 @@
                                 'version' => chillerlan\QRCode\Common\Version::AUTO,
 
                             ]);
-                            echo "<img style='border-radius: 7px;border: 1px solid #db620e;' width='150' src=". (new chillerlan\QRCode\QRCode($options))->render(get_uri('visitors_info/show_leave_qrcode_return/'.$leave_info->uuid))." alt='Scan to see' />";?>
+                            echo "<img style='border-radius: 7px;border: 1px solid #1f8bf2;' width='150' src=". (new chillerlan\QRCode\QRCode($options))->render(get_uri('visitors_info/show_leave_qrcode/'.$leave_info->uuid))." alt='Scan to see' />";?>
                     </div>
 
-                    
+                    <div class="d-flex justify-content-end mb-3 hprint">
+                        <a class="btn btn-warning text-white mr10 hprint" href="<?php echo get_uri('visitors_info/show_leave_qrcode_return/'.$leave_info->uuid);?>">
+                        <i data-feather='file' class='icon-16 '></i> Passport Celin</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+

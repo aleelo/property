@@ -1,46 +1,18 @@
-
-        <style>
-          
-            @media print {
-            
-                #default-navbar,#leaves-tabs,#leave-return-form,#js-init-chat-icon,.page-title,.sidebar {
-                    display: none;
-                }
-                .print-area{
-                    display: flex;
-                }
-               
-                #search-card2{
-                    width: 400px;
-                    margin-left:auto;margin-right: auto;
-                    margin-left: -150px;
-                    background-color: #fcab73 !important;
-                    color: white;
-                }
-            
-                body,.page-wrapper,.sidebar-menu,.sidebar-scroll,.sidebar,#left-menu-toggle-mask{
-                    background: #fff
-                }
-            }
-           
-            #searchTerm::placeholder {
-                color: #a8aaae;
-                /* color: #b2b3b4; */
-                /* background-color: #fff; */
-            }
-
-            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 * {
     margin: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 }
-
+.main {
+    background-color: rgba(128, 128, 128, 0.315);
+}
 
 .container {
     background-color: #ffe2b3;
     width: 440px;
+    margin: 20px auto;
     border-top-left-radius:  7px;
     border-top-right-radius:  7px;
     padding: 0px;
@@ -278,64 +250,3 @@ h2,h3,h4,h5,h6,p{
 }
 
 }
-        </style>
-
-    <div class=" col-md-4 search-container" style="margin-left:auto;margin-right: auto;width: 440px;" id="search-container">
-
-        <?php echo form_open(get_uri("leaves/leave_return_search"), array("id" => "leave-return-form", "class" => "general-form", "role" => "form","method"=>"POST")); ?>
-            <div class="shadow d-flex align-item-center col-xs-12 mt-3" style="">
-                <input type="text" id="searchTerm" name="searchTerm" value="<?php echo $search == 0? '' : $search; ?>" class="form-control" placeholder="Search by id,name,mobile or any unique property" >
-                <button type="submit" class="btn btn-primary rounded-0 rounded-end"><i class="search"></i> Search</button>
-                
-            </div>
-        <?php echo form_close() ?>
-
-        <div class="shadow d-flex justify-content-center col-xs-12 mt-3 mb-3 " id="search-card2">
-            <p class="p10 m10 fs-3">No result to show</p>
-        </div>
-    </div>
-
-<script>
-
-$('#leave-return-form').on('submit', function(e){
-
-    e.preventDefault();
-
-
-    $.ajax({
-            url: 'leaves/leave_return_search_form',
-            data: {
-                'searchTerm': $('#searchTerm').val(),
-                // 'rise_csrf_token': $('input[name="rise_csrf_token"]').val(),
-            },
-            cache: false,
-            dataType: 'json',
-            type: 'POST',
-            success: function (res) {
-                //    console.log(result.success);
-                $("#search-card2").html('');
-                $("#search-card2").html(res.result);
-
-
-                feather.replace();
-            },
-            statusCode: {
-                403: function () {
-                    console.log("403: Session expired.");
-                    // location.reload();
-                },
-                404: function () {
-                    $("#search-container").find('.modal-body').html("");
-                    appAlert.error("404: Page not found.", {container: '.search-container', animate: false});
-                }
-            },
-            error: function () {
-                $("#search-container").find('.modal-body').html("");
-                appAlert.error("500: Internal Server Error.", {container: '.search-container', animate: false});
-            }
-        });
-
-        
-});
-</script>
-
