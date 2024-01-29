@@ -74,6 +74,7 @@ class Signin extends App_Controller
 
         $email = $this->request->getPost("email");
         $password = $this->request->getPost("password");
+        $login_type = $this->request->getPost("login_type");
 
         // die($password);
 
@@ -100,8 +101,26 @@ class Signin extends App_Controller
             app_redirect('signin');
         }
 
-        //redirects user to make azure login
-        $this->aad_signin($email);
+        if($login_type == 'Azure Login'){
+            //redirects user to make azure login
+            $this->aad_signin($email);
+        }else{
+            // local user login            
+            if (!$this->Users_model->authenticate($email, $password)) {
+                //authentication failed
+                array_push($this->signin_validation_errors, app_lang("authentication_failed"));
+                $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
+                app_redirect('signin?login_type='.$login_type);
+            }
+
+            //authentication success
+            $redirect = $this->request->getPost("redirect");
+            if ($redirect) {
+                return redirect()->to($redirect);
+            } else {
+                app_redirect('dashboard/view');
+            }
+        }
 
         // if (!$this->Users_model->authenticateAAD($email)) {
         //     //authentication failed
@@ -232,7 +251,7 @@ class Signin extends App_Controller
                     //user with email not found ie. authentication failed
                     array_push($this->signin_validation_errors, app_lang("authentication_failed") . ', User Not Found');
                     $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
-                    app_redirect('signin');
+                    app_redirect('signin?login_type=Azure Login');
                 }
             }
 
@@ -242,7 +261,7 @@ class Signin extends App_Controller
             //AAD authentication failed
             array_push($this->signin_validation_errors, app_lang("authentication_failed") . ', No access token');
             $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
-            app_redirect('signin');
+            app_redirect('signin?login_type=Azure Login');
         }
 
     }
