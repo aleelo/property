@@ -31,6 +31,59 @@ class Signin extends App_Controller
         }
     }
 
+    public function signin_password()
+    {
+        if ($this->Users_model->login_user_id()) {
+            app_redirect('dashboard/view');
+        } else {
+
+            $view_data["redirect"] = "";
+            if (isset($_REQUEST["redirect"])) {
+                $view_data["redirect"] = $_REQUEST["redirect"];
+            }
+
+            $email = $this->request->getGet("email");
+// die($email);
+            if(!$email){
+                array_push($this->signin_validation_errors, 'Login failed, email is required');
+                $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
+                app_redirect('signin');
+            }
+
+            $view_data['email'] = $email;
+
+            return $this->template->view('signin/login_password_page', $view_data);
+        }
+    }
+
+    public function authenticate_local() {
+
+        $email = $this->request->getPost("email");
+        $password = $this->request->getPost("password");
+
+        if(!$email){
+            array_push($this->signin_validation_errors, 'Login failed, email is required');
+            $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
+            app_redirect('signin');
+        }
+
+        //login user with credentials
+        if (!$this->Users_model->authenticate($email, $password)) {
+            //authentication failed
+            array_push($this->signin_validation_errors, app_lang("authentication_failed").', email or password is incorrect');
+            $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
+            app_redirect('signin');
+        }
+
+        //authentication success
+        $redirect = $this->request->getPost("redirect");
+        if ($redirect) {
+            return redirect()->to($redirect);
+        } else {
+            app_redirect('dashboard/view');
+        }
+    }
+
     private function has_recaptcha_error()
     {
         $recaptcha_post_data = $this->request->getPost("g-recaptcha-response");
@@ -69,12 +122,10 @@ class Signin extends App_Controller
     {
         $validation = $this->validate_submitted_data(array(
             "email" => "required|valid_email",
-            "password" => "required",
+            // "password" => "required",
         ), true);
 
         $email = $this->request->getPost("email");
-        $password = $this->request->getPost("password");
-        $login_type = $this->request->getPost("login_type");
 
         // die($password);
 
@@ -101,41 +152,26 @@ class Signin extends App_Controller
             app_redirect('signin');
         }
 
-        if($login_type == 'Azure Login'){
+        // get login type for user:
+        $user = $this->db->query("SELECT * from rise_users where  email = '$email' limit 1")->getRow();
+
+        if($user){
+            $login_type = $user->login_type;
+        }else{
+            array_push($this->signin_validation_errors, app_lang("authentication_failed").", User with email $email not found.");
+            $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
+            app_redirect('signin');
+        }
+
+        if($login_type == 'azure_login'){
             //redirects user to make azure login
             $this->aad_signin($email);
         }else{
-            // local user login            
-            if (!$this->Users_model->authenticate($email, $password)) {
-                //authentication failed
-                array_push($this->signin_validation_errors, app_lang("authentication_failed"));
-                $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
-                app_redirect('signin?login_type='.$login_type);
-            }
-
-            //authentication success
-            $redirect = $this->request->getPost("redirect");
-            if ($redirect) {
-                return redirect()->to($redirect);
-            } else {
-                app_redirect('dashboard/view');
-            }
+            // local user login redirect to password page
+            app_redirect('signin/signin_password?email='.$email);           
+            
         }
 
-        // if (!$this->Users_model->authenticateAAD($email)) {
-        //     //authentication failed
-        //     array_push($this->signin_validation_errors, app_lang("authentication_failed"));
-        //     $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
-        //     app_redirect('signin');
-        // }
-
-        //authentication success
-        $redirect = $this->request->getPost("redirect");
-        if ($redirect) {
-            return redirect()->to($redirect);
-        } else {
-            app_redirect('dashboard/view');
-        }
     }
 
     /**
@@ -251,7 +287,7 @@ class Signin extends App_Controller
                     //user with email not found ie. authentication failed
                     array_push($this->signin_validation_errors, app_lang("authentication_failed") . ', User Not Found');
                     $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
-                    app_redirect('signin?login_type=Azure Login');
+                    app_redirect('signin');
                 }
             }
 
@@ -261,7 +297,7 @@ class Signin extends App_Controller
             //AAD authentication failed
             array_push($this->signin_validation_errors, app_lang("authentication_failed") . ', No access token');
             $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
-            app_redirect('signin?login_type=Azure Login');
+            app_redirect('signin');
         }
 
     }

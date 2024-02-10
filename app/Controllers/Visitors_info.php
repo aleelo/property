@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use chillerlan\QRCode\QRCode;
+
 class Visitors_info extends App_Controller
 {
 
@@ -14,6 +16,20 @@ class Visitors_info extends App_Controller
         helper('email');
     }
 
+    public function test_qr($id){
+        $visitor_info = $this->db->query("SELECT * FROM rise_cardholders WHERE id = $id")->getRow();
+        echo '<img width="150" src="'.(new QRCode())->render(get_uri('verify/show_visitor_qrcode/qr/'.$visitor_info->uid)).'" alt="Show Access Info" />';
+    }
+
+    /**
+     * api for cardholder for nfc reader device:
+     */
+    
+     public function cardholder_single($id){
+        // echo $id;
+        $cardholder = $this->db->query("SELECT * FROM rise_cardholders WHERE uid = '$id'")->getRow();
+        echo json_encode($cardholder);
+    }
 
     /** QR Code for Access requests */
     public function show_visitor_qrcode($id = 0){
