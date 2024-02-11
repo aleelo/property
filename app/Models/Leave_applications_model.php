@@ -38,6 +38,35 @@ class Leave_applications_model extends Crud_model {
             $where = " AND $leave_applications_table.id=$id";
         }
 
+
+        //role and user info:
+        $Users_model = model("App\Models\Users_model");
+        $login_user_id = $Users_model->login_user_id();
+        $user = $Users_model->get_access_info($login_user_id);
+
+        $Roles_model = model("App\Models\Roles_model");
+        
+        $r = $Roles_model->get_one($user->role_id);
+
+        if($user->is_admin){
+            $role = 'Admin';
+        }else{
+            $role = $r->title;
+        }
+
+        // die($role);
+        $d = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user->id")->getRow();
+        $department_id = $d->department_id;
+
+        if($role == 'Employee'){
+            $created_by = $user->id;
+        }elseif($role == 'Director' || $role == 'Secretary'){
+            $created_by = '%';
+        }elseif($role == 'HR' || $role == 'Admin' || $role == 'Administrator'){
+            $created_by = '%';
+            $department_id = '%';
+        }
+
         $status = $this->_get_clean_value($options, "status");
         if ($status) {
             $where .= " AND $leave_applications_table.status='$status'";
@@ -86,6 +115,7 @@ class Leave_applications_model extends Crud_model {
             FROM $leave_applications_table
             LEFT JOIN $users_table ON $users_table.id= $leave_applications_table.applicant_id
             LEFT JOIN $leave_types_table ON $leave_types_table.id= $leave_applications_table.leave_type_id        
+            
             WHERE $leave_applications_table.deleted=0 $where";
         return $this->db->query($sql);
     }

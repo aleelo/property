@@ -51,11 +51,17 @@ class Visitors extends Security_Controller
 
     public function index()
     {
-        $this->access_only_allowed_members();
+        // $this->access_only_allowed_members();
         $this->check_module_availability("module_visitor");
         $role = $this->get_user_role();
-        $view_data['can_add_requests'] = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin'; 
+        $view_data['can_add_requests'] = $role == 'Access Controll' || $role == 'admin'; 
 
+        // die($role != 'admin' );
+
+        
+        if($role != 'Access Controll' && $role != 'admin' && $role != 'Director' && $role != 'Secretary'){ //not allowed to others including 'admistrator' role
+            app_redirect("forbidden");
+        }
         
         // $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
         // $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("leads", $this->login_user->is_admin, $this->login_user->user_type);
@@ -968,11 +974,18 @@ class Visitors extends Security_Controller
 
         // $show_own_leads_only_user_id = $this->show_own_leads_only_user_id();
         
-        $result = $this->check_access('visitor');
+        $role = $this->get_user_role();
+        $department_id = $this->get_user_department_id();
 
-        $role = get_array_value($result,'role');
-        $department_id = get_array_value($result,'department_id');
-        $created_by = get_array_value($result,'created_by');
+        if($role == 'Access Controll' || $role == 'admin'){ //not allowed to others including 'admistrator' role
+            $created_by = '%';
+            $department_id = '%';
+        }elseif($role == 'Director' || $role == 'Secretary'){
+            $created_by = '%';
+        }
+        else{
+            app_redirect("forbidden");
+        }
 
         // die($this->login_user->is_admin);
         $options = append_server_side_filtering_commmon_params([]);
@@ -1065,7 +1078,7 @@ class Visitors extends Security_Controller
     {
         
         $role = $this->get_user_role();
-        $can_add_requests = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin'; 
+        $can_add_requests = $role == 'Access Controll' || $role == 'admin'; 
 
         //primary contact
         // $image_url = get_avatar($data->contact_avatar);
@@ -1115,7 +1128,8 @@ class Visitors extends Security_Controller
 
             $link = "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
         }else{
-            $link = '';
+            $webUrl =   get_uri('visitors/access_request_pdf/'.$data->uuid);
+            $link = "<a href='$webUrl' class='btn btn-success' target='_blank' title='Show Pdf' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
         }
         $delLink = $can_add_requests == true ? js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_visitor'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("visitors/delete"), "data-action" => "delete-confirmation")) : '';
         
