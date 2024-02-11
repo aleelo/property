@@ -831,6 +831,9 @@ class Team_members extends Security_Controller {
             "login_type" => $this->request->getPost('login_type')
         );
 
+        // var_dump($account_data);
+        // die();
+
         $role = $this->request->getPost('role');
         $user_info = $this->Users_model->get_one($user_id);
 

@@ -30,7 +30,7 @@
                             "class" => "form-control",
                             "data-rule-required" => true,
                             "data-msg-required" => app_lang("field_required")
-                        ),['Azure Login' => 'Azure Login','Normal Login'=>'Normal Login'],['Azure Login' => $user_info->login_type]);
+                        ),['azure_login' => 'Azure Login','normal_login'=>'Normal Login'],['Azure Login' => $user_info->login_type]);
                         ?>
                     </div>
                 </div>
@@ -174,7 +174,7 @@
         //login type:
         
         function get_login_defaults() {
-            if($('#login_type').val() == 'Azure Login'){
+            if($('#login_type').val() == 'azure_login'){
 
                 $('#password').hide();
                 $('#password_div').hide();
