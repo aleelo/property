@@ -1061,7 +1061,8 @@ class Clients extends Security_Controller {
         }
 
         $account_data = array(
-            "email" => $email
+            "email" => $email,            
+            "login_type" => $this->request->getPost('login_type')
         );
 
         //don't reset password if user doesn't entered any password

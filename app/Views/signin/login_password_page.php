@@ -48,11 +48,11 @@
                     </div>
 
                             <div class="d-flex justify-content-center mb-3">
-                                <div class="flex badge badge-secondary  bg-secondary fs-5"><?php echo $_GET['email'];?></div>
+                                <div class="flex badge badge-secondary  bg-secondary fs-5"><?php echo isset($_GET['email']) ? $_GET['email'] : '';?></div>
                             </div>
                         <div class="form-group" id="password_div">
                             
-                        <input type="hidden" name="email" id="email" value="<?php echo $_GET['email']; ?>">
+                        <input type="hidden" name="email" id="email" value="<?php echo isset($_GET['email']) ? $_GET['email'] : ''; ?>">
 
                             <?php
                                 echo form_password(array(
@@ -89,6 +89,37 @@
 
         <script>
             $(document).ready(function () {
+
+                // function get_login_defaults() {
+                //     if($('#login_type').val() == 'Azure Login'){
+
+                //         $('#password').hide();
+                //         $('#retype_password').hide();
+                //         $('#password').val('aleelo');
+                //         $('#retype_password').val('aleelo');
+
+                //         $('#email').attr('placeholder','Enter Microsoft Email');
+                        
+
+                //     }else{
+
+                //         $('#password').show();
+                //         $('#password').val('');
+                //         $('#retype_password').show();
+                //         $('#retype_password').val('');
+                //         $('#email').attr('placeholder','Enter Email');
+                        
+
+                //     }
+                // }
+            
+                // get_login_defaults();
+
+                //  $('#login_type').on('change', function(){
+                //     get_login_defaults();
+                // });
+
+
                 initScrollbar('.scrollable-page', {
                     setHeight: $(window).height() - 50
                 });

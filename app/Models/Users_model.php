@@ -159,7 +159,7 @@ class Users_model extends Crud_model {
 
         // die($role);
 
-        if($role != 'Employee'){
+        if($role != 'Employee' || $role != 'Director' || $role != 'Secretary'){
             $created_by = '%';
         }else{
             $created_by = $user->id;

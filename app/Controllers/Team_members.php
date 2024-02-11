@@ -341,11 +341,13 @@ class Team_members extends Security_Controller {
 
         $role = get_array_value($result,'role');
         $created_by = get_array_value($result,'created_by');
+        $department_id = get_array_value($result,'department_id');
 
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("team_members", $this->login_user->is_admin, $this->login_user->user_type);
         $options = array(
             'role'=>$role,
             'created_by'=>$created_by,
+            'department_id'=>$department_id,
             "status" => $this->request->getPost("status"),
             "user_type" => "staff",
             "custom_fields" => $custom_fields,
@@ -825,7 +827,8 @@ class Team_members extends Security_Controller {
         }
 
         $account_data = array(
-            "email" => $this->request->getPost('email')
+            "email" => $this->request->getPost('email'),
+            "login_type" => $this->request->getPost('login_type')
         );
 
         $role = $this->request->getPost('role');

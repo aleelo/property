@@ -19,6 +19,25 @@
             <input type="hidden" name="last_name" value="<?php echo $user_info->last_name; ?>" />
             <div class="form-group">
                 <div class="row">
+                    
+                    <label for="login_type" class=" col-md-2"><?php echo 'Login Type'; ?></label>
+                    <div class="col-md-10">
+
+                        <?php
+                        echo form_dropdown(array(
+                            "id" => "login_type",
+                            "name" => "login_type",
+                            "class" => "form-control",
+                            "data-rule-required" => true,
+                            "data-msg-required" => app_lang("field_required")
+                        ),['Azure Login' => 'Azure Login','Normal Login'=>'Normal Login'],['Azure Login' => $user_info->login_type]);
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">                
+                <div class="row">
+
                     <label for="email" class=" col-md-2"><?php echo app_lang('email'); ?></label>
                     <div class=" col-md-10">
                         <?php
@@ -40,7 +59,7 @@
             </div>
 
             <?php if (($user_info->id == $login_user->id) || $login_user->is_admin) { ?> 
-                <div class="form-group">
+                <div class="form-group" id="password_div">
                     <div class="row">
                         <label for="password" class=" col-md-2"><?php echo app_lang('password'); ?></label>
                         <div class=" col-md-10">
@@ -58,7 +77,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="retype_password_div">
                     <div class="row">
                         <label for="retype_password" class=" col-md-2"><?php echo app_lang('retype_password'); ?></label>
                         <div class=" col-md-10">
@@ -151,6 +170,46 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+
+        //login type:
+        
+        function get_login_defaults() {
+            if($('#login_type').val() == 'Azure Login'){
+
+                $('#password').hide();
+                $('#password_div').hide();
+                $('#retype_password_div').hide();
+                $('#retype_password').hide();
+                $('#password').val('aleelo');
+                $('#retype_password').val('aleelo');
+
+                $('#email').attr('placeholder','Enter Microsoft Email');
+                
+
+            }else{
+                
+                $('#password').show();
+                $('#password').val('');
+                
+                $('#password_div').show();
+                $('#retype_password_div').show();
+
+                $('#retype_password').show();
+                $('#retype_password').val('');
+                $('#email').attr('placeholder','Enter Email');
+                
+
+            }
+        }
+    
+        get_login_defaults();
+
+            $('#login_type').on('change', function(){
+            get_login_defaults();
+        });
+
+
+
         $("#account-info-form").appForm({
             isModal: false,
             onSuccess: function (result) {
