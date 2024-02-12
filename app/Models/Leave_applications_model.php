@@ -68,10 +68,18 @@ class Leave_applications_model extends Crud_model {
         }
 
         $status = $this->_get_clean_value($options, "status");
-        if ($status) {
-            $where .= " AND $leave_applications_table.status='$status'";
-        }
+        $view_type = get_array_value($options, 'view_type');
 
+      
+        if($status ){
+            if($view_type == 'pending_list'){
+                $where .= " AND $leave_applications_table.status IN('$status','active')";
+            }else{
+                $where .= " AND $leave_applications_table.status='$status'";
+            }
+            
+        }
+        
         $start_date = $this->_get_clean_value($options, "start_date");
         $end_date = $this->_get_clean_value($options, "end_date");
 
@@ -91,22 +99,23 @@ class Leave_applications_model extends Crud_model {
         }
 
         $access_type = $this->_get_clean_value($options, "access_type");
+     
+        // if (!$id && $access_type !== "all") {
 
-        if (!$id && $access_type !== "all") {
+        //     $allowed_members = $this->_get_clean_value($options, "allowed_members");
+        //     if (is_array($allowed_members) && count($allowed_members)) {
+        //         $allowed_members = join(",", $allowed_members);
+        //     } else {
+        //         $allowed_members = '0';
+        //     }
+        //     $login_user_id = $this->_get_clean_value($options, "login_user_id");
+        //     if ($login_user_id) {
+        //         $allowed_members .= "," . $login_user_id;
+        //     }
+        //     $where .= " AND $leave_applications_table.applicant_id IN($allowed_members)";
+        // }
 
-            $allowed_members = $this->_get_clean_value($options, "allowed_members");
-            if (is_array($allowed_members) && count($allowed_members)) {
-                $allowed_members = join(",", $allowed_members);
-            } else {
-                $allowed_members = '0';
-            }
-            $login_user_id = $this->_get_clean_value($options, "login_user_id");
-            if ($login_user_id) {
-                $allowed_members .= "," . $login_user_id;
-            }
-            $where .= " AND $leave_applications_table.applicant_id IN($allowed_members)";
-        }
-
+        $where.= " AND $leave_applications_table.applicant_id like '$created_by' AND $leave_applications_table.department_id like '$department_id'";
 
         $sql = "SELECT $leave_applications_table.id, $leave_applications_table.start_date, $leave_applications_table.end_date, $leave_applications_table.total_hours,
                 $leave_applications_table.total_days, $leave_applications_table.applicant_id, $leave_applications_table.status,

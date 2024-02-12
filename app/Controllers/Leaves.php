@@ -734,7 +734,7 @@ class Leaves extends Security_Controller {
 
     // list of pending leave application. prepared for datatable
     function pending_approval_list_data() {
-        $options = array("status" => "pending", "access_type" => $this->access_type, "allowed_members" => $this->allowed_members);
+        $options = array("status" => "pending",'view_type' => 'pending_list', "access_type" => $this->access_type, "allowed_members" => $this->allowed_members);
         $list_data = $this->Leave_applications_model->get_list($options)->getResult();
 
         $result = array();
