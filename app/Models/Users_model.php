@@ -159,11 +159,9 @@ class Users_model extends Crud_model {
 
         // die($role);
 
-        if($role != 'Employee' || $role != 'Director' || $role != 'Secretary'){
-            $created_by = '%';
-        }else{
-            $created_by = $user->id;
-        }
+        $role = get_array_value($options,'role') ?? '%';
+        $created_by = get_array_value($options,'created_by') ?? '%';
+        $department_id = get_array_value($options,'department_id') ?? '%';
 
         $where = "";
         $id = $this->_get_clean_value($options, "id");
@@ -294,7 +292,7 @@ class Users_model extends Crud_model {
         LEFT JOIN $clients_table ON $clients_table.id=$users_table.client_id
         LEFT JOIN $roles_table ON $roles_table.id=$users_table.role_id
         $join_custom_fieds    
-        WHERE $users_table.deleted=0 and $users_table.id LIKE '$created_by' $where $custom_fields_where
+        WHERE $users_table.deleted=0 and $users_table.id LIKE '$created_by' and $team_member_job_info_table.department_id like '$department_id' $where $custom_fields_where
         $order $limit_offset";
 
         $raw_query = $this->db->query($sql);
