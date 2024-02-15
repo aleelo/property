@@ -54,7 +54,7 @@ class Visitors extends Security_Controller
         // $this->access_only_allowed_members();
         $this->check_module_availability("module_visitor");
         $role = $this->get_user_role();
-        $view_data['can_add_requests'] = $role == 'Access Controll' || $role == 'admin'; 
+        $view_data['can_add_requests'] = $role == 'Access Controll' || $role == 'Secretary' || $role == 'Director' || $role == 'admin'; 
 
         // die($role != 'admin' );
 
