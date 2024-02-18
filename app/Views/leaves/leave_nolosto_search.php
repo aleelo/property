@@ -302,10 +302,22 @@ h2,h3,h4,h5,h6,p{
 
 <script>
 
+
+
+    
+    // $("#leave-nolosto_approve").appForm({
+    //         onSuccess: function (result) {
+                
+    //             // appAlert.success(result.message, {duration: 15000});             
+    //             alert(result.message);
+    //             window.location.reload();
+    //         }
+    //     });
+
+
 $('#leave-nolosto-form').on('submit', function(e){
 
     e.preventDefault();
-
 
 
     $.ajax({

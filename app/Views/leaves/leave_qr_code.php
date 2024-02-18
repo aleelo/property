@@ -68,7 +68,7 @@
             <div class="bording">
                 <div class="bording-content" style="padding: 20px 35px;">
                     <p>LEAVE DATE #</p>
-                    <h4><?php echo date_format(new DateTime($leave_info->start_date),'F d, Y').' - '.date_format(new DateTime($leave_info->end_date),'F d, Y');?></h4>
+                    <h4 style="font-size: 14px;"><?php echo date_format(new DateTime($leave_info->start_date),'F d, Y').' - '.date_format(new DateTime($leave_info->end_date),'F d, Y');?></h4>
                 </div>
             </div>
             <div class="qrcode">
@@ -95,6 +95,8 @@
             </div>
         </div>
     </div>
+    
+
     <script type="text/javascript">
         $(document).ready(function () {
 

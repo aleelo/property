@@ -63,7 +63,7 @@ class Leave_applications_model extends Crud_model {
             $created_by = $user->id;
         }elseif($role == 'Director' || $role == 'Secretary'){
             $created_by = '%';
-        }elseif($role == 'HR' || $role == 'Admin' || $role == 'Administrator'){
+        }elseif($role == 'HRM' || $role == 'Admin' || $role == 'Administrator'){
             $created_by = '%';
             $department_id = '%';
         }
@@ -121,7 +121,8 @@ class Leave_applications_model extends Crud_model {
         $sql = "SELECT $leave_applications_table.id, $leave_applications_table.start_date, $leave_applications_table.end_date, $leave_applications_table.total_hours,
                 $leave_applications_table.total_days, $leave_applications_table.applicant_id, $leave_applications_table.status,
                 CONCAT($users_table.first_name, ' ',$users_table.last_name) AS applicant_name, $users_table.image as applicant_avatar,
-                $leave_types_table.title as leave_type_title,   $leave_types_table.color as leave_type_color
+                $leave_types_table.title as leave_type_title,   $leave_types_table.color as leave_type_color,$leave_applications_table.leave_type_id,$leave_applications_table.uuid,
+                $leave_applications_table.nolo_status
             FROM $leave_applications_table
             LEFT JOIN $users_table ON $users_table.id= $leave_applications_table.applicant_id
             LEFT JOIN $leave_types_table ON $leave_types_table.id= $leave_applications_table.leave_type_id        

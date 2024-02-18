@@ -385,7 +385,7 @@ class Leaves extends Security_Controller {
         $search = $this->request->getPost('searchTerm') ?? 0;
         // die($search);
         $leave_info = empty($search) ? '' :  $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
-        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no FROM rise_leave_applications l 
+        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
         
         LEFT JOIN rise_users a on l.applicant_id = a.id
         LEFT JOIN rise_users cb on l.applicant_id = cb.id
@@ -419,7 +419,7 @@ class Leaves extends Security_Controller {
         $search = $this->request->getPost('searchTerm') ?? 0;
         // die($search);
         $leave_info = empty($search) ? '' : $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
-        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no FROM rise_leave_applications l 
+        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status  FROM rise_leave_applications l 
         
         LEFT JOIN rise_users a on l.applicant_id = a.id
         LEFT JOIN rise_users cb on l.applicant_id = cb.id
@@ -906,7 +906,9 @@ class Leaves extends Security_Controller {
         } else if (array_search($info->applicant_id, $this->allowed_members) && $info->applicant_id !== $this->login_user->id) {
             $can_manage_application = true;
         }
-        $view_data['show_approve_reject'] = $can_manage_application;
+
+        $role = $this->get_user_role();
+        $view_data['show_approve_reject'] = $role === 'admin' || $role === 'HRM' || $role === 'Director' || $role === 'Administrator';
 
         //has permission to manage the appliation? or is it own application?
         if (!$can_manage_application && $info->applicant_id !== $this->login_user->id) {
@@ -915,6 +917,21 @@ class Leaves extends Security_Controller {
 
         $view_data['leave_info'] = $this->_prepare_leave_info($info);
         return $this->template->view("leaves/application_details", $view_data);
+    }
+
+    public function approve_nolosto($id){
+        if(!$id){
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred').', Incorrect ID'));
+        }
+
+       $res = $this->db->query("update rise_leave_applications set nolo_status = 1 where id = $id");
+
+       if($res){
+            echo json_encode(array("success" => true, 'message' => 'Successfully approved.'));
+        } else {
+            echo json_encode(array("success" => false, 'message' => 'Data not saved, contact support.'));
+        }
+
     }
 
     //update leave status
