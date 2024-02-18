@@ -100,7 +100,7 @@
 $('#leave-nolosto_approve').on('submit', function(e){
     e.preventDefault();
     
-    alert('submit');
+    // alert('submit');
     $.ajax({
         url: 'leaves/approve_nolosto/'+ $(this).attr('data-id'),
         cache: false,

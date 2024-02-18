@@ -136,6 +136,24 @@ class Users_model extends Crud_model {
         app_redirect('signin');
     }
 
+    public function get_user_role() {
+        $Users_model = model("App\Models\Users_model");
+        $login_user_id = $Users_model->login_user_id();
+        $user = $Users_model->get_access_info($login_user_id);
+
+        $Roles_model = model("App\Models\Roles_model");
+        
+        $r = $Roles_model->get_one($user->role_id);
+
+        if($user->is_admin){
+            $role = 'Admin';
+        }else{
+            $role = $r->title;
+        }
+
+        return $role;
+    }
+
     function get_details($options = array()) {
         $users_table = $this->db->prefixTable('users');
         $team_member_job_info_table = $this->db->prefixTable('team_member_job_info');
@@ -489,6 +507,15 @@ class Users_model extends Crud_model {
         WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND FIND_IN_SET($users_table.id, '$member_ids')
         ORDER BY $users_table.first_name";
         return $this->db->query($sql);
+    }
+
+    public function get_user_department_id(){
+        $Users_model = model("App\Models\Users_model");
+        $user_id = $Users_model->login_user_id();
+
+        $job_info = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user_id")->getRow();
+        
+        return $job_info->department_id;
     }
 
     function get_access_info($user_id = 0) {

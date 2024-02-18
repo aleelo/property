@@ -267,7 +267,26 @@ class Attendance_model extends Crud_model {
 
     function get_clock_in_out_details_of_all_users($options = array()) {
         $attendnace_table = $this->db->prefixTable('attendance');
+        $team_member_job_info_table = $this->db->prefixTable('team_member_job_info');
         $users_table = $this->db->prefixTable('users');
+
+        $Users_model = model("App\Models\Users_model");
+        $department_id = $Users_model->get_user_department_id();
+        $role = $Users_model->get_user_role();
+        $user = $Users_model->get_access_info($Users_model->login_user_id());
+
+
+        $created_by = $user->id;
+
+        if($role == 'Employee'){
+            $created_by = $user->id;
+        }elseif($role == 'Director' || $role == 'Secretary'){
+            $created_by = '%';
+        }elseif($role == 'HRM' || $role == 'Admin' || $role == 'Administrator'){
+            $created_by = '%';
+            // $department_id = '%';
+        }
+
 
         $where = "";
 
@@ -285,7 +304,9 @@ class Attendance_model extends Crud_model {
         $sql = "SELECT CONCAT($users_table.first_name, ' ',$users_table.last_name) AS member_name, $users_table.image, $users_table.id, attendance_table.id AS attendance_id, attendance_table.in_time
         FROM $users_table
         LEFT JOIN (SELECT user_id, id, in_time FROM $attendnace_table WHERE $attendnace_table.deleted=0 AND $attendnace_table.status='incomplete') AS attendance_table ON attendance_table.user_id=$users_table.id
-        WHERE $users_table.deleted=0 AND $users_table.status='active' AND $users_table.user_type='staff' $where";
+        
+        LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id=$users_table.id
+        WHERE $users_table.deleted=0 AND $users_table.status='active' AND $users_table.user_type='staff' $where and $team_member_job_info_table.user_id like '$created_by' and $team_member_job_info_table.department_id like '$department_id' ";
         return $this->db->query($sql);
     }
 
