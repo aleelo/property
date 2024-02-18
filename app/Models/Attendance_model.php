@@ -284,7 +284,7 @@ class Attendance_model extends Crud_model {
             $created_by = '%';
         }elseif($role == 'HRM' || $role == 'Admin' || $role == 'Administrator'){
             $created_by = '%';
-            // $department_id = '%';
+            $department_id = '%';
         }
 
 
