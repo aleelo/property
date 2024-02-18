@@ -211,7 +211,7 @@ class Documents extends Security_Controller
             "template" => $template_id,
             "item_id" => $this->request->getPost('zip'),
             "created_by" => $this->request->getPost('owner_id') ? $this->request->getPost('owner_id') : $this->login_user->id,
-            "created_at" => date('Y-m-d H:i:s'),
+            "created_at" => date('Y-m-d'),
         );
 
         $input = clean_data($input);
@@ -342,7 +342,7 @@ class Documents extends Security_Controller
 
             'ref' => $data['ref_number'],
             'title' => $data['document_title'],
-            'date' => date('Y-m-d',strtotime($data['created_at'])),
+            'date' => date('F d, Y',strtotime($data['created_at'])),
 
         ]);
 

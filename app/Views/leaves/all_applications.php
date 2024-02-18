@@ -9,8 +9,9 @@
             source: '<?php echo_uri("leaves/all_application_list_data") ?>',
             dateRangeType: "monthly",
             columns: [
+                {title: '<?php echo 'ID' ?>', "class": "w10p"},
                 {title: '<?php echo app_lang("applicant") ?>', "class": "w20p"},
-                {title: '<?php echo app_lang("leave_type") ?>'},
+                {title: '<?php echo app_lang("leave_type") ?>', "class": "w20p"},
                 {title: '<?php echo app_lang("date") ?>', "class": "w20p"},
                 {title: '<?php echo app_lang("duration") ?>', "class": "w20p"},
                 {title: '<?php echo app_lang("status") ?>', "class": "w15p"},
