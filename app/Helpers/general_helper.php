@@ -1841,6 +1841,30 @@ if (!function_exists('send_message_via_pusher')) {
 
 }
 
+
+if (!function_exists('get_user_department_id')) {
+
+    function get_user_department_id() {
+        $ci = new Security_Controller(false);      
+        $dept = $ci->get_user_department_id();
+
+        return $dept;
+    }
+
+}
+
+if (!function_exists('get_user_role')) {
+
+    function get_user_role() {
+        $ci = new Security_Controller(false);      
+        $role = $ci->get_user_role();
+
+        return $role;
+    }
+
+}
+
+
 if (!function_exists('can_access_messages_module')) {
 
     function can_access_messages_module() {

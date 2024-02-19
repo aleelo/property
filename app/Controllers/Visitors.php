@@ -54,12 +54,12 @@ class Visitors extends Security_Controller
         // $this->access_only_allowed_members();
         $this->check_module_availability("module_visitor");
         $role = $this->get_user_role();
-        $view_data['can_add_requests'] = $role == 'Access Controll' || $role == 'Secretary' || $role == 'Director' || $role == 'admin' || $role == 'Administrator'; 
+        $view_data['can_add_requests'] = $role == 'Access Controll' || $role == 'Secretary' || $role == 'Director'  || $role == 'HRM' || $role == 'admin' || $role == 'Administrator'; 
 
         // die($role != 'admin' );
 
         
-        if($role != 'Access Controll' && $role != 'admin' && $role != 'Administrator' && $role != 'Director' && $role != 'Secretary'){ //not allowed to others including 'admistrator' role
+        if($role != 'Access Controll' && $role != 'admin' && $role != 'Administrator' && $role != 'Director' && $role != 'Secretary' && $role != 'HRM'){ //not allowed to others including 'admistrator' role
             app_redirect("forbidden");
         }
         
@@ -1078,7 +1078,7 @@ class Visitors extends Security_Controller
     {
         
         $role = $this->get_user_role();
-        $can_add_requests = $role == 'Access Controll' || $role == 'Secretary' || $role == 'Director' || $role == 'admin'; 
+        $can_add_requests = $role == 'Access Controll' || $role == 'Secretary' || $role == 'Director'  || $role == 'HRM' || $role == 'admin' || $role == 'Administrator'; 
 
         //primary contact
         // $image_url = get_avatar($data->contact_avatar);

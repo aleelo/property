@@ -38,6 +38,9 @@
                 if ($login_user->user_type === "client") {
                     show_clients_of_this_client_contact($login_user);
                 }
+
+                $role = get_user_role();
+                $dept_id = get_user_department_id();
                 ?>
 
                
@@ -103,18 +106,24 @@
                     </svg>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" title="Maaliyadda" href="https://sfmis.gov.so/Account/Login.aspx" target="_blank">
-                    <i data-feather="dollar-sign" class="icon"></i>
+                <?php if($dept_id == 199){?>
+                    <li class="nav-item">
+                        <a class="nav-link" title="Maaliyadda" href="https://sfmis.gov.so/Account/Login.aspx" target="_blank">
+                        <i data-feather="dollar-sign" class="icon"></i>
 
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" title="HR" href="https://ncsc-hr.com/" target="_blank">
-                    <i data-feather="user" class="icon"></i>
+                        </a>
+                    </li>
+                <?php }?>
 
-                    </a>
-                </li>
+                <?php if($dept_id == 196){?>
+                    <li class="nav-item">
+                        <a class="nav-link" title="HR" href="https://ncsc-hr.com/" target="_blank">
+                        <i data-feather="user" class="icon"></i>
+
+                        </a>
+                    </li>
+                <?php }?>
+
 
                
             </ul>
