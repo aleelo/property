@@ -168,6 +168,40 @@ $lang["keep_it_blank_to_use_default"] = "Keep it blank to use the default";
 $lang["admin_user_has_all_power"] = "Admin user's has power to access/modify everything in this system!";
 $lang["no_posts_to_show"] = "No posts to show";
 
+/** fuel receive **/
+$lang["supplier"] = "Supplier";
+$lang["fuel_type"] = "Fuel Type";
+$lang["barrels"] = "Barrels";
+$lang["litters"] = "Litters";
+$lang["receive_date"] = "Receive Date";
+$lang["received_by"] = "Received By";
+$lang["vehicle_model"] = "Vehicle Model";
+$lang["plate"] = "Plate";
+$lang["uuid"] = "UUID";
+$lang["pending"] = "Pending";
+$lang["Pending"] = "Pending";
+$lang["can_access_fuel"] = "Can Access Fuel";
+$lang["yes_all"] = "Yes All";
+$lang["yes_only_own"] = "Yes only Own";
+$lang["driver_name"] = "Driver Name";
+$lang["confirm_dispense"] = "Confirm Dispense";
+$lang["dispense"] = "Dispense";
+$lang["Dispense"] = "Dispense";
+$lang["dispensed"] = "Dispensed";
+$lang["Dispensed"] = "Dispensed";
+
+/** fuel request **/
+$lang["requested_by"] = "Requested By";
+$lang["vehicle_engine"] = "Vehicle Engine";
+$lang["request_type"] = "Request Type";
+$lang["request_date"] = "Request Date";
+$lang["purpose"] = "Purpose";
+$lang["fuel_receive"] = "Fuel Receive";
+$lang["fuel_request"] = "Fuel Request";
+$lang["fuel"] = "Fuel";
+$lang["add_fuel_request"] = "Add Fuel Request";
+$lang["add_fuel_receive"] = "Add Fuel Receive";
+
 /* team_member */
 $lang["add_team_member"] = "Add employee";
 $lang["edit_team_member"] = "Edit employee";

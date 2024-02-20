@@ -39,6 +39,7 @@ class Left_menu {
             $access_proposal = get_array_value($permissions, "proposal");
             $access_order = get_array_value($permissions, "order");
             $access_visitor = get_array_value($permissions, "visitor");
+            $access_fuel = get_array_value($permissions, "Fuel");
             $access_items = ($this->ci->login_user->is_admin || $access_invoice || $access_estimate);
 
             $client_message_users = get_setting("client_message_users");
@@ -62,6 +63,12 @@ class Left_menu {
                 $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "#", "class" => "users");
                 $sidebar_menu["access_list"] = array("name" => "access_list", "url" => "visitors", "class" => "users");
                 $sidebar_menu["access_search"] = array("name" => "access_search", "url" => "visitors/access_search", "class" => "users");
+            }
+
+            if ($this->ci->login_user->is_admin || $access_fuel && ($role != "Employee")) {
+                $sidebar_menu["fuel"] = array("name" => "fuel", "url" => "#", "class" => "droplet");
+                $sidebar_menu["fuel_receive"] = array("name" => "fuel_receive", "url" => "fuel", "class" => "users");
+                $sidebar_menu["fuel_request"] = array("name" => "fuel_request", "url" => "fuel/request", "class" => "users");
             }
 
             if ($this->ci->login_user->is_admin || !get_array_value($this->ci->login_user->permissions, "do_not_show_projects")) {

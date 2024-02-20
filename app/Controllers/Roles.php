@@ -71,6 +71,7 @@ class Roles extends Security_Controller {
             $view_data['client'] = get_array_value($permissions, "client");
             $view_data['lead'] = get_array_value($permissions, "lead");
             $view_data['visitor'] = get_array_value($permissions, "visitor");
+            $view_data['fuel'] = get_array_value($permissions, "fuel");
 
             $view_data['ticket'] = get_array_value($permissions, "ticket");
             $view_data['ticket_specific'] = get_array_value($permissions, "ticket_specific");
@@ -197,6 +198,7 @@ class Roles extends Security_Controller {
         $client = $this->request->getPost('client_permission');
         $lead = $this->request->getPost('lead_permission');
         $visitor = $this->request->getPost('visitor_permission');
+        $fuel = $this->request->getPost('fuel_permission');
 
         $ticket = $this->request->getPost('ticket_permission');
 
@@ -315,6 +317,7 @@ class Roles extends Security_Controller {
             "client_specific" => $client_specific,
             "lead" => $lead,
             "visitor" => $visitor,
+            "fuel" => $fuel,
             "ticket" => $ticket,
             "ticket_specific" => $ticket_specific,
             "announcement" => $announcement,

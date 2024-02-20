@@ -852,7 +852,7 @@ class Leaves extends Security_Controller {
             } else if ($data->status === "approved") {
                 $status_class = "badge bg-success";//btn-success
             } else if ($data->status === "active") {
-                $status_class = "";//btn-success
+                $status_class = "btn-dark";//btn-success
                 $style = "background-color:#a7abbf;";
             } else if ($data->status === "rejected") {
                 $status_class = "bg-danger";

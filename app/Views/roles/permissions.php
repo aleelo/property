@@ -1052,7 +1052,46 @@
                         </div>
                     </li>
                 <?php } ?>
+                <li>
+                        <span data-feather="key" class="icon-14 ml-20"></span>
+                        <h5><?php echo app_lang("can_access_fuel"); ?></h5>
+                        <div>
+                            <?php
 
+                            $fuel = $fuel ?? '';
+                           
+                            echo form_radio(array(
+                                "id" => "fuel_no",
+                                "name" => "fuel_permission",
+                                "value" => "",
+                                "class" => "form-check-input",
+                                    ), $fuel, ($fuel === "") ? true : false);
+                            ?>
+                            <label for="fuel_no"><?php echo app_lang("no"); ?> </label>
+                        </div>
+                        <div>
+                            <?php
+                            echo form_radio(array(
+                                "id" => "fuel_yes",
+                                "name" => "fuel_permission",
+                                "value" => "all",
+                                "class" => "form-check-input",
+                                    ), $fuel, ($fuel === "all") ? true : false);
+                            ?>
+                            <label for="fuel_yes"><?php echo app_lang("yes_all"); ?></label>
+                        </div>
+                        <div>
+                            <?php
+                            echo form_radio(array(
+                                "id" => "fuel_yes_own",
+                                "name" => "fuel_permission",
+                                "value" => "own",
+                                "class" => "form-check-input",
+                                    ), $fuel, ($fuel === "own") ? true : false);
+                            ?>
+                            <label for="fuel_yes_own"><?php echo app_lang("yes_only_own"); ?></label>
+                        </div>
+                    </li>
 
                 <?php app_hooks()->do_action('app_hook_role_permissions_extension'); ?>
 
