@@ -456,7 +456,7 @@ public function r_delete()
 
         if ($this->login_user->is_admin || $role == 'Administrator'  || $role == 'Access Control' || $role == 'HRM' ) { //|| $perm == "all"
             $created_by = '%';
-            $dept_id = '%';
+            $department_id = '%';
         } else if ($role == 'Director'|| $role == 'Secretary') {
             $created_by = '%';
         } else if ($role == 'Employee') { //$perm == "own" || 
@@ -568,7 +568,7 @@ public function r_delete()
         $created_by = $this->login_user->id;
 
         if ($this->login_user->is_admin || $role == 'Administrator'  || $role == 'Access Control' || $role == 'HRM' ) { //|| $perm == "all"
-            
+
             $created_by = '%';
             $department_id = '%';
 
