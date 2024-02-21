@@ -1033,6 +1033,63 @@ class Security_Controller extends App_Controller {
         }
     }
 
+    public function get_employees_dropdown() {
+        $employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'")->getResult();
+        $temp_array =[];
+  
+        foreach($employees as $e){
+            $temp_array[$e->id] = $e->name;
+        }
+
+        return $temp_array;
+    }
+    public function get_employees_dropdown_for_table() {
+        $employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'")->getResult();
+        $temp_array[] = array('id' => '', 'text' => 'Choose Employee');
+  
+        foreach($employees as $e){
+            $temp_array[] = array('id' => $e->id, 'text' => $e->name);
+        }
+
+        return json_encode($temp_array);
+    }
+
+
+    function get_departments_for_select(){
+        // $depts = $this->db->table('departments')->select('id,nameEn')->get();
+        $depts = $this->db->query('select id,nameSo from departments');
+
+        if(!$depts){
+            return [];
+        }else{
+            $depts = $depts->getResult();
+            $data = array();
+            foreach($depts as $d){
+                $data[$d->id] = $d->nameSo;
+            }
+
+            return $data;
+        }
+    }
+
+    
+    function get_departments_for_table(){
+        // $depts = $this->db->table('departments')->select('id,nameEn')->get();
+        $depts = $this->db->query('select id,nameSo from departments');
+        $data[] = array('id' => '', 'text' => 'Choose Department');
+
+        if(!$depts){
+            return [];
+        }else{
+            $depts = $depts->getResult();
+            foreach($depts as $d){
+                $data[] = array('id' => $d->id, 'text' => $d->nameSo);
+            }
+
+            return json_encode($data);
+        }
+    }
+
     /* load the project settings into ci settings */
 
     protected function init_project_settings($project_id) {

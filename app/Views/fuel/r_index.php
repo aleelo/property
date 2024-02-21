@@ -37,7 +37,7 @@
             serverSide: true,
             // smartFilterIdentity: "all_leads_list", //a to z and _ only. should be unique to avoid conflicts
             ignoreSavedFilter: ignoreSavedFilter,
-            order: [[0, "desc"]],
+            //order: [[0, "desc"]],
             columnDefs:[
                 {
                     "targets": "_all",

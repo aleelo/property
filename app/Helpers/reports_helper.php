@@ -19,6 +19,7 @@ if (!function_exists('get_reports_topbar')) {
         $access_expense = get_array_value($permissions, "expense");
         $access_lead = get_array_value($permissions, "lead");
         $access_ticket = get_array_value($permissions, "ticket");
+        $access_fuel = get_array_value($permissions, "fuel");
 
         /*
           $access_order = get_array_value($permissions, "order");
@@ -33,6 +34,14 @@ if (!function_exists('get_reports_topbar')) {
         if (get_setting("module_invoice") == "1" && ($ci->login_user->is_admin || $access_invoice)) {
             $sales_dropdown_button["invoices_summary"] = array("name" => "invoices_summary", "url" => "invoices/invoices_summary");
             $show_payments_button = true;
+        }
+
+        $fuel_dropdown = array();
+        if (($ci->login_user->is_admin || $access_fuel)) {
+            $fuel_dropdown["fuel_receive"] = array("name" => "fuel_receive", "url" => "fuel/fuel_receive_report");
+            $fuel_dropdown["fuel_request"] = array("name" => "fuel_request", "url" => "fuel/fuel_request_report");
+            $fuel_dropdown["daily_activity"] = array("name" => "daily_activity", "url" => "fuel/daily_activity_report");
+          
         }
 
         /*
@@ -99,6 +108,10 @@ if (!function_exists('get_reports_topbar')) {
 
         if (get_setting("module_ticket") == "1" && ($ci->login_user->is_admin || $access_ticket == "all")) {
             $reports_menu[] = array("name" => "tickets", "url" => "tickets/tickets_chart_report", "class" => "life-buoy", "single_button" => true);
+        }
+
+        if ( ($ci->login_user->is_admin || $access_fuel == "all" || $access_fuel == "own")) {
+            $reports_menu['fuel'] = array("name" => "fuel", "url" => "fuel", "class" => "droplet", "dropdown_item" => $fuel_dropdown);
         }
 
         if ($return_array) {

@@ -189,6 +189,9 @@ $lang["dispense"] = "Dispense";
 $lang["Dispense"] = "Dispense";
 $lang["dispensed"] = "Dispensed";
 $lang["Dispensed"] = "Dispensed";
+$lang["fuel_activity"] = "Fuel Activity";
+$lang["daily_activity"] = "Daily Activity";
+$lang["department"] = "Department";
 
 /** fuel request **/
 $lang["requested_by"] = "Requested By";

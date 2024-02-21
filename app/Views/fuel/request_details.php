@@ -8,6 +8,8 @@
                 $status_class = "bg-warning";
             } else if ($model_info->status === "approved") {
                 $status_class = "badge bg-success";//btn-success
+            } else if ($model_info->status === "dispensed") {
+                $status_class = "badge btn-success";//btn-success
             } else if ($model_info->status === "cancelled") {
                 $status_class = "bg-dark";//btn-success
             
@@ -82,7 +84,7 @@
     <?php if (1) { ?>
         <button data-status="cancelled" type="submit" class="btn btn-dark btn-sm update-request-status"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('cancel'); ?></button>
         <button data-status="rejected" type="submit" class="btn btn-danger btn-sm update-request-status"><span data-feather="x-circle" class="icon-16"></span> <?php echo app_lang('reject'); ?></button>
-        <button data-status="dispensed" type="submit" class="btn btn-success btn-sm update-request-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('approve'); ?></button>
+        <button data-status="approved" type="submit" class="btn btn-success btn-sm update-request-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('approve'); ?></button>
     <?php } ?>
 
     <!-- <?php //if (strtolower($model_info->status) === "approved" && $model_info->leave_type_id !== 3 && $model_info->nolo_status == 1 && $login_user->id === $model_info->applicant_id) { ?>

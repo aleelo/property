@@ -564,10 +564,11 @@ class Team_members extends Security_Controller {
         }
 
         $view_data['departments'] = $this->Team_model->get_departments_for_select();
+        array_unshift($view_data['departments'],'Choose Department');
+        
         $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
         $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
 
-        array_unshift($view_data['departments'],'Choose Department');
         // var_dump($view_data['departments']);
         // die();
 

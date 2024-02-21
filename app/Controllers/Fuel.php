@@ -106,17 +106,54 @@ class Fuel extends Security_Controller
       $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loding from the lead's details view
       $view_data['model_info'] = $this->Fuel_Request_model->get_one($id); //$this->Subscriptions_model->get_one($lead_id);//
     //   $dept_id = $this->get_user_department_id();
-      $employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users")->getResult();
-      $temp_array =[];
+      $employees = $this->get_employees_dropdown();
 
-      foreach($employees as $e){
-          $temp_array[$e->id] = $e->name;
-      }
 
-      $view_data['employees'] = $temp_array;
+      $view_data['employees'] = $employees;
 
       return $this->template->view('fuel/request_modal_form', $view_data);
   }
+
+   /* receive report */
+   public function fuel_receive_report()
+   {
+       $id = $this->request->getPost('id');
+ 
+       $this->validate_submitted_data(array(
+           "id" => "numeric",
+       ));
+ 
+       $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loding from the lead's details view
+       $view_data['model_info'] = $this->Fuel_Receive_model->get_one($id); //$this->Subscriptions_model->get_one($lead_id);//
+     //   $dept_id = $this->get_user_department_id();
+    
+      $view_data['members_dropdown'] = $this->get_employees_dropdown_for_table(); 
+      $view_data['departments_dropdown'] = $this->get_departments_for_table();
+      
+ 
+       return $this->template->rander('fuel/fuel_receive_report', $view_data);
+   }
+
+   /* receive report */
+   public function fuel_request_report()
+   {
+       $id = $this->request->getPost('id');
+ 
+       $this->validate_submitted_data(array(
+           "id" => "numeric",
+       ));
+ 
+       $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loding from the lead's details view
+       $view_data['model_info'] = $this->Fuel_Receive_model->get_one($id); //$this->Subscriptions_model->get_one($lead_id);//
+     //   $dept_id = $this->get_user_department_id();
+    
+      $view_data['members_dropdown'] = $this->get_employees_dropdown_for_table(); 
+      $view_data['departments_dropdown'] = $this->get_departments_for_table();
+      
+ 
+       return $this->template->rander('fuel/fuel_request_report', $view_data);
+   }
+
     //get owners dropdown
     //owner will be team member
     private function _get_owners_dropdown($view_type = "")
@@ -163,7 +200,7 @@ class Fuel extends Security_Controller
             "plate" => "required",
         ));
            
-    // fuel_type supplier receive_date barrels	litters	received_by	vehicle_model	plate	
+        // fuel_type supplier receive_date barrels	litters	received_by	vehicle_model	plate	
         $input = array(
             'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             "fuel_type" => $this->request->getPost('fuel_type'),
@@ -186,20 +223,17 @@ class Fuel extends Security_Controller
         
         if ($save_id) {
             // save_custom_fields("leads", $save_id, $this->login_user->is_admin, $this->login_user->user_type);
-            $data = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
-                    LEFT JOIN rise_users u on rc.received_by = u.id 
-                    LEFT JOIN departments dp on rc.department_id = dp.id 
-                    where rc.id=$save_id")->getRow();
+            $data = $this->_row_data($save_id);
 
             if (!$id) { //create operation
                 
-                log_notification("document_created", array("document_id" => $save_id), $this->login_user->id);
+                log_notification("fuel_receive_created", array("fuel_receive_id" => $save_id), $this->login_user->id);
 
                 echo json_encode(array("success" => true, "data" =>  $data, 'id' => $save_id, 'view' => $this->request->getPost('view'),
                     'message' => app_lang('record_saved')));
             } else { //update operation
                 
-                log_notification("document_updated", array("document_id" => $id), $this->login_user->id);
+                log_notification("fuel_receive_updated", array("fuel_receive_id" => $id), $this->login_user->id);
 
                 echo json_encode(array("success" => true, "data" => $data, 'id' => $id, 'view' => $this->request->getPost('view'),
                     'message' => app_lang('record_updated')));
@@ -226,7 +260,7 @@ class Fuel extends Security_Controller
         ));
            
         $requested_by = $this->request->getPost('requested_by');
-    // requested_by	department_id	litters	vehicle_engine	plate	request_type	request_date	purpose	status	remarks	
+        // requested_by	department_id	litters	vehicle_engine	plate	request_type	request_date	purpose	status	remarks	
         $input = array(
             'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             "request_type" => $this->request->getPost('request_type'),
@@ -249,20 +283,17 @@ class Fuel extends Security_Controller
 
         if ($save_id) {
             // save_custom_fields("leads", $save_id, $this->login_user->is_admin, $this->login_user->user_type);
-            $data = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
-            LEFT JOIN rise_users u on rc.requested_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
-            where rc.id=$save_id")->getRow();
+            $data = $this->request_row_data($save_id);
 
             if (!$id) { //create operation
                 
-                log_notification("document_created", array("document_id" => $save_id), $this->login_user->id);
+                log_notification("fuel_request_created", array("fuel_request_id" => $save_id), $this->login_user->id);
 
                 echo json_encode(array("success" => true, "data" =>  $data, 'id' => $save_id, 'view' => $this->request->getPost('view'),
                     'message' => app_lang('record_saved')));
             } else { //update operation
                 
-                log_notification("document_updated", array("document_id" => $id), $this->login_user->id);
+                log_notification("fuel_request_updated", array("fuel_request_id" => $id), $this->login_user->id);
 
                 // var_dump($doc->getRowArray());
                 // die();
@@ -437,13 +468,162 @@ public function r_delete()
         echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
     }
 }
-    /* list of receive, prepared for datatable  */
+    /* list of receive report, prepared for datatable  */
+    public function rec_rpt_list_data()
+    {
+        $role = get_user_role();
+        $department_id = get_user_department_id();
+        $received_by = $this->login_user->id;
+        
+        $received_by_search = $this->request->getPost('received_by');
+        $department_id_search = $this->request->getPost('department_id');
+        $start_date = $this->request->getPost('start_date');
+        $end_date = $this->request->getPost('end_date');
+
+        if ($this->login_user->is_admin || $role == 'Administrator'  || $role == 'Access Control' || $role == 'HRM' ) { //|| $perm == "all"
+            $received_by = '%';
+            $department_id = '%';
+        } else if ($role == 'Director'|| $role == 'Secretary') {
+            $received_by = '%';
+        } else if ($role == 'Employee') { //$perm == "own" || 
+            $received_by = $this->login_user->id;
+        }else{
+            
+            app_redirect("forbidden");
+        }
+
+        if($received_by_search){
+            $received_by = $received_by_search;
+        }
+
+        if($department_id_search){
+            $department_id = $department_id_search;
+        }
+
+        $where = " and rc.deleted=0";
+        //by this, we can handel the server side or client side from the app table prams.
+      
+            if($start_date){
+                $where .= " and receive_date between '$start_date' and '$end_date'";
+            }
+
+            $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
+            LEFT JOIN rise_users u on rc.received_by = u.id 
+            LEFT JOIN departments dp on rc.department_id = dp.id 
+            where rc.received_by LIKE '$received_by' and rc.department_id LIKE '$department_id'  $where");
+
+            $list_data = $result->getResult();
+            $total_rows =$this->db->query("select count(*) as affected from rise_fuel_receives rc
+            where received_by LIKE '$received_by' and department_id LIKE '$department_id'  $where")->getRow()->affected;
+            $result = array();
+        
+
+
+        $result_data = array();
+        foreach ($list_data as $data) {
+            $result_data[] = array(
+                $data->id,
+                $data->fuel_type,
+                $data->supplier,
+                $data->receive_date,
+                $data->barrels,
+                $data->litters,
+                $data->user,
+                $data->department,
+                $data->vehicle_model,
+                $data->plate
+            );
+        }
+
+        $result["data"] = $result_data;
+        $result["recordsTotal"] = $total_rows;
+        $result["recordsFiltered"] = $total_rows;
+
+        // var_dump($result);
+        // die();
+        echo json_encode($result);
+    }
+
+    /* list of request report, prepared for datatable  */
+    public function req_rpt_list_data()
+    {
+        $role = get_user_role();
+        $department_id = get_user_department_id();
+        $requested_by = $this->login_user->id;
+        
+        $requested_by_search = $this->request->getPost('requested_by');
+        $department_id_search = $this->request->getPost('department_id');
+        $start_date = $this->request->getPost('start_date');
+        $end_date = $this->request->getPost('end_date');
+
+        if ($this->login_user->is_admin || $role == 'Administrator'  || $role == 'Access Control' || $role == 'HRM' ) { //|| $perm == "all"
+            $requested_by = '%';
+            $department_id = '%';
+        } else if ($role == 'Director'|| $role == 'Secretary') {
+            $requested_by = '%';
+        } else if ($role == 'Employee') { //$perm == "own" || 
+            $requested_by = $this->login_user->id;
+        }else{
+            
+            app_redirect("forbidden");
+        }
+
+        if($requested_by_search){
+            $requested_by = $requested_by_search;
+        }
+
+        if($department_id_search){
+            $department_id = $department_id_search;
+        }
+
+        $where = " and rc.deleted=0";
+        //by this, we can handel the server side or client side from the app table prams.
+      
+            if($start_date){
+                $where .= " and request_date between '$start_date' and '$end_date'";
+            }
+
+            $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
+            LEFT JOIN rise_users u on rc.requested_by = u.id 
+            LEFT JOIN departments dp on rc.department_id = dp.id 
+            where rc.requested_by LIKE '$requested_by' and rc.department_id LIKE '$department_id'  $where");
+
+            $list_data = $result->getResult();
+            $total_rows =$this->db->query("select count(*) as affected from rise_fuel_requests rc
+            where requested_by LIKE '$requested_by' and department_id LIKE '$department_id'  $where")->getRow()->affected;
+            $result = array();
+        
+
+
+        $result_data = array();
+        foreach ($list_data as $data) {
+            $result_data[] = array(
+                $data->id,
+                $data->request_type,
+                $data->litters,
+                $data->request_date,
+                $data->purpose,
+                $data->user,
+                $data->department,
+                $data->vehicle_engine,
+                $data->plate,
+                $data->status
+            );
+        }
+
+        $result["data"] = $result_data;
+        $result["recordsTotal"] = $total_rows;
+        $result["recordsFiltered"] = $total_rows;
+
+        // var_dump($result);
+        // die();
+        echo json_encode($result);
+    }
 
     public function list_data()
     {
-        $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
-
-        $permissions = $this->login_user->permissions;
+        
+        // $permissions = $this->login_user->permissions;
 
         // $perm = get_array_value($permissions, $name);
        
@@ -539,7 +719,7 @@ public function r_delete()
 
         $result_data = array();
         foreach ($list_data as $data) {
-            $result_data[] = $this->_make_row($data, $custom_fields);
+            $result_data[] = $this->_make_row($data);
         }
 
         $result["data"] = $result_data;
@@ -699,7 +879,7 @@ public function r_delete()
         return $this->_make_request_row($data, $custom_fields);
     }
 
-    private function _make_row($data, $custom_fields)
+    private function _make_row($data)
     {
         // $image_url = get_avatar($data->contact_avatar);
        
@@ -762,9 +942,11 @@ public function r_delete()
 
             if ($data->status === "pending") {
                 $status_class = "bg-warning";
-            } else if ($data->status === "dispensed") {
+            } else if ($data->status === "approved") {
                 $status_class = "badge bg-success";//btn-success
-            } else if ($data->status === "cancelled") {
+            }else if ($data->status === "dispensed") {
+                $status_class = "badge btn-success";//btn-success
+            }  else if ($data->status === "cancelled") {
                 $status_class = "bg-dark";//btn-success
                
             } else if ($data->status === "rejected") {
@@ -783,7 +965,7 @@ public function r_delete()
             $data->request_date,
             $data->purpose,
             $owner,
-            $status_meta,
+            $status_meta
         );
 
         // $row_data[] = js_anchor($data->document_title, array("style" => "background-color: green;",

@@ -59,7 +59,7 @@
                 {title: "<?php echo app_lang('total') ?>", "class": "text-right"},
                 {visible: false, title: "<?php echo app_lang('hours') ?>", "class": "text-right"},
                 {title: '<i data-feather="message-circle" class="icon-16"></i>', "class": "text-center w50"}
-<?php echo $custom_field_headers; ?>,
+                <?php echo $custom_field_headers; ?>,
                 {visible: optionVisibility, title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
             ],
             printColumns: combineCustomFieldsColumns([0, 1, 2, 3, 5, 7, 8, 9, 10], '<?php echo $custom_field_headers; ?>'),
