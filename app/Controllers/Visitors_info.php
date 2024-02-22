@@ -15,6 +15,23 @@ class Visitors_info extends App_Controller
         $this->signin_validation_errors = array();
         helper('email');
     }
+    
+    function request_qrcode($id) {
+       
+        $model_info = $this->db->query("select rc.*,u.image as avatar,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
+        LEFT JOIN rise_users u on rc.requested_by = u.id 
+        LEFT JOIN departments dp on rc.department_id = dp.id 
+        where rc.uuid='$id'")->getRow();
+
+        if (!$model_info) {
+            show_404();
+        }
+
+
+        $view_data['model_info'] = $model_info;
+        return $this->template->view("fuel/request_qrcode", $view_data);
+    }
+    
 
     public function test_qr($id){
         $visitor_info = $this->db->query("SELECT * FROM rise_cardholders WHERE id = $id")->getRow();

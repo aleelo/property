@@ -9,6 +9,8 @@ use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use chillerlan\QRCode\Output\QRImageWithLogo;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class Fuel extends Security_Controller
 {
@@ -379,13 +381,12 @@ class Fuel extends Security_Controller
             show_404();
         }
 
-
         $view_data['model_info'] = $model_info;
         return $this->template->view("fuel/request_details", $view_data);
     }
 
-    function request_qrcode($id) {
-       
+    function request_pdf($id) {
+    
         $model_info = $this->db->query("select rc.*,u.image as avatar,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
         LEFT JOIN rise_users u on rc.requested_by = u.id 
         LEFT JOIN departments dp on rc.department_id = dp.id 
@@ -396,9 +397,64 @@ class Fuel extends Security_Controller
         }
 
 
+        $options = new QROptions([
+            'eccLevel' => EccLevel::L,
+            'outputBase64' => true,
+            'logoSpaceHeight' => 17,
+            'logoSpaceWidth' => 17,
+            'scale' => 20,
+            'version' => Version::AUTO,
+
+          ]);
+
+        //   $options->outputType = ;
+
+        $qrcode = (new QRCode($options))->render(get_uri('visitors_info/request_qrcode/'.$model_info->uuid));//->getQRMatrix(current_url())
+
         $view_data['model_info'] = $model_info;
-        return $this->template->view("fuel/request_qrcode", $view_data);
+        $view_data['qrcode'] = $qrcode;
+
+        $this->get_fuel_request_pdf("fuel/request_pdf", $view_data);
+        
+        // return $this->template->view("fuel/request_pdf", $view_data);
     }
+    
+    
+    public function get_fuel_request_pdf($path,$data,$mode='view'){
+
+        $data_info = get_array_value($data, "model_info");
+        $pdf_file_name = "fuel_request_pdf_".$data_info->id.".pdf";
+       
+        $options = new Options([
+            'enable_remote' => true,
+            'isRemoteEnabled' => true,
+            'chroot',base_url('files/visitors'),
+        ]);
+        
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+        $options = $dompdf->getOptions();
+        $dompdf->setOptions($options);
+        
+        // var_dump($options->get('chroot'));
+        // die();
+        // file_get_contents('visitors/',$dompdf->output());
+
+        $html = view($path,$data);
+        $dompdf->loadHtml($html);
+        
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream($pdf_file_name,['Attachment'=>0]);
+        exit();
+    }
+
     
     function confirm_dispense() {
 

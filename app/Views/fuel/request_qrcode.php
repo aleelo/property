@@ -17,8 +17,10 @@
          <?php 
             if ($model_info->status === "pending") {
                 $status_class = "bg-warning";
-            } else if ($model_info->status === "dispensed") {
+            } else if ($model_info->status === "approved") {
                 $status_class = "badge bg-success";//btn-success
+            } else if ($model_info->status === "dispensed") {
+                $status_class = "badge btn-success";//btn-success
             } else if ($model_info->status === "cancelled") {
                 $status_class = "bg-dark";//btn-success
             
