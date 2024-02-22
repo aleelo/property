@@ -134,7 +134,7 @@ class Fuel extends Security_Controller
        return $this->template->rander('fuel/fuel_receive_report', $view_data);
    }
 
-   /* receive report */
+   /* request report */
    public function fuel_request_report()
    {
        $id = $this->request->getPost('id');
@@ -153,6 +153,41 @@ class Fuel extends Security_Controller
  
        return $this->template->rander('fuel/fuel_request_report', $view_data);
    }
+    
+    /* activity report */
+    public function fuel_activity_report()
+    {
+        $id = $this->request->getPost('id');
+
+        $this->validate_submitted_data(array(
+            "id" => "numeric",
+        ));
+
+     //   $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loding from the lead's details view
+     //   $view_data['model_info'] = $this->Fuel_Receive_model->get_one($id); //$this->Subscriptions_model->get_one($lead_id);//
+    //   $dept_id = $this->get_user_department_id();
+
+    $rec_employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'")->getResult();
+    $rec_array[] = array('id' => '', 'text' => 'Filter by Received');
+
+    foreach($rec_employees as $e){
+        $rec_array[] = array('id' => $e->id, 'text' => $e->name);
+    }
+
+    $req_employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'")->getResult();
+    $req_array[] = array('id' => '', 'text' => 'Filter by Requested');
+
+    foreach($req_employees as $e){
+        $req_array[] = array('id' => $e->id, 'text' => $e->name);
+    }
+
+    
+    $view_data['receive_dropdown'] = json_encode($rec_array); 
+    $view_data['request_dropdown'] = json_encode($req_array); 
+    
+
+        return $this->template->rander('fuel/fuel_activity_report', $view_data);
+    }
 
     //get owners dropdown
     //owner will be team member
@@ -267,6 +302,7 @@ class Fuel extends Security_Controller
             "department_id" => $this->get_user_department_id(),
             "request_date" => $this->request->getPost('request_date'),
             "litters" => $this->request->getPost('litters'),
+            "fuel_type" => $this->request->getPost('fuel_type'),
             "vehicle_engine" => $this->request->getPost('vehicle_engine'),
             "plate" => $this->request->getPost('plate'),
             "requested_by" => isset($requested_by) ? $this->request->getPost('requested_by') : $this->login_user->id,
@@ -620,6 +656,83 @@ public function r_delete()
         echo json_encode($result);
     }
 
+    /* list of activity report, prepared for datatable  */
+    public function activity_rpt_list_data()
+    {
+        $role = get_user_role();
+        
+        $requested_by_search = $this->request->getPost('requested_by');
+        $received_by_search = $this->request->getPost('received_by');
+        $start_date = $this->request->getPost('start_date');
+        $end_date = $this->request->getPost('end_date');
+
+        if($requested_by_search){
+            $requested_by = $requested_by_search;
+        }else{
+            $requested_by = '%';
+        }
+
+        if($received_by_search){
+            $received_by = $received_by_search;
+        }else{
+            $received_by = '%';
+        }
+
+        $where = "";
+        //by this, we can handel the server side or client side from the app table prams.
+      
+            if($start_date){
+                $where .= " and date between '$start_date' and '$end_date'";
+            }
+
+            $result = $this->db->query("SELECT date,type,person,user_id,fuel_type,max(deleted) as deleted, sum(recqty) recqty,sum(reqqty) reqqty FROM(
+                        SELECT receive_date date,'receive' as type,fuel_type,concat(u.first_name,' ',u.last_name) person,received_by user_id,rc.deleted,litters recqty,0 reqqty  from rise_fuel_receives rc
+                        LEFT JOIN rise_users u on rc.received_by = u.id 
+                        UNION all
+                        SELECT request_date date,'request' as type,rq.fuel_type,concat(u.first_name,' ',u.last_name) person,requested_by user_id,rq.deleted,0 recqty,litters reqqty  from rise_fuel_requests rq
+                        LEFT JOIN rise_users u on rq.requested_by = u.id 
+                    ) r where (user_id LIKE '$requested_by' or user_id LIKE '$received_by') and deleted=0 $where
+                    GROUP BY date,type,person,user_id,fuel_type");
+
+            $list_data = $result->getResult();
+
+            $total_rows =$this->db->query(" SELECT count(*) as affected FROM(
+                            SELECT receive_date date,'receive' as type,fuel_type,concat(u.first_name,' ',u.last_name) person,received_by user_id,rc.deleted,litters recqty,0 reqqty  from rise_fuel_receives rc
+                            LEFT JOIN rise_users u on rc.received_by = u.id 
+                            UNION all
+                            SELECT request_date date,'request' as type,rq.fuel_type ,concat(u.first_name,' ',u.last_name) person,requested_by user_id,rq.deleted,0 recqty,litters reqqty  from rise_fuel_requests rq
+                            LEFT JOIN rise_users u on rq.requested_by = u.id 
+                            )r where (user_id LIKE '$requested_by' or user_id LIKE '$received_by') and deleted=0 $where")->getRow()->affected;
+         
+         $result = array();
+        
+
+
+        $result_data = array();
+        foreach ($list_data as $data) {
+            
+            $balance = $data->recqty - $data->reqqty;
+
+            $result_data[] = array(
+                $data->date,
+                $data->type,
+                $data->fuel_type,
+                $data->person,
+                $data->recqty,
+                $data->reqqty,
+                $balance
+            );
+        }
+
+        $result["data"] = $result_data;
+        $result["recordsTotal"] = $total_rows;
+        $result["recordsFiltered"] = $total_rows;
+
+        // var_dump($result);
+        // die();
+        echo json_encode($result);
+    }
+
     public function list_data()
     {
         
@@ -922,6 +1035,8 @@ public function r_delete()
         return $row_data;
     }
 
+
+
     /* prepare a row of request list table */
     private function _make_request_row($data, $custom_fields)
     {
@@ -961,6 +1076,7 @@ public function r_delete()
         $row_data = array(
             $data->id,
             $data->request_type,
+            $data->fuel_type,
             $data->litters,
             $data->request_date,
             $data->purpose,

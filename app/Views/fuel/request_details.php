@@ -29,6 +29,10 @@
                     <td><?php echo $model_info->request_type; ?></td>
                 </tr>
                 <tr>
+                    <td class="w100"> <?php echo app_lang('fuel_type'); ?></td>
+                    <td><?php echo $model_info->fuel_type; ?></td>
+                </tr>
+                <tr>
                     <td> <?php echo app_lang('request_date'); ?></td>
                     <td><?php echo date_format(new DateTime($model_info->request_date),'F d, Y'); ?></td>
                 </tr>

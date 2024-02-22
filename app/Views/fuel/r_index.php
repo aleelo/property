@@ -47,6 +47,7 @@
             columns: [
             {title: "<?php echo 'ID' ?>", "class": "all", order_by: "id"},
             {title: "<?php echo app_lang("request_type") ?>", "class": "all", order_by: "request_type"},
+            {title: "<?php echo app_lang("fuel_type") ?>", "class": "all", order_by: "fuel_type"},
             {title: "<?php echo app_lang("litters") ?>", order_by: "litters"},
             {title: "<?php echo app_lang("request_date") ?>", order_by: "request_date"},
             {title: "<?php echo app_lang("purpose") ?>", order_by: "purpose"},

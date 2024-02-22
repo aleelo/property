@@ -46,9 +46,9 @@
                 {title: "<?php echo app_lang("request_date") ?>", order_by: "request_date"},
                 {title: "<?php echo app_lang("purpose") ?>", order_by: "purpose"},
                 {title: "<?php echo app_lang("requested_by") ?>", order_by: "requested_by"},
-                {title: "<?php echo app_lang('department') ?>", "class": "text-right"},
-                {title: "<?php echo app_lang('vehicle_engine') ?>", "class": "text-right"},
-                {title: "<?php echo app_lang('plate') ?>", "class": "text-right"},
+                {title: "<?php echo app_lang('department') ?>", "class": ""},
+                {title: "<?php echo app_lang('vehicle_engine') ?>", "class": ""},
+                {title: "<?php echo app_lang('plate') ?>", "class": ""},
                 {title: "<?php echo app_lang("status") ?>", order_by: "status"},
                 // {visible: optionVisibility, title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
             ],
