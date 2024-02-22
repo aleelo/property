@@ -62,7 +62,7 @@
                             $status_class = "bg-dark";
                         }
             
-                        $status_meta = "<span class='badge $status_class'>" . app_lang($model_info->status) . "</span>";
+                        $status_meta = "<span style='border-radius:5px;color:white;font-size:12px;font-weight: 600' class='badge $status_class'>" . app_lang($model_info->status) . "</span>";
 
                         ?>
                     <!-- <img src="<?php echo $header?>"  style="width:100%;"> -->
@@ -119,7 +119,7 @@
                             </tr>
                             <tr>
                                 <td> <?php echo app_lang('status'); ?></td>
-                                <td><?php echo $status_meta; ?></td>
+                                <td><?php echo  $status_meta; ?></td>
                             </tr>
                             <tr>
                                 <td> <?php echo app_lang('remarks'); ?></td>
