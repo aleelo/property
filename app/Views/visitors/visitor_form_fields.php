@@ -277,7 +277,7 @@
                 "id" => "allowed_gates",
                 "name" => "allowed_gates",
                 "value" => $model_info->allowed_gates ? $model_info->allowed_gates : "",
-                "class" => "form-control",
+                "class" => "form-control select2",
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),
             ),[''=>'Choose allowed gates','Kashmir, Radio Muqdisho & Gate 1'=>'Kashmir, Radio Muqdisho & Gate 1','Kashmir, Radio Muqdisho, Gate 1 & Gate 2'=>'Kashmir, Radio Muqdisho, Gate 1 & Gate 2'],[$model_info->allowed_gates]);

@@ -195,6 +195,7 @@ $lang["department"] = "Department";
 $lang["requested_litters"] = "Requested Litters";
 $lang["received_litters"] = "Received Litters";
 $lang["balance"] = "Balance";
+$lang["allowed_gates"] = "Allowed Gates";
 
 /** fuel request **/
 $lang["requested_by"] = "Requested By";
