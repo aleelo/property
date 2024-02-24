@@ -267,6 +267,26 @@
     </div>
 </div>
 
+<div class="form-group">
+    <div class="row">
+        <label for="allowed_gates" class="<?php echo 'col-3'; ?>"><?php echo app_lang('allowed_gates'); ?></label>
+       
+        <div class="col-9">
+            <?php
+            echo form_dropdown(array(
+                "id" => "allowed_gates",
+                "name" => "allowed_gates",
+                "value" => $model_info->allowed_gates ? $model_info->allowed_gates : "",
+                "class" => "form-control",
+                "data-rule-required" => true,
+                "data-msg-required" => app_lang("field_required"),
+            ),[''=>'Choose allowed gates','Kashmir, Radio Muqdisho & Gate 1'=>'Kashmir, Radio Muqdisho & Gate 1','Kashmir, Radio Muqdisho, Gate 1 & Gate 2'=>'Kashmir, Radio Muqdisho, Gate 1 & Gate 2'],[$model_info->allowed_gates]);
+            ?>
+
+        </div>
+    </div>
+</div>
+
 <div class="form-group ">
     <hr class="mt-4 mb-4">
     <button type="button" class="btn btn-success float-end" id="add_visitor_btn"><i data-feather="plus-circle" class='icon'></i> Add Visitors</button>

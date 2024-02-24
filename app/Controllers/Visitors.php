@@ -280,6 +280,7 @@ class Visitors extends Security_Controller
             "client_type" => $this->request->getPost('client_type'),
             "visit_time" => $this->request->getPost('visit_time'),
             "document_title" => $this->request->getPost('document_title'),
+            "allowed_gates" => $this->request->getPost('allowed_gates'),
             "start_date" => $start_date,
             "visit_date" => $start_date,
             "end_date" => $end_date,
@@ -419,6 +420,7 @@ class Visitors extends Security_Controller
                 'table' => $arr_table,
                 'images_table' => $image_block,
                 "document_title" => $visitor_info->document_title,
+                "allowed_gates" => $visitor_info->allowed_gates,
                 "remarks" => $this->request->getPost('remarks'),
                 "created_at" => date('Y-m-d H:i:s')
             ];
@@ -636,9 +638,10 @@ class Visitors extends Security_Controller
         $template->setValues([
 
             'ref' => $data['ref_number'],
-            'date' => date('Y-m-d',strtotime($data['created_at'])),
+            'date' => date('F d, Y',strtotime($data['created_at'])),
             'visitDate' => $data['visit_date'],
             'documentTitle'=>$data['document_title'],
+            'gates'=>$data['allowed_gates'],
 
         ]);
 
@@ -1124,7 +1127,7 @@ class Visitors extends Security_Controller
 
         $webUrl = empty($doc) ? '' : $doc->webUrl;
 
-        if($data->status == 'Pending' && $can_add_requests){
+        if(($data->status == 'Pending' && $can_add_requests) || $role =='admin'){
 
             $link = "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
         }else{
