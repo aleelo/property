@@ -94,10 +94,10 @@
         <button data-status="approved" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('approve'); ?></button>
     <?php } ?>
 
-    <?php if ((strtolower($leave_info->status) === "approved" && $leave_info->leave_type_id !== 3 && $leave_info->nolo_status == 1 && $login_user->id === $leave_info->applicant_id)) { ?>
+    <?php if ((strtolower($leave_info->status) === "approved" && $leave_info->leave_type_id === 3 && $leave_info->nolo_status == 1 && $login_user->id === $leave_info->applicant_id) || get_user_role() == 'admin') { ?>
         <a target="_blank" href="<?php echo get_uri('visitors_info/show_leave_qrcode_return/'.$leave_info->uuid);?>" class="btn btn-success btn-sm update-leave-status"><span data-feather="file-text" class="icon-16"></span> <?php echo 'Passport Return'; ?></a>
-    <?php } else if ((strtolower($leave_info->status) !== "cancelled" && strtolower($leave_info->status) !== "approved" ) && $leave_info->leave_type_id !== 3 && $login_user->id === $leave_info->applicant_id ) {  ?>
-        <a target="_blank" href="<?php echo get_uri('visitors_info/show_leave_qrcode/'.$leave_info->uuid);?>" class="btn btn-success btn-sm update-leave-status"><span data-feather="user" class="icon-16"></span> <?php echo 'Nolo Osto'; ?></a>
+    <?php } else if ((strtolower($leave_info->status) !== "cancelled" && $leave_info->leave_type_id === 3 && $login_user->id === $leave_info->applicant_id ) || get_user_role() == 'admin') {  ?>
+        <a target="_blank" href="<?php echo get_uri('visitors_info/show_leave_qrcode/'.$leave_info->uuid);?>" class="btn btn-success btn-sm update-leave-status"><span data-feather="user" class="icon-16"></span> <?php echo 'Fasax Dhoof'; ?></a>
         <?php } ?>
 </div>
 <?php echo form_close(); ?>

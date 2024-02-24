@@ -22,27 +22,26 @@
         <link rel="stylesheet" href="<?php echo base_url().'assets/css/nolosto.css';?>" class="">
     </head>
     <body>
-
     <div class="container">
-        <div class="ticket-header">
-            <img id="logo" src="<?php echo base_url().'assets/images/sys-logo.png';?>" alt="">
+        <div class="ticket-header" style="padding: 0px !important;background-color: #6bc6ff !important;">
+            <img id="logo" src="<?php echo base_url().'assets/images/sys-logo-white.png';?>" style="width: 400px;">
             &nbsp;&nbsp;
-            <h2><?php echo $leave_info->leave_type ?></h2>
         </div>
         <div class="ticket-body">
+            <h2 class="text-center mb-3"><?php echo strtoupper($leave_info->leave_type) ?></h2>
             <div class="ticket-name">
                 <p>Howlwadeen:</p>
-                <h2><?php echo $leave_info->applicant_name;?></h2>
+                <h2 style="font-size: 20px;"><?php echo $leave_info->applicant_name;?></h2>
             </div>
             <div class="ruler"></div>
             <div class="ticket-number-date">
                 <div>
                     <p>PASSPORT NO.</p>
-                    <h2><?php echo $leave_info->passport_no;?></h2>
+                    <h2 style="font-size: 20px;"><?php echo $leave_info->passport_no;?></h2>
                 </div>
                 <div>
                     <p>DATE</p>
-                    <h2><?php echo date_format(new DateTime($leave_info->start_date),'d M');?></h2>
+                    <h2 style="font-size: 20px;"><?php echo date_format(new DateTime($leave_info->start_date),'d M, Y');?></h2>
                 </div>
             </div>
             <div class="ruler"></div>
@@ -63,6 +62,7 @@
                         </div>
                     </div>
             </div>
+            
             
             <div class="ruler"></div>
             <div class="bording">

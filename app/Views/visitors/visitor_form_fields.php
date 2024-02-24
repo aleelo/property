@@ -280,7 +280,7 @@
                 "class" => "form-control select2",
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),
-            ),[''=>'Choose allowed gates','Kashmir, Radio Muqdisho & Gate 1'=>'Kashmir, Radio Muqdisho & Gate 1','Kashmir, Radio Muqdisho, Gate 1 & Gate 2'=>'Kashmir, Radio Muqdisho, Gate 1 & Gate 2'],[$model_info->allowed_gates]);
+            ),[''=>'Choose allowed gates','Gate 1'=>'Gate 1','Gate 1 iyo Gate 2'=>'Gate 1 iyo Gate 2'],[$model_info->allowed_gates]);
             ?>
 
         </div>

@@ -385,9 +385,9 @@ class Visitors extends Security_Controller
                 $arr_table[] = array(
                                 'id'=>$index,
                                 'visitorName'=>$d->visitor_name,
-                                'visitorMobile'=>$d->mobile,
+                                // 'visitorMobile'=>$d->mobile,
                                 'vehicle'=>$d->vehicle_details,
-                                'image'=>$d->image
+                                // 'image'=>$d->image
                             );
                             
                 if($d->image){
@@ -627,7 +627,7 @@ class Visitors extends Security_Controller
         $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'Views/documents/'.$data['template']);
        
         $ext = pathinfo(APPPATH.'Views/documents/'.$data['template'],PATHINFO_EXTENSION);
-        $save_as_name = $data['id'].'_'.date('m').'_'.date('Y').'.'.$ext;
+        $save_as_name = $data['id'].'.'.date('m').'.'.date('Y').'.'.$ext;
         
 
         $path_absolute = APPPATH . 'Views/documents/'.$save_as_name;
@@ -641,7 +641,8 @@ class Visitors extends Security_Controller
             'date' => date('F d, Y',strtotime($data['created_at'])),
             'visitDate' => $data['visit_date'],
             'documentTitle'=>$data['document_title'],
-            'gates'=>$data['allowed_gates'],
+            'gatesText'=>$data['allowed_gates'],
+            'sqn'=>$data['id'],
 
         ]);
 
