@@ -29,22 +29,16 @@
                     <div class="row">
                         <label for="department_id" class=" col-md-3"><?php echo 'Employee Department'; ?></label>
                         <div class=" col-md-9">
-                          
-                            <select id= "department_id",
-                                name= "department_id",
-                                class = "form-control select2",
-                                placeholder = 'Employee Department',
-                                autocomplete= "off",
-                                data-rule-required = 'true',
-                                data-msg-required =  "<?= app_lang("field_required")?>">
-                                    <?php
-                                        foreach($departments as $k=>$v){
-                                    ?>
-                                        <option value="<?php echo $k?>" <?php echo $k == $job_info->department_id ? 'selected' : '' ?>><?php echo $v?></option>
-                                    <?php
-                                    }
-                                    ?>
-                            </select>
+                        <?php 
+                        echo form_dropdown(array( 
+                                'id'=> "department_id",
+                                'name'=> "department_id",
+                                'class' => "form-control select2",
+                                'placeholder' => 'Employee Department',
+                                'autocomplete'=> "off",
+                                'data-rule-required' => true,
+                                'data-msg-required' =>   app_lang('field_required')
+                            ),$departments,[$job_info->department_id]); ?>
                         </div>
                     </div>
                 </div> 

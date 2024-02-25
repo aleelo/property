@@ -562,7 +562,7 @@ class Team_members extends Security_Controller {
             app_redirect("forbidden");
         }
 
-        $view_data['departments'] = $this->Team_model->get_departments_for_select();
+        $view_data['departments'] = $this->get_departments_for_select();
         array_unshift($view_data['departments'],'Choose Department');
         
         $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];

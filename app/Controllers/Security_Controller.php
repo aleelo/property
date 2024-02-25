@@ -1057,12 +1057,11 @@ class Security_Controller extends App_Controller {
 
     function get_departments_for_select(){
         // $depts = $this->db->table('departments')->select('id,nameEn')->get();
-        $depts = $this->db->query('select id,nameSo from departments');
+        $depts = $this->db->query('select id,nameSo from departments')->getResult();
 
         if(!$depts){
             return [];
         }else{
-            $depts = $depts->getResult();
             $data = array();
             foreach($depts as $d){
                 $data[$d->id] = $d->nameSo;
