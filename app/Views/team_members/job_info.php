@@ -45,29 +45,6 @@
  
                 <div class="form-group">
                     <div class="row">
-                        <label for="section_id" class=" col-md-3"><?php echo 'Department Section'; ?></label>
-                        <div class=" col-md-9">
-                           
-                             <select id= "section_id",
-                                name= "section_id",
-                                class = "form-control select2",
-                                placeholder = 'Choose department Section',
-                                autocomplete= "off",
-                                data-rule-required = 'true',
-                                data-msg-required =  "<?= app_lang("field_required")?>">
-                                    <?php
-                                        foreach($sections as $k=>$v){
-                                    ?>
-                                        <option value="<?php echo $k?>" <?php echo $k == $job_info->section_id ? 'selected' : '' ?>><?php echo $v?></option>
-                                    <?php
-                                    }
-                                    ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
                         <label for="job_title_en" class=" col-md-3"><?php echo 'Job Title English'; ?></label>
                         <div class=" col-md-9">
                             <?php
