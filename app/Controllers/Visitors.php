@@ -936,9 +936,11 @@ class Visitors extends Security_Controller
         LEFT JOIN rise_visitors_detail vd on v.id = vd.visitor_id
         WHERE visitor_id = $id
         ")->getResult();
-
+        
+        $doc = $this->db->query("SELECT d.webUrl FROM rise_visitor_document l left join rise_documents d on l.document_id = d.id where l.visitor_id = $id")->getRow();
         $data['visitor_info'] = $visitor_info;
         $data['visitor_details'] =  $visitor_details;
+        $data['webUrl'] =  empty($doc) ? '' : $doc->webUrl;
       
 
         return $this->template->view('visitors/visitor_details',$data);
