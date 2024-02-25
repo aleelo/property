@@ -1128,7 +1128,7 @@ class Visitors extends Security_Controller
 
         $webUrl = empty($doc) ? '' : $doc->webUrl;
 
-        if(($data->status == 'Pending' && $can_add_requests) || $role =='admin'){
+        if(($can_add_requests)){
 
             $link = "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
         }else{
