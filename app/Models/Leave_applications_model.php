@@ -117,7 +117,7 @@ class Leave_applications_model extends Crud_model {
             LEFT JOIN $users_table ON $users_table.id= $leave_applications_table.applicant_id
             LEFT JOIN $leave_types_table ON $leave_types_table.id= $leave_applications_table.leave_type_id        
             
-            WHERE $leave_applications_table.deleted=0 $where";
+            WHERE $leave_applications_table.deleted=0 $where order by start_date desc";
         return $this->db->query($sql);
     }
 
