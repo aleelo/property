@@ -156,7 +156,6 @@ class Team_members extends Security_Controller {
             "job_title_en" => "required",
             "job_title_so" => "required",
             "department_id" => "required",
-            "section_id" => "required",
             "role" => "required"
         ));
 
@@ -215,7 +214,7 @@ class Team_members extends Security_Controller {
                 "salary_term" => $this->request->getPost('salary_term'),
                 "date_of_hire" => $this->request->getPost('date_of_hire'),
                 "department_id" => $this->request->getPost('department_id'),
-                "section_id" => $this->request->getPost('section_id'),
+                "section_id" => 0,
                 "job_title_en" => $this->request->getPost('job_title_en'),
                 "job_title_so" => $this->request->getPost('job_title_so'),
                 "employee_type" => $this->request->getPost('employee_type'),

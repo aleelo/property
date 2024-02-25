@@ -85,7 +85,7 @@
             <div class=" col-md-12 search-container" style="" id="btn-confirm">         
             <?php echo form_open(get_uri("leaves/approve_nolosto/".$leave_info->id),  array("data-id"=> $leave_info->id, "id" => "leave-nolosto_approve", "class" => "general-form", "role" => "form","method"=>"POST")); ?>
 
-                <div class="shadow d-flex  col-xs-12 mx-0 mb-0 rounded-0" id="search-card2">
+                <div class="shadow d-flex  col-xs-12 mx-0 mb-0 rounded-0">
                     <button type="submit" class="btn btn-primary w100p rounded-0"><i class="search"></i> Approve Nolo Osto  </button>
                 </div>
                 <?php echo form_close() ?>
