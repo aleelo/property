@@ -509,7 +509,7 @@ class Leaves extends Security_Controller {
             'leavetype' => $data['leavetype'],
             'passport' => $data['passport'],
             'ref' => $data['ref_number'],
-            'date' => date('Y-m-d',strtotime($data['date'])),
+            'date' => date('F d, Y',strtotime($data['date'])),
 
         ]);
 

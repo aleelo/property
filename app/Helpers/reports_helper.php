@@ -40,7 +40,7 @@ if (!function_exists('get_reports_topbar')) {
         if (($ci->login_user->is_admin || $access_fuel)) {
             $fuel_dropdown["fuel_receive"] = array("name" => "fuel_receive", "url" => "fuel/fuel_receive_report");
             $fuel_dropdown["fuel_request"] = array("name" => "fuel_request", "url" => "fuel/fuel_request_report");
-            $fuel_dropdown["daily_activity"] = array("name" => "daily_activity", "url" => "fuel/daily_activity_report");
+            $fuel_dropdown["fuel_daily_activity"] = array("name" => "fuel_daily_activity", "url" => "fuel/fuel_activity_report");
           
         }
 

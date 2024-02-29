@@ -269,6 +269,26 @@
 
 <div class="form-group">
     <div class="row">
+        <label for="department_id" class="<?php echo 'col-3'; ?>"><?php echo app_lang('office').'/Xafiiska'; ?></label>
+       
+        <div class="col-9">
+            <?php
+            echo form_dropdown(array(
+                "id" => "department_id",
+                "name" => "department_id",
+                "value" => $model_info->department_id ? $model_info->department_id : "",
+                "class" => "form-control select2",
+                "data-rule-required" => true,
+                "data-msg-required" => app_lang("field_required"),
+            ),$departments,[$model_info->department_id]);
+            ?>
+
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="row">
         <label for="allowed_gates" class="<?php echo 'col-3'; ?>"><?php echo app_lang('allowed_gates'); ?></label>
        
         <div class="col-9">

@@ -782,6 +782,23 @@ class Security_Controller extends App_Controller {
         }
     }
 
+    
+    public function get_department_name($id){
+        $d = $this->db->query("SELECT nameSo from departments where id = $id")->getRow();
+        
+        return $d->nameSo;
+    }
+
+    public function get_user_department_name(){
+        $user_id = $this->login_user->id;
+        $job_info = $this->db->query("SELECT d.nameSo from rise_team_member_job_info t 
+        left join rise_users u on u.id=t.user_id 
+        left join departments d on d.id=t.department_id 
+        where t.user_id = $user_id")->getRow();
+        
+        return $job_info->nameSo;
+    }
+
     public function get_user_department_id(){
         $user_id = $this->login_user->id;
         $job_info = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user_id")->getRow();

@@ -55,7 +55,7 @@
             {title: "<?php echo app_lang("ref_number") ?>", order_by: "ref_number"},
             {title: "<?php echo app_lang("depertment") ?>", order_by: "depertment"},
             {title: "<?php echo app_lang("template") ?>", order_by: "template"},
-            {title: "<?php echo app_lang("item_id") ?>", order_by: "item_id"},
+            // {title: "<?php //echo app_lang("item_id") ?>", order_by: "item_id",vissible: false},
             {title: "<?php echo app_lang("created_by") ?>", order_by: "created_by"},
             {title: "<?php echo app_lang("created_at") ?>", order_by: "created_at"}
             <?php echo $custom_field_headers; ?>,

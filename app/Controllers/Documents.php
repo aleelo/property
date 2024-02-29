@@ -615,7 +615,7 @@ class Documents extends Security_Controller
             $data->ref_number,
             $data->depertment,
             $data->template,
-            $data->item_id,
+            // $data->item_id,
             $owner,
             format_to_date($data->created_at, false),
         );

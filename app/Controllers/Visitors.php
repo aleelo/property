@@ -78,8 +78,28 @@ class Visitors extends Security_Controller
     public function modal_form()
     {
         $lead_id = $this->request->getPost('id');
+        $dept_id = $this->get_user_department_id();
+        $role = $this->get_user_role();
+
+        if($role === 'Access Controll' || $role === 'admin' || $role === 'Administrator'){
+            $dept_id = '%';
+        }
 
         $view_data = $this->make_lead_modal_form_data($lead_id);
+        $depts = $this->db->query("select * from departments where id like '$dept_id'")->getResult();
+
+        if($dept_id == '%'){
+
+            $departments =array(
+                ''=>'Choose Office/Xafiiska'
+            );
+        }
+
+        foreach($depts as $d){
+            $departments[$d->id] = $d->nameSo;
+        }
+
+        $view_data['departments'] = $departments;
 
         return $this->template->view('visitors/modal_form', $view_data);
     }
@@ -198,7 +218,8 @@ class Visitors extends Security_Controller
             "id" => "numeric",
             "name" => "required",
             'visitor_name'=>'required',
-            // 'visitor_mobile'=>'required',
+            'department_id'=>'required',
+            'allowed_gates'=>'required',
             'document_title'=>'required',
         ];
 
@@ -288,7 +309,7 @@ class Visitors extends Security_Controller
             "total_hours" => $hours,
             "access_type" => $access_type,
             "access_duration" => $this->request->getPost('access_duration'),
-            "department_id" => $this->get_user_department_id(),
+            "department_id" => $this->request->getPost('department_id'),
             "remarks" => $this->request->getPost('remarks'),
             "created_by" => $this->request->getPost('owner_id') ? $this->request->getPost('owner_id') : $user_id,
             "created_at" => date('Y-m-d H:i:s'),
@@ -421,6 +442,7 @@ class Visitors extends Security_Controller
                 'images_table' => $image_block,
                 "document_title" => $visitor_info->document_title,
                 "allowed_gates" => $visitor_info->allowed_gates,
+                "department" => $this->get_department_name($visitor_info->department_id),
                 "remarks" => $this->request->getPost('remarks'),
                 "created_at" => date('Y-m-d H:i:s')
             ];
@@ -643,6 +665,7 @@ class Visitors extends Security_Controller
             'documentTitle'=>$data['document_title'],
             'gatesText'=>$data['allowed_gates'],
             'sqn'=>$data['id'],
+            'department'=>$data['department'],
 
         ]);
 

@@ -133,3 +133,4 @@ nb-configuration.xml
 
 /.php-cs-fixe
 files/visitors/
+app/Views/documents/~$min_finance_template.docx
