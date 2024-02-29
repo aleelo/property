@@ -121,7 +121,7 @@ class Leaves extends Security_Controller {
             'ref_number'=> $template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('y'),
             'template' => $template->path,
             'folder' => $template->destination_folder,
-            'date' => date('Y-m-d'),
+            'date' => $leave_data['start_date'],
         ];
 
         $doc_data = [
@@ -267,7 +267,7 @@ class Leaves extends Security_Controller {
             'ref_number'=> $template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('y'),
             'template' => $template->path,
             'folder' => $template->destination_folder,
-            'date' => date('Y-m-d'),
+            'date' => $leave_data['start_date'],
         ];
 
         $doc_data = [

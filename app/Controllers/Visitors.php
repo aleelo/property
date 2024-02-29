@@ -444,7 +444,7 @@ class Visitors extends Security_Controller
                 "allowed_gates" => $visitor_info->allowed_gates,
                 "department" => $this->get_department_name($visitor_info->department_id),
                 "remarks" => $this->request->getPost('remarks'),
-                "created_at" => date('Y-m-d H:i:s')
+                "created_at" => $start_date
             ];
     
             $doc_data = [
