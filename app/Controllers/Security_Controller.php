@@ -786,6 +786,9 @@ class Security_Controller extends App_Controller {
     public function get_department_name($id){
         $d = $this->db->query("SELECT nameSo from departments where id = $id")->getRow();
         
+        if(empty($d)){
+            return '';
+        }
         return $d->nameSo;
     }
 
@@ -795,7 +798,10 @@ class Security_Controller extends App_Controller {
         left join rise_users u on u.id=t.user_id 
         left join departments d on d.id=t.department_id 
         where t.user_id = $user_id")->getRow();
-        
+
+        if(empty($job_info)){
+            return '';
+        }
         return $job_info->nameSo;
     }
 

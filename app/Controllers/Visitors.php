@@ -1127,6 +1127,13 @@ class Visitors extends Security_Controller
         }
 
         // $lead_labels = make_labels_view_data($data->labels_list, true);
+       
+        if (strtolower($data->status) === "approved") {
+            $status_meta = "<span class='badge badge bg-success'>Approved</span>";
+        }else{
+            $status_meta = "<span class='badge badge bg-warning'>Pending</span>";
+        }
+
 
         $visit_date = date('Y-m-d',strtotime($data->visit_date));
          // client_type	name	created_by	visit_date	created_at	deleted	remarks
@@ -1137,8 +1144,9 @@ class Visitors extends Security_Controller
             $data->client_type,
             date("h:i a, F d, Y",strtotime($visit_date.' '.$data->visit_time)),
             $owner,
+            $this->get_department_name($data->department_id),
             format_to_date($data->created_at, false),
-            $data->remarks,
+            $status_meta,
         );
 
         // $row_data[] = js_anchor($data->document_title, array("style" => "background-color: green;",

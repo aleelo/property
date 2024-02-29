@@ -51,8 +51,9 @@
             {title: "<?php echo app_lang("client_type") ?>", order_by: "client_type"},
             {title: "<?php echo app_lang("visit_date") ?>", order_by: "visit_date"},
             {title: "<?php echo app_lang("created_by") ?>", order_by: "created_by"},
+            {title: "<?php echo app_lang("office") ?>"},
             {title: "<?php echo app_lang("created_at") ?>", order_by: "created_at"},
-            {title: "<?php echo app_lang("remarks") ?>", order_by: "remarks"},
+            {title: "<?php echo app_lang("status") ?>", order_by: "status"},
             
             {title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w10p"}
             ],
