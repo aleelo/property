@@ -6,8 +6,8 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="type" class="<?php echo 'col-3'; ?>"><?php echo app_lang('visitor_type'); ?></label>
-        <div class="col-9">
+        <label for="type" class="<?php echo 'col-2'; ?>"><?php echo app_lang('visitor_type'); ?></label>
+        <div class="col-10">
             <?php
             echo form_radio(array(
                 "id" => "type_organization",
@@ -34,11 +34,11 @@
     <div class="form-group">
         <div class="row">
             <?php if ($model_info->client_type == "person") { ?>
-                <label for="name" class="<?php echo $label_column; ?> company_name_section"><?php echo app_lang('name'); ?></label>
+                <label for="name" class="<?php echo 'col-2'; ?> company_name_section"><?php echo app_lang('name'); ?></label>
             <?php } else { ?>
-                <label for="company_name" class="<?php echo $label_column; ?> company_name_section"><?php echo app_lang('company_name'); ?></label>
+                <label for="company_name" class="<?php echo 'col-2'; ?> company_name_section"><?php echo app_lang('company_name'); ?></label>
             <?php } ?>
-            <div class="<?php echo $field_column; ?>">
+            <div class="<?php echo 'col-10'; ?>">
                 <?php
                 echo form_input(array(
                     "id" => ($model_info->client_type == "person") ? "name" : "company_name",
@@ -57,8 +57,8 @@
 <?php } else { ?>
     <div class="form-group">
         <div class="row">
-            <label for="company_name" class="<?php echo $label_column; ?> company_name_section"><?php echo app_lang('company_name'); ?></label>
-            <div class="<?php echo $field_column; ?>">
+            <label for="company_name" class="<?php echo 'col-2'; ?> company_name_section"><?php echo app_lang('company_name'); ?></label>
+            <div class="<?php echo 'col-10'; ?>">
                 <?php
                 echo form_input(array(
                     "id" => "company_name",
@@ -78,8 +78,8 @@
 
 <div class=" form-group">
     <div class="row">
-        <label for="duration" class=" col-md-3"><?php echo app_lang('access_duration'); ?></label>
-        <div class="col-md-9">
+        <label for="duration" class=" col-2"><?php echo app_lang('access_duration'); ?></label>
+        <div class="col-10">
 
         <?php
             echo form_radio(array(
@@ -114,8 +114,8 @@
 
 <div id="single_day_section"  class="form-group date_section">
     <div class="row">
-        <label id="date_label" for="single_date" class=" col-md-3"><?php echo app_lang('date'); ?></label>
-        <div class="col-md-9">
+        <label id="date_label" for="single_date" class=" col-2"><?php echo app_lang('date'); ?></label>
+        <div class="col-10">
             <?php
             echo form_input(array(
                 "id" => "single_date",
@@ -134,8 +134,8 @@
 <div id="multiple_days_section" class="hide date_section">
     <div class="form-group">
         <div class="row">
-            <label for="start_date" class=" col-md-3"><?php echo app_lang('start_date'); ?></label>
-            <div class=" col-md-9">
+            <label for="start_date" class=" col-2"><?php echo app_lang('start_date'); ?></label>
+            <div class=" col-10">
                 <?php
                 echo form_input(array(
                     "id" => "start_date",
@@ -154,8 +154,8 @@
 
     <div class="form-group">
         <div class="row">
-            <label for="end_date" class=" col-md-3"><?php echo app_lang('end_date'); ?></label>
-            <div class=" col-md-9">
+            <label for="end_date" class=" col-2"><?php echo app_lang('end_date'); ?></label>
+            <div class=" col-10">
                 <?php
                 echo form_input(array(
                     "id" => "end_date",
@@ -179,8 +179,8 @@
 <div id="total_days_section" class="hide date_section">
     <div class="form-group">
         <div class="row">
-            <label for="total_days" class="col-md-3"><?php echo app_lang('total_days'); ?></label>
-            <div class="col-md-9 total-days">
+            <label for="total_days" class="col-2"><?php echo app_lang('total_days'); ?></label>
+            <div class="col-10 total-days">
 
             </div>
         </div>
@@ -190,7 +190,7 @@
 <div id="hours_section" class="hide date_section">
     <div class="clearfix">
         <div class="row">
-            <label for="hour_date" class=" col-md-3"><?php echo app_lang('date'); ?></label>
+            <label for="hour_date" class=" col-2"><?php echo app_lang('date'); ?></label>
             <div class="col-md-4 form-group">
                 <?php
                 echo form_input(array(
@@ -207,7 +207,7 @@
             </div>
 
             <label for="hours" class=" col-md-2"><?php echo app_lang('hours'); ?></label>
-            <div class=" col-md-3">
+            <div class=" col-2">
                 <?php
                 echo form_dropdown("hours", array(
                     "01" => "01",
@@ -227,9 +227,9 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="visit_date" class="<?php echo 'col-3'; ?>"><?php echo app_lang('visit_time'); ?></label>
+        <label for="visit_date" class="<?php echo 'col-2'; ?>"><?php echo app_lang('visit_time'); ?></label>
        
-        <div class="col-9">
+        <div class="col-10">
             <?php
             echo form_input(array(
                 "id" => "visit_time",
@@ -248,9 +248,9 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="document_title" class="<?php echo 'col-3'; ?>"><?php echo app_lang('document_title'); ?></label>
+        <label for="document_title" class="<?php echo 'col-2'; ?>"><?php echo app_lang('document_title'); ?></label>
        
-        <div class="col-9">
+        <div class="col-10">
             <?php
             echo form_input(array(
                 "id" => "document_title",
@@ -269,9 +269,9 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="department_id" class="<?php echo 'col-3'; ?>"><?php echo app_lang('office').'/Xafiiska'; ?></label>
+        <label for="department_id" class="<?php echo 'col-2'; ?>"><?php echo app_lang('office').'/Xafiiska'; ?></label>
        
-        <div class="col-9">
+        <div class="col-10">
             <?php
             echo form_dropdown(array(
                 "id" => "department_id",
@@ -289,9 +289,9 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="allowed_gates" class="<?php echo 'col-3'; ?>"><?php echo app_lang('allowed_gates'); ?></label>
+        <label for="allowed_gates" class="<?php echo 'col-2'; ?>"><?php echo app_lang('allowed_gates'); ?></label>
        
-        <div class="col-9">
+        <div class="col-10">
             <?php
             echo form_dropdown(array(
                 "id" => "allowed_gates",
