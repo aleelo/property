@@ -13,7 +13,7 @@
                 "autofocus" => true,
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),
-            ),['Diesel'=>'Diesel','Gasoline'=>'Gasoline','Kerosene'=>'Kerosene','Naphtha'=>'Naphtha'],[$model_info->fuel_type]);
+            ),['Gasoline (Baasiin)'=>'Gasoline (Baasiin)','Naphtha'=>'Naphtha'],[$model_info->fuel_type]);
             ?>
         </div>
     </div>
@@ -31,7 +31,7 @@
                 "autofocus" => true,
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),
-            ),['NISA'=>'NISA','UNSOS'=>'UNSOS','HAQABTIRE'=>'HAQABTIRE'],[$model_info->supplier]);
+            ),['NISA'=>'NISA','SNA'=>'SNA','UNSOS'=>'UNSOS','HAQABTIRE'=>'HAQABTIRE'],[$model_info->supplier]);
             ?>
         </div>
     </div>
@@ -158,5 +158,8 @@
 
         // $("#lead_labels").select2({multiple: true, data: <?php //echo json_encode($label_suggestions); ?>});
 
+        $('#barrels').on('input', function (e) {
+            $('#litters').val($(this).val() * 220);
+        });
     });
 </script>

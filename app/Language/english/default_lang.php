@@ -191,6 +191,7 @@ $lang["dispensed"] = "Dispensed";
 $lang["Dispensed"] = "Dispensed";
 $lang["fuel_activity"] = "Fuel Activity";
 $lang["daily_activity"] = "Daily Activity";
+$lang["fuel_daily_activity"] = "Daily Activity";
 $lang["department"] = "Department";
 $lang["requested_litters"] = "Requested Litters";
 $lang["received_litters"] = "Received Litters";

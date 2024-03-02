@@ -25,6 +25,10 @@
         <div class="table-responsive mb15">
             <table class="table dataTable display b-t">
                 <tr>
+                    <td class="w100"> <?php echo app_lang('uuid'); ?></td>
+                    <td><?php echo $model_info->uuid; ?></td>
+                </tr>
+                <tr>
                     <td class="w100"> <?php echo app_lang('request_type'); ?></td>
                     <td><?php echo $model_info->request_type; ?></td>
                 </tr>
@@ -85,14 +89,15 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('close'); ?></button>
   
-    <?php if (1) { ?>
+    <?php if (strtolower($model_info->status) == 'pending') { ?>
         <button data-status="cancelled" type="submit" class="btn btn-dark btn-sm update-request-status"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('cancel'); ?></button>
         <button data-status="rejected" type="submit" class="btn btn-danger btn-sm update-request-status"><span data-feather="x-circle" class="icon-16"></span> <?php echo app_lang('reject'); ?></button>
         <button data-status="approved" type="submit" class="btn btn-success btn-sm update-request-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('approve'); ?></button>
-    <?php } ?>
+        <?php } ?>
+
+    <a target="_blank" href="<?php echo get_uri('fuel/request_pdf/'.$model_info->uuid);?>" class="btn btn-success btn-sm "><span data-feather="file-text" class="icon-16"></span> <?php echo 'Show PDF'; ?></a>
 
     <!-- <?php //if (strtolower($model_info->status) === "approved" && $model_info->leave_type_id !== 3 && $model_info->nolo_status == 1 && $login_user->id === $model_info->applicant_id) { ?>
-        <a target="_blank" href="<?php //echo get_uri('visitors_info/show_leave_qrcode_return/'.$model_info->uuid);?>" class="btn btn-success btn-sm update-leave-status"><span data-feather="file-text" class="icon-16"></span> <?php echo 'Passport Return'; ?></a>
     <?php // } else if ((strtolower($model_info->status) !== "cancelled" && strtolower($model_info->status) !== "approved" ) && $model_info->leave_type_id !== 3 && $login_user->id === $model_info->applicant_id ) {  ?>
         <a target="_blank" href="<?php //echo get_uri('visitors_info/show_leave_qrcode/'.$model_info->uuid);?>" class="btn btn-success btn-sm update-leave-status"><span data-feather="user" class="icon-16"></span> <?php echo 'Nolo Osto'; ?></a>
         <?php //} ?> -->

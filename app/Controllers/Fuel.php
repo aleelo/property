@@ -245,7 +245,7 @@ class Fuel extends Security_Controller
             "department_id" => $this->get_user_department_id(),
             "receive_date" => $this->request->getPost('receive_date'),
             "barrels" => $this->request->getPost('barrels'),
-            "litters" => $this->request->getPost('barrels') * 159,
+            "litters" => $this->request->getPost('litters'),
             "vehicle_model" => $this->request->getPost('vehicle_model'),
             "plate" => $this->request->getPost('plate'),
             "received_by" => $this->login_user->id,
@@ -746,7 +746,7 @@ public function r_delete()
                         LEFT JOIN rise_users u on rc.received_by = u.id 
                         UNION all
                         SELECT request_date date,'request' as type,rq.fuel_type,concat(u.first_name,' ',u.last_name) person,requested_by user_id,rq.deleted,0 recqty,litters reqqty  from rise_fuel_requests rq
-                        LEFT JOIN rise_users u on rq.requested_by = u.id 
+                        LEFT JOIN rise_users u on rq.requested_by = u.id where rq.status like 'dispensed'
                     ) r where (user_id LIKE '$requested_by' or user_id LIKE '$received_by') and deleted=0 $where
                     GROUP BY date,type,person,user_id,fuel_type");
 
@@ -757,7 +757,7 @@ public function r_delete()
                             LEFT JOIN rise_users u on rc.received_by = u.id 
                             UNION all
                             SELECT request_date date,'request' as type,rq.fuel_type ,concat(u.first_name,' ',u.last_name) person,requested_by user_id,rq.deleted,0 recqty,litters reqqty  from rise_fuel_requests rq
-                            LEFT JOIN rise_users u on rq.requested_by = u.id 
+                            LEFT JOIN rise_users u on rq.requested_by = u.id where rq.status like 'dispensed'
                             )r where (user_id LIKE '$requested_by' or user_id LIKE '$received_by') and deleted=0 $where")->getRow()->affected;
          
          $result = array();

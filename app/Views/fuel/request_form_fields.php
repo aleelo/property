@@ -49,7 +49,8 @@
                 "autofocus" => true,
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),
-            ),['Diesel'=>'Diesel','Gasoline'=>'Gasoline','Kerosene'=>'Kerosene','Naphtha'=>'Naphtha'],[$model_info->fuel_type]);
+                
+            ),['Gasoline (Baasiin)'=>'Gasoline (Baasiin)','Naphtha'=>'Naphtha'],[$model_info->fuel_type]);
             ?>
         </div>
     </div>
