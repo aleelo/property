@@ -186,98 +186,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="my-4">
-                    <h4 class="text-muted">Emergency Information</h4>
-                    <hr class="mt-0"/> 
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <label for="emergency_name" class=" col-md-3"><?php echo 'Emergency Contact Name'; ?></label>
-                        <div class=" col-md-9">
-                            <?php
-                            echo form_input(array(
-                                "id" => "emergency_name",
-                                "name" => "emergency_name",
-                                "class" => "form-control",
-                                "placeholder" => 'Emergency Contact Name'
-                            ));
-                            ?>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <div class="row">
-                        <label for="emergency_phone" class=" col-md-3"><?php echo 'Emergency Phone'; ?></label>
-                        <div class=" col-md-9">
-                            <?php
-                            echo form_input(array(
-                                "id" => "emergency_phone",
-                                "name" => "emergency_phone",
-                                "class" => "form-control",
-                                "placeholder" => 'Emergency Phone'
-                            ));
-                            ?>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="my-4">
-                    <h4 class="text-muted">Education Information</h4>
-                    <hr class="mt-0"/> 
-                </div>
-
-                <div class="form-group">
-                    <div class="row">
-                        <label for="education_level" class=" col-md-3"><?php echo 'Education Level'; ?></label>
-                        <div class=" col-md-9">
-                            <?php
-                            echo form_dropdown(array(
-                                "id" => "education_level",
-                                "name" => "education_level",
-                                "class" => "form-control select2",
-                                "placeholder" => 'Education Level'
-                            ),$education_levels,[$model_info->education_level]);
-                            ?>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="row">
-                        <label for="education_field" class=" col-md-3"><?php echo 'Field of Study'; ?></label>
-                        <div class=" col-md-9">
-                            <?php
-                            echo form_dropdown(array(
-                                "id" => "education_field",
-                                "name" => "education_field",
-                                "class" => "form-control select2",
-                                "placeholder" => 'Field of Study',
-                                "autocomplete" => "off",
-                            ),$education_fields,[$model_info->education_field]);
-                            ?>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="row">
-                        <label for="education_school" class=" col-md-3"><?php echo 'School of Study'; ?></label>
-                        <div class=" col-md-9">
-                            <?php
-                            echo form_input(array(
-                                "id" => "education_school",
-                                "name" => "education_school",
-                                "class" => "form-control",
-                                "placeholder" => 'School of Study',
-                                "autocomplete" => "off",
-                            ));
-                            ?>
-                        </div>
-                    </div>
-                </div>
-                <?php echo view("custom_fields/form/prepare_context_fields", array("custom_fields" => $custom_fields, "label_column" => "col-md-3", "field_column" => " col-md-9")); ?> 
-
+              
             </div>
                 
             <div role="tabpanel" class="tab-pane" id="job-info-tab">
@@ -434,74 +343,6 @@
                 </div>
             </div>
             
-            <div role="tabpanel" class="tab-pane" id="account-info-tab">
-                <div class="form-group">
-                    <div class="row">
-                        <label for="email" class=" col-md-3"><?php echo app_lang('email'); ?></label>
-                        <div class=" col-md-9">
-                            <?php
-                            echo form_input(array(
-                                "id" => "email",
-                                "name" => "email",
-                                "class" => "form-control",
-                                "placeholder" => app_lang('email').': Microsoft 365 email',
-                                "autocomplete" => "off",
-                                "data-rule-email" => true,
-                                "data-msg-email" => app_lang("enter_valid_email"),
-                                "data-rule-required" => true,
-                                "data-msg-required" => app_lang("field_required"),
-                            ));
-                            ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group" style="display: none">
-                    <div class="row">
-                        <label for="password" class="col-md-3"><?php echo app_lang('password'); ?></label>
-                        <div class=" col-md-8">
-                            <div class="input-group">
-                                <?php
-                                echo form_password(array(
-                                    "id" => "password",
-                                    "name" => "password",
-                                    "class" => "form-control",
-                                    "placeholder" => app_lang('password'),
-                                    "autocomplete" => "off",
-                                    "data-rule-required" => true,
-                                    "data-msg-required" => app_lang("field_required"),
-                                    "data-rule-minlength" => 6,
-                                    "data-msg-minlength" => app_lang("enter_minimum_6_characters"),
-                                    "autocomplete" => "off",
-                                    "style" => "z-index:auto;"
-                                ),'aleelo',['style' => 'display:none;']);
-                                ?>
-                                <button type="button" class="input-group-text clickable no-border" id="generate_password"><span data-feather="key" class="icon-16"></span> <?php echo app_lang('generate'); ?></button>
-                            </div>
-                        </div>
-                        <div class="col-md-1 p0">
-                            <a href="#" id="show_hide_password" class="btn btn-default" title="<?php echo app_lang('show_text'); ?>"><span data-feather="eye" class="icon-16"></span></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <label for="role" class="col-md-3"><?php echo app_lang('role'); ?></label>
-                        <div class="col-md-9">
-                            <?php
-                            echo form_dropdown("role", $role_dropdown, array(), "class='select2' id='user-role'");
-                            ?>
-                            <div id="user-role-help-block" class="help-block ml10 hide"><i data-feather="alert-triangle" class="icon-16 text-warning"></i> <?php echo app_lang("admin_user_has_all_power"); ?></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group ">
-                    <div class="col-md-12">  
-                        <?php
-                        echo form_checkbox("email_login_details", "1", true, "id='email_login_details' class='form-check-input'");
-                        ?> <label for="email_login_details"><?php echo app_lang('email_login_details'); ?></label>
-                    </div>
-                </div>
-            </div>
         </div>
 
     </div>
@@ -510,8 +351,6 @@
 
 <div class="modal-footer">
     <button class="btn btn-default" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('close'); ?></button>
-    <button id="form-previous" type="button" class="btn btn-default hide"><span data-feather="arrow-left-circle" class="icon-16"></span> <?php echo app_lang('previous'); ?></button>
-    <button id="form-next" type="button" class="btn btn-info text-white"><span data-feather="arrow-right-circle" class="icon-16"></span> <?php echo app_lang('next'); ?></button>
     <button id="form-submit" type="button" class="btn btn-primary hide"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('save'); ?></button>
 </div>
 <?php echo form_close(); ?>
@@ -532,16 +371,6 @@
             }
         });
 
-        $("#team_member-form input").keydown(function (e) {
-            if (e.keyCode === 13) {
-                e.preventDefault();
-                if ($('#form-submit').hasClass('hide')) {
-                    $("#form-next").trigger('click');
-                } else {
-                    $("#team_member-form").trigger('submit');
-                }
-            }
-        });
         setTimeout(function () {
             $("#first_name").focus();
         }, 200);
@@ -550,103 +379,10 @@
         setDatePicker("#date_of_hire");
         setDatePicker(".date_input");
 
-        $("#form-previous").click(function () {
-            var $generalTab = $("#general-info-tab"),
-                    $jobTab = $("#job-info-tab"),
-                    $accountTab = $("#account-info-tab"),
-                    $previousButton = $("#form-previous"),
-                    $nextButton = $("#form-next"),
-                    $submitButton = $("#form-submit");
-
-            if ($accountTab.hasClass("active")) {
-                $accountTab.removeClass("active");
-                $jobTab.addClass("active");
-                $nextButton.removeClass("hide");
-                $submitButton.addClass("hide");
-            } else if ($jobTab.hasClass("active")) {
-                $jobTab.removeClass("active");
-                $generalTab.addClass("active");
-                $previousButton.addClass("hide");
-                $nextButton.removeClass("hide");
-                $submitButton.addClass("hide");
-            } 
-        });
-
-        $("#form-next").click(function () {
-            var $generalTab = $("#general-info-tab"),
-                    $jobTab = $("#job-info-tab"),
-                    $accountTab = $("#account-info-tab"),
-                    $previousButton = $("#form-previous"),
-                    $nextButton = $("#form-next"),
-                    $submitButton = $("#form-submit");
-            if (!$("#team_member-form").valid()) {
-                return false;
-            }
-            if ($generalTab.hasClass("active")) {
-                $generalTab.removeClass("active");
-                $jobTab.addClass("active");
-                $previousButton.removeClass("hide");
-                $("#form-progress-bar").width("45%");
-                $("#general-info-label").find("svg").remove();
-                $("#general-info-label").prepend('<i data-feather="check-circle" class="icon-16"></i>');
-                feather.replace();
-                $("#team_member_id").focus();
-                $("#employee_type").focus();
-            } else if ($jobTab.hasClass("active")) {
-                $jobTab.removeClass("active");
-                $accountTab.addClass("active");
-                $previousButton.removeClass("hide");
-                $nextButton.addClass("hide");
-                $submitButton.removeClass("hide");
-                $("#form-progress-bar").width("72%");
-                $("#job-info-label").find("svg").remove();
-                $("#job-info-label").prepend('<i data-feather="check-circle" class="icon-16"></i>');
-                feather.replace();
-                $("#employee_type").focus();
-                $("#email").focus();
-            } 
-        });
-
         $("#form-submit").click(function () {
             $("#team_member-form").trigger('submit');
         });
 
-        $("#generate_password").click(function () {
-            $("#password").val(getRndomString(8));
-        });
-
-        $("#show_hide_password").click(function () {
-            var $target = $("#password"),
-                    type = $target.attr("type");
-            if (type === "password") {
-                $(this).attr("title", "<?php echo app_lang("hide_text"); ?>");
-                $(this).html("<span data-feather='eye-off' class='icon-16'></span>");
-                feather.replace();
-                $target.attr("type", "text");
-            } else if (type === "text") {
-                $(this).attr("title", "<?php echo app_lang("show_text"); ?>");
-                $(this).html("<span data-feather='eye' class='icon-16'></span>");
-                feather.replace();
-                $target.attr("type", "password");
-            }
-        });
-
-        $("#user-role").change(function () {
-            if ($(this).val() === "admin") {
-                $("#user-role-help-block").removeClass("hide");
-            } else {
-                $("#user-role-help-block").addClass("hide");
-            }
-        });
-
-        $("#email_login_details").click(function () {
-            if ($(this).is(":checked")) {
-                $("#password").attr("data-rule-required", true);
-                $("#password").attr("data-msg-required", "<?php echo app_lang("field_required"); ?>");
-            } else {
-                $("#password").removeAttr("data-rule-required");
-                $("#password").removeAttr("data-msg-required");
-            }
-        });
+      
     });
 </script>

@@ -30,7 +30,9 @@
             </div>
             <input type="hidden" id="profile_image" name="profile_image" value=""  />
         <?php } ?>
-        <span class="avatar avatar-lg"><img id="profile-image-preview" src="<?php echo get_avatar($user_info->image); ?>" alt="..."></span> 
+        <span class="avatar avatar-lg">
+            <img id="profile-image-preview" src="<?php echo get_avatar($user_info->image); ?>" alt="..." style="height: 130px;width: 120px;">
+        </span> 
         <h4 class=""><?php echo $user_info->first_name . " " . $user_info->last_name; ?></h4>
         <?php echo form_close(); ?>
     </div> 
