@@ -121,7 +121,7 @@ class Cardholders extends Security_Controller {
         );
 
         $view_data['model_info'] = $this->Users_model->get_details($options)->getRow();
-        $view_data['departments'] = $this->Team_model->get_departments_for_select();
+        $view_data['departments'] = $this->get_departments_for_select();
         $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
         $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
         $education_fields = $this->db->query("select id,name from education_industry")->getResult();
@@ -386,7 +386,7 @@ class Cardholders extends Security_Controller {
         $full_name = $data->fullName;
 
         //check contact info view permissions
-        $show_cotact_info = $this->can_view_team_members_contact_info();
+        // $show_cotact_info = $this->can_view_team_members_contact_info();
         // `photo`, `CID`, `type`, `fullName`, `department`, `titleEng`, `titleSom`, `cardId`, `user_id`, `expireDate`, 
 
         $row_data = array(
@@ -398,6 +398,7 @@ class Cardholders extends Security_Controller {
             $data->titleEng,
             $data->cardId,
             $data->status
+
         );
 
         foreach ($custom_fields as $field) {
@@ -410,6 +411,7 @@ class Cardholders extends Security_Controller {
             $delete_link = js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_team_member'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("cardholders/delete"), "data-action" => "delete-confirmation"));
         }
 
+        $row_data[] =  modal_anchor(get_uri("cardholders/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => 'Edit Employee Information', "data-post-id" => $data->id));
         $row_data[] = $delete_link;
 
         return $row_data;

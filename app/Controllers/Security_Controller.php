@@ -911,10 +911,13 @@ class Security_Controller extends App_Controller {
         return $this->login_user->id === $user_id;
     }
 
+    protected function role_has_permission($perm) {
+        return get_array_value($this->login_user->permissions, $perm);
+    }
+
     protected function has_role_manage_permission() {
         return get_array_value($this->login_user->permissions, "can_manage_user_role_and_permissions");
     }
-
     protected function is_admin_role($role) {
         return $role == "admin";
     }
