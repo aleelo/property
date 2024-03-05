@@ -104,7 +104,13 @@ class Documents extends Security_Controller
         $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("leads", $lead_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
 
         $dept_id = $this->get_user_department_id();
-        $templates = $this->db->query("SELECT * FROM rise_templates where department = $dept_id")->getResult();
+        $role = $this->get_user_role();
+        
+        if($role == "admin"){
+            $dept_id = '%';
+        }
+
+        $templates = $this->db->query("SELECT * FROM rise_templates where department like '$dept_id'")->getResult();
         $temp_array =[];
 
         foreach($templates as $t){
