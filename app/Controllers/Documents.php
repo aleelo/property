@@ -105,13 +105,14 @@ class Documents extends Security_Controller
 
         $dept_id = $this->get_user_department_id();
         $role = $this->get_user_role();
-        
+        $temp_array =[];
         if($role == "admin"){
             $dept_id = '%';
+            $temp_array =[''=>'Choose Template'];
         }
 
         $templates = $this->db->query("SELECT * FROM rise_templates where department like '$dept_id'")->getResult();
-        $temp_array =[];
+        
 
         foreach($templates as $t){
             $temp_array[$t->id] = $t->name;
