@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use Twilio\Rest\Client;
+
 class Security_Controller extends App_Controller {
 
     public $login_user;
@@ -1113,6 +1115,27 @@ class Security_Controller extends App_Controller {
 
             return json_encode($data);
         }
+    }
+
+    /** send whatsup message */
+    protected function send_whatsup_message($phoneNumber,$body){
+
+        require(ROOTPATH.'\vendor\twilio\sdk\src\Twilio\autoload.php');
+
+        die(ROOTPATH.'\vendor\twilio\sdk\src\Twilio\autoload.php');
+
+        $sid = getenv('TWILIO_ACCOUNT_SID');
+        $token = getenv('TWILIO_AUTH_TOKEN');
+        $client = new Client($sid, $token);
+
+        $message = $client->messages->create(
+            $phoneNumber,
+            [
+                'from' => '',
+                'body' => $body
+            ]
+        );
+
     }
 
     /* load the project settings into ci settings */

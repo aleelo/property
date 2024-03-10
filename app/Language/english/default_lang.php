@@ -210,6 +210,14 @@ $lang["fuel_request"] = "Fuel Request";
 $lang["fuel"] = "Fuel";
 $lang["add_fuel_request"] = "Add Fuel Request";
 $lang["add_fuel_receive"] = "Add Fuel Receive";
+$lang["add_fuel_order"] = "Add Fuel Order";
+$lang["fuel_order"] = "Fuel Order";
+$lang["ordered_by"] = "Ordered By";
+$lang["order_date"] = "Order date";
+$lang["arrival_date"] = "Arrival date";
+$lang["ordered_by"] = "Ordered By";
+$lang["receive"] = "Receive";
+$lang["ead_arrival_date"] = "Estimated arrival date";
 
 /* team_member */
 $lang["add_team_member"] = "Add employee";

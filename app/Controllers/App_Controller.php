@@ -30,6 +30,7 @@ class App_Controller extends Controller {
     public $Templates_model;
     public $Visitors_model;
     public $Fuel_Receive_model;
+    public $Fuel_Order_model;
     public $Fuel_Request_model;
     public $Announcements_model;
     public $Messages_model;
@@ -146,6 +147,7 @@ class App_Controller extends Controller {
             'Templates_model',
             'Visitors_model',
             'Fuel_Receive_model',
+            'Fuel_Order_model',
             'Fuel_Request_model',
             'Events_model',
             'Announcements_model',

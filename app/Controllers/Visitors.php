@@ -469,6 +469,8 @@ class Visitors extends Security_Controller
             // var_dump($data['parentReference']);
             // die();
 
+            //send whatsup message to access team:
+            // $r = $this->send_whatsup_message($number,'Test Message');
             if (isset($data['error'])) {
 
                 // var_dump($data['error']['code'] . ', ' . $data['error']['message']);
@@ -681,8 +683,6 @@ class Visitors extends Security_Controller
             'id',
             $data['table']
         );
-
-
 
         $options = new QROptions([
             'eccLevel' => EccLevel::H,
