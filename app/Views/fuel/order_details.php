@@ -23,6 +23,10 @@
         <div class="table-responsive mb15">
             <table class="table dataTable display b-t">
                 <tr>
+                    <td class="w150"> <?php echo app_lang('id'); ?></td>
+                    <td><?php echo 'PO'.str_pad($model_info->id,4,'0',STR_PAD_LEFT); ?></td>
+                </tr>
+                <tr>
                     <td class="w150"> <?php echo app_lang('fuel_type'); ?></td>
                     <td><?php echo $model_info->fuel_type; ?></td>
                 </tr>
