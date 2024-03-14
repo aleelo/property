@@ -97,7 +97,7 @@ class Fuel extends Security_Controller
        $ordersArr = array(''=>'Choose Fuel Order');
 
        foreach($orders as $o){
-            $ordersArr[$o->id] = $o->supplier . ' - '. $o->barrels .' - '.$o->order_date;
+            $ordersArr[$o->id] = 'PO'.$o->id.' - '.$o->supplier . ' - '. $o->barrels .' - '.date_format(new \DateTime($o->order_date),'F d, Y');
        }
 
        $orders = $ordersArr;
@@ -1357,13 +1357,14 @@ public function r_delete()
 
         $status_meta = "<span class='badge $status_class'>" . app_lang($data->status) . "</span>";
    
-
+        $fOrderDate = empty($data->order_date)? '' : date_format(new \DateTime($data->order_date),'F d, Y');
+        $fArrival_date = empty($data->arrival_date)? '' : date_format(new \DateTime($data->arrival_date),'F d, Y');
         $row_data = array(
             $data->id,
             $data->fuel_type,
             $data->supplier,
-            $data->order_date,
-            $data->arrival_date,
+            $fOrderDate,
+            $fArrival_date,
             $data->barrels,
             $data->litters,
             $owner,

@@ -1,23 +1,6 @@
 <input type="hidden" name="id" value="<?php echo $model_info->id; ?>" />
 <input type="hidden" name="view" value="<?php echo isset($view) ? $view : ""; ?>" />
-<div class="form-group">
-    <div class="row">
-        <label for="fuel_type" class="col-3"><?php echo app_lang('fuel_type'); ?></label>
-        <div class="col-9">
-            <?php
-            echo form_dropdown(array(
-                "id" => "fuel_type",
-                "name" => "fuel_type",
-                "class" => "form-control select2",
-                "placeholder" => app_lang('fuel_type'),
-                "autofocus" => true,
-                "data-rule-required" => true,
-                "data-msg-required" => app_lang("field_required"),
-            ),['Gasoline (Baasiin)'=>'Gasoline (Baasiin)','Naphtha'=>'Naphtha'],[$model_info->fuel_type]);
-            ?>
-        </div>
-    </div>
-</div>
+
 <div class="form-group">
     <div class="row">
         <label for="fuel_order" class="col-3"><?php echo app_lang('fuel_order'); ?></label>
@@ -36,6 +19,26 @@
         </div>
     </div>
 </div>
+
+<div class="form-group">
+    <div class="row">
+        <label for="fuel_type" class="col-3"><?php echo app_lang('fuel_type'); ?></label>
+        <div class="col-9">
+            <?php
+            echo form_dropdown(array(
+                "id" => "fuel_type",
+                "name" => "fuel_type",
+                "class" => "form-control select2",
+                "placeholder" => app_lang('fuel_type'),
+                "autofocus" => true,
+                "data-rule-required" => true,
+                "data-msg-required" => app_lang("field_required"),
+            ),['Gasoline (Baasiin)'=>'Gasoline (Baasiin)','Naphtha'=>'Naphtha'],[$model_info->fuel_type]);
+            ?>
+        </div>
+    </div>
+</div>
+
 
 <div class="form-group">
     <div class="row">
