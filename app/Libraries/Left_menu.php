@@ -67,6 +67,7 @@ class Left_menu {
 
             if ($this->ci->login_user->is_admin || $access_fuel && ($role != "Employee")) {
                 $sidebar_menu["fuel"] = array("name" => "fuel", "url" => "#", "class" => "droplet");
+                $sidebar_menu["fuel_order"] = array("name" => "fuel_order", "url" => "fuel/order", "class" => "users");
                 $sidebar_menu["fuel_receive"] = array("name" => "fuel_receive", "url" => "fuel", "class" => "users");
                 $sidebar_menu["fuel_request"] = array("name" => "fuel_request", "url" => "fuel/request", "class" => "users");
             }

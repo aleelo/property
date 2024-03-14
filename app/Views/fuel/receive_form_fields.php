@@ -20,6 +20,25 @@
 </div>
 <div class="form-group">
     <div class="row">
+        <label for="fuel_order" class="col-3"><?php echo app_lang('fuel_order'); ?></label>
+        <div class="col-9">
+            <?php
+            echo form_dropdown(array(
+                "id" => "order_id",
+                "name" => "order_id",
+                "class" => "form-control select2",
+                "placeholder" => app_lang('fuel_order'),
+                "autofocus" => true,
+                "data-rule-required" => true,
+                "data-msg-required" => app_lang("field_required"),
+            ),$orders,[$model_info->order_id]);
+            ?>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="row">
         <label for="supplier" class="col-3"><?php echo app_lang('supplier'); ?></label>
         <div class="col-9">
             <?php

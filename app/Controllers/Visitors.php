@@ -696,6 +696,7 @@ class Visitors extends Security_Controller
 
           ]);
 
+        //   $template->setMacroChars()
         //   $options->outputType = ;
 
         $qrcode = (new QRCode($options))->render(get_uri('visitors_info/show_visitor_qrcode/'.$data['uuid']));//->getQRMatrix(current_url())
