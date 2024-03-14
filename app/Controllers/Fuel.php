@@ -97,7 +97,7 @@ class Fuel extends Security_Controller
        $ordersArr = array(''=>'Choose Fuel Order');
 
        foreach($orders as $o){
-            $ordersArr[$o->id] = 'PO'.$o->id.' - '.$o->supplier . ' - '. $o->barrels .' - '.date_format(new \DateTime($o->order_date),'F d, Y');
+            $ordersArr[$o->id] = 'PO'.$o->id.' - '.$o->supplier.' - '. $o->fuel_type . ' - '. $o->barrels .' - '.date_format(new \DateTime($o->order_date),'F d, Y');
        }
 
        $orders = $ordersArr;
@@ -476,6 +476,25 @@ class Fuel extends Security_Controller
 
         $view_data['model_info'] = $model_info;
         return $this->template->view("fuel/order_details", $view_data);
+    }
+
+    function get_order_details_json() {
+        $this->validate_submitted_data(array(
+            "order_id" => "required|numeric"
+        ));
+
+        
+        $id = $this->request->getPost('order_id');
+        $model_info = $this->db->query("select rc.*,u.image as avatar,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_orders rc 
+        LEFT JOIN rise_users u on rc.ordered_by = u.id 
+        LEFT JOIN departments dp on rc.department_id = dp.id 
+        where rc.id=$id")->getRow();
+
+        if (!$model_info) {
+            show_404();
+        }
+
+        echo json_encode($model_info); 
     }
 
     function request_details() {

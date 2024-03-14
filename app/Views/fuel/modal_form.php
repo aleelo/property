@@ -41,8 +41,13 @@
                 }
             }
         });
+
         setTimeout(function () {
             $("#fuel_type").focus();
         }, 200);
     });
+
+        // populate selected order
+        
+    
 </script>    

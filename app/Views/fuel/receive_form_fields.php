@@ -183,5 +183,49 @@
         $('#barrels').on('input', function (e) {
             $('#litters').val($(this).val() * 220);
         });
+
+
+        $('#order_id').on('change',function(e){
+
+            e.preventDefault();
+
+            $.ajax({
+                    url: 'fuel/get_order_details_json',
+                    data: {
+                        'order_id': $('#order_id').val(),
+                        // 'rise_csrf_token': $('input[name="rise_csrf_token"]').val(),
+                    },
+                    cache: false,
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (res) {
+                        // console.log(res);
+                        $('#fuel_type').val(res.fuel_type).trigger('change');
+                        $('#supplier').val(res.supplier).trigger('change');
+                        $('#receive_date').val(res.order_date);
+                        $('#barrels').val(res.barrels);
+                        $('#litters').val(res.barrels * 220);
+                        $('#remarks').val(res.remarks);
+                                             
+                        feather.replace();
+                    },
+                    statusCode: {
+                        403: function () {
+                            console.log("403: Session expired.");
+                            // location.reload();
+                        },
+                        404: function () {
+                            $("#search-container").find('.modal-body').html("");
+                            appAlert.error("404: Page not found.", {container: '.search-container', animate: false});
+                        }
+                    },
+                    error: function () {
+                        $("#search-container").find('.modal-body').html("");
+                        appAlert.error("500: Internal Server Error.", {container: '.search-container', animate: false});
+                    }
+                });
+
+                
+            });
     });
 </script>
