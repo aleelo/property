@@ -359,8 +359,9 @@ class Team_members extends Security_Controller {
         // die();
 
         $list_data = $this->Users_model->get_details($options);
-        $list_data = is_array($list_data) ? $list_data : $list_data->getResult();
         
+        $list_data = get_array_value($list_data,'data') ? $list_data : $list_data->getResult();
+
         $result = array();
         foreach ($list_data as $data) {
             $result[] = $this->_make_row($data, $custom_fields);
