@@ -35,10 +35,15 @@
         }
 
         $("#team_member-table").appTable({
-            source: '<?php echo_uri("team_members/list_data/") ?>',
+            source: '<?php echo_uri("team_members/list_data") ?>',
             order: [[1, "asc"]],
             radioButtons: [{text: '<?php echo app_lang("active_members") ?>', name: "status", value: "active", isChecked: true}, {text: '<?php echo app_lang("inactive_members") ?>', name: "status", value: "inactive", isChecked: false}],
-            filterDropdown: [<?php echo $custom_field_filters; ?>],
+            filterDropdown: [
+                <?php echo $custom_field_filters; ?>
+                {name: "department_id", class: "w200", options: <?php echo $departments_dropdown; ?>},
+                
+            ],
+            serverSide: true,
             columns: [
                 {title: '', "class": "w50 text-center all"},
                 {title: "<?php echo app_lang("name") ?>", "class": "w200 all"},

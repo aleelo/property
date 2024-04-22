@@ -193,10 +193,8 @@ class Users_model extends Crud_model {
         if ($id) {
             $where .= " AND $users_table.id=$id";
         }
-        if ($status === "active") {
-            $where .= " AND $users_table.status='active'";
-        } else if ($status === "inactive") {
-            $where .= " AND $users_table.status='inactive'";
+        if ($status) {
+            $where .= " AND $users_table.status='$status'";
         }
 
         if ($user_type) {
