@@ -445,11 +445,15 @@ class Users_model extends Crud_model {
 
         $total_rows = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow();
 
+        if ($limit) {
             return array(
                 "data" => $raw_query->getResult(),
                 "recordsTotal" => $total_rows->found_rows,
                 "recordsFiltered" => $total_rows->found_rows,
             );
+        } else {
+            return $raw_query;
+        }
         
     }
     
