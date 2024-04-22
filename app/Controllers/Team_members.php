@@ -91,7 +91,7 @@ class Team_members extends Security_Controller {
         }
 
         $view_data["show_contact_info"] = $this->can_view_team_members_contact_info();
-        $view_data['departments_dropdown'] = $this->get_departments_for_table();
+        $view_data['departments_dropdown'] = $this->get_departments_for_table_emp();
 
         $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("team_members", $this->login_user->is_admin, $this->login_user->user_type);
         $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("team_members", $this->login_user->is_admin, $this->login_user->user_type);

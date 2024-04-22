@@ -1116,6 +1116,30 @@ class Security_Controller extends App_Controller {
             return json_encode($data);
         }
     }
+    
+    function get_departments_for_table_emp(){
+        // $depts = $this->db->table('departments')->select('id,nameEn')->get();
+        $dept_id = $this->get_user_department_id();
+        $role = $this->get_user_role();
+
+        if($role == 'admin' || $role == 'Director' || $role == 'HRM'){
+            $dept_id = '%';
+        }
+
+        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id'");
+        $data[] = array('id' => '', 'text' => 'Choose Department');
+
+        if(!$depts){
+            return [];
+        }else{
+            $depts = $depts->getResult();
+            foreach($depts as $d){
+                $data[] = array('id' => $d->id, 'text' => $d->nameSo);
+            }
+
+            return json_encode($data);
+        }
+    }
 
     /** send whatsup message */
     protected function send_whatsup_message($phoneNumber,$body){
