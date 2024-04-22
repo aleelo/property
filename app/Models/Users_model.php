@@ -452,7 +452,7 @@ class Users_model extends Crud_model {
                 "recordsFiltered" => $total_rows->found_rows,
             );
         } else {
-            return $raw_query;
+            return $raw_query->getResult();
         }
     }
     
