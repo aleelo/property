@@ -252,7 +252,7 @@ class Users_model extends Crud_model {
         }
 
         $limit_offset = "";
-        $limit = $this->_get_clean_value($options, "limit") ?? 20;
+        $limit = $this->_get_clean_value($options, "limit");
         if ($limit) {
             $skip = $this->_get_clean_value($options, "skip");
             $offset = $skip ? $skip : 0;
