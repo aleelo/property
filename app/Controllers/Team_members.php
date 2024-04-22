@@ -360,13 +360,18 @@ class Team_members extends Security_Controller {
 
         $list_data = $this->Users_model->get_details($options);
         
-        $list_data = get_array_value($list_data,'data') ? get_array_value($list_data,'data') : $list_data;
+        $list_data = get_array_value($list_data,'data'); 
+       $recordsTotal =  get_array_value($list_data,'recordsTotal');
+       $recordsFiltered =  get_array_value($list_data,'recordsFiltered');
 
         $result = array();
         foreach ($list_data as $data) {
             $result[] = $this->_make_row($data, $custom_fields);
         }
-        echo json_encode(array("data" => $result));
+        echo json_encode(array("data" => $result,
+                        'recordsTotal'=>$recordsTotal,
+                        'recordsFiltered'=>$recordsFiltered
+                    ));
     }
 
     //get a row data for member list
