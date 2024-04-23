@@ -494,6 +494,7 @@ class Documents extends Security_Controller
             echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
         }
     }
+    
     /* delete or undo a lead */
     public function delete_template()
     {

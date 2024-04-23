@@ -43,7 +43,8 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="destination_folder" class="col-3"><?php echo app_lang('template_destination'); ?> <span title="Waa folder ka sharepoint aad ka abuurtay"> <span data-feather="info" class="icon-16 text-info"></span></span></label>
+        <label for="destination_folder" class="col-3"><?php echo app_lang('template_destination'); ?> <span title="Waa folder ka sharepoint aad ka abuurtay"> 
+            <span data-feather="info" class="icon-16 text-info"></span></span></label>
         <div class="col-9">
             <?php
             echo form_input(array(
@@ -82,7 +83,8 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="ref_prefix" class=""><?php echo app_lang('upload_template'); ?></label>
+        <label for="ref_prefix" class=""><?php echo app_lang('upload_template'); ?> 
+        (<span class="text-info">Please upload one document at a time.</span>)</label>
         <div class="col-12">
             <div class="container-fluid">
                 <?php
