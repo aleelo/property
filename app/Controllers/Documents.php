@@ -494,6 +494,22 @@ class Documents extends Security_Controller
             echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
         }
     }
+    /* delete or undo a lead */
+    public function delete_template()
+    {
+        $this->validate_submitted_data(array(
+            "id" => "required|numeric",
+        ));
+
+        $id = $this->request->getPost('id');
+        // $this->validate_lead_access($id);
+
+        if ($this->Templates_model->delete($id)) {
+            echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
+        }
+    }
 
     /* list of leads, prepared for datatable  */
 
