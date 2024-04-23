@@ -129,14 +129,7 @@
                                     ), "female", false);
                             ?>
                             <label for="gender_female" class="mr15"><?php echo app_lang('female'); ?></label>
-                            <?php
-                            echo form_radio(array(
-                                "id" => "gender_other",
-                                "name" => "gender",
-                                "class" => "form-check-input",
-                                    ), "other", false);
-                            ?>
-                            <label for="gender_other" class=""><?php echo app_lang('other'); ?></label>
+                           
                         </div>
                     </div>
                 </div>

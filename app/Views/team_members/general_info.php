@@ -121,23 +121,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <label for="dob" class=" col-md-2"><?php echo app_lang('date_of_birth'); ?></label>
-                    <div class=" col-md-10">
-                        <?php
-                        echo form_input(array(
-                            "id" => "dob",
-                            "name" => "dob",
-                            "value" => $user_info->dob,
-                            "class" => "form-control",
-                            "placeholder" => app_lang('date_of_birth'),
-                            "autocomplete" => "off"
-                        ));
-                        ?>
-                    </div>
-                </div>
-            </div>
+            
             <div class="form-group">
                 <div class="row">
                     <label for="ssn" class=" col-md-2"><?php echo app_lang('ssn'); ?></label>
@@ -174,14 +158,7 @@
                                 ), "female", ($user_info->gender === "female") ? true : false, "class='form-check-input'");
                         ?>
                         <label for="gender_female" class="p0 mr15"><?php echo app_lang('female'); ?></label>
-                        <?php
-                        echo form_radio(array(
-                            "id" => "gender_other",
-                            "name" => "gender",
-                            "class" => "form-check-input",
-                                ), "other", ($user_info->gender === "other") ? true : false);
-                        ?>
-                        <label for="gender_other" class=""><?php echo app_lang('other'); ?></label>
+                       
                     </div>
                 </div>
             </div>
@@ -369,7 +346,7 @@
         });
         $("#general-info-form .select2").select2();
 
-        setDatePicker("#dob");
+        setDatePicker("#birth_date");
 
     });
 </script>    
