@@ -200,6 +200,31 @@ if (!function_exists('get_array_value')) {
 
 }
 
+
+/**
+ * converts a string to snake_case
+ * 
+ * @param array $array
+ * @return extract array value safely
+ */
+if (!function_exists('toSnakeCase')) {
+
+   
+    function toSnakeCase($inputString) {
+        // Replace spaces and special characters with underscores
+        $snakeCaseString = preg_replace('/[^A-Za-z0-9]+/', '_', $inputString);
+        // Convert to lowercase
+        $snakeCaseString = strtolower($snakeCaseString);
+        // Remove leading and trailing underscores
+        $snakeCaseString = trim($snakeCaseString, '_');
+        return $snakeCaseString;
+    }
+
+
+}
+
+
+
 /**
  * prepare a anchor tag for any js request
  * 

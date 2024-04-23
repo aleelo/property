@@ -23,7 +23,7 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="name" class="col-3"><?php echo app_lang('template_prefix'); ?></label>
+        <label for="ref_prefix" class="col-3"><?php echo app_lang('template_prefix'); ?> <span title="Waa Summadda sida JSF/XM/XAG"> <span data-feather="info" class="icon-16 text-info"></span></span></label>
         <div class="col-9">
             <?php
             echo form_input(array(
@@ -31,7 +31,7 @@
                 "name" => "ref_prefix",
                 "value" => $model_info->ref_prefix,
                 "class" => "form-control",
-                "placeholder" => app_lang('template_prefix'),
+                "placeholder" => 'Waa Summadda sid: JSF/XM/XAG',
                 "autofocus" => true,
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),
@@ -43,7 +43,7 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="name" class="col-3"><?php echo app_lang('template_destination'); ?></label>
+        <label for="destination_folder" class="col-3"><?php echo app_lang('template_destination'); ?> <span title="Waa folder ka sharepoint aad ka abuurtay"> <span data-feather="info" class="icon-16 text-info"></span></span></label>
         <div class="col-9">
             <?php
             echo form_input(array(
@@ -51,28 +51,10 @@
                 "name" => "destination_folder",
                 "value" => $model_info->destination_folder,
                 "class" => "form-control",
-                "placeholder" => app_lang('template_destination'),
+                "placeholder" => 'Geli Magaca folder ka sharepoint aad ka abuurtay',
                 "autofocus" => true,
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),
-            ));
-            ?>
-        </div>
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="row">
-        <label for="section" class="col-3"><?php echo app_lang('template_path'); ?>
-        </label>
-        <div class="col-9">
-            <?php
-            echo form_input(array(
-                "id" => "path",
-                "name" => "path",
-                "value" => $model_info->path,
-                "class" => "form-control",
-                "placeholder" => app_lang('template_path')
             ));
             ?>
         </div>
@@ -98,11 +80,29 @@
 </div>
 
 
+<div class="form-group">
+    <div class="row">
+        <label for="ref_prefix" class=""><?php echo app_lang('upload_template'); ?></label>
+        <div class="col-12">
+            <div class="container-fluid">
+                <?php
+                echo view("includes/multi_file_uploader", array(
+                    "upload_url" => get_uri("clients/upload_file"),
+                    "validation_url" => get_uri("clients/validate_file"),
+                ));
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script type="text/javascript">
     $(document).ready(function () {
         $('[data-bs-toggle="tooltip"]').tooltip();
         $(".select2").select2();
 
+        feather.replace();
         // $('#owner_id').select2({data: <?php //echo json_encode($owners_dropdown); ?>});
 
         // $("#lead_labels").select2({multiple: true, data: <?php //echo json_encode($label_suggestions); ?>});

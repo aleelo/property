@@ -14,6 +14,7 @@ $lang["text_direction"] = "ltr"; //supported value ltr/rtl
 /* Documents */
 $lang["document_title"] = "Document Title";
 $lang["ref_number"] = "Reference No.";
+$lang["ref_prefix"] = "Document Reference";
 $lang["depertment"] = "Depertment";
 $lang["template"] = "Template";
 $lang["created_by"] = "Created By";
@@ -22,12 +23,17 @@ $lang["created_at"] = "Created At";
 
 //templates:
 $lang["add_template"] = "Add Template";
+$lang["templates_list"] = "Templates List";
+$lang["templates"] = "Templates";
 $lang["edit_template"] = "Edit Template";
+$lang["delete_template"] = "Delete Template";
 $lang["template_name"] = "Template Name";
 $lang["template_dept"] = "Template Department";
 $lang["template_path"] = "Template Path";
 $lang["template_prefix"] = "Reference Prefix";
 $lang["template_destination"] = "Destination Folder";
+$lang["destination_folder"] = "Destination Folder";
+$lang["upload_template"] = "Upload Template";
 
 // client_type	name	created_by	visit_date	created_at	deleted	remarks
 //visitor

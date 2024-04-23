@@ -1102,7 +1102,14 @@ class Security_Controller extends App_Controller {
     
     function get_departments_for_table(){
         // $depts = $this->db->table('departments')->select('id,nameEn')->get();
-        $depts = $this->db->query('select id,nameSo from departments');
+        $dept_id = $this->get_user_department_id();
+        $role = $this->get_user_role();
+
+        if($role == 'admin' || $role == 'Director' || $role == 'HRM'){
+            $dept_id = '%';
+        }
+
+        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id'");
         $data[] = array('id' => '', 'text' => 'Choose Department');
 
         if(!$depts){

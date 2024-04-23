@@ -64,6 +64,22 @@ class Documents extends Security_Controller
         return $this->template->rander("documents/index", $view_data);
     }
 
+    public function templates()
+    {
+        
+       $res = $this->check_access('lead');
+       $role = get_array_value($res,'role');
+       $can_add_template = $role == 'admin';
+       $view_data["can_add_template"] = $can_add_template;
+        // $this->access_only_allowed_members();
+        // $this->check_module_availability("module_lead");
+
+        $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
+        $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("leads", $this->login_user->is_admin, $this->login_user->user_type);
+
+        return $this->template->rander("templates/index", $view_data);
+    }
+
     /* load lead add/edit modal */
 
     public function modal_form()
@@ -578,6 +594,97 @@ class Documents extends Security_Controller
         echo json_encode($result);
     }
 
+    public function templates_list_data()
+    {
+        $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
+
+        // $show_own_leads_only_user_id = $this->show_own_leads_only_user_id();
+       
+        $result = $this->check_access('lead');//here means documents for us.
+
+        $role = get_array_value($result,'role');
+        $department_id = get_array_value($result,'department_id');
+        $created_by = get_array_value($result,'created_by');
+        
+        $options = append_server_side_filtering_commmon_params([]);
+
+
+        $extraWhere = " AND d.destination_folder NOT LIKE 'Visitor' AND d.destination_folder NOT LIKE 'Leave'";
+        //by this, we can handel the server side or client side from the app table prams.
+        if (get_array_value($options, "server_side")) {
+            $order_by = $options['order_by'];
+            $order_direction = $options['order_dir'];
+            $search_by = $options["search_by"] ;
+            $skip = $options["skip"] ;
+
+            
+            $limit_offset = "";
+            $limit = $options['limit'] ?? 10;
+            $where="d.deleted=0";
+
+            if ($limit) {
+            
+                $offset = $skip ? $skip : 0;
+                $limit_offset = " LIMIT $limit OFFSET $offset ";
+            }
+
+            if ($order_by) {
+                $order_by = "$order_by $order_direction ";
+            }
+
+            if ($search_by) {
+                $search_by = $this->db->escapeLikeString($search_by);
+
+            // `document_title`, `ref_number`, `depertment`, `template`, `item_id`,`created_by`, `created_at`
+                $where .= " AND (";
+                $where .= " d.id LIKE '%$search_by%' ESCAPE '!' ";
+                $where .= " OR d.name LIKE '%$search_by%' ESCAPE '!' ";
+                $where .= " OR d.ref_prefix LIKE '%$search_by%' ESCAPE '!' ";
+                $where .= " OR d.department LIKE '%$search_by%' ESCAPE '!' ";
+                $where .= " OR d.destination_folder LIKE '%$search_by%' ESCAPE '!' ";
+                $where .= " OR d.description LIKE '%$search_by%' ESCAPE '!' ";
+                $where .= " OR d.created_at LIKE '%$search_by%' ESCAPE '!' ";
+                $where .= " )";
+            }
+
+
+            $result = $this->db->query("select d.*,dp.nameSo as department from rise_templates d 
+            LEFT JOIN departments dp on d.department = dp.id 
+            where d.department LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
+
+            $list_data = $result->getResult();
+            $total_rows =$this->db->query("select count(*) as affected from rise_templates d
+            LEFT JOIN departments dp on d.department = dp.id 
+            where department LIKE '$department_id' and d.deleted=0 $extraWhere")->getRow()->affected;
+            $result = array();
+
+        } else {
+            $result = $this->db->query("select d.*,dp.nameSo as department from rise_templates d 
+            LEFT JOIN departments dp on d.department = dp.id 
+            where  d.department LIKE '$department_id' and  d.deleted=0 $extraWhere");
+
+            $list_data = $result->getResult();
+            $total_rows =$this->db->query("select count(*) as affected from rise_templates d
+            LEFT JOIN departments dp on d.department = dp.id 
+            where   department LIKE '$department_id' and  d.deleted=0 $extraWhere")->getRow()->affected;
+            $result = array();
+        }
+
+
+        $result_data = array();
+        foreach ($list_data as $data) {
+            $result_data[] = $this->template_make_row($data, $custom_fields);
+        }
+
+        $result["data"] = $result_data;
+        $result["recordsTotal"] = $total_rows;
+        $result["recordsFiltered"] = $total_rows;
+
+        // var_dump($result);
+        // die();
+        echo json_encode($result);
+    }
+
     /* return a row of lead list table */
 
     private function _row_data($id)
@@ -644,6 +751,42 @@ class Documents extends Security_Controller
 
         return $row_data;
     }
+    private function template_row_data($id)
+    {
+        $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
+        $options = array(
+            "id" => $id,
+            "custom_fields" => $custom_fields,
+            // "leads_only" => true
+        );
+        $data = $this->Templates_model->get_one($id)->getRow();
+        return $this->_make_row($data, $custom_fields);
+    }
+
+    /* prepare a row of lead list table */
+
+    private function template_make_row($data, $custom_fields)
+    {
+      
+        $row_data = array(
+            $data->id,
+            $data->name,
+            // anchor(get_uri("documents/view/" . $data->id), ),
+            $data->ref_prefix,
+            $data->destination_folder,
+            $data->department,
+            $data->description,
+            format_to_date($data->created_at, false),
+        );
+
+       
+        // $row_data[] = modal_anchor(get_uri("templates/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit",
+        //     "title" => app_lang('edit_lead'), "data-post-id" => $data->id))
+        // . 
+        $row_data[] =   js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_template'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("documents/delete_template"), "data-action" => "delete-confirmation"));
+
+        return $row_data;
+    }
 
     
     function template_modal_form() {
@@ -651,12 +794,13 @@ class Documents extends Security_Controller
             "id" => "numeric"
         ));
 
-        $view_data['departments'] = $this->Team_model->get_departments_for_select();
-        array_unshift($view_data['departments'],'Choose Department');
+        $view_data['departments'] = $this->get_departments_for_select();
 
         $view_data['model_info'] = $this->Templates_model->get_one($this->request->getPost('id'));
         return $this->template->view('templates/modal_form', $view_data);
     }
+
+    
 
     function save_template() {
         $this->validate_submitted_data(array(
@@ -664,40 +808,69 @@ class Documents extends Security_Controller
             "name" => "required",
             "destination_folder" => "required",
             "ref_prefix" => "required",
-            "path" => "required",
+            "department" => "required"
         ));
 
+
+        $id = $this->request->getPost('id');
+
         $user_id = $this->login_user->id;
-        $job_info = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user_id")->getRow();
+
         // var_dump($user_id);
         // var_dump($job_info);
         // die();
 
-        $data = array(
-            "name" => $this->request->getPost('name'),
-            "department" => $this->request->getPost('department'), //$job_info->department_id,
-            "ref_prefix" => $this->request->getPost('ref_prefix'),
-            "destination_folder" => $this->request->getPost('destination_folder'),
-            "path" => $this->request->getPost('path'),
-            "created_at" => date("Y-m-d H:i:s"),
+        // save uploaded document templates
+        
+        $files = $this->request->getPost("files");
+        $success = false;
+        $now = get_current_utc_time();
 
-        );
+        $target_path = APPPATH . "/Views/documents" . '/';
+        $file_name_tosaved = toSnakeCase($this->request->getPost('name'));
+        $sufix = '';
+        $sufix2 = '';
 
-        $id = $this->request->getPost('id');
-        $save_id=null;
+        //process the fiiles which has been uploaded by dropzone
+        if ($files && get_array_value($files, 0)) {
+            foreach ($files as $file) {
+                    
+                if(count($files) > 1){
+                    $sufix = '_' . $file;
+                    $sufix2 = ' ' . $file;
+                }
 
-        if(!$id){
+                $file_name = $this->request->getPost('file_name_' . $file);
+                $file_info = move_temp_file($file_name, $target_path,"","",$file_name_tosaved.$sufix.'.docx');
+                if ($file_info) {
+                    $path = get_array_value($file_info,'file_name');
+                   
+                    $data = array(
+                        "name" => $this->request->getPost('name').$sufix2,
+                        "department" => $this->request->getPost('department'), //$job_info->department_id,
+                        "ref_prefix" => $this->request->getPost('ref_prefix'),
+                        "destination_folder" => $this->request->getPost('destination_folder'),
+                        "description" => $this->request->getPost('description_' . $file),
+                        "path" => $path,
+                        "created_at" => date("Y-m-d H:i:s"),
+            
+                    );
 
-            $save_id = $this->Templates_model->ci_save($data);
-            echo json_encode(array("success" => true, "data" => null, 'id' => $save_id, 'message' => app_lang('record_saved')));
-            // $template_info = $this->Templates_model->get_one($id);
-        }else{
-
-            $save_id = $this->Templates_model->ci_save($data, $id);
-            echo json_encode(array("success" => true, "data" => null, 'id' => $id, 'message' => app_lang('record_updated')));
+                    $success = $this->Templates_model->ci_save($data);
+                } else {
+                    $success = false;
+                }
+            }
         }
 
-        if (!$save_id) {
+
+        if($success){
+
+            echo json_encode(array("success" => true, "data" => null, 'id' => $success, 'message' => app_lang('record_saved')));
+            // $template_info = $this->Templates_model->get_one($id);
+        }
+
+        if (!$success) {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
     }
