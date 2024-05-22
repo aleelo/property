@@ -17,11 +17,8 @@ class Archives extends Security_Controller {
 
             $view_data['client_id'] = 0;
         }
-
-
         
         return $this->template->rander("archives/index", $view_data);
-   
 
     }
 
@@ -136,6 +133,7 @@ class Archives extends Security_Controller {
 
         $options = array(
             'department_id' => $department_id,
+            'uploaded_by'=> $this->login_user->id,
             'role'=> $role
         );
         $list_data = $this->Archives_model->get_details($options)->getResult();

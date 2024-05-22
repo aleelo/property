@@ -1,6 +1,7 @@
 # exclude database configuration
 app/Config/Database.php
 app/Config/App.php
+.env
 
 #-------------------------
 # Operating Specific Junk Files
@@ -134,4 +135,5 @@ nb-configuration.xml
 /.php-cs-fixe
 files/visitors/
 app/Views/documents/~$min_finance_template.docx
+
 .env

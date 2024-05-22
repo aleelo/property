@@ -376,6 +376,10 @@ class Users_model extends Crud_model {
             $where .= " AND $cardholders_table.user_id=1549 ";
         }
 
+        if ($role == 'ID Printer') {
+            $where .= " AND $cardholders_table.institution='Xafiiska Madaxweynaha' ";
+        }
+
         if ($status) {
             $where .= " AND $cardholders_table.status='$status'";
         } 
@@ -395,6 +399,7 @@ class Users_model extends Crud_model {
         $available_order_by_list = array(
             "fullName" => $cardholders_table . ".fullName",
             "CID" => $cardholders_table . ".CID",
+            "institution" => $cardholders_table . ".institution",
             "titleEng" => $cardholders_table . ".titleEng",
             "titleSom" => $cardholders_table . ".titleSom",
             "status" => $cardholders_table . ".status"
@@ -414,8 +419,11 @@ class Users_model extends Crud_model {
             $search_by = $this->db->escapeLikeString($search_by);
 
             $where .= " AND (";
+            $where .= " $cardholders_table.uid LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " $cardholders_table.titleEng LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " OR $cardholders_table.titleSom LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $cardholders_table.institution LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $cardholders_table.office LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " OR $cardholders_table.CID LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " OR $cardholders_table.fullName LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " OR $cardholders_table.status LIKE '%$search_by%' ESCAPE '!' ";

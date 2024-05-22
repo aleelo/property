@@ -19,7 +19,8 @@ class Left_menu {
         if ($selected_dashboard_id) {
             $dashboard_menu = array("name" => "dashboard", "url" => "dashboard/view/" . $selected_dashboard_id, "class" => "monitor", "custom_class" => "dashboard-menu");
         }
-
+        
+        $role = $this->ci->get_user_role();
         if ($this->ci->login_user->user_type == "staff" && $type !== "client_default") {
 
             $sidebar_menu = array("dashboard" => $dashboard_menu);
@@ -48,7 +49,7 @@ class Left_menu {
 
             $manage_help_and_knowledge_base = ($this->ci->login_user->is_admin || get_array_value($permissions, "help_and_knowledge_base"));
             $access_timeline = ($this->ci->login_user->is_admin || get_array_value($permissions, "timeline_permission") !== "no");
-            $role = $this->ci->get_user_role();
+           
 
             if (get_setting("module_event") == "1") {
                 $sidebar_menu["events"] = array("name" => "events", "url" => "events", "class" => "calendar");
@@ -63,13 +64,13 @@ class Left_menu {
             $sidebar_menu["archives"] = array("name" => "archives", "url" => "archives", "class" => "layers");
             
 
-            if ($this->ci->login_user->is_admin || $access_visitor && ($role != "Employee")) {
+            if (($this->ci->login_user->is_admin || $access_visitor) && !in_array($role,["Employee","ID Printer"])) {
                 $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "#", "class" => "users");
                 $sidebar_menu["access_list"] = array("name" => "access_list", "url" => "visitors", "class" => "users");
                 $sidebar_menu["access_search"] = array("name" => "access_search", "url" => "visitors/access_search", "class" => "users");
             }
 
-            if ($this->ci->login_user->is_admin || $access_fuel) { //&& ($role != "Employee")
+            if (($this->ci->login_user->is_admin || $access_fuel) && !in_array($role,["Employee","ID Printer"])) { //&& ($role != "Employee")
                 $sidebar_menu["fuel"] = array("name" => "fuel", "url" => "#", "class" => "droplet");
                 $sidebar_menu["fuel_order"] = array("name" => "fuel_order", "url" => "fuel/order", "class" => "users");
                 $sidebar_menu["fuel_receive"] = array("name" => "fuel_receive", "url" => "fuel", "class" => "users");
@@ -82,7 +83,7 @@ class Left_menu {
 
             $sidebar_menu["tasks"] = array("name" => "tasks", "url" => "tasks/all_tasks", "class" => "check-circle");
 
-            if (get_setting("module_lead") == "1" && ($this->ci->login_user->is_admin || $access_lead) && ($role != "Employee")) {
+            if (get_setting("module_lead") == "1" && ($this->ci->login_user->is_admin || $access_lead) && !in_array($role,["Employee","ID Printer"])) {
                 //was leads changed to: 'documents'
                 $sidebar_menu["leads"] = array("name" => "leads", "url" => "documents", "class" => "layers");
             }
@@ -147,7 +148,7 @@ class Left_menu {
                 $sidebar_menu["notes"] = array("name" => "notes", "url" => "notes", "class" => "book");
             }
 
-            if (get_setting("module_message") == "1" && $access_messages) {
+            if (get_setting("module_message") == "1" && $access_messages  && $role != 'ID Printer') {
                 $sidebar_menu["messages"] = array("name" => "messages", "url" => "messages", "class" => "message-circle", "badge" => count_unread_message(), "badge_class" => "bg-primary");
             }
 
@@ -164,22 +165,22 @@ class Left_menu {
 
             if (get_setting("module_attendance") == "1" && ($this->ci->login_user->is_admin || $access_timecard)) {
                 $team_submenu["attendance"] = array("name" => "attendance", "url" => "attendance", "class" => "clock");
-            } else if (get_setting("module_attendance") == "1") {
+            } else if (get_setting("module_attendance") == "1"  && $role != 'ID Printer') {
                 $team_submenu["attendance"] = array("name" => "attendance", "url" => "attendance/attendance_info", "class" => "clock");
             }
 
-            if (get_setting("module_leave") == "1" && ($this->ci->login_user->is_admin || $access_leave)) {
+            if (get_setting("module_leave") == "1" && ($this->ci->login_user->is_admin || $access_leave) && $role != 'ID Printer') {
                 $team_submenu["leaves"] = array("name" => "leaves", "url" => "leaves", "class" => "log-out");
-            } else if (get_setting("module_leave") == "1") {
+            } else if (get_setting("module_leave") == "1"  && $role != 'ID Printer') {
                 $team_submenu["leaves"] = array("name" => "leaves", "url" => "leaves/leave_info", "class" => "log-out");
             }
 
-            if (get_setting("module_timeline") == "1" && $access_timeline) {
+            if (get_setting("module_timeline") == "1" && $access_timeline && $role != 'ID Printer') {
                 $team_submenu["timeline"] = array("name" => "timeline", "url" => "timeline", "class" => "send");
             }
 
 
-            if (get_setting("module_announcement") == "1") {
+            if (get_setting("module_announcement") == "1"  && $role != 'ID Printer') {
                 $team_submenu["announcements"] = array("name" => "announcements", "url" => "announcements", "class" => "bell");
             }
 
@@ -315,7 +316,7 @@ class Left_menu {
             }
 
             //check message access settings for clients
-            if (get_setting("module_message") && get_setting("client_message_users")) {
+            if (get_setting("module_message") && get_setting("client_message_users") && $role != 'ID Printer') {
                 $sidebar_menu[] = array("name" => "messages", "url" => "messages", "class" => "message-circle", "badge" => count_unread_message());
             }
 

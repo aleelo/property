@@ -25,9 +25,9 @@ class General_files_model extends Crud_model {
             $where = " AND $archive_files_table.client_id=$client_id";
         }
 
-        $user_id = $this->_get_clean_value($options, "user_id");
-        if ($user_id) {
-            $where = " AND $archive_files_table.user_id = $user_id";
+        $uploaded_by = $this->_get_clean_value($options, "uploaded_by");
+        if ($uploaded_by) {
+            $where = " AND $archive_files_table.uploaded_by = $uploaded_by";
         }
 
         $department_id = $this->_get_clean_value($options, "department_id");
