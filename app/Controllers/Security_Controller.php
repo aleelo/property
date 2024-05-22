@@ -836,7 +836,7 @@ class Security_Controller extends App_Controller {
             $dept_id = '%';
         } else if ($role == 'Director'|| $role == 'Secretary') {
             $created_by = '%';
-        } else if ($perm == "own" || $role == 'Employee') {
+        } else if ($perm == "own" || in_array($role,['Employee','ID Printer'])) {
             $created_by = $this->login_user->id;
         }else{
             
