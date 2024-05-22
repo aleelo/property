@@ -77,7 +77,7 @@ class Left_menu {
                 $sidebar_menu["fuel_request"] = array("name" => "fuel_request", "url" => "fuel/request", "class" => "users");
             }
 
-            if ($this->ci->login_user->is_admin || !get_array_value($this->ci->login_user->permissions, "do_not_show_projects")) {
+            if ($this->ci->login_user->is_admin || !get_array_value($this->ci->login_user->permissions, "do_not_show_projects") && $role != 'ID Printer') {
                 $sidebar_menu["projects"] = array("name" => "projects", "url" => "projects/all_projects", "class" => "command");
             }
 
@@ -214,19 +214,21 @@ class Left_menu {
                 $show_expenses_menu = true;
             }
 
-            $sidebar_menu["reports"] = array("name" => "reports", "url" => "reports/index", "class" => "pie-chart",
-                "sub_pages" => array(
-                    "invoices/invoices_summary",
-                    "orders/orders_summary",
-                    "projects/all_timesheets",
-                    "expenses/income_vs_expenses",
-                    "invoice_payments/payments_summary",
-                    "expenses/summary",
-                    "projects/team_members_summary",
-                    "leads/converted_to_client_report",
-                    "tickets/tickets_chart_report"
-                )
-            );
+            if($role != 'ID Printer'){
+                $sidebar_menu["reports"] = array("name" => "reports", "url" => "reports/index", "class" => "pie-chart",
+                    "sub_pages" => array(
+                        "invoices/invoices_summary",
+                        "orders/orders_summary",
+                        "projects/all_timesheets",
+                        "expenses/income_vs_expenses",
+                        "invoice_payments/payments_summary",
+                        "expenses/summary",
+                        "projects/team_members_summary",
+                        "leads/converted_to_client_report",
+                        "tickets/tickets_chart_report"
+                    )
+                );
+            }
 
             $module_help = get_setting("module_help") == "1" ? true : false;
             $module_knowledge_base = get_setting("module_knowledge_base") == "1" ? true : false;
@@ -320,7 +322,7 @@ class Left_menu {
                 $sidebar_menu[] = array("name" => "messages", "url" => "messages", "class" => "message-circle", "badge" => count_unread_message());
             }
 
-            if (!in_array("projects", $hidden_menu)) {
+            if (!in_array("projects", $hidden_menu) && $role != 'ID Printer') {
                 $sidebar_menu[] = array("name" => "projects", "url" => "projects/all_projects", "class" => "command");
             }
 
