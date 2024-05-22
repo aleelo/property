@@ -32,6 +32,15 @@ class App_Controller extends Controller {
     public $Fuel_Receive_model;
     public $Fuel_Order_model;
     public $Fuel_Request_model;
+    
+    public $Purchase_Order_model;
+    public $Purchase_Receive_model;
+    public $Purchase_Item_model;
+    public $Purchase_Order_Items_model;
+    public $Suppliers_model;
+
+    public $Cardholders_model;
+    public $Archives_model;
     public $Announcements_model;
     public $Messages_model;
     public $Clients_model;
@@ -149,6 +158,13 @@ class App_Controller extends Controller {
             'Fuel_Receive_model',
             'Fuel_Order_model',
             'Fuel_Request_model',
+            'Cardholders_model',
+            'Purchase_Order_model',
+            'Purchase_Receive_model',
+            'Purchase_Item_model',
+            'Purchase_Order_Items_model',
+            'Suppliers_model',
+            'Archives_model',
             'Events_model',
             'Announcements_model',
             'Messages_model',
@@ -324,7 +340,7 @@ class App_Controller extends Controller {
                 $file_id = get_array_value($file, "file_id");
                 $service_type = get_array_value($file, "service_type");
 
-                if ($service_type) {
+                if ($service_type && !in_array($service_type,['Media','Document']) ) {
                     $file_data = "";
 
                     if ($service_type == "google") {

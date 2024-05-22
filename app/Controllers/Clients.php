@@ -916,7 +916,8 @@ class Clients extends Security_Controller {
 
         $this->access_only_allowed_members_or_contact_personally($contact_id);
 
-        $user_data = array(
+        $user_data = array(            
+            'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             "first_name" => $this->request->getPost('first_name'),
             "last_name" => $this->request->getPost('last_name'),
             "phone" => $this->request->getPost('phone'),
@@ -944,6 +945,7 @@ class Clients extends Security_Controller {
             $user_data["email"] = trim($this->request->getPost('email'));
             $user_data["password"] = $this->request->getPost("login_password") ? password_hash($this->request->getPost("login_password"), PASSWORD_DEFAULT) : "";
             $user_data["created_at"] = get_current_utc_time();
+            $user_data["login_type"] = 'normal_login';
 
             //validate duplicate email address
             if ($this->Users_model->is_email_exists($user_data["email"], 0, $client_id)) {
@@ -1242,7 +1244,7 @@ class Clients extends Security_Controller {
     /* prepare a row of contact list table */
 
     private function _make_contact_row($data, $custom_fields, $hide_primary_contact_label = false) {
-        $image_url = get_avatar($data->image);
+        $image_url = get_avatar($data?->image);
         $user_avatar = "<span class='avatar avatar-xs'><img src='$image_url' alt='...'></span>";
         $full_name = $data->first_name . " " . $data->last_name . " ";
         $primary_contact = "";

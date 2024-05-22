@@ -59,13 +59,17 @@ class Left_menu {
                 $sidebar_menu["clients"] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
             }
 
+        
+            $sidebar_menu["archives"] = array("name" => "archives", "url" => "archives", "class" => "layers");
+            
+
             if ($this->ci->login_user->is_admin || $access_visitor && ($role != "Employee")) {
                 $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "#", "class" => "users");
                 $sidebar_menu["access_list"] = array("name" => "access_list", "url" => "visitors", "class" => "users");
                 $sidebar_menu["access_search"] = array("name" => "access_search", "url" => "visitors/access_search", "class" => "users");
             }
 
-            if ($this->ci->login_user->is_admin || $access_fuel && ($role != "Employee")) {
+            if ($this->ci->login_user->is_admin || $access_fuel) { //&& ($role != "Employee")
                 $sidebar_menu["fuel"] = array("name" => "fuel", "url" => "#", "class" => "droplet");
                 $sidebar_menu["fuel_order"] = array("name" => "fuel_order", "url" => "fuel/order", "class" => "users");
                 $sidebar_menu["fuel_receive"] = array("name" => "fuel_receive", "url" => "fuel", "class" => "users");
@@ -154,7 +158,7 @@ class Left_menu {
                 $team_submenu["team_members"] = array("name" => "team_members", "url" => "team_members", "class" => "users");//team_members
             }
 
-            if (get_array_value($this->ci->login_user->permissions, "hide_team_members_list") != "1" && $role != "Employee") {
+            if ($role != "Employee") {
                 $team_submenu["card_holders"] = array("name" => "card_holders", "url" => "cardholders", "class" => "users");//team_members                
             }
 
@@ -296,6 +300,11 @@ class Left_menu {
             $hidden_menu = explode(",", get_setting("hidden_client_menus"));
 
             $sidebar_menu[] = $dashboard_menu;
+
+            
+            if (!in_array("card_holders", $hidden_menu) ) {
+                $team_submenu["card_holders"] = array("name" => "card_holders", "url" => "cardholders", "class" => "users");//team_members                
+            }
 
             if (get_setting("module_event") == "1" && !in_array("events", $hidden_menu)) {
                 $sidebar_menu[] = array("name" => "events", "url" => "events", "class" => "calendar");

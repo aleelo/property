@@ -115,4 +115,12 @@ class Visitors_info extends App_Controller
         return $this->template->view('leaves/leave_qr_code_return',$view_data);
     }
 
+    public function cardholder_qrcode($qid,$uuid) {
+        // die($uuid);
+        $model_info = $this->db->query("SELECT * FROM rise_cardholders c where uid = '$uuid'")->getRow();
+        
+        $view_data['model_info'] = $model_info;
+        return $this->template->view('cardholders/employee_qr_code',$view_data);
+    }
+
 }

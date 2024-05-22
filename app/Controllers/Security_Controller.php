@@ -581,6 +581,14 @@ class Security_Controller extends App_Controller {
         if ($this->login_user->user_type == "staff" && ($this->login_user->is_admin || get_array_value($this->login_user->permissions, "invoice") === "all")) {
             return true;
         }
+
+    }
+
+    protected function can_edit_purchases() {
+        $role = $this->get_user_role();
+        if ($this->login_user->user_type == "staff" ) { //&& ($role == 'admin' || $role == 'Administrator' || $role == 'Director' || $role == 'HRM' || $role == 'Employee')
+            return true;
+        }
     }
 
     protected function can_access_expenses() {
@@ -811,7 +819,7 @@ class Security_Controller extends App_Controller {
         $user_id = $this->login_user->id;
         $job_info = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user_id")->getRow();
         
-        return $job_info->department_id;
+        return $job_info?->department_id;
     }
 
     public function check_access($name = null){
@@ -1084,13 +1092,23 @@ class Security_Controller extends App_Controller {
 
 
     function get_departments_for_select(){
-        // $depts = $this->db->table('departments')->select('id,nameEn')->get();
-        $depts = $this->db->query('select id,nameSo from departments')->getResult();
+        
+        $dept_id = $this->get_user_department_id();
+        $role = $this->get_user_role();
+
+        if($role == 'admin' || $role == 'Administrator' || $role == 'HRM'){
+            $dept_id = '%';
+        }
+
+        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id'");
+        
         $data = array('' => 'Choose Department');
 
         if(!$depts){
             return [];
         }else{
+            
+            $depts = $depts->getResult();
             foreach($depts as $d){
                 $data[$d->id] = $d->nameSo;
             }
@@ -1100,12 +1118,35 @@ class Security_Controller extends App_Controller {
     }
 
     
+    function get_suppliers_for_select(){
+        
+        $dept_id = $this->get_user_department_id();
+        $role = $this->get_user_role();
+
+
+        $suppliers = $this->db->query("select id,supplier_name from rise_suppliers where deleted=0");
+        
+        $data = array('' => 'Choose Supplier');
+
+        if(!$suppliers){
+            return [];
+        }else{
+            
+            $suppliers = $suppliers->getResult();
+            foreach($suppliers as $d){
+                $data[$d->id] = $d->supplier_name;
+            }
+
+            return $data;
+        }
+    }
+
     function get_departments_for_table(){
         // $depts = $this->db->table('departments')->select('id,nameEn')->get();
         $dept_id = $this->get_user_department_id();
         $role = $this->get_user_role();
 
-        if($role == 'admin' || $role == 'Director' || $role == 'HRM'){
+        if($role == 'admin' || $role == 'Administrator' || $role == 'HRM'){
             $dept_id = '%';
         }
 
@@ -1129,7 +1170,7 @@ class Security_Controller extends App_Controller {
         $dept_id = $this->get_user_department_id();
         $role = $this->get_user_role();
 
-        if($role == 'admin' || $role == 'Director' || $role == 'HRM'){
+        if($role == 'admin' || $role == 'Administrator' || $role == 'HRM'){
             $dept_id = '%';
         }
 

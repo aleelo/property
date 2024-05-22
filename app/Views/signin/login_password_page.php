@@ -6,12 +6,12 @@
     <body>
 
     <div class="form-signin">
-    <div class="card bg-white mb15" style="height: 350px;">
+    <div class="card bg-white mb15" style="height: 370px;">
         <div class="card-header text-center">
             <?php if (get_setting("show_logo_in_signin_page") === "yes") {?>
                 <img class="p20 mw100p" src="<?php echo get_logo_url(); ?>" />
             <?php } else {?>
-                <img src="<?php echo base_url() . 'assets/images/sys-logo.png'; ?>" alt="">
+                <img src="<?php echo base_url() . 'assets/images/sys-logo.png'; ?>" width="400">
             <?php }?>
         </div>
         <div class="card-body p30 rounded-bottom">
@@ -38,7 +38,7 @@
                 <div class="scrollable-page">
                     <div class="form-signin">
 
-                    <div class="w-100 mb-3 d-flex p-3">
+                    <div class="w-100 mb-3 d-flex ">
                         <div class="w-45" style="height: 1px;background: #bec3d0;width: 35%;"></div>
                             <div class="mx-3  fs-5 d-flex fs-3" style="margin-top: -15px;">
 

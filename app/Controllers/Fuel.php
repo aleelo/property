@@ -276,6 +276,7 @@ class Fuel extends Security_Controller
         // fuel_type supplier receive_date barrels	litters	received_by	vehicle_model	plate	
         $input = array(
             'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
+            "order_id" => $this->request->getPost('order_id'),
             "fuel_type" => $this->request->getPost('fuel_type'),
             "supplier" => $this->request->getPost('supplier'),
             "department_id" => $this->get_user_department_id(),

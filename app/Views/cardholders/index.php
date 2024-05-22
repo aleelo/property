@@ -8,10 +8,9 @@
                     <?php echo anchor(get_uri("cardholders/view"), "<i data-feather='grid' class='icon-16'></i>", array("class" => "btn btn-default btn-sm")); ?>
                 </div>
                 <?php
-                if ($login_user->is_admin || get_array_value($login_user->permissions, "can_add_or_invite_new_team_members")) {
                     // echo modal_anchor(get_uri("cardholders/invitation_modal"), "<i data-feather='mail' class='icon-16'></i> " . app_lang('send_invitation'), array("class" => "btn btn-default", "title" => app_lang('send_invitation')));
-                    // echo modal_anchor(get_uri("cardholders/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_team_member'), array("class" => "btn btn-default", "title" => app_lang('add_team_member')));
-                }
+                    echo modal_anchor(get_uri("cardholders/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . 'Add Cardholder', array("class" => "btn btn-default", "title" => 'Add Cardholder'));
+               
                 ?>
             </div>
         </div>
@@ -24,32 +23,24 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var visibleContact = false;
-        if ("<?php echo $show_contact_info; ?>") {
-            visibleContact = true;
-        }
-
-        var visibleDelete = false;
-        if ("<?php echo $login_user->is_admin; ?>") {
-            visibleDelete = true;
-        }
+        var visibleDelete = true;
+       
         // `photo`, `CID`, `type`, `fullName`, `department`, `titleEng`, `titleSom`, `cardId`, `user_id`, `expireDate`, 
 
         $("#team_member-table").appTable({
-            source: '<?php echo_uri("cardholders/list_data/") ?>',
+            source: '<?php echo_uri("cardholders/list_data") ?>',
             order: [[1, "asc"]],
-            radioButtons: [{text: '<?php echo app_lang("active_members") ?>', name: "status", value: "active", isChecked: true}, {text: '<?php echo app_lang("inactive_members") ?>', name: "status", value: "inactive", isChecked: false}],
-            filterDropdown: [<?php echo $custom_field_filters; ?>],
+            radioButtons: [{text: '<?php echo app_lang("active_cards") ?>', name: "status", value: "Active", isChecked: true}, {text: '<?php echo app_lang("inactive_cards") ?>', name: "status", value: "Inactive", isChecked: false}, {text: '<?php echo app_lang("lost_cards") ?>', name: "status", value: "Lost", isChecked: false}],
+            
+            serverSide: true,
             columns: [
-                {title: '', "class": "w50 text-center all"},
-                {title: "<?php echo app_lang("name") ?>", "class": "w20p all"},
-                {title: "<?php echo app_lang("type") ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("CID") ?>", "class": "w15p"},
-                {title: "<?php echo app_lang("job_title_en") ?>", "class": "w15p"},
+                {title: "<?php echo app_lang("name") ?>", "class": "w20p all"},
+                {title: "<?php echo app_lang("institution") ?>", "class": "w15p"},
+                {title: "<?php echo app_lang("office") ?>", "class": "w15p"},
                 {title: "<?php echo app_lang("job_title_so") ?>", "class": "w15p"},
-                {visible: visibleContact, title: "<?php echo app_lang("card_number") ?>", "class": "w15p"},
-                {title: "<?php echo app_lang("status") ?>", "class": "w15p"}
-<?php echo $custom_field_headers; ?>,
+                {title: "<?php echo app_lang("job_title_en") ?>", "class": "w15p"},
+                {title: "<?php echo app_lang("status") ?>", "class": "w15p"},
                 {visible: visibleDelete, title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100"}
             ],
             printColumns: combineCustomFieldsColumns([1, 2, 3, 4], '<?php echo $custom_field_headers; ?>'),

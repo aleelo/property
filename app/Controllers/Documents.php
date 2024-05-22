@@ -8,7 +8,6 @@ use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
-use chillerlan\QRCode\Output\QRImageWithLogo;
 
 class Documents extends Security_Controller
 {
@@ -45,11 +44,11 @@ class Documents extends Security_Controller
 
     public function index()
     {
-        
-       $res = $this->check_access('lead');
-       $role = get_array_value($res,'role');
-       $can_add_template = $role == 'admin';
-       $view_data["can_add_template"] = $can_add_template;
+
+        $res = $this->check_access('lead');
+        $role = get_array_value($res, 'role');
+        $can_add_template = $role == 'admin';
+        $view_data["can_add_template"] = $can_add_template;
         // $this->access_only_allowed_members();
         // $this->check_module_availability("module_lead");
 
@@ -66,11 +65,11 @@ class Documents extends Security_Controller
 
     public function templates()
     {
-        
-       $res = $this->check_access('lead');
-       $role = get_array_value($res,'role');
-       $can_add_template = $role == 'admin';
-       $view_data["can_add_template"] = $can_add_template;
+
+        $res = $this->check_access('lead');
+        $role = get_array_value($res, 'role');
+        $can_add_template = $role == 'admin';
+        $view_data["can_add_template"] = $can_add_template;
         // $this->access_only_allowed_members();
         // $this->check_module_availability("module_lead");
 
@@ -121,16 +120,15 @@ class Documents extends Security_Controller
 
         $dept_id = $this->get_user_department_id();
         $role = $this->get_user_role();
-        $temp_array =[];
-        if($role == "admin"){
+        $temp_array = [];
+        if ($role == "admin") {
             $dept_id = '%';
-            $temp_array =[''=>'Choose Template'];
+            $temp_array = ['' => 'Choose Template'];
         }
 
         $templates = $this->db->query("SELECT * FROM rise_templates where department like '$dept_id'")->getResult();
-        
 
-        foreach($templates as $t){
+        foreach ($templates as $t) {
             $temp_array[$t->id] = $t->name;
         }
 
@@ -182,7 +180,7 @@ class Documents extends Security_Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://login.microsoftonline.com/'.$tennantid.'/oauth2/v2.0/token?Content-Type=application%2Fx-www-form-urlencoded',
+            CURLOPT_URL => 'https://login.microsoftonline.com/' . $tennantid . '/oauth2/v2.0/token?Content-Type=application%2Fx-www-form-urlencoded',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -190,7 +188,7 @@ class Documents extends Security_Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => 'client_id='.$appid.'&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret='.$secret.'&grant_type=client_credentials',
+            CURLOPT_POSTFIELDS => 'client_id=' . $appid . '&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=' . $secret . '&grant_type=client_credentials',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/x-www-form-urlencoded',
                 'Cookie: fpc=AvtPK5Dz759HgjJgzmeSAChRGrKTAQAAAIgG3NwOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd',
@@ -224,7 +222,7 @@ class Documents extends Security_Controller
             "template" => "required",
         ));
         $template_id = $this->request->getPost('template');
-           
+
         // `document_title`,`created_by`, `ref_number`, `depertment`, `template`, `item_id`, `created_at`
         $input = array(
             'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
@@ -241,8 +239,8 @@ class Documents extends Security_Controller
         $save_id = null;
         $webUrl = null;
 
-        if (!$id) { 
-            
+        if (!$id) {
+
             $save_id = $this->Documents_model->ci_save($input);
 
             $t = $this->Templates_model->get_one($template_id);
@@ -253,14 +251,14 @@ class Documents extends Security_Controller
             $input['id'] = $save_id;
 
             //get document row
-            $doc = $this->db->query("select d.*,t.name as template,t.ref_prefix,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d 
-            LEFT JOIN rise_users u on d.created_by = u.id 
-            LEFT JOIN rise_templates t on d.template = t.id 
+            $doc = $this->db->query("select d.*,t.name as template,t.ref_prefix,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d
+            LEFT JOIN rise_users u on d.created_by = u.id
+            LEFT JOIN rise_templates t on d.template = t.id
             where d.deleted=0 and d.id =$save_id");
 
             $input['folder'] = $doc->getRow()->folder;
             $input['uuid'] = $doc->getRow()->uuid;
-            $input['ref_number'] = $doc->getRow()->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('y');
+            $input['ref_number'] = $doc->getRow()->ref_prefix . '/' . $sqn . '/' . date('m') . '/' . date('y');
             $token = $this->AccesToken();
 
             //create/save doc
@@ -275,13 +273,13 @@ class Documents extends Security_Controller
             if (isset($data['error'])) {
 
                 // var_dump($data['error']['code'] . ', ' . $data['error']['message']);
-                if($data['error']['code'] == "notAllowed"){
-                    $msg = $data['error']['code'] . ', ' . $data['error']['message'];//"The file is being edited by another user";
-                }else{
-                    $msg=$data['error']['code'] . ', ' . $data['error']['message'];
+                if ($data['error']['code'] == "notAllowed") {
+                    $msg = $data['error']['code'] . ', ' . $data['error']['message']; //"The file is being edited by another user";
+                } else {
+                    $msg = $data['error']['code'] . ', ' . $data['error']['message'];
                 }
-                
-                echo json_encode(array("success" => false, 'message' => app_lang('error_occurred').', '.$msg));
+
+                echo json_encode(array("success" => false, 'message' => app_lang('error_occurred') . ', ' . $msg));
                 exit;
 
             } else {
@@ -292,8 +290,8 @@ class Documents extends Security_Controller
                 $drive_ref = $data['parentReference'];
 
                 //update item id and web url
-                $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$input['ref_number'],'drive_info'=>@serialize($drive_ref));
-                
+                $u_data = array('item_id' => $itemId, 'webUrl' => $webUrl, 'ref_number' => $input['ref_number'], 'drive_info' => @serialize($drive_ref));
+
                 $this->Documents_model->ci_save($u_data, $doc->getRow()->id);
 
                 // echo $webUrl;
@@ -306,14 +304,14 @@ class Documents extends Security_Controller
                 "document_title" => $this->request->getPost('document_title'),
                 "ref_number" => $this->request->getPost('ref_number'),
                 // "depertment" => $this->request->getPost('depertment'),
-                "template" => $this->request->getPost('template')
+                "template" => $this->request->getPost('template'),
             );
 
             $updated = $this->Documents_model->ci_save($input, $id);
             //get document row
-            $doc = $this->db->query("select d.*,t.name as template,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d 
-                    LEFT JOIN rise_users u on d.created_by = u.id 
-                    LEFT JOIN rise_templates t on d.template = t.id 
+            $doc = $this->db->query("select d.*,t.name as template,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d
+                    LEFT JOIN rise_users u on d.created_by = u.id
+                    LEFT JOIN rise_templates t on d.template = t.id
                     where d.deleted=0 and d.id =$id");
         }
 
@@ -321,13 +319,13 @@ class Documents extends Security_Controller
             // save_custom_fields("leads", $save_id, $this->login_user->is_admin, $this->login_user->user_type);
 
             if (!$id) { //create operation
-                
+
                 log_notification("document_created", array("document_id" => $save_id), $this->login_user->id);
 
-                echo json_encode(array("success" => true, "data" => $this->_make_row($doc->getRow(), null), 'webUrl'=>$webUrl, 'id' => $save_id, 'view' => $this->request->getPost('view'),
+                echo json_encode(array("success" => true, "data" => $this->_make_row($doc->getRow(), null), 'webUrl' => $webUrl, 'id' => $save_id, 'view' => $this->request->getPost('view'),
                     'message' => app_lang('record_saved')));
             } else { //update operation
-                
+
                 log_notification("document_updated", array("document_id" => $id), $this->login_user->id);
 
                 // var_dump($doc->getRowArray());
@@ -338,34 +336,33 @@ class Documents extends Security_Controller
             }
 
         } else {
-            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred').', Document not saved.'));
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred') . ', Document not saved.'));
         }
     }
 
     // Creates the Document Using the Provided Template
-    public function createDoc($data =array())
+    public function createDoc($data = array())
     {
 
         require_once ROOTPATH . 'vendor/autoload.php';
 
         // Creating the new document...
 
-        $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'Views/documents/'.$data['template']);
+        $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'Views/documents/' . $data['template']);
 
-        $ext = pathinfo(APPPATH.'Views/documents/'.$data['template'],PATHINFO_EXTENSION);
-        $save_as_name = $data['id'].'_'.date('m').'_'.date('Y').'.'.$ext;
-        
+        $ext = pathinfo(APPPATH . 'Views/documents/' . $data['template'], PATHINFO_EXTENSION);
+        $save_as_name = $data['id'] . '_' . date('m') . '_' . date('Y') . '.' . $ext;
 
-        $path_absolute = APPPATH . 'Views/documents/'.$save_as_name;
+        $path_absolute = APPPATH . 'Views/documents/' . $save_as_name;
         // var_dump($data);
         // var_dump($save_as_name);
         // die();
-        
+
         $template->setValues([
 
             'ref' => $data['ref_number'],
             'title' => $data['document_title'],
-            'date' => date('F d, Y',strtotime($data['created_at'])),
+            'date' => date('F d, Y', strtotime($data['created_at'])),
 
         ]);
 
@@ -373,17 +370,17 @@ class Documents extends Security_Controller
             'eccLevel' => EccLevel::H,
             'outputBase64' => true,
             'cachefile' => APPPATH . 'Views/documents/qrcode.png',
-            'outputType'=>QROutputInterface::GDIMAGE_PNG,
+            'outputType' => QROutputInterface::GDIMAGE_PNG,
             'logoSpaceHeight' => 17,
             'logoSpaceWidth' => 17,
             'scale' => 20,
             'version' => Version::AUTO,
 
-          ]);
+        ]);
 
         //   $options->outputType = ;
 
-        $qrcode = (new QRCode($options))->render(get_uri('visitors_info/show_document_qrcode/'.$data['uuid']));//->getQRMatrix(current_url())
+        $qrcode = (new QRCode($options))->render(get_uri('visitors_info/show_document_qrcode/' . $data['uuid'])); //->getQRMatrix(current_url())
 
         // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
 
@@ -405,7 +402,7 @@ class Documents extends Security_Controller
     }
 
     // Gets the created file and uploads it to the SharePoint Drive
-    public function uploadDoc($accessToken,$data, $path)
+    public function uploadDoc($accessToken, $data, $path)
     {
 
         $fileContents = file_get_contents(APPPATH . 'Views/documents/' . $path); // Read the contents of the image file
@@ -413,7 +410,7 @@ class Documents extends Security_Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drives/b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq/root:/'.$data['folder'].'/' . $path . ':/content',
+            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drives/b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq/root:/' . $data['folder'] . '/' . $path . ':/content',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -434,49 +431,14 @@ class Documents extends Security_Controller
         // Decode the JSON response into an associative array
         $data = json_decode($json, true);
 
-       
-        if(file_exists(APPPATH . 'Views/documents/'.$path)){
-            unlink(APPPATH . 'Views/documents/'.$path);
+        if (file_exists(APPPATH . 'Views/documents/' . $path)) {
+            unlink(APPPATH . 'Views/documents/' . $path);
         }
 
-        
         return $data;
 
     }
 
-    //opens document with [itemid] in sharepoint
-    public function openDoc($accessToken, $itemID)
-    {
-
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/sites/villasomaliafrs.sharepoint.com,47e1c0f0-d924-4f35-aeba-f45b4948148d,6d6454c2-2184-4c7b-84dc-1a701bdb5a9b/drive/root:/test/' . $itemID . '?Autho=null',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer ' . $accessToken,
-            ),
-        ));
-
-        $json = curl_exec($curl);
-
-        curl_close($curl);
-
-        // Decode the JSON response into an associative array
-        $data = json_decode($json, true);
-
-        // Get the web URL of the file from the array
-        $webUrl = $data["webUrl"];
-
-        // Redirect to the web URL using the header function
-        header("Location: $webUrl");
-        exit;
-    }
 
     /* delete or undo a lead */
     public function delete()
@@ -494,7 +456,7 @@ class Documents extends Security_Controller
             echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
         }
     }
-    
+
     /* delete or undo a lead */
     public function delete_template()
     {
@@ -519,31 +481,29 @@ class Documents extends Security_Controller
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
 
         // $show_own_leads_only_user_id = $this->show_own_leads_only_user_id();
-       
-        $result = $this->check_access('lead');//here means documents for us.
 
-        $role = get_array_value($result,'role');
-        $department_id = get_array_value($result,'department_id');
-        $created_by = get_array_value($result,'created_by');
-        
+        $result = $this->check_access('lead'); //here means documents for us.
+
+        $role = get_array_value($result, 'role');
+        $department_id = get_array_value($result, 'department_id');
+        $created_by = get_array_value($result, 'created_by');
+
         $options = append_server_side_filtering_commmon_params([]);
-
 
         $extraWhere = " AND t.destination_folder NOT LIKE 'Visitor' AND t.destination_folder NOT LIKE 'Leave'";
         //by this, we can handel the server side or client side from the app table prams.
         if (get_array_value($options, "server_side")) {
             $order_by = $options['order_by'];
             $order_direction = $options['order_dir'];
-            $search_by = $options["search_by"] ;
-            $skip = $options["skip"] ;
+            $search_by = $options["search_by"];
+            $skip = $options["skip"];
 
-            
             $limit_offset = "";
             $limit = $options['limit'] ?? 10;
-            $where="d.deleted=0";
+            $where = "d.deleted=0";
 
             if ($limit) {
-            
+
                 $offset = $skip ? $skip : 0;
                 $limit_offset = " LIMIT $limit OFFSET $offset ";
             }
@@ -555,7 +515,7 @@ class Documents extends Security_Controller
             if ($search_by) {
                 $search_by = $this->db->escapeLikeString($search_by);
 
-            // `document_title`, `ref_number`, `depertment`, `template`, `item_id`,`created_by`, `created_at`
+                // `document_title`, `ref_number`, `depertment`, `template`, `item_id`,`created_by`, `created_at`
                 $where .= " AND (";
                 $where .= " d.id LIKE '%$search_by%' ESCAPE '!' ";
                 $where .= " OR d.document_title LIKE '%$search_by%' ESCAPE '!' ";
@@ -569,33 +529,31 @@ class Documents extends Security_Controller
                 $where .= " )";
             }
 
-
-            $result = $this->db->query("select d.*,t.name as template,dp.nameSo as depertment,concat(u.first_name,' ',u.last_name) user from rise_documents d 
-            LEFT JOIN rise_users u on d.created_by = u.id 
-            LEFT JOIN rise_templates t on d.template = t.id 
-            LEFT JOIN departments dp on d.depertment = dp.id 
+            $result = $this->db->query("select d.*,t.name as template,dp.nameSo as depertment,concat(u.first_name,' ',u.last_name) user from rise_documents d
+            LEFT JOIN rise_users u on d.created_by = u.id
+            LEFT JOIN rise_templates t on d.template = t.id
+            LEFT JOIN departments dp on d.depertment = dp.id
             where d.created_by LIKE '$created_by' and d.depertment LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_documents d
-            LEFT JOIN rise_templates t on d.template = t.id 
+            $total_rows = $this->db->query("select count(*) as affected from rise_documents d
+            LEFT JOIN rise_templates t on d.template = t.id
             where created_by LIKE '$created_by' and depertment LIKE '$department_id' and d.deleted=0 $extraWhere")->getRow()->affected;
             $result = array();
 
         } else {
-            $result = $this->db->query("select d.*,t.name as template,dp.nameSo as depertment,concat(u.first_name,' ',u.last_name) user from rise_documents d 
-            LEFT JOIN rise_users u on d.created_by = u.id 
-            LEFT JOIN rise_templates t on d.template = t.id  
-            LEFT JOIN departments dp on d.depertment = dp.id 
+            $result = $this->db->query("select d.*,t.name as template,dp.nameSo as depertment,concat(u.first_name,' ',u.last_name) user from rise_documents d
+            LEFT JOIN rise_users u on d.created_by = u.id
+            LEFT JOIN rise_templates t on d.template = t.id
+            LEFT JOIN departments dp on d.depertment = dp.id
             where d.created_by LIKE '$created_by' and d.depertment LIKE '$department_id' and  d.deleted=0 $extraWhere");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_documents d
-            LEFT JOIN rise_templates t on d.template = t.id 
+            $total_rows = $this->db->query("select count(*) as affected from rise_documents d
+            LEFT JOIN rise_templates t on d.template = t.id
             where created_by LIKE '$created_by' and depertment LIKE '$department_id' and  d.deleted=0 $extraWhere")->getRow()->affected;
             $result = array();
         }
-
 
         $result_data = array();
         foreach ($list_data as $data) {
@@ -616,31 +574,29 @@ class Documents extends Security_Controller
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
 
         // $show_own_leads_only_user_id = $this->show_own_leads_only_user_id();
-       
-        $result = $this->check_access('lead');//here means documents for us.
 
-        $role = get_array_value($result,'role');
-        $department_id = get_array_value($result,'department_id');
-        $created_by = get_array_value($result,'created_by');
-        
+        $result = $this->check_access('lead'); //here means documents for us.
+
+        $role = get_array_value($result, 'role');
+        $department_id = get_array_value($result, 'department_id');
+        $created_by = get_array_value($result, 'created_by');
+
         $options = append_server_side_filtering_commmon_params([]);
-
 
         $extraWhere = " AND d.destination_folder NOT LIKE 'Visitor' AND d.destination_folder NOT LIKE 'Leave'";
         //by this, we can handel the server side or client side from the app table prams.
         if (get_array_value($options, "server_side")) {
             $order_by = $options['order_by'];
             $order_direction = $options['order_dir'];
-            $search_by = $options["search_by"] ;
-            $skip = $options["skip"] ;
+            $search_by = $options["search_by"];
+            $skip = $options["skip"];
 
-            
             $limit_offset = "";
             $limit = $options['limit'] ?? 10;
-            $where="d.deleted=0";
+            $where = "d.deleted=0";
 
             if ($limit) {
-            
+
                 $offset = $skip ? $skip : 0;
                 $limit_offset = " LIMIT $limit OFFSET $offset ";
             }
@@ -652,7 +608,7 @@ class Documents extends Security_Controller
             if ($search_by) {
                 $search_by = $this->db->escapeLikeString($search_by);
 
-            // `document_title`, `ref_number`, `depertment`, `template`, `item_id`,`created_by`, `created_at`
+                // `document_title`, `ref_number`, `depertment`, `template`, `item_id`,`created_by`, `created_at`
                 $where .= " AND (";
                 $where .= " d.id LIKE '%$search_by%' ESCAPE '!' ";
                 $where .= " OR d.name LIKE '%$search_by%' ESCAPE '!' ";
@@ -664,29 +620,27 @@ class Documents extends Security_Controller
                 $where .= " )";
             }
 
-
-            $result = $this->db->query("select d.*,dp.nameSo as department from rise_templates d 
-            LEFT JOIN departments dp on d.department = dp.id 
+            $result = $this->db->query("select d.*,dp.nameSo as department from rise_templates d
+            LEFT JOIN departments dp on d.department = dp.id
             where d.department LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_templates d
-            LEFT JOIN departments dp on d.department = dp.id 
+            $total_rows = $this->db->query("select count(*) as affected from rise_templates d
+            LEFT JOIN departments dp on d.department = dp.id
             where department LIKE '$department_id' and d.deleted=0 $extraWhere")->getRow()->affected;
             $result = array();
 
         } else {
-            $result = $this->db->query("select d.*,dp.nameSo as department from rise_templates d 
-            LEFT JOIN departments dp on d.department = dp.id 
+            $result = $this->db->query("select d.*,dp.nameSo as department from rise_templates d
+            LEFT JOIN departments dp on d.department = dp.id
             where  d.department LIKE '$department_id' and  d.deleted=0 $extraWhere");
 
             $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_templates d
-            LEFT JOIN departments dp on d.department = dp.id 
+            $total_rows = $this->db->query("select count(*) as affected from rise_templates d
+            LEFT JOIN departments dp on d.department = dp.id
             where   department LIKE '$department_id' and  d.deleted=0 $extraWhere")->getRow()->affected;
             $result = array();
         }
-
 
         $result_data = array();
         foreach ($list_data as $data) {
@@ -732,8 +686,7 @@ class Documents extends Security_Controller
             // $owner_image_url = get_avatar($data->owner_avatar);
             // $owner_user = "<span class='avatar avatar-xs mr10'><img src='$owner_image_url' alt='...'></span> $data->user";
             // $owner = get_team_member_profile_link($data->created_by, $owner_user);
-            $owner =$data->user;//$this->db->query("select * from rise_users where id = $data->created_by");
-            
+            $owner = $data->user; //$this->db->query("select * from rise_users where id = $data->created_by");
 
         }
 
@@ -741,7 +694,7 @@ class Documents extends Security_Controller
 
         $row_data = array(
             $data->id,
-            modal_anchor(get_uri("documents/modal_form"),$data->document_title , array("class" => "edit","title" => app_lang('edit_lead'), "data-post-id" => $data->id)),
+            modal_anchor(get_uri("documents/modal_form"), $data->document_title, array("class" => "edit", "title" => app_lang('edit_lead'), "data-post-id" => $data->id)),
             // anchor(get_uri("documents/view/" . $data->id), ),
             $data->ref_number,
             $data->depertment,
@@ -764,7 +717,7 @@ class Documents extends Security_Controller
         $row_data[] = modal_anchor(get_uri("documents/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit",
             "title" => app_lang('edit_lead'), "data-post-id" => $data->id))
         . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_lead'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("documents/delete"), "data-action" => "delete-confirmation"))
-        . $link;
+            . $link;
 
         return $row_data;
     }
@@ -784,7 +737,7 @@ class Documents extends Security_Controller
 
     private function template_make_row($data, $custom_fields)
     {
-      
+
         $row_data = array(
             $data->id,
             $data->name,
@@ -796,19 +749,17 @@ class Documents extends Security_Controller
             format_to_date($data->created_at, false),
         );
 
-       
-        // $row_data[] = modal_anchor(get_uri("templates/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit",
-        //     "title" => app_lang('edit_lead'), "data-post-id" => $data->id))
-        // . 
-        $row_data[] =   js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_template'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("documents/delete_template"), "data-action" => "delete-confirmation"));
+        $row_data[] = modal_anchor(get_uri("documents/template_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit",
+            "title" => app_lang('edit_template'), "data-post-id" => $data->id))
+        . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_template'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("documents/delete_template"), "data-action" => "delete-confirmation"));
 
         return $row_data;
     }
 
-    
-    function template_modal_form() {
+    public function template_modal_form()
+    {
         $this->validate_submitted_data(array(
-            "id" => "numeric"
+            "id" => "numeric",
         ));
 
         $view_data['departments'] = $this->get_departments_for_select();
@@ -817,17 +768,15 @@ class Documents extends Security_Controller
         return $this->template->view('templates/modal_form', $view_data);
     }
 
-    
-
-    function save_template() {
+    public function save_template()
+    {
         $this->validate_submitted_data(array(
             "id" => "numeric",
             "name" => "required",
             "destination_folder" => "required",
             "ref_prefix" => "required",
-            "department" => "required"
+            "department" => "required",
         ));
-
 
         $id = $this->request->getPost('id');
 
@@ -838,7 +787,7 @@ class Documents extends Security_Controller
         // die();
 
         // save uploaded document templates
-        
+
         $files = $this->request->getPost("files");
         $success = false;
         $now = get_current_utc_time();
@@ -851,26 +800,26 @@ class Documents extends Security_Controller
         //process the fiiles which has been uploaded by dropzone
         if ($files && get_array_value($files, 0)) {
             foreach ($files as $file) {
-                    
-                if(count($files) > 1){
+
+                if (count($files) > 1) {
                     $sufix = '_' . $file;
                     $sufix2 = ' ' . $file;
                 }
 
                 $file_name = $this->request->getPost('file_name_' . $file);
-                $file_info = move_temp_file($file_name, $target_path,"","",$file_name_tosaved.$sufix.'.docx');
+                $file_info = move_temp_file($file_name, $target_path, "", "", $file_name_tosaved . $sufix . '.docx');
                 if ($file_info) {
-                    $path = get_array_value($file_info,'file_name');
-                   
+                    $path = get_array_value($file_info, 'file_name');
+
                     $data = array(
-                        "name" => $this->request->getPost('name').$sufix2,
+                        "name" => $this->request->getPost('name') . $sufix2,
                         "department" => $this->request->getPost('department'), //$job_info->department_id,
                         "ref_prefix" => $this->request->getPost('ref_prefix'),
                         "destination_folder" => $this->request->getPost('destination_folder'),
                         "description" => $this->request->getPost('description_' . $file),
                         "path" => $path,
                         "created_at" => date("Y-m-d H:i:s"),
-            
+
                     );
 
                     $success = $this->Templates_model->ci_save($data);
@@ -878,10 +827,21 @@ class Documents extends Security_Controller
                     $success = false;
                 }
             }
+        }else{
+
+            $id = $this->request->getPost('id');
+            $data = array(
+                "name" => $this->request->getPost('name'),
+                "department" => $this->request->getPost('department'), //$job_info->department_id,
+                "ref_prefix" => $this->request->getPost('ref_prefix'),
+                "destination_folder" => $this->request->getPost('destination_folder')
+
+            );
+
+            $success = $this->Templates_model->ci_save($data,$id);
         }
 
-
-        if($success){
+        if ($success) {
 
             echo json_encode(array("success" => true, "data" => null, 'id' => $success, 'message' => app_lang('record_saved')));
             // $template_info = $this->Templates_model->get_one($id);
@@ -891,7 +851,6 @@ class Documents extends Security_Controller
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
     }
-
 
     /* load lead details view */
 

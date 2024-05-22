@@ -164,6 +164,7 @@ class Team_members extends Security_Controller {
 
         // new Data:  `marital_status`, `emergency_name`, `emergency_phone`, `birth_date`, `birth_place`, `education_level`, `education_field`, `education_school`
         $user_data = array(
+            'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             "email" => $this->request->getPost('email'),
             "first_name" => $this->request->getPost('first_name'),
             "last_name" => $this->request->getPost('last_name'),

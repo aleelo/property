@@ -172,7 +172,7 @@
 
             },
             onInitComplete: function () {
-<?php if ($can_edit_invoices) { ?>
+                <?php if ($can_edit_invoices) { ?>
                     //apply sortable
                     $("#invoice-item-table").find("tbody").attr("id", "invoice-item-table-sortable");
                     var $selector = $("#invoice-item-table-sortable");

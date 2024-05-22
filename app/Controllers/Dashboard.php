@@ -1301,6 +1301,9 @@ class Dashboard extends Security_Controller {
         }
 
         $dashboard_view = "";
+        // for cardholder in clien dashboard:
+            
+        $view_data["show_contact_info"] = false;
 
         if ($client_default_dashboard) {
             $view_data["widget_columns"] = $this->make_dashboard(unserialize($client_default_dashboard));

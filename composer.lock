@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e100674fb312b34fa00b19d3cd75180e",
+    "content-hash": "7e1ab61c924a4fa7eb72d7aec1c8d95a",
     "packages": [
         {
             "name": "chillerlan/php-qrcode",
@@ -226,6 +226,44 @@
                 "source": "https://github.com/dompdf/dompdf/tree/v2.0.4"
             },
             "time": "2023-12-12T20:19:39+00:00"
+        },
+        {
+            "name": "howtomakeaturn/pdfinfo",
+            "version": "1.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/howtomakeaturn/pdfinfo.git",
+                "reference": "eceeb37702c4b9f812ff4c991b2cd8953b11b278"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/howtomakeaturn/pdfinfo/zipball/eceeb37702c4b9f812ff4c991b2cd8953b11b278",
+                "reference": "eceeb37702c4b9f812ff4c991b2cd8953b11b278",
+                "shasum": ""
+            },
+            "require-dev": {
+                "filp/whoops": "1.1.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Howtomakeaturn\\PDFInfo": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "simple php wrapper for pdfinfo",
+            "keywords": [
+                "pdf",
+                "pdfinfo"
+            ],
+            "support": {
+                "issues": "https://github.com/howtomakeaturn/pdfinfo/issues",
+                "source": "https://github.com/howtomakeaturn/pdfinfo/tree/1.1.5"
+            },
+            "time": "2024-01-23T14:09:19+00:00"
         },
         {
             "name": "laminas/laminas-escaper",
@@ -665,5 +703,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

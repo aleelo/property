@@ -390,7 +390,7 @@ if (!function_exists('get_source_url_of_file')) {
         $file_id = get_array_value($file_info, "file_id");
         $service_type = get_array_value($file_info, "service_type");
 
-        if ($service_type && $service_type !== "google") {
+        if ($service_type && $service_type !== "google" &&  !in_array($service_type,['Media','Document'])) {
             try {
                 $source_url = app_hooks()->apply_filters('app_filter_get_source_url_of_file', array(
                     "file_info" => $file_info,

@@ -6,7 +6,7 @@ class Cardholders extends Security_Controller {
 
     function __construct() {
         parent::__construct();
-        $this->access_only_team_members();
+        // $this->access_only_team_members();
         
     }
 
@@ -34,7 +34,7 @@ class Cardholders extends Security_Controller {
         if ($this->can_update_team_members_info($user_id)) {
             return true; //own profile
         } else {
-            app_redirect("forbidden");
+            // app_redirect("forbidden");
         }
     }
 
@@ -62,7 +62,7 @@ class Cardholders extends Security_Controller {
         if ($user_id && ($this->login_user->is_admin || $this->login_user->id === $user_id || get_array_value($this->login_user->permissions, "can_manage_user_role_and_permissions"))) {
             return true;
         } else {
-            app_redirect("forbidden");
+            // app_redirect("forbidden");
         }
     }
 
@@ -86,21 +86,21 @@ class Cardholders extends Security_Controller {
     }
 
     public function index() {
-        if (!$this->can_view_team_members_list()) {
-            app_redirect("forbidden");
-        }
+        // if (!$this->can_view_team_members_list()) {
+        //     app_redirect("forbidden");
+        // }
 
-        $view_data["show_contact_info"] = $this->can_view_team_members_contact_info();
+        $view_data["show_contact_info"] = true;//$this->can_view_team_members_contact_info();
 
-        $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("team_members", $this->login_user->is_admin, $this->login_user->user_type);
-        $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("team_members", $this->login_user->is_admin, $this->login_user->user_type);
+        $view_data["custom_field_headers"] = null;
+        $view_data["custom_field_filters"] = null;
 
         return $this->template->rander("cardholders/index", $view_data);
     }
 
     private function access_only_admin_or_member_creator() {
         if (!($this->login_user->is_admin || get_array_value($this->login_user->permissions, "can_add_or_invite_new_team_members"))) {
-            app_redirect("forbidden");
+            // app_redirect("forbidden");
         }
     }
 
@@ -113,144 +113,143 @@ class Cardholders extends Security_Controller {
             "id" => "numeric"
         ));
 
-        $view_data['role_dropdown'] = $this->_get_roles_dropdown();
-
         $id = $this->request->getPost('id');
         $options = array(
             "id" => $id,
         );
 
-        $view_data['model_info'] = $this->Users_model->get_details($options)->getRow();
-        $view_data['departments'] = $this->get_departments_for_select();
-        $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
-        $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
-        $education_fields = $this->db->query("select id,name from education_industry")->getResult();
+        $view_data['model_info'] = $this->Cardholders_model->get_one($id);
 
-        $array_fields=[];
-        foreach($education_fields as $f){
-            $array_fields[$f->id] = $f->name;
+        $institutions = $this->db->query("select distinct institution from rise_cardholders")->getResult();
+
+        foreach($institutions as $inst){
+            $instArr[$inst->institution] = $inst->institution;
         }
-        $view_data['education_fields'] = $array_fields;
 
-        array_unshift($view_data['departments'],'Choose Department');
-        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("team_members", 0, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+        $view_data['institutions'] = $instArr;
+        $view_data['types'] = ['VStaff'=>'VStaff','SNA'=>'SNA','OAG'=>'OAG','SPC'=>'SPC','SSP'=>'SSP','NISA'=>'NISA','SPF'=>'SPF'];
+
+        $view_data["custom_fields"] ='' ;
 
         return $this->template->view('cardholders/modal_form', $view_data);
     }
 
     /* save new member */
 
-    function add_team_member() {
-        $this->access_only_admin_or_member_creator();
-
-        //check duplicate email address, if found then show an error message
-        if ($this->Users_model->is_email_exists($this->request->getPost('email'))) {
-            echo json_encode(array("success" => false, 'message' => app_lang('duplicate_email')));
-            exit();
-        }
-
+    function save() {
+        
         $this->validate_submitted_data(array(
-            "email" => "required|valid_email",
-            "first_name" => "required",
-            "last_name" => "required",
-            "job_title_en" => "required",
-            "job_title_so" => "required",
-            "department_id" => "required",
-            "section_id" => "required",
-            "role" => "required"
+            "fullName" => "required",
+            "institution" => "required",
+            "office" => "required",
+            "titleSom" => "required",
+            "titleEng" => "required",
+            
         ));
+        
+        // photoId,  CID,    fullName,   institution,    office, titleSom,   titleEng 
+        $id = $this->request->getPost('id');
+        $uuid = $this->request->getPost('uuid');
+        // die($this->request->getPost('status'));
 
-        $password = $this->request->getPost("password");
-
-        // new Data:  `marital_status`, `emergency_name`, `emergency_phone`, `birth_date`, `birth_place`, `education_level`, `education_field`, `education_school`
-        $user_data = array(
-            "email" => $this->request->getPost('email'),
-            "first_name" => $this->request->getPost('first_name'),
-            "last_name" => $this->request->getPost('last_name'),
-            "is_admin" => $this->request->getPost('is_admin'),
-            "address" => $this->request->getPost('address'),
-            "phone" => $this->request->getPost('phone'),
-            "gender" => $this->request->getPost('gender'),
-            "job_title" => $this->request->getPost('job_title_en'),
-            "phone" => $this->request->getPost('phone'),
-            "gender" => $this->request->getPost('gender'),
-            "marital_status" => $this->request->getPost('marital_status'),
-            "emergency_name" => $this->request->getPost('emergency_name'),
-            "emergency_phone" => $this->request->getPost('emergency_phone'),
-            "birth_date" => $this->request->getPost('birth_date'),
-            "birth_place" => $this->request->getPost('birth_place'),
-            "education_level" => $this->request->getPost('education_level'),
-            "education_field" => $this->request->getPost('education_field'),
-            "education_school" => $this->request->getPost('education_school'),
-            "passport_no" => $this->request->getPost('passport_no'),
-            "user_type" => "staff",
-            "created_at" => get_current_utc_time()
+       $user_data = array(
+            "fullName" => $this->request->getPost('fullName'),
+            "institution" => $this->request->getPost('institution'),
+            "office" => $this->request->getPost('office'),
+            "titleSom" => $this->request->getPost('titleSom'),
+            "titleEng" => $this->request->getPost('titleEng'),          
+            "type" => $this->request->getPost('type'),          
+            "status" => $this->request->getPost('status'),          
+            "user_id" => $this->login_user->id,          
         );
-
-        if ($password) {
-            $user_data["password"] = password_hash($password, PASSWORD_DEFAULT);
+        $type = $this->request->getPost('type');
+        
+        if($type == 'VStaff'){
+            $type = 'S';
+        }elseif($type == 'SPC') {
+            $type = 'SPC';        
+        }elseif($type == 'SNA') {
+            $type = 'SNA';        
+        }elseif($type == 'SSP') {
+           $type = 'SSP';
+        }elseif($type == 'NISA') {
+            $type = 'NIS';
+        }elseif($type == 'SPF') {
+            $type = 'SPF';
+        }elseif($type == 'OAG') {
+            $type = 'OAG';
         }
 
-        //make role id or admin permission 
-        $role = $this->request->getPost('role');
-        $role_id = $role;
 
-        if ($this->login_user->is_admin && $role === "admin") {
-            $user_data["is_admin"] = 1;
-            $user_data["role_id"] = 0;
-        } else {
-            $user_data["is_admin"] = 0;
-            $user_data["role_id"] = $role_id;
+        //add a new uuid
+        // if(!$id){
+        //     $user_data['uid'] =  $this->db->query("SELECT uuid() as uuid ")->getRow()->uuid;
+        // }
+        
+        $user_data['uid'] = $uuid;
+        // if($uuid){
+        // }else{
+            // $user_data['uid'] =  $this->db->query("SELECT uuid() as uuid ")->getRow()->uuid;
+        // }
+      
+        
+        $user_id = $this->Cardholders_model->ci_save($user_data,$id); 
+        $data = $this->Cardholders_model->get_one($user_id); 
+        $cid = $type.str_pad($user_id,4,'0',STR_PAD_LEFT);       
+        
+        // save image file here:
+        
+        //validate files before saving any thing:
+            if (count($_FILES) > 0) {
+                
+                $avatar_image_file = get_array_value($_FILES, "avatar_image_file");
+                
+                $image_file_name = get_array_value($avatar_image_file, "tmp_name");
+                $file_name = get_array_value($avatar_image_file, "name");
+                $image_file_size = get_array_value($avatar_image_file, "size");
+                $ext = pathinfo($file_name, PATHINFO_EXTENSION);
+                $ext = strtolower($ext);
+                $size_kb = $image_file_size/1024;
+                // rename(ROOTPATH.'/files/IdImages/'.$data->id.'.png',ROOTPATH.'/files/IdImages/'.$data->uid.'.png');
+                
+
+                if(!starts_with($avatar_image_file['type'], 'image/')) {
+                    echo json_encode(array("success" => false, 'message' => 'Invalid file, upload image file'));
+                    exit();
+                }elseif(!in_array($ext, array('png', 'jpg', 'jpeg'))) {
+                    echo json_encode(array("success" => false, 'message' => 'Invalid image extension, shoud be png or jpg'));
+                    exit();
+                }elseif ($size_kb > 2048) {
+                    echo json_encode(array("success" => false, 'message' => app_lang('visitor_image_error_message')));
+                    exit();
+                
+                }        
+                
+                $uuid = str_replace('-','',$data->uid);
+                                                         
+                      
+                // $avatar_image = move_temp_file($data->uid.".png", "files/IdImages/", "", $image_file_name, $data->id.'.png', "", false, $image_file_size);
+                //delete old file
+                if (file_exists(ROOTPATH.'files/IdImages/'.$data->uid.'.png')) {
+                    unlink("files/IdImages/" . $data->uid.'.png');
+                }elseif(file_exists(ROOTPATH.'files/IdImages/'.$uuid.'.png')) {
+                    unlink("files/IdImages/" . $uuid.'.png');
+                }
+
+                //save new image
+                move_uploaded_file($image_file_name,ROOTPATH.'files/IdImages/'.$uuid.'.png');
+              
         }
-
-
-        //add a new team member
-        $user_id = $this->Users_model->ci_save($user_data);
+    
+        //end save image file
+        
         if ($user_id) {
-            //user added, now add the job info for the user
-            // new Data: `department_id`, `section_id`, `job_title_en`, `job_title_so`, `employee_type`, `employee_id`
-            $job_data = array(
-                "user_id" => $user_id,
-                "salary" => $this->request->getPost('salary') ? $this->request->getPost('salary') : 0,
-                "salary_term" => $this->request->getPost('salary_term'),
-                "date_of_hire" => $this->request->getPost('date_of_hire'),
-                "department_id" => $this->request->getPost('department_id'),
-                "section_id" => $this->request->getPost('section_id'),
-                "job_title_en" => $this->request->getPost('job_title_en'),
-                "job_title_so" => $this->request->getPost('job_title_so'),
-                "employee_type" => $this->request->getPost('employee_type'),
-                "employee_id" => $this->request->getPost('employee_id'),
-            );
-            $this->Users_model->save_job_info($job_data);
-
-            save_custom_fields("team_members", $user_id, $this->login_user->is_admin, $this->login_user->user_type);
-
-            //send login details to user
-            if ($this->request->getPost('email_login_details')) {
-
-                //get the login details template
-                $email_template = $this->Email_templates_model->get_final_template("login_info"); //use default template
-
-                $parser_data["SIGNATURE"] = $email_template->signature;
-                $parser_data["USER_FIRST_NAME"] = $user_data["first_name"];
-                $parser_data["USER_LAST_NAME"] = $user_data["last_name"];
-                $parser_data["USER_LOGIN_EMAIL"] = $user_data["email"];
-                $parser_data["USER_LOGIN_PASSWORD"] = $this->request->getPost('password');
-                $parser_data["DASHBOARD_URL"] = base_url();
-                $parser_data["LOGO_URL"] = get_logo_url();
-                $parser_data["RECIPIENTS_EMAIL_ADDRESS"] = $user_data["email"];
-
-                $message = $this->parser->setData($parser_data)->renderString($email_template->message);
-                $subject = $this->parser->setData($parser_data)->renderString($email_template->subject);
-
-                send_app_mail($this->request->getPost('email'), $subject, $message);
-            }
-        }
-
-        if ($user_id) {
+            $this->db->query("update rise_cardholders set CID = '$cid',photoId = '$user_id' where id = $user_id");
             echo json_encode(array("success" => true, "data" => $this->_row_data($user_id), 'id' => $user_id, 'message' => app_lang('record_saved')));
+            die;
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+            die;
         }
     }
 
@@ -333,31 +332,52 @@ class Cardholders extends Security_Controller {
 
     //prepere the data for members list
     function list_data() {
-        if (!$this->can_view_team_members_list()) {
-            app_redirect("forbidden");
-        }
+        // if (!$this->can_view_team_members_list()) {
+        //     app_redirect("forbidden");
+        // }
 
-        $result = $this->check_access('lead');//here means documents for us.
-
-        $role = get_array_value($result,'role');
-        $created_by = get_array_value($result,'created_by');
+        // $result = $this->check_access('lead');//here means documents for us.
+        // die($this->request->getPost("status"));
+        $role = $this->get_user_role();
+        // $created_by = get_array_value($result,'created_by');
 
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("team_members", $this->login_user->is_admin, $this->login_user->user_type);
-        $options = array(
-            'role'=>$role,
-            'created_by'=>$created_by,
-            "status" => $this->request->getPost("status"),
-            "user_type" => "staff",
-            "custom_fields" => $custom_fields,
-            "custom_field_filter" => $this->prepare_custom_field_filter_values("team_members", $this->login_user->is_admin, $this->login_user->user_type)
-        );
+               
+        $options = append_server_side_filtering_commmon_params([]);
+        $options['role'] = $role;
+        
+        $options['created_by'] = '%';
+        $options['status'] =  $this->request->getPost("status");
+        $options['user_type'] = "staff";
+        $options['custom_fields'] =  $custom_fields;
+        $options['custom_field_filter'] = $this->prepare_custom_field_filter_values("team_members", $this->login_user->is_admin, $this->login_user->user_type);
 
-        $list_data = $this->Users_model->get_cardholder_details($options)->getResult();
+
+        $data = $this->Users_model->get_cardholder_details($options);
+
+        // var_dump($data);
+        // die;
+ 
+        $list_data = get_array_value($data,'data');
+        // if( empty(get_array_value($list_data,'data'))){
+        //     $list_data = null;
+        // }
+
+        $recordsTotal =  get_array_value($data,'recordsTotal');
+        $recordsFiltered =  get_array_value($data,'recordsFiltered');
+
+
         $result = array();
         foreach ($list_data as $data) {
             $result[] = $this->_make_row($data, $custom_fields);
         }
-        echo json_encode(array("data" => $result));
+        
+        // $recordsTotal = $this->db->query("SELECT count(*) as total_rows from rise_cardholders")->getRow()->total_rows;
+        // $recordsFiltered = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow()->found_rows;
+        echo json_encode(array("data" => $result,
+            'recordsTotal'=>$recordsTotal,
+            'recordsFiltered'=>$recordsFiltered
+        ));
     }
 
     //get a row data for member list
@@ -368,21 +388,21 @@ class Cardholders extends Security_Controller {
             "id" => $id,
             "custom_fields" => $custom_fields
         );
-
-        $data = $this->Users_model->get_details($options)->getRow();
+        
+        $data = $this->Cardholders_model->get_one($id);
         return $this->_make_row($data, $custom_fields);
     }
 
     //prepare team member list row
     private function _make_row($data, $custom_fields) {
-        $image_url = get_avatar($data->photo);
+        // $image_url = get_avatar($data->photo);
         
 
         // var_dump($a);
         // var_dump($image_url);
         // die();
 
-        $user_avatar = "<span class='avatar avatar-xs'><img src='$image_url' alt='...'></span>";
+        // $user_avatar = "<span class='avatar avatar-xs'><img src='$image_url' alt='...'></span>";
         $full_name = $data->fullName;
 
         //check contact info view permissions
@@ -390,13 +410,12 @@ class Cardholders extends Security_Controller {
         // `photo`, `CID`, `type`, `fullName`, `department`, `titleEng`, `titleSom`, `cardId`, `user_id`, `expireDate`, 
 
         $row_data = array(
-            $user_avatar,
-            get_team_member_profile_link($data->id, $full_name),
-            $data->type,
             $data->CID,
+            $full_name,
+            $data->institution,
+            $data->office,
             $data->titleSom,
             $data->titleEng,
-            $data->cardId,
             $data->status
 
         );
@@ -445,8 +464,8 @@ class Cardholders extends Security_Controller {
             validate_numeric_value($id);
 
             //if team member's list is disabled, but the user can see his/her own profile.
-            if (!$this->can_view_team_members_list() && $this->login_user->id != $id) {
-                app_redirect("forbidden");
+            if ($this->login_user->id != $id) {
+                // app_redirect("forbidden");
             }
 
             //we have an id. view the team_member's profie
@@ -503,8 +522,8 @@ class Cardholders extends Security_Controller {
                 $view_data['show_leave'] = $show_leave && get_setting("module_leave") ? true : false;
 
                 //check contact info view permissions
-                $show_cotact_info = $this->can_view_team_members_contact_info();
-                $show_social_links = $this->can_view_team_members_social_links();
+                $show_cotact_info = true;
+                $show_social_links = true;
 
                 //own info is always visible
                 if ($id == $this->login_user->id) {
@@ -549,9 +568,9 @@ class Cardholders extends Security_Controller {
             }
         } else {
 
-            if (!$this->can_view_team_members_list()) {
-                app_redirect("forbidden");
-            }
+            // if (!$this->can_view_team_members_list()) {
+            //     app_redirect("forbidden");
+            // }
 
             //we don't have any specific id to view. show the list of team_member
             $view_data['cardholders'] = $this->Users_model->get_cardholder_details(array("user_type" => "staff", "status" => "active"))->getResult();
@@ -564,7 +583,7 @@ class Cardholders extends Security_Controller {
 
         validate_numeric_value($user_id);
         if (!($this->login_user->is_admin || $this->login_user->id === $user_id || $this->has_job_info_manage_permission())) {
-            app_redirect("forbidden");
+            // app_redirect("forbidden");
         }
 
         $view_data['departments'] = $this->Team_model->get_departments_for_select();
@@ -594,7 +613,7 @@ class Cardholders extends Security_Controller {
     //save job information of a team member
     function save_job_info() {
         if (!($this->login_user->is_admin || $this->has_job_info_manage_permission())) {
-            app_redirect("forbidden");
+            // app_redirect("forbidden");
         }
         
         // var_dump($this->request->getPost());
@@ -1104,7 +1123,7 @@ class Cardholders extends Security_Controller {
         if ($file_info) {
 
             if (!$file_info->user_id) {
-                app_redirect("forbidden");
+                // app_redirect("forbidden");
             }
 
             $this->update_only_allowed_members($file_info->user_id);
@@ -1134,7 +1153,7 @@ class Cardholders extends Security_Controller {
         $file_info = $this->General_files_model->get_one($id);
 
         if (!$file_info->user_id) {
-            app_redirect("forbidden");
+            // app_redirect("forbidden");
         }
         $this->update_only_allowed_members($file_info->user_id);
 
@@ -1164,7 +1183,7 @@ class Cardholders extends Security_Controller {
         $info = $this->General_files_model->get_one($id);
 
         if (!$info->user_id) {
-            app_redirect("forbidden");
+            // app_redirect("forbidden");
         }
 
         if ($info->user_id && ($this->login_user->is_admin || $this->login_user->id === $info->uploaded_by)) {
@@ -1178,7 +1197,7 @@ class Cardholders extends Security_Controller {
                 echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
             }
         } else {
-            app_redirect("forbidden");
+            // app_redirect("forbidden");
         }
     }
 

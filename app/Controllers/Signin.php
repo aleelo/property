@@ -78,9 +78,11 @@ class Signin extends App_Controller
         //authentication success
         $redirect = $this->request->getPost("redirect");
         if ($redirect) {
+            // die('redirecing');
             return redirect()->to($redirect);
         } else {
-            app_redirect('dashboard/view');
+            // die('normal');
+            app_redirect('dashboard');
         }
     }
 

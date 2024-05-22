@@ -1505,6 +1505,143 @@ if (!function_exists("clean_data")) {
 }
 
 
+/**
+ * use this to clean xss and html elements
+ * the best practice is to use this before rendering 
+ * but you can use this before saving for suitable cases
+ *
+ * @param string or array $data
+ * @return clean $data
+ */
+if (!function_exists("sendWhatsAppMessage")) {
+
+    function sendWhatsAppMessage($baseUrl, $phoneNumber, $message, $messageType, $apiKey,$group = false,$imageLink = '')
+    {
+        // $phoneNumberID = getenv('WHATSAPP_PHONE_NUMBER_ID');
+
+        $type = "text";
+
+        if($messageType == "image") {
+
+            $type = "image";
+
+            $typeArr = array(
+                "image" => array("link" => $imageLink)
+                );
+
+        }else if($messageType == "text") {
+
+            $type = "text";
+
+            $typeArr = array(
+                'preview_url' => true,
+                'body' => $message);
+        }
+                
+        $postData = json_encode(array(
+            "messaging_product" => "whatsapp",
+            "recipient_type" => $group ? "group" : "individual",
+            "to" => $phoneNumber,
+            "type" => "text",
+            "text" => array(
+                'preview_url' => true,
+                'body' => $message)         
+        ));
+
+        $headers = array(
+            "Content-Type: application/json",
+            "Authorization: Bearer " . $apiKey,
+        );
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $baseUrl);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        if ($httpCode == 200) {
+            return json_decode($response, true);
+        } else {
+            print_r($response);
+            echo "Error response code: " . $httpCode;
+            return null;
+        }
+    }
+
+}
+
+/**
+ * use this to clean xss and html elements
+ * the best practice is to use this before rendering 
+ * but you can use this before saving for suitable cases
+ *
+ * @param string or array $data
+ * @return clean $data
+ */
+if (!function_exists("sendWhatsAppMessageWithActions")) {
+
+    function sendWhatsAppMessageWithActions($baseUrl, $phoneNumber, $message, $messageType, $apiKey,$group = false)
+    {
+        $phoneNumberID = getenv('WHATSAPP_PHONE_NUMBER_ID');
+        $url = $baseUrl . "/$phoneNumberID/send-message";              
+
+        $postData = json_encode(array(
+            "messaging_product" => "whatsapp",
+            "recipient_type" => $group ? "group" : "individual",
+            "to" => $phoneNumber,
+            "type" => $messageType,//interactive
+            "interactive" => array(
+                "type"=>"button",
+                "body"=>array("text"=>$message),
+                "action"=>array(
+                    "buttons"=>[
+                        array(
+                        "type" => "reply",
+                        "reply" => array(
+                            "id" => "UNIQUE_BUTTON_ID_2",
+                            "title" => "BUTTON_TITLE_2"
+                        )
+                    )
+                    ]
+                )
+            )
+        ));
+
+        $headers = array(
+            "Content-Type: application/json",
+            "Authorization: Bearer " . $apiKey,
+        );
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        if ($httpCode == 200) {
+            return json_decode($response, true);
+        } else {
+            print_r($response);
+            echo "Error response code: " . $httpCode;
+            return null;
+        }
+    }
+
+}
+
+
 //return site logo
 if (!function_exists("get_logo_url")) {
 

@@ -586,7 +586,7 @@ class Leaves extends Security_Controller {
         curl_close($curl);
 
         // Decode the JSON response into an associative array
-        $data = json_decode($json, true);
+        $res = json_decode($json, true);
 
         if(file_exists(APPPATH.'Views/documents/'.$path)){
             unlink(APPPATH.'Views/documents/'.$path);
@@ -598,7 +598,26 @@ class Leaves extends Security_Controller {
             unlink(APPPATH.'Views/documents/'.$file_name.'.docx');
         }
 
-        return $data;
+        // send whatsapp message:
+        $id = $data['id'];
+        $employee = $data['employee'];
+        $jobTitle = $data['jobTitle'];
+
+        $baseUrl = getenv('WHATSAPP_BASE_URL');
+        $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+        $message = "New Leave Requested.\n";
+        $message .= "\nLeave Number: #$id"; 
+        $message .= "\nRequested by: #$employee"; 
+        $message .= "\nJob Title: #$jobTitle"; 
+        $messageType = "text";
+        $apiKey = getenv('WHATSAPP_API_KEY');
+                
+        // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
+        
+        // $resw = sendWhatsappMessage($baseUrl, $phoneNumber, $message,$messageType, $apiKey);
+
+
+        return $res;
 
     }
 
@@ -969,26 +988,60 @@ class Leaves extends Security_Controller {
             //any user can't cancel other user's leave application
             app_redirect("forbidden");
         }
-
+        
         //user can update only the applications where status = pending
         // if (($applicatoin_info->status != "pending" || $applicatoin_info->status != "active") || !($status === "approved" || $status === "rejected" || $status === "canceled")) {
-        //     app_redirect("forbidden");
-        // }
+            //     app_redirect("forbidden");
+            // }
+            
+            $save_id = $this->Leave_applications_model->ci_save($leave_data, $applicaiton_id);
+            if ($save_id) {
+                
+                $notification_options = array("leave_id" => $applicaiton_id, "to_user_id" => $applicatoin_info->applicant_id);
+                
+                if ($status == "approved") {
+                    log_notification("leave_approved_HR", $notification_options);//leave_approved
+                } else if ($status == "pending") {
+                    log_notification("leave_approved_Director", $notification_options);
+                } else if ($status == "rejected") {
+                    log_notification("leave_rejected", $notification_options);
+                } else if ($status == "canceled") {
+                    log_notification("leave_canceled", $notification_options);
+                }
+                
+                if ($status === "approved" ) {
+                    
+                    // send whatsapp message:
+                                      
+                    $baseUrl = getenv('WHATSAPP_BASE_URL');
+                    $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                    $message = "Your Leave Request Approved.\n";
+                    $message .= "\nLeave Number: #$save_id"; 
+                    $messageType = "text";
+                    $apiKey = getenv('WHATSAPP_API_KEY');
+                            
+                    // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
+                    
+                    // $resw = sendWhatsappMessage($baseUrl, $phoneNumber, $message,$messageType, $apiKey);
 
-        $save_id = $this->Leave_applications_model->ci_save($leave_data, $applicaiton_id);
-        if ($save_id) {
+                }elseif($status === "rejected"){
 
-            $notification_options = array("leave_id" => $applicaiton_id, "to_user_id" => $applicatoin_info->applicant_id);
+                    // send whatsapp message:
+                                      
+                    $baseUrl = getenv('WHATSAPP_BASE_URL');
+                    $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                    $message = "Your Leave Request Rejected.\n";
+                    $message .= "\nLeave Number: #$save_id"; 
+                    $messageType = "text";
+                    $apiKey = getenv('WHATSAPP_API_KEY');
+                            
+                    // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
+                    
+                    // $resw = sendWhatsappMessage($baseUrl, $phoneNumber, $message,$messageType, $apiKey);
 
-            if ($status == "approved") {
-                log_notification("leave_approved_HR", $notification_options);//leave_approved
-            } else if ($status == "pending") {
-                log_notification("leave_approved_Director", $notification_options);
-            } else if ($status == "rejected") {
-                log_notification("leave_rejected", $notification_options);
-            } else if ($status == "canceled") {
-                log_notification("leave_canceled", $notification_options);
-            }
+                }
+
+
 
             echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
         } else {

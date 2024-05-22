@@ -66,7 +66,7 @@ $routes->get("Updates", "Updates::index");
 $routes->get("Updates/(:any)", "Updates::$1");
 $routes->post("Updates/(:any)", "Updates::$1");
 
-// $routes->get('/signin/aad_callback',"Signin::aad_callback");
+$routes->get('/verify/(:any)',"Visitors_info::cardholder_qrcode/$1");
 // $routes->get('/signin/aad_signout',"Signin::aad_signout");
 // $routes->post('/signin/aad_signin',"Signin::aad_signin");
 
