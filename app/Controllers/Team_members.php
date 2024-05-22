@@ -338,7 +338,7 @@ class Team_members extends Security_Controller {
             app_redirect("forbidden");
         }
 
-        $result = $this->check_access('lead');//here means documents for us.
+        $result = $this->check_access();//here means documents for us.
 
         $role = get_array_value($result,'role');
         $created_by = get_array_value($result,'created_by');

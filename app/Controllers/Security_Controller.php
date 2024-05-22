@@ -824,7 +824,7 @@ class Security_Controller extends App_Controller {
 
     public function check_access($name = null){
         
-        $this->check_module_availability('module_'.$name);
+        // $this->check_module_availability('module_'.$name);
         $role = $this->get_user_role();
         $dept_id = $this->get_user_department_id();
         $permissions = $this->login_user->permissions;
