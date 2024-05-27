@@ -55,13 +55,11 @@
                         </div>
 
                         <div class="clearfix">
-                            <?php if ($can_add_purchase) { ?>
-                                <div class="float-start mt20 ml15">
-                                    <?php echo modal_anchor(get_uri("purchase_order/item_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_item'), array("class" => "btn btn-info text-white", "title" => app_lang('add_item'), "data-post-purchase_order_id" => $purchase_info->id)); ?>
-                                </div>
-                            <?php } ?>
+                            <div class="float-start mt20 ml15">
+                                <?php echo modal_anchor(get_uri("purchase_order/item_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_item'), array("class" => "btn btn-info text-white", "title" => app_lang('add_item'), "data-post-purchase_order_id" => $purchase_info->id)); ?>
+                            </div>
                             <div class="float-end pr15" id="invoice-total-section">
-                                <?php echo view("purchase_order/purchase_total_section", array("purchase_id" => $purchase_info->id,'purchase_total_summary'=>$purchase_total_summary, "can_add_purchase" => $can_add_purchase)); ?>
+                                <?php echo view("purchase_order/purchase_total_section", array("purchase_id" => $purchase_info->id,'purchase_total_summary'=>$purchase_total_summary, "can_add_purchase" => true, "can_edit_purchase" => true)); ?>
                             </div>
                         </div>           
 
@@ -120,9 +118,8 @@
     $(document).ready(function () {
                 
         var optionVisibility = false;
-        if ("<?php echo $can_edit_purchase ?>") {
-            optionVisibility = true;
-        }
+        optionVisibility = true;
+      
         var delay;
         var taxableRows = [];
 
@@ -163,55 +160,7 @@
             //     }
 
             // },
-            onInitComplete: function () {
-                <?php if ($can_edit_purchase) { ?>
-                    //apply sortable
-                    $("#purchase-item-table").find("tbody").attr("id", "purchase-item-table-sortable");
-                    var $selector = $("#purchase-item-table-sortable");
-
-                    Sortable.create($selector[0], {
-                        animation: 150,
-                        chosenClass: "sortable-chosen",
-                        ghostClass: "sortable-ghost",
-                        onUpdate: function (e) {
-                            appLoader.show();
-                            //prepare sort indexes 
-                            var data = "";
-                            $.each($selector.find(".item-row"), function (index, ele) {
-                                if (data) {
-                                    data += ",";
-                                }
-
-                                data += $(ele).attr("data-id") + "-" + index;
-                            });
-
-                            //update sort indexes
-                            // $.ajax({
-                            //     url: '<?php //echo_uri("invoices/update_item_sort_values") ?>',
-                            //     type: "POST",
-                            //     data: {sort_values: data},
-                            //     success: function () {
-                            //         appLoader.hide();
-                            //     }
-                            // });
-                        }
-                    });
-
-<?php } ?>
-
-            },
-            onDeleteSuccess: function (result) {
-                $("#invoice-total-section").html(result.invoice_total_view);
-                if (typeof updateInvoiceStatusBar == 'function') {
-                    updateInvoiceStatusBar(result.invoice_id);
-                }
-            },
-            onUndoSuccess: function (result) {
-                $("#invoice-total-section").html(result.invoice_total_view);
-                if (typeof updateInvoiceStatusBar == 'function') {
-                    updateInvoiceStatusBar(result.invoice_id);
-                }
-            }
+     
         });
 
         

@@ -66,27 +66,24 @@ class Purchase_Order_model extends Crud_model {
         return $this->db->query($sql);
     }
 
-   
-    function get_purchase_total_summary($purchase_id) {
-        $invoice_payments_table = $this->db->prefixTable('invoice_payments');
-        $clients_table = $this->db->prefixTable('clients');
-        $invoices_table = $this->db->prefixTable('invoices');
+       
+    function get_purchase_total_summary($purchase_order_id) {
+        $purchase_receive_items_table = $this->db->prefixTable('purchase_receive_items');
+        $purchase_order_items_table = $this->db->prefixTable('purchase_order_items');
+        $purchase_order_table = $this->db->prefixTable('purchase_orders');
+       
+        // $result = $this->get_invoice_total_meta($purchase_order_id);
 
-        $result = $this->get_invoice_total_meta($purchase_id);
+        $sql = "SELECT SUM(poi.total) AS purchase_total,SUM(pr.total) AS receive_total,SUM(poi.total - pr.total) AS balance
+        FROM $purchase_order_table as po
+        LEFT JOIN $purchase_order_items_table as poi on po.id = poi.purchase_order_id
+        LEFT JOIN $purchase_receive_items_table as pr on po.id = pr.purchase_order_id
+        WHERE poi.deleted=0 AND pr.deleted=0 AND poi.purchase_order_id=$purchase_order_id";
 
-        $client_sql = "SELECT $clients_table.currency_symbol, $clients_table.currency FROM $clients_table WHERE $clients_table.id=(SELECT $invoices_table.client_id FROM $invoices_table WHERE $invoices_table.id=$invoice_id LIMIT 1)";
-        $client = $this->db->query($client_sql)->getRow();
+        $result = $this->db->query($sql)->getRow();
 
-        $result->currency_symbol = $client->currency_symbol ? $client->currency_symbol : get_setting("currency_symbol");
-        $result->currency = $client->currency ? $client->currency : get_setting("default_currency");
-
-        $payment_sql = "SELECT SUM($invoice_payments_table.amount) AS total_paid
-        FROM $invoice_payments_table
-        WHERE $invoice_payments_table.deleted=0 AND $invoice_payments_table.invoice_id=$invoice_id";
-        $payment = $this->db->query($payment_sql)->getRow();
-
-        $result->total_paid = is_null($payment->total_paid) ? 0 : $payment->total_paid;
-        $result->balance_due = number_format($result->invoice_total, 2, ".", "") - number_format($result->total_paid, 2, ".", "");
+        // $result->total_paid = is_null($payment->total_paid) ? 0 : $payment->total_paid;
+        // $result->balance_due = number_format($result->invoice_total, 2, ".", "") - number_format($result->total_paid, 2, ".", "");
 
         return $result;
     }

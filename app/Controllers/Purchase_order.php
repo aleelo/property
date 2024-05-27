@@ -9,6 +9,7 @@ use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use chillerlan\QRCode\Output\QRImageWithLogo;
+use Config\Services;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -345,6 +346,51 @@ class Purchase_order extends Security_Controller
             echo json_encode(array("success" => true, "purchase_order_id" => $purchase_item_info->purchase_order_id, "data" => $this->_make_item_row($purchase_item_info, true), "invoice_total_view" => $this->_get_purchase_total_view($purchase_item_info->purchase_order_id), 'id' => $purchase_item_id, 'message' => app_lang('record_saved')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+    
+    // download pdf/view pdf:
+    function download_pdf($id = 0, $mode = "download", $user_language = "") {
+
+        if ($id) {
+            validate_numeric_value($id);
+            
+            $data = array();
+            $purchase_info = $this->Purchase_Order_model->get_details(array("id" => $id))->getRow();
+          
+            $data['purchase_info'] = $purchase_info;
+            $data['supplier_info'] = $this->Suppliers_model->get_one($purchase_info->supplier_id);
+            $data['purchase_items'] = $this->Purchase_Order_Items_model->get_details(array("purchase_order_id" => $id))->getResult();
+            
+            $data["purchase_total_summary"] = $this->Purchase_Order_model->get_purchase_total_summary($id);
+                
+            if(!$this->can_edit_purchases()){
+                app_redirect("forbidden");
+            }
+            
+            
+
+            if ($user_language) {
+                $language = Services::language();
+
+                $active_locale = $language->getLocale();
+
+                if ($user_language && $user_language !== $active_locale) {
+                    $language->setLocale($user_language);
+                }
+
+                prepare_purchase_pdf($data, $mode);
+
+                if ($user_language && $user_language !== $active_locale) {
+                    // Reset to active locale
+                    $language->setLocale($active_locale);
+                }
+            } else {
+              
+                prepare_purchase_pdf($data, $mode);
+            }
+        } else {
+            show_404();
         }
     }
 

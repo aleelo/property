@@ -850,6 +850,7 @@ if (!function_exists('get_invoice_making_data')) {
 
 }
 
+
 /**
  * get all data to make an invoice
  * 
@@ -899,6 +900,55 @@ if (!function_exists('prepare_invoice_pdf')) {
 
 }
 
+/**
+ * get all data to make an invoice
+ * 
+ * @param Purchase_Order making data $data
+ * @return array
+ */
+if (!function_exists('prepare_purchase_pdf')) {
+
+    function prepare_purchase_pdf($data, $mode = "download") {
+        $pdf = new Pdf();
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        $pdf->SetCellPadding(1.5);
+        $pdf->setImageScale(1.42);
+        $pdf->AddPage();
+        $pdf->SetFontSize(10);
+       
+
+        if ($data) {
+
+            $data["mode"] = clean_data($mode);
+
+            $html = view("purchase_order/purchase_pdf", $data);
+
+            if ($mode != "html") {
+                $pdf->writeHTML($html, true, false, true, false, '');
+            }
+
+            $purchase_info = get_array_value($data, "purchase_info");
+            
+            $pdf_file_name = preg_replace('/[^A-Za-z0-9\-]/', 'purchase-', $purchase_info->id) . ".pdf";
+
+            if ($mode === "download") {
+                $pdf->Output($pdf_file_name, "D");
+            } else if ($mode === "send_email") {
+                $temp_download_path = getcwd() . "/" . get_setting("temp_file_path") . $pdf_file_name;
+                $pdf->Output($temp_download_path, "F");
+                return $temp_download_path;
+            } else if ($mode === "view") {
+                $pdf->SetTitle($pdf_file_name);
+                $pdf->Output($pdf_file_name, "I");
+                exit;
+            } else if ($mode === "html") {
+                return $html;
+            }
+        }
+    }
+
+}
 /**
  * get all data to make an estimate
  * 
@@ -3072,7 +3122,7 @@ if (!function_exists('get_company_logo')) {
             }
             ?>
 
-            <img class="max-logo-size" src="<?php echo get_file_from_setting($logo, $only_file_path); ?>" alt="..." />
+            <img class="max-logo-size" src="<?php echo get_file_from_setting($logo, $only_file_path); ?>" width="300" />
 
             <?php
         }

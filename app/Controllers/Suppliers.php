@@ -31,13 +31,18 @@ class Suppliers extends Security_Controller {
 
     /* load item modal */
 
-    function modal_form() {
+    function modal_form($sid = 0) {
 
         $this->validate_submitted_data(array(
             "id" => "numeric"
         ));
         // die('hers');
+
         $id = $this->request->getPost('id');
+
+        if($sid){
+            $id = $sid;
+        }
 
         $view_data['model_info'] = $this->Suppliers_model->get_one($id);
         $view_data['categories_dropdown'] = [];
