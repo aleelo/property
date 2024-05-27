@@ -364,6 +364,7 @@ class Users_model extends Crud_model {
         $where = "";
         $id = $this->_get_clean_value($options, "id");
         $status = $this->_get_clean_value($options, "status");
+      
         $user_type = $this->_get_clean_value($options, "user_type");
         $client_id = $this->_get_clean_value($options, "client_id");
 
@@ -419,8 +420,8 @@ class Users_model extends Crud_model {
             $search_by = $this->db->escapeLikeString($search_by);
 
             $where .= " AND (";
-            $where .= " $cardholders_table.uid LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " $cardholders_table.titleEng LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= "  $cardholders_table.uid LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $cardholders_table.titleEng LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " OR $cardholders_table.titleSom LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " OR $cardholders_table.institution LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " OR $cardholders_table.office LIKE '%$search_by%' ESCAPE '!' ";
