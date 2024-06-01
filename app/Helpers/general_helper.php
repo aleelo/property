@@ -1565,37 +1565,23 @@ if (!function_exists("clean_data")) {
  */
 if (!function_exists("sendWhatsAppMessage")) {
 
-    function sendWhatsAppMessage($baseUrl, $phoneNumber, $message, $messageType, $apiKey,$group = false,$imageLink = '')
+    function sendWhatsAppMessage($phoneNumber, $message, $messageType, $group = false)
     {
         // $phoneNumberID = getenv('WHATSAPP_PHONE_NUMBER_ID');
-
-        $type = "text";
-
-        if($messageType == "image") {
-
-            $type = "image";
-
-            $typeArr = array(
-                "image" => array("link" => $imageLink)
-                );
-
-        }else if($messageType == "text") {
-
-            $type = "text";
-
-            $typeArr = array(
-                'preview_url' => true,
-                'body' => $message);
-        }
+        $apiKey = getenv('WHATSAPP_API_KEY');
+        $baseUrl = getenv('WHATSAPP_BASE_URL').'/whatsapp/send-message' ;
+        
+        // "phoneNumber": "+254712345678",
+        // "message": "This as a caption message.",
+        // "type": "media",
+        // "media_type": "image",
+        // "fileName": "filename.pdf",
+        // "mediaUrl":"https://www.africau.edu/images/default/sample.pdf"
                 
         $postData = json_encode(array(
-            "messaging_product" => "whatsapp",
-            "recipient_type" => $group ? "group" : "individual",
-            "to" => $phoneNumber,
-            "type" => "text",
-            "text" => array(
-                'preview_url' => true,
-                'body' => $message)         
+            "phoneNumber" => $phoneNumber,
+            "message" => $message,
+            "type" =>$messageType,
         ));
 
         $headers = array(
@@ -1620,11 +1606,76 @@ if (!function_exists("sendWhatsAppMessage")) {
         } else {
             print_r($response);
             echo "Error response code: " . $httpCode;
-            return null;
+            return "Error response code: " . $httpCode;
         }
     }
 
 }
+
+//** original whatsup api send message */
+// if (!function_exists("sendWhatsAppMessage")) {
+
+//     function sendWhatsAppMessage($baseUrl, $phoneNumber, $message, $messageType, $apiKey,$group = false,$imageLink = '')
+//     {
+//         // $phoneNumberID = getenv('WHATSAPP_PHONE_NUMBER_ID');
+
+//         $type = "text";
+
+//         if($messageType == "image") {
+
+//             $type = "image";
+
+//             $typeArr = array(
+//                 "image" => array("link" => $imageLink)
+//                 );
+
+//         }else if($messageType == "text") {
+
+//             $type = "text";
+
+//             $typeArr = array(
+//                 'preview_url' => true,
+//                 'body' => $message);
+//         }
+                
+//         $postData = json_encode(array(
+//             "messaging_product" => "whatsapp",
+//             "recipient_type" => $group ? "group" : "individual",
+//             "to" => $phoneNumber,
+//             "type" => "text",
+//             "text" => array(
+//                 'preview_url' => true,
+//                 'body' => $message)         
+//         ));
+
+//         $headers = array(
+//             "Content-Type: application/json",
+//             "Authorization: Bearer " . $apiKey,
+//         );
+
+//         $ch = curl_init();
+//         curl_setopt($ch, CURLOPT_URL, $baseUrl);
+//         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+//         curl_setopt($ch, CURLOPT_POST, true);
+//         curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+//         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+//         $response = curl_exec($ch);
+//         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+//         curl_close($ch);
+
+//         if ($httpCode == 200) {
+//             return json_decode($response, true);
+//         } else {
+//             print_r($response);
+//             echo "Error response code: " . $httpCode;
+//             return null;
+//         }
+//     }
+
+// }
+
 
 /**
  * use this to clean xss and html elements

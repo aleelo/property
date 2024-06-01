@@ -603,18 +603,16 @@ class Leaves extends Security_Controller {
         $employee = $data['employee'];
         $jobTitle = $data['jobTitle'];
 
-        $baseUrl = getenv('WHATSAPP_BASE_URL');
         $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
         $message = "New Leave Requested.\n";
         $message .= "\nLeave Number: #$id"; 
         $message .= "\nRequested by: #$employee"; 
         $message .= "\nJob Title: #$jobTitle"; 
         $messageType = "text";
-        $apiKey = getenv('WHATSAPP_API_KEY');
                 
         // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
         
-        // $resw = sendWhatsappMessage($baseUrl, $phoneNumber, $message,$messageType, $apiKey);
+        $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
 
         return $res;
@@ -1013,31 +1011,27 @@ class Leaves extends Security_Controller {
                     
                     // send whatsapp message:
                                       
-                    $baseUrl = getenv('WHATSAPP_BASE_URL');
                     $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
                     $message = "Your Leave Request Approved.\n";
                     $message .= "\nLeave Number: #$save_id"; 
                     $messageType = "text";
-                    $apiKey = getenv('WHATSAPP_API_KEY');
                             
                     // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
                     
-                    // $resw = sendWhatsappMessage($baseUrl, $phoneNumber, $message,$messageType, $apiKey);
+                    $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
                 }elseif($status === "rejected"){
 
                     // send whatsapp message:
                                       
-                    $baseUrl = getenv('WHATSAPP_BASE_URL');
                     $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
                     $message = "Your Leave Request Rejected.\n";
                     $message .= "\nLeave Number: #$save_id"; 
                     $messageType = "text";
-                    $apiKey = getenv('WHATSAPP_API_KEY');
                             
                     // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
                     
-                    // $resw = sendWhatsappMessage($baseUrl, $phoneNumber, $message,$messageType, $apiKey);
+                    $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
                 }
 

@@ -828,11 +828,9 @@ class Visitors extends Security_Controller
         }       
 
         //send whatsapp message:        
-        $baseUrl = getenv('WHATSAPP_BASE_URL');
         $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
         $message = "New Access Request.\n";
         $messageType = "text";
-        $apiKey = getenv('WHATSAPP_API_KEY');
         
         // get visitors details:
         $id = $data['id'];
@@ -863,7 +861,7 @@ class Visitors extends Security_Controller
 
         
 
-        // sendWhatsappMessage($baseUrl, $phoneNumber, $message,$messageType, $apiKey);
+        $res = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
         
         return $res;
@@ -1018,16 +1016,14 @@ class Visitors extends Security_Controller
             $this->db->query("UPDATE rise_visitors SET status = '$status',rejected_by = $user_id WHERE id = $id");    
             
             // send whatsapp message:
-            $baseUrl = getenv('WHATSAPP_BASE_URL');
             $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
             $message = "Access Request Rejected.\n";
             $message .= "\nRequest Number: #$id"; 
             $messageType = "text";
-            $apiKey = getenv('WHATSAPP_API_KEY');
                        
             // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
             
-            // $res = sendWhatsappMessage($baseUrl, $phoneNumber, $message,$messageType, $apiKey);
+            $res = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
         }elseif($status == 'show-pdf'){
             
@@ -1039,20 +1035,18 @@ class Visitors extends Security_Controller
             }else{
                 show_404();
             }
-        }elseif($status == 'Updated'){
+        }elseif($status == 'Approved'){
             $this->db->query("UPDATE rise_visitors SET status = '$status',approved_by = $user_id WHERE id = $id");  
 
             // send whatsapp message:
-            $baseUrl = getenv('WHATSAPP_BASE_URL');
             $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
             $message = "Access Request Approved.\n";
             $message .= "\n Request Number: #$id";
             $messageType = "text";
-            $apiKey = getenv('WHATSAPP_API_KEY');
                        
             // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
             
-            // $res = sendWhatsappMessage($baseUrl, $phoneNumber, $message,$messageType, $apiKey);
+            $res = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
         }
         else{
