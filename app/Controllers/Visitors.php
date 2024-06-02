@@ -486,6 +486,9 @@ class Visitors extends Security_Controller
             } else {
 
                 // Get the web URL of the file from the array
+                echo json_encode($data);
+                echo print_r($data);
+                die;
                 $webUrl = $data["webUrl"];
                 $itemId = $data["id"];
                 $drive_ref = $data['parentReference'];
@@ -861,7 +864,7 @@ class Visitors extends Security_Controller
 
         
 
-        $res = sendWhatsappMessage($phoneNumber, $message,$messageType);
+        $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
         
         return $res;

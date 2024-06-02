@@ -1204,6 +1204,8 @@ $lang["edit_task_status"] = "Edit task status";
 $lang["delete_task_status"] = "Delete task status";
 
 $lang["list"] = "List";
+$lang["male_team_members"] = "Male Employees";
+$lang["female_team_members"] = "Female Employees";
 $lang["kanban"] = "Kanban";
 $lang["priority"] = "Priority";
 $lang["moved_up"] = "Moved Up";

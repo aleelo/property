@@ -1576,6 +1576,10 @@ if (!function_exists('team_members_overview_widget')) {
         $ci = new Security_Controller(false);
 
         $view_data["total_team_members"] = $ci->Users_model->count_total_users();
+        $res = $ci->Users_model->count_users_by_gender();
+    
+        $view_data["male_team_members"] = get_array_value($res,'male');
+        $view_data["female_team_members"] = get_array_value($res,'female');
 
         $leave_options = array(
             "login_user_id" => $ci->login_user->id,

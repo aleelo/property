@@ -718,6 +718,22 @@ class Users_model extends Crud_model {
         return $this->db->query($sql)->getRow()->total;
     }
 
+    function count_users_by_gender() {
+        $users_table = $this->db->prefixTable('users');
+
+        $sql_male = "SELECT COUNT($users_table.id) AS total_male
+        FROM $users_table 
+        WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND $users_table.gender='male'";
+         $male = $this->db->query($sql_male)->getRow()->total_male;
+         
+        $sql_female = "SELECT COUNT($users_table.id) AS total_female
+        FROM $users_table 
+        WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND $users_table.gender='female'";
+         $female = $this->db->query($sql_female)->getRow()->total_female;
+
+        return ['male' => $male, 'female' => $female];
+    }
+
     function get_team_members_id_and_name() {
         $users_table = $this->db->prefixTable('users');
 
