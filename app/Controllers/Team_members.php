@@ -123,7 +123,7 @@ class Team_members extends Security_Controller {
 
         $view_data['model_info'] = $this->Users_model->get_details($options)->getRow();
         $view_data['departments'] = $this->Team_model->get_departments_for_select();
-        $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
+        $view_data['education_levels'] = [''=>'Choose Education Level','Diploma'=>'Diploma','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctorate'=>'Doctorate','Other/Skill'=>'Other/Skill'];
         $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
         $education_fields = $this->db->query("select id,name from education_industry")->getResult();
 

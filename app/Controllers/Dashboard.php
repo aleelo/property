@@ -806,6 +806,8 @@ class Dashboard extends Security_Controller {
         //app widgets
         if ($this->login_user->user_type == "staff" && $this->show_staff_on_staff) {
             $default_widgets_array = array(
+                "team_members_agegroup_education_widget",
+                "team_members_by_department_widget",
                 "open_projects",
                 "open_projects_list",
                 "completed_projects",
@@ -1056,8 +1058,16 @@ class Dashboard extends Security_Controller {
     }
 
     private function _get_widgets_for_staffs($widget, $widgets_array) {
+        
+        // "team_members_agegroup_education_widget",
+        // "team_members_by_department_widget",
+
         if (get_array_value($widgets_array, $widget)) {
-            if ($widget == "clock_in_out") {
+            if ($widget == "team_members_agegroup_education_widget") {
+                return team_members_agegroup_education_widget();
+            } if ($widget == "team_members_by_department_widget") {
+                return team_members_by_department_widget();
+            } if ($widget == "clock_in_out") {
                 return clock_widget();
             } else if ($widget == "events_today") {
                 return events_today_widget();

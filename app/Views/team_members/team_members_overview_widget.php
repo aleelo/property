@@ -28,7 +28,7 @@ if ($total_team_members) {
 
             <div class="box-content">
                 <a href="<?php echo get_uri('leaves/index/all_applications'); ?>" class="text-default">
-                    <div class="p-3 text-center">
+                    <div class="p-2 text-center">
                         <h3 class="mt-0 strong mb5 text-warning"><?php echo $on_leave_today; ?></h3>
                         <div><?php echo app_lang("on_leave_today"); ?></div>
                     </div>
@@ -50,7 +50,7 @@ if ($total_team_members) {
 
             <div class="box-content">
                 <a href="<?php echo get_uri('team_members/index'); ?>" class="text-default">
-                    <div class="p-3 text-center">
+                    <div class="p-2 text-center">
                         <h3 class="mt-0 strong mb5 text-info"><?php echo $female_team_members; ?></h3>
                         <div><?php echo app_lang("female_team_members"); ?></div>
                     </div>

@@ -10,7 +10,7 @@ if ($last_announcement) {
 
 <a href="<?php echo $link; ?>" class="text-default">
     <div class="card dashboard-icon-widget">
-        <div class="card-body">
+        <div class="card-body p-3">
             <i data-feather="mic" class="icon" stroke-width="2.5"></i><span class="ml10"><?php echo app_lang("last_announcement"); ?></span>
             <div class="mt15 ms-1 text-truncate" title="<?php echo $title; ?>">
                 <?php echo $title; ?>
