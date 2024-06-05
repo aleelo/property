@@ -625,6 +625,11 @@ class Leaves extends Security_Controller {
         $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
 
+        if($resw == 400){                
+            echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid phone number, Please update your number like: +25261xxxx'));
+            die;
+        }
+
         return $res;
 
     }
@@ -1036,6 +1041,11 @@ class Leaves extends Security_Controller {
                                         
                     $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
+                    if($resw == 400){                
+                        echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid phone number, Please update your number like: +25261xxxx'));
+                        die;
+                    }
+
                 }elseif($status === "rejected"){
 
                     
@@ -1054,6 +1064,13 @@ class Leaves extends Security_Controller {
                     $messageType = "text";
                     
                     $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
+
+                    
+                    if($resw == 400){                
+                        echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid phone number, Please update your number like: +25261xxxx'));
+                        die;
+                    }
+
 
                 }
 
