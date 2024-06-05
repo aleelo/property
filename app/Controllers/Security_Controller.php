@@ -814,6 +814,18 @@ class Security_Controller extends App_Controller {
         }
         return $job_info->nameSo;
     }
+ 
+    public function get_user_job_info($user_id){
+        $job_info = $this->db->query("SELECT d.nameSo,t.* from rise_team_member_job_info t 
+        left join rise_users u on u.id=t.user_id 
+        left join departments d on d.id=t.department_id 
+        where t.user_id = $user_id")->getRow();
+
+        if(empty($job_info)){
+            return null;
+        }
+        return $job_info;
+    }
 
     public function get_user_department_id(){
         $user_id = $this->login_user->id;

@@ -832,38 +832,27 @@ class Visitors extends Security_Controller
 
         //send whatsapp message:        
         $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
-        $message = "New Access Request.\n";
+        $message = "Codsi Soo deyn:.\n";
         $messageType = "text";
         
         // get visitors details:
         $id = $data['id'];
-        $visitor_name = '';
-        $mobile = '';
-        $vehicle_details = '';
+        $department = $data['department'];
+       
+        // $jobinfo = $this->get_user_job_info($this->login_user->id);
 
-        $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
-
-        if($vdetails){
-            foreach($vdetails as $k => $d){
-                $visitor_name = $d->visitor_name;
-                $mobile = $d->mobile;
-                $vehicle_details = $d->vehicle_details;
-                $k = $k + 1;
-
-                $message.="\n$k.";
-                $message.="\nName: " . $visitor_name;
-                if($mobile){
-                    $message.="\nMobile: " . $mobile;
-                }
-                if($vehicle_details){
-                    $message.="\nVehicle Details: " . $vehicle_details."\n";
-                }
-                
-            }
+        if(!$department){
+            $department = 'N/A';
         }
 
-        
+        // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
+        // $options = array('id'=> $this->login_user->id); 
+        // $user_info = $this->Users_model->get_details($options)->getRow();
 
+        $message.="\nWaxaa xaqiijin u baahan codsiga soo gelista ee #" . $id;
+    
+        $message.="\nee kayimid Xafiiska: " . $department;
+           
         $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
         
@@ -1015,22 +1004,28 @@ class Visitors extends Security_Controller
         $status = $this->request->getPost('leave_status_input');
         $user_id = $this->login_user->id;
 
+        $visitor_info = $this->db->query("SELECT * FROM rise_visitors WHERE id = $id")->getRow();
+
         if($status == 'Rejected'){
             $this->db->query("UPDATE rise_visitors SET status = '$status',rejected_by = $user_id WHERE id = $id");    
-            
+                        
+            $visitor_info = $this->db->query("SELECT * FROM rise_visitors WHERE id = $id")->getRow();
+           
+            $options = array('id'=> $visitor_info->created_by); 
+            $user_info = $this->Users_model->get_details($options)->getRow();
+
+            $visit_date = date('F d,Y',strtotime($visitor_info->visit_date));
             // send whatsapp message:
-            $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
-            $message = "Access Request Rejected.\n";
-            $message .= "\nRequest Number: #$id"; 
+            // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+            $phoneNumber = $user_info->phone;
+            $message = "Codsiga soo deynta #$id ee ku mudeysan: $visit_date waa la diiday.\n";
+           
             $messageType = "text";
-                       
-            // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
-            
+                                   
             $res = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
         }elseif($status == 'show-pdf'){
             
-            $visitor_info = $this->db->query("SELECT * FROM rise_visitors WHERE id = $id")->getRow();
             // show pdf:
             if($visitor_info){
 
@@ -1041,11 +1036,23 @@ class Visitors extends Security_Controller
         }elseif($status == 'Approved'){
             $this->db->query("UPDATE rise_visitors SET status = '$status',approved_by = $user_id WHERE id = $id");  
 
+
             // send whatsapp message:
-            $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
-            $message = "Access Request Approved.\n";
-            $message .= "\n Request Number: #$id";
+            // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+            
+            $visitor_info = $this->db->query("SELECT * FROM rise_visitors WHERE id = $id")->getRow();
+            
+            $options = array('id'=> $visitor_info->created_by); 
+            $user_info = $this->Users_model->get_details($options)->getRow();
+
+            $visit_date = date('F d,Y',strtotime($visitor_info->visit_date));
+            // send whatsapp message:
+            // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+            $phoneNumber = $user_info->phone;
+            $message = "Codsiga soo deynta #$id ee ku mudeysan: $visit_date waa la oggolaaday.\n";
+           
             $messageType = "text";
+                                   
                        
             // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
             

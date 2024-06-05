@@ -757,32 +757,32 @@ class Users_model extends Crud_model {
         $sql_diploma = "SELECT COUNT($users_table.id) AS total_diploma
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND $users_table.education_level='Diploma'";
-            $total_diploma = $this->db->query($sql_diploma)->getRow()->total_diploma;
+            $total_diploma = $this->db->query($sql_diploma)->getRow()?->total_diploma;
          
         $sql_graduate = "SELECT COUNT($users_table.id) AS total_graduate
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND $users_table.gender='Graduate'";
-            $total_graduate = $this->db->query($sql_graduate)->getRow()->total_graduate;
+            $total_graduate = $this->db->query($sql_graduate)->getRow()?->total_graduate;
          
         $sql_bachelor = "SELECT COUNT($users_table.id) AS total_bachelor
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND $users_table.gender='Bachelor'";
-            $total_bachelor = $this->db->query($sql_bachelor)->getRow()->total_bachelor;
+            $total_bachelor = $this->db->query($sql_bachelor)->getRow()?->total_bachelor;
          
         $sql_master = "SELECT COUNT($users_table.id) AS total_master
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND $users_table.gender='Master'";
-            $total_master = $this->db->query($sql_master)->getRow()->total_master;
+            $total_master = $this->db->query($sql_master)->getRow()?->total_master;
          
         $sql_doctorate = "SELECT COUNT($users_table.id) AS total_doctorate
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND $users_table.gender='Doctorate'";
-            $total_doctorate = $this->db->query($sql_doctorate)->getRow()->total_doctorate;
+            $total_doctorate = $this->db->query($sql_doctorate)->getRow()?->total_doctorate;
          
         $sql_other = "SELECT COUNT($users_table.id) AS total_other
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND $users_table.gender='Other/Skill'";
-            $total_other = $this->db->query($sql_other)->getRow()->total_other;
+            $total_other = $this->db->query($sql_other)->getRow()?->total_other;
 
         return [
             'total_diploma' => $total_diploma, 'total_graduate' => $total_graduate,
@@ -795,36 +795,36 @@ class Users_model extends Crud_model {
         $users_table = $this->db->prefixTable('users');
         // '15-30','31-45','46-60','60 & above'
 
-        $sql_1530 = "SELECT '15 - 31' as group, DATEDIFF(now(), birth_date)/365 AS total_1530
+        $sql_1530 = "SELECT '15 - 30' as g, DATEDIFF(now(), birth_date)/365 AS total_1530
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND DATEDIFF(now(), birth_date)/365 between 15 AND 30";
-            $total_1530 = $this->db->query($sql_1530)->getRow()->total_1530;
+            $total_1530 = $this->db->query($sql_1530)->getRow()?->total_1530;
          
-        $sql_3145 = "SELECT '31 - 45' as group, DATEDIFF(now(), birth_date)/365  AS total_3145
+        $sql_3145 = "SELECT '31 - 45' as g, DATEDIFF(now(), birth_date)/365  AS total_3145
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND DATEDIFF(now(), birth_date)/365 between 31 AND 45";
-            $total_3145 = $this->db->query($sql_3145)->getRow()->total_3145;      
+            $total_3145 = $this->db->query($sql_3145)->getRow()?->total_3145;      
          
-        $sql_4660 = "SELECT '46 - 59' as group, DATEDIFF(now(), birth_date)/365  AS total_4660
+        $sql_4660 = "SELECT '46 - 59' as g, DATEDIFF(now(), birth_date)/365  AS total_4660
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND DATEDIFF(now(), birth_date)/365 between 46 AND 60";
-            $total_4660 = $this->db->query($sql_4660)->getRow()->total_4660;
+            $total_4660 = $this->db->query($sql_4660)->getRow()?->total_4660;
       
-        $sql_6075 = "SELECT '60 - 75' as group, DATEDIFF(now(), birth_date)/365  AS total_6075
+        $sql_6075 = "SELECT '60 - 75' as g, DATEDIFF(now(), birth_date)/365  AS total_6075
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND DATEDIFF(now(), birth_date)/365 between 60 AND 76";
-            $total_6075 = $this->db->query($sql_6075)->getRow()->total_6075;
+            $total_6075 = $this->db->query($sql_6075)->getRow()?->total_6075;
       
       
-        $sql_76up = "SELECT '76 & Above' as group, DATEDIFF(now(), birth_date)/365  AS total_76up
+        $sql_76up = "SELECT '76 & Above' as g, DATEDIFF(now(), birth_date)/365  AS total_76up
             FROM $users_table 
             WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND DATEDIFF(now(), birth_date)/365 > 75";
-            $total_76up = $this->db->query($sql_76up)->getRow()->total_76up;
+            $total_76up = $this->db->query($sql_76up)->getRow()?->total_76up;
       
 
         return [
             'total_1530' => $total_1530, 'total_3145' => $total_3145,
-            'total_4660' => $total_4660, 'total_6075' => $total_6075,'total_60up' => $total_76up
+            'total_4660' => $total_4660, 'total_6075' => $total_6075,'total_76up' => $total_76up
         ];
     }
 
@@ -838,7 +838,7 @@ class Users_model extends Crud_model {
             left join $team_member_job_info j on u.id = j.user_id
             left join departments d on d.id = j.department_id
 
-            WHERE $users_table.deleted=0 AND $users_table.user_type='staff' AND $users_table.status='active' AND  d.nameSo is not null 
+            WHERE u.deleted=0 AND u.user_type='staff' AND u.status='active' AND  d.nameSo is not null 
             Group by d.id";
 
          $res = $this->db->query($sql)->getResult();

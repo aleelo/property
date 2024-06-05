@@ -77,6 +77,15 @@ class Left_menu {
                 $sidebar_menu["fuel_request"] = array("name" => "fuel_request", "url" => "fuel/request", "class" => "users");
             }
 
+            // if (($this->ci->login_user->is_admin || $access_fuel) && !in_array($role,["Employee","ID Printer"])) { //&& ($role != "Employee")
+            //     $sidebar_menu["procurement"] = array("name" => "procurement", "url" => "#", "class" => "shopping-cart");
+            //     $sidebar_menu["purchase_request"] = array("name" => "purchase_request", "url" => "purchase_request", "class" => "users");
+            //     $sidebar_menu["purchase_order"] = array("name" => "purchase_order", "url" => "purchase_order", "class" => "users");
+            //     $sidebar_menu["purchase_receive"] = array("name" => "purchase_receive", "url" => "purchase_receive", "class" => "users");
+            //     $sidebar_menu["purchase_items"] = array("name" => "purchase_items", "url" => "purchase_items", "class" => "users");
+            //     $sidebar_menu["suppliers"] = array("name" => "suppliers", "url" => "suppliers", "class" => "users");
+            // }
+
             if ($this->ci->login_user->is_admin || !get_array_value($this->ci->login_user->permissions, "do_not_show_projects") && $role != 'ID Printer') {
                 $sidebar_menu["projects"] = array("name" => "projects", "url" => "projects/all_projects", "class" => "command");
             }

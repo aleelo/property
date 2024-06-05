@@ -212,6 +212,9 @@ class Dashboard extends Security_Controller {
         if ($this->can_view_team_members_list() && $show_attendance && ($access_timecards->access_type === "all" || $access_timecards->allowed_members) && $show_leave) {
             $widget["team_members_overview"] = true;
         }
+        
+        $widget["team_members_agegroup_education_widget"] = true;
+        $widget["team_members_by_department_widget"] = true;
 
         if (can_access_reminders_module()) {
             $widget["next_reminder"] = true;
@@ -447,13 +450,15 @@ class Dashboard extends Security_Controller {
 
         $fourth_row = $this->_get_fourth_row_of_admin_and_team_dashboard($widgets);
         $fifth_row = $this->_get_fifth_row_of_admin_and_team_dashboard($widgets);
+        // $sixth_row = $this->_get_sixth_row_of_admin_and_team_dashboard($widgets);
 
         $row_widgets = array(
             $first_row,
             $second_row,
             $third_row,
             $fourth_row,
-            $fifth_row
+            $fifth_row,
+            // $sixth_row
         );
 
         return $row_widgets;
@@ -655,6 +660,21 @@ class Dashboard extends Security_Controller {
 
         $row["columns"] = $columns;
         $row["ratio"] = "8-4";
+
+        return $row;
+    }
+
+    private function _get_sixth_row_of_admin_and_team_dashboard($widgets) {
+
+        $row = array();
+        $columns = array();
+
+        $columns[] = array("sticky_note");//array("team_members_overview_widget");
+        $columns[] = array("team_members_by_department_widget");
+        $columns[] = array("team_members_agegroup_education_widget");
+
+        $row["columns"] = $columns;
+        $row["ratio"] = "4-4-4";
 
         return $row;
     }
@@ -1061,6 +1081,8 @@ class Dashboard extends Security_Controller {
         
         // "team_members_agegroup_education_widget",
         // "team_members_by_department_widget",
+        // print_r($widgets_array);
+        // echo $widget;die;
 
         if (get_array_value($widgets_array, $widget)) {
             if ($widget == "team_members_agegroup_education_widget") {

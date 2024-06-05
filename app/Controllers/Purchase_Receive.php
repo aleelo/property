@@ -13,7 +13,7 @@ use Config\Services;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-class Purchase_order extends Security_Controller
+class Purchase_Receive extends Security_Controller
 {
 
     use Excel_import;
@@ -53,7 +53,7 @@ class Purchase_order extends Security_Controller
         // $this->check_module_availability("module_lead");
 
 
-        return $this->template->rander("purchase_order/index", $view_data);
+        return $this->template->rander("purchase_receive/index", $view_data);
     }
     
      /* load receive add/edit modal */
@@ -78,7 +78,7 @@ class Purchase_order extends Security_Controller
         // print_r($view_data['model_info']);die;
        
  
-         return $this->template->view('purchase_order/order_modal_form', $view_data);
+         return $this->template->view('purchase_receive/order_modal_form', $view_data);
      }
 
     //get owners dropdown
@@ -253,7 +253,7 @@ class Purchase_order extends Security_Controller
         }
 
         $view_data['purchase_order_id'] = $purchase_order_id;
-        return $this->template->view('purchase_order/item_modal_form', $view_data);
+        return $this->template->view('purchase_receive/item_modal_form', $view_data);
     }
 
      /* prepare suggestion of purchase item */
@@ -289,7 +289,7 @@ class Purchase_order extends Security_Controller
         $can_edit_purchase = true;
             
         $view_data["can_edit_purchase"] = $can_edit_purchase;
-        return $this->template->view('purchase_order/purchase_total_section', $view_data);
+        return $this->template->view('purchase_receive/purchase_total_section', $view_data);
     }
 
     /* add or edit purchase item */
@@ -476,8 +476,8 @@ class Purchase_order extends Security_Controller
             to_decimal_format($data->quantity) . " " . $type,
             to_currency($data->price, '$'),
             to_currency($data->total, '$'),
-            modal_anchor(get_uri("purchase_order/item_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_purchase'), "data-post-id" => $data->id, "data-post-purchase_order_id" => $data->purchase_order_id))
-            . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("purchase_order/delete_item"), "data-action" => "delete"))
+            modal_anchor(get_uri("purchase_receive/item_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_purchase'), "data-post-id" => $data->id, "data-post-purchase_order_id" => $data->purchase_order_id))
+            . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("purchase_receive/delete_item"), "data-action" => "delete"))
         );
     }
 
@@ -581,7 +581,7 @@ class Purchase_order extends Security_Controller
         }
 
         $view_data['model_info'] = $model_info;
-        return $this->template->view("purchase_order/order_details", $view_data);
+        return $this->template->view("purchase_receive/order_details", $view_data);
     }
 
     function order_details_tab($purchase_order_id) {
@@ -599,7 +599,7 @@ class Purchase_order extends Security_Controller
         $view_data['can_add_purchase'] = true;
         $view_data['can_edit_purchase'] = true;
 
-        return $this->template->view("purchase_order/order_details_tab", $view_data);
+        return $this->template->view("purchase_receive/order_details_tab", $view_data);
     }
 
     function order_details_json($id=0) {
@@ -633,7 +633,7 @@ class Purchase_order extends Security_Controller
                 $view_data['purchase_status'] = $purchase_info->status;
                 // $view_data['purchase_order_id'] = $purchase_order_id;
                 $view_data["can_add_purchase"] = true;
-                return $this->template->rander("purchase_order/view_purchase", $view_data);
+                return $this->template->rander("purchase_receive/view_purchase", $view_data);
         } else {
             show_404();
         }
@@ -1519,7 +1519,7 @@ public function r_delete()
         $fOrderDate = empty($data->order_date)? '' : date_format(new \DateTime($data->order_date),'F d, Y');
         $row_data = array(
             $data->id,
-            anchor(get_uri("purchase_order/view/".$data->id), 'PO-'.str_pad($data->id,4,'0',STR_PAD_LEFT), array("title" => app_lang("purchase_details"), "data-post-id" => $data->id)),
+            anchor(get_uri("purchase_receive/view/".$data->id), 'PO-'.str_pad($data->id,4,'0',STR_PAD_LEFT), array("title" => app_lang("purchase_details"), "data-post-id" => $data->id)),
             // 'PO-'.str_pad($data->id,4,'0',STR_PAD_LEFT),
             $data->product_type,
             $data->supplier,
@@ -1534,9 +1534,9 @@ public function r_delete()
         //open doc link:
         // $link = "<a href='$data->webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
 
-        $row_data[] = modal_anchor(get_uri("purchase_order/order_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => 'Edit Order Information', "data-post-id" => $data->id))
-        .modal_anchor(get_uri("purchase_order/order_details"), "<i data-feather='info' class='icon-16'></i>", array("class" => "info", "title" => 'Show Order Information', "data-post-id" => $data->id))
-        . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => 'Delete Order Information', "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("purchase_order/delete"), "data-action" => "delete-confirmation"));
+        $row_data[] = modal_anchor(get_uri("purchase_receive/order_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => 'Edit Order Information', "data-post-id" => $data->id))
+        .modal_anchor(get_uri("purchase_receive/order_details"), "<i data-feather='info' class='icon-16'></i>", array("class" => "info", "title" => 'Show Order Information', "data-post-id" => $data->id))
+        . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => 'Delete Order Information', "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("purchase_receive/delete"), "data-action" => "delete-confirmation"));
 
         return $row_data;
     }

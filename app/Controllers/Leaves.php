@@ -602,13 +602,23 @@ class Leaves extends Security_Controller {
         $id = $data['id'];
         $employee = $data['employee'];
         $jobTitle = $data['jobTitle'];
+        $leave_type = $data['leavetype'];
 
         $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
-        $message = "New Leave Requested.\n";
-        $message .= "\nLeave Number: #$id"; 
-        $message .= "\nRequested by: #$employee"; 
-        $message .= "\nJob Title: #$jobTitle"; 
+       
+        $message = "Codsi Fasax:.\n";
         $messageType = "text";
+        
+        // get visitors details:
+        $id = $data['id'];
+       
+        // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
+        // $options = array('id'=> $this->login_user->id); 
+        // $user_info = $this->Users_model->get_details($options)->getRow();
+
+        $message.="\nWaxaa xaqiijin u baahan codsiga fasaxa noociisu yahay: $leave_type ee #" . $id;
+    
+        $message.="\nee kayimid codsade: " . $employee;           
                 
         // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
         
@@ -1009,27 +1019,39 @@ class Leaves extends Security_Controller {
                 
                 if ($status === "approved" ) {
                     
-                    // send whatsapp message:
-                                      
-                    $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
-                    $message = "Your Leave Request Approved.\n";
-                    $message .= "\nLeave Number: #$save_id"; 
-                    $messageType = "text";
-                            
-                    // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
                     
+                    // send whatsapp message:
+                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                                    
+                    $options = array('id'=> $applicatoin_info->applicant_id); 
+                    $user_info = $this->Users_model->get_details($options)->getRow();
+
+                    $start_date = date('F d,Y',strtotime($applicatoin_info->start_date));
+                    // send whatsapp message:
+                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                    $phoneNumber = $user_info->phone;
+                    $message = "Codsiga fasaxa #$applicaiton_id ee ku mudeysan: $start_date waa la oggolaaday.\n";
+                
+                    $messageType = "text";
+                                        
                     $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
                 }elseif($status === "rejected"){
 
+                    
                     // send whatsapp message:
-                                      
-                    $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
-                    $message = "Your Leave Request Rejected.\n";
-                    $message .= "\nLeave Number: #$save_id"; 
+                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                                    
+                    $options = array('id'=> $applicatoin_info->applicant_id); 
+                    $user_info = $this->Users_model->get_details($options)->getRow();
+
+                    $start_date = date('F d,Y',strtotime($applicatoin_info->start_date));
+                    // send whatsapp message:
+                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                    $phoneNumber = $user_info->phone;
+                    $message = "Codsiga fasaxa #$applicaiton_id ee ku mudeysan: $start_date waa la diiday.\n";
+                
                     $messageType = "text";
-                            
-                    // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
                     
                     $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 

@@ -1622,7 +1622,7 @@ if (!function_exists('team_members_agegroup_education_widget')) {
         $view_data["total_3145"] = get_array_value($agegroups_data,'total_3145');
         $view_data["total_4660"] = get_array_value($agegroups_data,'total_4660');
         $view_data["total_6075"] = get_array_value($agegroups_data,'total_6075');
-        $view_data["total_60up"] = get_array_value($agegroups_data,'total_60up');
+        $view_data["total_76up"] = get_array_value($agegroups_data,'total_76up');
       
         $view_data["total_diploma"] = get_array_value($education_data,'total_diploma');
         $view_data["total_graduate"] = get_array_value($education_data,'total_graduate');

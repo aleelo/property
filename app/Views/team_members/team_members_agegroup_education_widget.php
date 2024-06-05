@@ -11,9 +11,9 @@
 ?>
 <div class="card bg-white">
     <div class="card-header">
-        <i data-feather="users" class="icon-16"></i> &nbsp;<?php echo app_lang("team_members_departments_overview"); ?>
+        <i data-feather="users" class="icon-16"></i> &nbsp;<?php echo app_lang("team_members_educaction_age_overview"); ?>
     </div>
-    <div class="rounded-bottom">
+    <div class="rounded-bottom row">
 
         <div class="col-md-6 col b-r-2 ps-4 pe-4">
             <h4>Employee Education Levels</h4>
