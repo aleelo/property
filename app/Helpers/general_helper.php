@@ -1604,9 +1604,9 @@ if (!function_exists("sendWhatsAppMessage")) {
         if ($httpCode == 200) {
             return json_decode($response, true);
         } else {
-            print_r($response);
-            echo "Error response code: " . $httpCode;
-            return "Error response code: " . $httpCode;
+            // print_r($response);
+        
+            return $httpCode;
         }
     }
 

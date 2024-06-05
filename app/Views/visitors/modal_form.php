@@ -46,8 +46,7 @@
                     "<td style='width: 110px;'>" + actions + "</td>"+
                 "</tr>"
             );
-
-          
+         
 
             feather.replace();
 
@@ -63,10 +62,7 @@
 
         setDatePicker(".date");
         
-        setTimePicker(".time");
-
-        
-        
+        setTimePicker(".time");       
 
         //read details for visitor:
         

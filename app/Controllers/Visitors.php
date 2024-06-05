@@ -1057,6 +1057,12 @@ class Visitors extends Security_Controller
             // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
             
             $res = sendWhatsappMessage($phoneNumber, $message,$messageType);
+            // die('error: '.$res);
+
+            if($res == 400){                
+                echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid phone number, Please update your number like: +25261xxxx'));
+                die;
+            }
 
         }
         else{
