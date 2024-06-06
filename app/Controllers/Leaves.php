@@ -626,7 +626,7 @@ class Leaves extends Security_Controller {
 
 
         if($resw == 400){                
-            echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid phone number, Please update your number like: +25261xxxx'));
+            echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
             die;
         }
 

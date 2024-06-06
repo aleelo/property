@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class General_files_model extends Crud_model {
+class Archives_model extends Crud_model {
 
     protected $table = null;
 
