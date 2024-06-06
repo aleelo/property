@@ -1025,7 +1025,7 @@ class Visitors extends Security_Controller
             $res = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
             if($res == 400){                
-                echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid phone number, Please update your number like: +25261xxxx'));
+                echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
                 die;
             }
 
@@ -1064,14 +1064,14 @@ class Visitors extends Security_Controller
             $res = sendWhatsappMessage($phoneNumber, $message,$messageType);
             
             if($res == 400){                
-                echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid phone number, Please update your number like: +25261xxxx'));
+                echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
                 die;
             }
 
             // die('error: '.$res);
 
             if($res == 400){                
-                echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid phone number, Please update your number like: +25261xxxx'));
+                echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
                 die;
             }
 

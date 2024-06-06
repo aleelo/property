@@ -42,7 +42,7 @@ class Visitors_info extends App_Controller
      * api for cardholder for nfc reader device:
      */
     
-     public function cardholder_single($id){
+     public function cardholder_single($id=0){
         // echo $id;
         $cardholder = $this->db->query("SELECT * FROM rise_cardholders WHERE uid = '$id'")->getRow();
         echo json_encode($cardholder);

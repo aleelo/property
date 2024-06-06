@@ -736,6 +736,7 @@ class Leaves extends Security_Controller {
             "start_date" => $start_date,
             "end_date" => $end_date,
             "reason" => $this->request->getPost('reason'),
+            "flight_included" => $this->request->getPost('flight_included'),
             "created_by" => $this->login_user->id,
             "created_at" => $now,
             "department_id" => $this->get_user_department_id(),
@@ -1023,8 +1024,7 @@ class Leaves extends Security_Controller {
                 }
                 
                 if ($status === "approved" ) {
-                    
-                    
+                                        
                     // send whatsapp message:
                     // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
                                     
@@ -1042,7 +1042,7 @@ class Leaves extends Security_Controller {
                     $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
                     if($resw == 400){                
-                        echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid phone number, Please update your number like: +25261xxxx'));
+                        echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
                         die;
                     }
 
@@ -1067,7 +1067,7 @@ class Leaves extends Security_Controller {
 
                     
                     if($resw == 400){                
-                        echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid phone number, Please update your number like: +25261xxxx'));
+                        echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
                         die;
                     }
 
