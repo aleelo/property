@@ -9,7 +9,7 @@ if ($total_team_members) {
 ?>
 <div class="card bg-white">
     <div class="card-header">
-        <i data-feather="users" class="icon-16"></i> &nbsp;<?php echo app_lang("team_members_overview"); ?>
+        <i data-feather="users" class="icon-16"></i> &nbsp;<?php echo app_lang("total_team_members_overview"); ?>
     </div>
     <div class="rounded-bottom">
         <div class="box pt-2">

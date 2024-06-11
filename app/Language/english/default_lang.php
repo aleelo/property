@@ -1210,6 +1210,7 @@ $lang["team_members_departments_overview"] = "Employee Departments Overview";
 $lang["team_members_by_department_widget"] = "Employee Departments Overview";
 $lang["team_members_educaction_age_overview"] = "Employee Education/Age Groups Overview";
 $lang["team_members_agegroup_education_widget"] = "Employee Education/Age Groups Overview";
+$lang["total_team_members_overview"] = "Total Employee Overview";
 $lang["kanban"] = "Kanban";
 $lang["procurement"] = "Procurement";
 $lang["suppliers"] = "Suppliers";
