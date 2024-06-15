@@ -1083,7 +1083,11 @@ class Security_Controller extends App_Controller {
 
     public function get_employees_dropdown() {
         $employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'")->getResult();
-        $temp_array =[];
+        $temp_array = array('' => '---Choose Department Head---');
+
+        if(!$employees){
+            return null;
+        }
   
         foreach($employees as $e){
             $temp_array[$e->id] = $e->name;
@@ -1093,7 +1097,7 @@ class Security_Controller extends App_Controller {
     }
     public function get_employees_dropdown_for_table() {
         $employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'")->getResult();
-        $temp_array[] = array('id' => '', 'text' => 'Choose Employee');
+        $temp_array[] = array('id' => '', 'text' => '---Choose Employee---');
   
         foreach($employees as $e){
             $temp_array[] = array('id' => $e->id, 'text' => $e->name);
@@ -1114,7 +1118,7 @@ class Security_Controller extends App_Controller {
 
         $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id'");
         
-        $data = array('' => 'Choose Department');
+        $data = array('' => '---Choose Department---');
 
         if(!$depts){
             return [];
@@ -1138,7 +1142,7 @@ class Security_Controller extends App_Controller {
 
         $suppliers = $this->db->query("select id,supplier_name from rise_suppliers where deleted=0");
         
-        $data = array('' => 'Choose Supplier');
+        $data = array('' => '---Choose Supplier---');
 
         if(!$suppliers){
             return [];
@@ -1163,7 +1167,7 @@ class Security_Controller extends App_Controller {
         }
 
         $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id'");
-        $data[] = array('id' => '', 'text' => 'Choose Department');
+        $data[] = array('id' => '', 'text' => '---Choose Department---');
 
         if(!$depts){
             return [];
@@ -1187,7 +1191,7 @@ class Security_Controller extends App_Controller {
         }
 
         $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id'");
-        $data[] = array('id' => '', 'text' => 'Choose Department');
+        $data[] = array('id' => '', 'text' => '---Choose Department---');
 
         if(!$depts){
             return [];

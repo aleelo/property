@@ -33,16 +33,17 @@ class Crud_model extends Model {
         // $this->sc = new Security_Controller();
     }
 
-    protected function use_table($table,$prefix=false) {
-        $db_prefix = $this->db->getPrefix();
+    protected function use_table($table,$prefix) {
+        $db_prefix = $prefix ? $this->db->getPrefix() : "";
         $this->table = $db_prefix . $table;
         $this->table_without_prefix = $table;
 
-        if($prefix){
-            $this->db_builder = $this->db->table($this->table);
-        }else{
-            $this->db_builder = $this->db->table($this->table_without_prefix);
-        }
+        $this->db_builder = $this->db->table($this->table);
+        
+        // if($prefix){
+        // }else{
+        //     $this->db_builder = $this->db->table($this->table);
+        // }
     }
 
     protected function disable_log_activity() {

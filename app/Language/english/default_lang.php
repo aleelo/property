@@ -43,10 +43,24 @@ $lang["purchase_type"] = "Purchase Type";
 $lang["po_id"] = "PO ID";
 $lang["supplier_name"] = "Supplier Name";
 $lang["contact_person"] = "Contact Person";
+
 $lang["add_supplier"] = "Add Supplier";
 $lang["add_suppliers"] = "Add Suppliers";
 $lang["edit_supplier"] = "Edit Supplier";
 $lang["suppliers_list"] = "Suppliers List";
+
+$lang["add_department"] = "Add Department";
+$lang["add_department"] = "Add Department";
+$lang["add_departments"] = "Add Department";
+$lang["edit_department"] = "Edit Department";
+$lang["departments_list"] = "Departments List";
+$lang["department_email"] = "Department Email";
+$lang["departments"] = "Departments";
+$lang["name_so"] = "Name Somali";
+$lang["name_en"] = "Name English";
+$lang["head"] = "Head";
+$lang["department_head"] = "Department Head";
+
 $lang["order_details"] = "Order Details";
 $lang["purchase"] = "Purchase";
 $lang["total_received"] = "Total Received";

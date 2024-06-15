@@ -63,6 +63,9 @@ class Left_menu {
         
             $sidebar_menu["archives"] = array("name" => "archives", "url" => "archives", "class" => "layers");
             
+            if ($this->ci->login_user->is_admin || $role =="Administrator" || $role == "HRM") {
+                $sidebar_menu["departments"] = array("name" => "departments", "url" => "departments", "class" => "server");
+            }
 
             if (($this->ci->login_user->is_admin || $access_visitor) && !in_array($role,["Employee","ID Printer"])) {
                 $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "#", "class" => "users");

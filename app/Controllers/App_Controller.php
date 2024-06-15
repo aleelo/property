@@ -38,6 +38,7 @@ class App_Controller extends Controller {
     public $Purchase_Item_model;
     public $Purchase_Order_Items_model;
     public $Suppliers_model;
+    public $Departments_model;
 
     public $Cardholders_model;
     public $Archives_model;
@@ -164,6 +165,7 @@ class App_Controller extends Controller {
             'Purchase_Item_model',
             'Purchase_Order_Items_model',
             'Suppliers_model',
+            'Departments_model',
             'Archives_model',
             'Events_model',
             'Announcements_model',
