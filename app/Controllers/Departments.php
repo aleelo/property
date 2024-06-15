@@ -99,22 +99,13 @@ class Departments extends Security_Controller {
         ));
 
         $id = $this->request->getPost('id');
-        if ($this->request->getPost('undo')) {
-            if ($this->Departments_model->delete($id, true)) {
-                $options = array("id" => $id);
-                $model_info = $this->Departments_model->get_details($options)->getRow();
-                echo json_encode(array("success" => true, "id" => $model_info->id, "data" => $this->_make_supplier_row($model_info), "message" => app_lang('record_undone')));
-            } else {
-                echo json_encode(array("success" => false, app_lang('error_occurred')));
-            }
+    
+        if ($this->db->query("delete from departments where id = $id")) {
+            echo json_encode(array("success" => true, "id" => $id, 'message' => app_lang('record_deleted')));
         } else {
-            if ($this->Departments_model->delete($id)) {
-                $model_info = $this->Departments_model->get_one($id);
-                echo json_encode(array("success" => true, "id" => $model_info->id, 'message' => app_lang('record_deleted')));
-            } else {
-                echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
-            }
+            echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
         }
+        
     }
 
     /* list of items, prepared for datatable  */
