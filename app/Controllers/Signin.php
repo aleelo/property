@@ -197,7 +197,7 @@ class Signin extends App_Controller
 
         $params = array('client_id' => $appid,
 
-            'redirect_uri' => $env == 'development' ? 'https://localhost/eVilla/signin/aad_callback' : 'https://phpstack-249906-4047771.cloudwaysapps.com/signin/aad_callback',
+            'redirect_uri' => $env == 'development' ? 'https://localhost/eVilla/signin/aad_callback' : 'https://ev.villasomalia.gov.so/signin/aad_callback',
 
             'response_type' => 'token',
             'login_hint' => $email, //'admin@presidency@gov.so',
