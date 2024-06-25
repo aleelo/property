@@ -1082,6 +1082,82 @@ class Leaves extends Security_Controller {
         }
     }
 
+    public function send_leave_nulla_osta($data = array()) {
+        
+        $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta", true);
+        $email = 'alihaile2020@gmail.com';//$data['EMAIL'];
+        $leave_id = $data['LEAVE_ID'];
+        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
+                        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
+                        
+                        LEFT JOIN rise_users a on l.applicant_id = a.id
+                        LEFT JOIN rise_users cb on l.applicant_id = cb.id
+                        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
+                        left join rise_leave_types t on t.id=l.leave_type_id 
+                        where l.id= $leave_id")->getRow();
+
+        $nolo_data['leave_info'] = $leave_info;
+
+        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
+        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
+        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
+        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
+        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
+        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
+        $parser_data["LEAVE_URL"] = get_uri('leaves');
+        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_nolosto_search_form',$nolo_data);
+        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
+        $parser_data["LOGO_URL"] = get_logo_url();
+        $parser_data["SITE_URL"] = get_uri();
+        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
+        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
+
+        $message =  get_array_value($email_template, "message_default");
+        $subject =  get_array_value($email_template, "subject_default");
+
+        $message = $this->parser->setData($parser_data)->renderString($message);
+        $subject = $this->parser->setData($parser_data)->renderString($subject);
+
+        if (send_app_mail($email, $subject, $message)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function send_notify_leave_status($data = array()) {
+        
+        $email = $data['email'];
+        $status = $data['LEAVE_STATUS'];
+
+        if($status == 'approved'){
+            $email_template = $this->Email_templates_model->get_final_template("leave_request_approved", true);
+        }else if($status == 'rejected'){
+            $email_template = $this->Email_templates_model->get_final_template("leave_request_rejected", true);
+        }
+
+        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
+        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
+        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
+        $parser_data["LEAVE_URL"] = get_uri('leaves');
+        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
+        $parser_data["LOGO_URL"] = get_logo_url();
+        $parser_data["SITE_URL"] = get_uri();
+        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
+        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
+
+        $message =  get_array_value($email_template, "message_default");
+        $subject =  get_array_value($email_template, "subject_default");
+
+        $message = $this->parser->setData($parser_data)->renderString($message);
+        $subject = $this->parser->setData($parser_data)->renderString($subject);
+
+        if (send_app_mail($email, $subject, $message)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     //    delete a leave application
 
     function delete() {

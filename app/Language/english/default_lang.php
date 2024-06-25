@@ -49,6 +49,12 @@ $lang["add_suppliers"] = "Add Suppliers";
 $lang["edit_supplier"] = "Edit Supplier";
 $lang["suppliers_list"] = "Suppliers List";
 
+$lang["leave_nulla_osta"] = "Leave Nulla Osta";
+$lang["leave_passport_return"] = "Leave Passport Return";
+$lang["new_leave_request"] = "New Leave Request";
+$lang["leave_request_approved"] = "Leave Request Approved";
+$lang["leave_request_rejected"] = "Leave Request Rejected";
+
 $lang["add_department"] = "Add Department";
 $lang["add_department"] = "Add Department";
 $lang["add_departments"] = "Add Department";
@@ -59,6 +65,8 @@ $lang["departments"] = "Departments";
 $lang["name_so"] = "Name Somali";
 $lang["name_en"] = "Name English";
 $lang["head"] = "Head";
+$lang["employee"] = "Employee";
+$lang["employees"] = "Employees";
 $lang["department_head"] = "Department Head";
 
 $lang["order_details"] = "Order Details";
