@@ -178,6 +178,26 @@ class Leaves extends Security_Controller {
             // var_dump($res);
             // die();
 
+            
+            $duration = (int)$leave_info->total_days;
+            
+            //send email to the HRM for new leave notification:
+                $leave_email_data = [
+                    'LEAVE_ID'=>$save_id,
+                    'UUID' => $leave_info->uuid,
+                    'LEAVE_REASON' => $leave_info->reason,
+                    'LEAVE_TITLE' => $leave_info->title,
+                    'EMPLOYEE_NAME'=>$user_info->first_name.' '.$user_info->last_name,
+                    'JOB_TITLE'=>$user_info->job_title_so,
+                    'EMAIL'=>$user_info->private_email,
+                    'PASSPORT'=>$user_info->passport_no,            
+                    'TOTAL_DAYS'=>$duration,
+                    'LEAVE_TYPE'=>$leave_info->title,            
+                    'LEAVE_DATE' => $duration == 1 ? $leave_data['start_date']: $leave_data['start_date'] .' - '.$leave_data['end_date'],
+                ];
+    
+                $r = $this->send_leave_nulla_osta($leave_email_data);
+
         }
 
 
@@ -316,6 +336,24 @@ class Leaves extends Security_Controller {
             // echo $webUrl;
             // die();
 
+            $duration = (int)$leave_info->total_days;
+            
+            //send email to the HRM for new leave notification:
+                $leave_email_data = [
+                    'LEAVE_ID'=>$save_id,
+                    'UUID' => $leave_info->uuid,
+                    'LEAVE_REASON' => $leave_info->reason,
+                    'LEAVE_TITLE' => $leave_info->title,
+                    'EMPLOYEE_NAME'=>$user_info->first_name.' '.$user_info->last_name,
+                    'JOB_TITLE'=>$user_info->job_title_so,
+                    'EMAIL'=>$user_info->private_email,
+                    'PASSPORT'=>$user_info->passport_no,            
+                    'TOTAL_DAYS'=>$duration,
+                    'LEAVE_TYPE'=>$leave_info->title,            
+                    'LEAVE_DATE' => $duration == 1 ? $leave_data['start_date']: $leave_data['start_date'] .' - '.$leave_data['end_date'],
+                ];
+    
+                $r = $this->send_leave_nulla_osta($leave_email_data);
         }
 
 
