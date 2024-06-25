@@ -115,7 +115,7 @@ class Leaves extends Security_Controller {
             'uuid' => $leave_info->uuid,
             'id'=>$save_id,
             'employee'=>$user_info->first_name.' '.$user_info->last_name,
-            'jobtitle'=>$user_info->job_title_so,
+            'jobTitle'=>$user_info->job_title_so,
             'passport'=>$user_info->passport_no,
             'leavetype'=>$leave_info->title,
             'ref_number'=> $template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('y'),
