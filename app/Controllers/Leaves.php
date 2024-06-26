@@ -1066,7 +1066,8 @@ class Leaves extends Security_Controller {
 
         //only allow to updte the status = accept or reject for admin or specefic user
         //otherwise user can cancel only his/her own application
-        $applicatoin_info = $this->Leave_applications_model->get_one($applicaiton_id);
+        $applicatoin_info = $this->db->query("SELECT l.*,t.title FROM rise_leave_applications l 
+                        left join rise_leave_types t on t.id=l.leave_type_id where l.id = $applicaiton_id")->getRow();;
 
         if ($status === "approved" || $status === "rejected") {
             $this->access_only_allowed_members($applicatoin_info->applicant_id);
