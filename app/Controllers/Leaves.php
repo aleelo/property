@@ -1133,7 +1133,7 @@ class Leaves extends Security_Controller {
                         'PASSPORT'=>$user_info->passport_no,            
                         'TOTAL_DAYS'=>$duration,
                         'LEAVE_TYPE'=>$applicatoin_info->title,            
-                        'LEAVE_DATE' => $duration == 1 ? $leave_data['start_date']: $leave_data['start_date'] .' - '.$leave_data['end_date'],
+                        'LEAVE_DATE' => $duration == 1 ? $applicatoin_info->start_date: $applicatoin_info->start_date .' - '.$applicatoin_info->end_date,
                     ];
         
                     $r = $this->send_leave_passport_return($leave_email_data);

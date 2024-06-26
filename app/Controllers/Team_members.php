@@ -843,6 +843,7 @@ class Team_members extends Security_Controller {
 
         $account_data = array(
             "email" => $this->request->getPost('email'),
+            "private_email" => $this->request->getPost('private_email'),
             "login_type" => $this->request->getPost('login_type')
         );
 

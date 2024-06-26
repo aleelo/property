@@ -65,6 +65,7 @@ $lang["departments"] = "Departments";
 $lang["name_so"] = "Name Somali";
 $lang["name_en"] = "Name English";
 $lang["head"] = "Head";
+$lang["private_email"] = "Private Email";
 $lang["employee"] = "Employee";
 $lang["employees"] = "Employees";
 $lang["department_head"] = "Department Head";

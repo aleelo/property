@@ -57,6 +57,28 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="form-group">
+                    <div class="row">
+                        <label for="private_email" class=" col-md-2"><?php echo app_lang('private_email'); ?></label>
+                        <div class=" col-md-10">
+                            <?php
+                            echo form_input(array(
+                                "id" => "private_email",
+                                "name" => "private_email",
+                                "class" => "form-control",
+                                "value" => $user_info->private_email,
+                                "placeholder" => app_lang('email').': your private email',
+                                "autocomplete" => "off",
+                                "data-rule-email" => true,
+                                "data-msg-email" => app_lang("enter_valid_email"),
+                                "data-rule-required" => true,
+                                "data-msg-required" => app_lang("field_required"),
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
 
             <?php if (($user_info->id == $login_user->id) || $login_user->is_admin) { ?> 
                 <div class="form-group" id="password_div">
