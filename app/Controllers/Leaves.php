@@ -1162,7 +1162,7 @@ class Leaves extends Security_Controller {
         $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
         $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
         $parser_data["LEAVE_URL"] = get_uri('leaves');
-        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_nolosto_mail/'.$leave_id,$nolo_data);
+        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_nolosto_mail',$nolo_data);
         $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
         $parser_data["LOGO_URL"] = get_logo_url();
         $parser_data["SITE_URL"] = get_uri();
