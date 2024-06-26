@@ -12,130 +12,8 @@
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
         } */
-/* 
 
-        #search-container1 .container {
-            background-color: #c8eaff;
-            width: 440px;
-            border-top-left-radius:  7px;
-            border-top-right-radius:  7px;
-            padding: 0px;
-            color: #4f4f74;
-        }
 
-        #search-container1 .ticket-header {
-            background-color: #3cb4ff;
-            color: white;
-            border-top-left-radius:  7px;
-            border-top-right-radius:  7px;
-            text-align: center;
-            padding: 15px 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .ticket-header h2{
-            font-size: 20px;
-        }
-
-        #logo {
-            /* width: 45px; */
-            /* border: 2px solid white; */
-            /* border-radius: 100%; */
-        }
-
-        .ticket-body {
-            padding: 20px 15px;
-        }
-
-        #search-container1 .ticket-name p {
-            font-size: 0.9rem;
-            color: midnightblue;
-            font-weight: 300;
-        }
-
-        #search-container1 .ruler {
-            margin: 1rem 0;
-            height: 1px;
-            background: #20a3f6;
-        }
-
-        .ticket-number-date {
-            display: flex;
-            justify-content: space-between;
-            margin: 0 10%;
-        }
-
-        .ticket-from-and-to {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            /* margin: 0 15%; */
-            /* border-bottom: 2.5px dashed #20a3f6;
-            padding-bottom: 20px; */
-        }
-
-        .plane-body {
-            display: flex;
-            align-items: center;
-            justify-content:center;
-            width: 250px;
-        }
-
-        .plane {
-            width: 50px;
-            margin-top: 15px;
-            /* display: flex; */
-        }
-
-        .ter-gat-set {
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .bording {
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-        }
-
-        #search-container1 .bording-content {
-            border: 2px dashed #20a3f6;
-            padding: 10px 73px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .qrcode {
-            margin-top: 20px;
-            display: felx;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .code {
-            height:200px;
-            width: 200px;
-        }
-
-        p{
-            font-weight: 500;
-        }
-        h2,h3,h4,h5,h6,p{
-            margin-bottom: 0;
-            margin-top: 0;
-        }
-
-        .ticket-from-and-to .avatar{
-            width: 100px;
-            height: 100px;
-        }
         @media screen and (max-width: 414px) {
             
             
@@ -268,7 +146,8 @@
         .bg-primary{
             background-color: #6690F4 !important;
             color: #fff;
-        } */
+        } 
+        
     </style>
 
     <div class=" search-container" style="margin-left:auto;margin-right: auto;width: 440px;" id="search-container1" >
@@ -304,17 +183,22 @@
                         <div class="ruler"  style="margin: 1rem 0; height: 1px; background: #20a3f6;"></div>
                         <div class="ticket-number-date" style=" display: flex;justify-content: space-between;margin: 0 10%;">
                             <div>
-                                <p style="font-size: 0.9rem;color: midnightblue;">PASSPORT NO.</p>
-                                <h2 style="font-size: 20px;"><?php echo $leave_info->passport_no;?></h2>
+                                <p style="font-size: 0.9rem;color: midnightblue;margin:0;">PASSPORT NO.</p>
+                                <h2 style="font-size: 20px;margin:0;"><?php echo $leave_info->passport_no;?></h2>
                             </div>
                             <div>
-                                <p style="font-size: 0.9rem;color: midnightblue;">DATE</p>
-                                <h2 style="font-size: 20px;"><?php echo date_format(new DateTime($leave_info->start_date),'d M, Y');?></h2>
+                                <p style="font-size: 0.9rem;color: midnightblue;margin:0;">DATE</p>
+                                <h2 style="font-size: 20px;margin:0;"><?php echo date_format(new DateTime($leave_info->start_date),'d M, Y');?></h2>
                             </div>
                         </div>
                         <div class="ruler"  style="margin: 1rem 0; height: 1px; background: #20a3f6;"></div>
                         <div class="ticket-from-and-to justify-content-center" style=" display: flex; justify-content: space-between;align-items: center;">
-                            <div class="clearfix" style="display: flex;width: 100%;align-items: center;text-align: center;justify-content: center;gap: 30px;">
+                            <div class="clearfix" style="display: flex;
+                                        width: 100%;
+                                        align-items: center;
+                                        text-align: center;
+                                        gap: 10px;
+                                        flex-direction: column;">
                                 <div class="flex-shrink-0">
                                     <span class="avatar" style="width: 100px;height: 130px;display: flex;justify-content: center;">
                                         <img src="<?php echo get_avatar($leave_info->applicant_avatar); ?>" alt="..." style="border-radius: 50%;" />
@@ -324,7 +208,7 @@
                                     <div class="m0">
                                         <?php echo $leave_info->applicant_name; ?>
                                     </div>
-                                    <p><span class='badge bg-primary' style="border-radius: 20px;display: inline-block;
+                                    <p style="margin: 0;"><span class='badge bg-primary' style="border-radius: 20px;display: inline-block;
                                     padding: 4px 5px;font-weight: normal;font-size: 85%;margin-top: 5px;background-color: #6690F4 !important;color: #fff;">
                                     <?php echo $leave_info->job_title; ?></span> </p>
                                 </div>
@@ -334,8 +218,8 @@
                         <div class="ruler" style="margin: 1rem 0; height: 1px; background: #20a3f6;"></div>
                         <div class="bording" style=" margin-top: 10px;display: flex;justify-content: center;">
                             <div class="bording-content" style="padding: 20px 35px;border: 2px dashed #20a3f6; display: flex;justify-content: center;align-items: center;flex-direction: column;">
-                                <p>LEAVE DATE #</p>
-                                <h4 style="font-size: 14px;"><?php echo date_format(new DateTime($leave_info->start_date),'F d, Y').' - '.date_format(new DateTime($leave_info->end_date),'F d, Y');?></h4>
+                                <p style="margin:0;margin-bottom: 5px;">LEAVE DATE #</p>
+                                <h4 style="font-size: 14px;margin:0"><?php echo date_format(new DateTime($leave_info->start_date),'F d, Y').' - '.date_format(new DateTime($leave_info->end_date),'F d, Y');?></h4>
                             </div>
                         </div>
                         <div class="qrcode" style="  margin-top: 20px;
