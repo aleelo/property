@@ -100,7 +100,8 @@ class Leaves extends Security_Controller {
         }
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
-        $leave_info = $this->db->query("SELECT t.*,l.id,l.uuid FROM rise_leave_applications l 
+      
+        $leave_info = $this->db->query("SELECT l.*,t.title FROM rise_leave_applications l 
                         left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
 
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
@@ -270,7 +271,8 @@ class Leaves extends Security_Controller {
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
 
-        $leave_info = $this->db->query("SELECT t.*,l.id,l.uuid FROM rise_leave_applications l 
+        
+        $leave_info = $this->db->query("SELECT l.*,t.title FROM rise_leave_applications l 
                         left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
 
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
@@ -441,6 +443,23 @@ class Leaves extends Security_Controller {
         echo json_encode(array('success' => true,'result' =>$view,'search' => $search ));
     }
 
+    
+    public function leave_nolosto_mail($id=0) {
+        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
+        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
+        LEFT JOIN rise_users a on l.applicant_id = a.id
+        LEFT JOIN rise_users cb on l.applicant_id = cb.id
+        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
+        left join rise_leave_types t on t.id=l.leave_type_id 
+        where l.id = $id")->getRow();
+        
+        $view_data['leave_info'] = $leave_info;
+
+        return $this->template->view('leaves/leave_nolosto_mail',$view_data);
+
+    }
+
+
     // leave return search
     public function leave_return_search() {
         $search = $this->request->getPost('searchTerm') ?? 0;
@@ -543,7 +562,7 @@ class Leaves extends Security_Controller {
 
             'id' => $data['id'],
             'employee' => $data['employee'],
-            'jobtitle' => $data['jobtitle'],
+            'jobtitle' => $data['jobTitle'],
             'leavetype' => $data['leavetype'],
             'passport' => $data['passport'],
             'ref' => $data['ref_number'],
@@ -1143,7 +1162,7 @@ class Leaves extends Security_Controller {
         $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
         $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
         $parser_data["LEAVE_URL"] = get_uri('leaves');
-        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_nolosto_search_form',$nolo_data);
+        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_nolosto_mail/'.$leave_id,$nolo_data);
         $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
         $parser_data["LOGO_URL"] = get_logo_url();
         $parser_data["SITE_URL"] = get_uri();
