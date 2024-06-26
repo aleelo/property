@@ -41,37 +41,35 @@
                         &nbsp;&nbsp;
                     </div>
                     <div class="ticket-body" style=" padding: 20px 15px;">
-                        <h2 class="text-center mb-3" style="margin-bottom: 15px;color: #264a78;text-align:center"><?php echo strtoupper($leave_info->leave_type) ?></h2>
+                        <h2 class="text-center mb-3" style="margin-bottom: 15px;color: #264a78;text-align:center;margin-top: 0;"><?php echo strtoupper($leave_info->leave_type) ?></h2>
                         <div class="ticket-name">
                             <p style=" font-size: 0.9rem;
-                                color: midnightblue;font-weight: 300;">Howlwadeen:</p>
-                            <h2 style="font-size: 20px;"><?php echo $leave_info->applicant_name;?></h2>
+                                color: midnightblue;font-weight: 300;margin:0;">Howlwadeen:</p>
+                            <h2 style="font-size: 20px;margin:0;"><?php echo $leave_info->applicant_name;?></h2>
                         </div>
                         <div class="ruler"  style="margin: 1rem 0; height: 1px; background: #20a3f6;"></div>
-                        <div class="ticket-number-date" style=" display: flex;justify-content: space-between;margin: 0 10%;">
-                            <div>
+                        <div class="ticket-number-date" style=" margin: 0 10%;">
+                            <div style="float: left;">
                                 <p style="font-size: 0.9rem;color: midnightblue;margin:0;">PASSPORT NO.</p>
                                 <h2 style="font-size: 20px;margin:0;"><?php echo $leave_info->passport_no;?></h2>
                             </div>
-                            <div>
+                            <div style="float: right;">
                                 <p style="font-size: 0.9rem;color: midnightblue;margin:0;">DATE</p>
-                                <h2 style="font-size: 20px;margin:0;"><?php echo date_format(new DateTime($leave_info->start_date),'d M, Y');?></h2>
+                                <h2 style="font-size: 20px;margin:0;margin-bottom: 10px;"><?php echo date_format(new DateTime($leave_info->start_date),'d M, Y');?></h2>
                             </div>
                         </div>
-                        <div class="ruler"  style="margin: 1rem 0; height: 1px; background: #20a3f6;"></div>
-                        <div class="ticket-from-and-to justify-content-center" style=" display: flex; justify-content: space-between;align-items: center;">
-                            <div class="clearfix" style="display: flex;
+                        <div class="ruler"  style="margin: 1rem 0; height: 1px; background: #20a3f6;clear: both;"></div>
+                        <div class="ticket-from-and-to justify-content-center" style="align-items: center;">
+                            <div class="clearfix" style="
                                         width: 100%;
-                                        align-items: center;
                                         text-align: center;
-                                        gap: 10px;
-                                        flex-direction: column;margin-left: auto;margin-right: auto;">
+                                        margin-left: auto;margin-right: auto;">
                                 <div class="flex-shrink-0">
                                     <span class="avatar" style="margin-left: auto;margin-right: auto;">
                                         <img src="<?php echo get_avatar($leave_info->applicant_avatar); ?>" alt="..." style="border-radius: 50%;width: 130px;" />
                                     </span>
                                 </div>
-                                <div class="ps-2 pt5">
+                                <div class="ps-2 pt5" style="margin-top: 7px;">
                                     <div class="m0">
                                         <?php echo $leave_info->applicant_name; ?>
                                     </div>
@@ -83,7 +81,7 @@
                         </div>
                         
                         <div class="ruler" style="margin: 1rem 0; height: 1px; background: #20a3f6;"></div>
-                        <div class="bording" style=" margin-top: 10px;display: flex;justify-content: center;margin-left: auto;margin-right: auto;">
+                        <div class="bording" style=" margin-top: 10px;margin-left: auto;margin-right: auto;">
                             <div class="bording-content" style="padding: 20px 35px;border: 2px dashed #20a3f6;text-align: center;">
                                 <p style="margin:0;margin-bottom: 5px;">LEAVE DATE #</p>
                                 <h4 style="font-size: 14px;margin:0"><?php echo date_format(new DateTime($leave_info->start_date),'F d, Y').' - '.date_format(new DateTime($leave_info->end_date),'F d, Y');?></h4>
