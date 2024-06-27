@@ -17,7 +17,7 @@
         
     </style>
 
-    <div class=" search-container" style="margin-left:auto;margin-right: auto;width: 440px;" id="search-container1" >
+    <div class=" search-container" style="margin-left:auto;margin-right: auto;width: 100%;" id="search-container1" >
 
         <div class="shadow d-flex justify-content-center col-xs-12 mt-3 mb-3 " id="search-card1">
             <?php if(!empty($leave_info)){ ?>
