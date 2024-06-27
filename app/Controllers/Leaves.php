@@ -1103,6 +1103,7 @@ class Leaves extends Security_Controller {
                                     
                     $options = array('id'=> $applicatoin_info->applicant_id); 
                     $user_info = $this->Users_model->get_details($options)->getRow();
+                    $leave_user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $applicatoin_info?->applicant_id")->getRow();
 
                     $start_date = date('F d,Y',strtotime($applicatoin_info->start_date));
                     // send whatsapp message:
@@ -1138,6 +1139,22 @@ class Leaves extends Security_Controller {
         
                     $r = $this->send_leave_passport_return($leave_email_data);
 
+                    
+                     //send email to the user for leave status:
+                        if($leave_user_info->private_email){
+                            $leave_email_data = [
+                                'LEAVE_ID'=>$save_id,
+                                'LEAVE_TITLE' => $applicatoin_info->title,
+                                'EMPLOYEE_NAME'=>$leave_user_info->first_name.' '.$user_info->last_name,
+                                'LEAVE_STATUS'=>$status,                 
+                                'email'=>$leave_user_info->private_email,                 
+                            ];
+        
+
+                            $r = $this->send_notify_leave_status($leave_email_data);
+                        }
+
+
                 }elseif($status === "rejected"){
 
                     
@@ -1146,6 +1163,7 @@ class Leaves extends Security_Controller {
                                     
                     $options = array('id'=> $applicatoin_info->applicant_id); 
                     $user_info = $this->Users_model->get_details($options)->getRow();
+                    $leave_user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $applicatoin_info?->applicant_id")->getRow();
 
                     $start_date = date('F d,Y',strtotime($applicatoin_info->start_date));
                     // send whatsapp message:
@@ -1163,11 +1181,22 @@ class Leaves extends Security_Controller {
                         die;
                     }
 
+                     //send email to the user for leave status
+                        if($leave_user_info->private_email){
+                            $leave_email_data = [
+                                'LEAVE_ID'=>$save_id,
+                                'LEAVE_TITLE' => $applicatoin_info->title,
+                                'EMPLOYEE_NAME'=>$leave_user_info->first_name.' '.$user_info->last_name,
+                                'LEAVE_STATUS'=>$status,  
+                                'email'=>$leave_user_info->private_email,                 
+                            ];
+
+                            $r = $this->send_notify_leave_status($leave_email_data);
+                        }
 
                 }
-
-
-
+                      
+               
             echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
@@ -1246,6 +1275,38 @@ class Leaves extends Security_Controller {
         $parser_data["SITE_URL"] = get_uri();
         $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
         $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
+
+        $message =  get_array_value($email_template, "message_default");
+        $subject =  get_array_value($email_template, "subject_default");
+
+        $message = $this->parser->setData($parser_data)->renderString($message);
+        $subject = $this->parser->setData($parser_data)->renderString($subject);
+
+        if (send_app_mail($email, $subject, $message)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    
+    public function send_leave_request_email($data = array()) {
+        
+        $email_template = $this->Email_templates_model->get_final_template("new_leave_request", true);
+        $email = 'info@revenuedirectorate.gov.so';//$data['EMAIL'];
+
+        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
+        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
+        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
+        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
+        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
+        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
+        $parser_data["LEAVE_URL"] = get_uri('leaves');
+        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
+        $parser_data["LOGO_URL"] = get_logo_url();
+        $parser_data["SITE_URL"] = get_uri();
+        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/email_header.png');
+        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/email_footer.png');
 
         $message =  get_array_value($email_template, "message_default");
         $subject =  get_array_value($email_template, "subject_default");
