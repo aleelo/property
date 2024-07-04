@@ -33,7 +33,7 @@ class Crud_model extends Model {
         // $this->sc = new Security_Controller();
     }
 
-    protected function use_table($table,$prefix) {
+    protected function use_table($table,$prefix = true) {
         $db_prefix = $prefix ? $this->db->getPrefix() : "";
         $this->table = $db_prefix . $table;
         $this->table_without_prefix = $table;

@@ -1064,7 +1064,7 @@ public function r_delete()
         echo json_encode($result);
     }
 
-    public function list_data()
+    public function receive_list_data()
     {
         
         // $permissions = $this->login_user->permissions;
@@ -1083,92 +1083,36 @@ public function r_delete()
             $department_id = '%';
         } else if ($role == 'Director'|| $role == 'Secretary') {
             $created_by = '%';
-        } else if ($role == 'Employee') { //$perm == "own" || 
-            $created_by = $this->login_user->id;
+        // } else if ($role == 'Employee') { //$perm == "own" || 
+            // $created_by = $this->login_user->id;
         }else{
             
-            app_redirect("forbidden");
+            $created_by = $this->login_user->id;
         }
         
         $options = append_server_side_filtering_commmon_params([]);
 
-
-        $extraWhere = "";
-        //by this, we can handel the server side or client side from the app table prams.
-        if (get_array_value($options, "server_side")) {
-            $order_by = $options['order_by'];
-            $order_direction = $options['order_dir'];
-            $search_by = $options["search_by"] ;
-            $skip = $options["skip"] ;
-
-            
-            $limit_offset = "";
-            $limit = $options['limit'] ?? 10;
-            $where="rc.deleted=0";
-
-            if ($limit) {
-            
-                $offset = $skip ? $skip : 0;
-                $limit_offset = " LIMIT $limit OFFSET $offset ";
-            }
-
-            if ($order_by) {
-                $order_by = "$order_by $order_direction ";
-            }
-
-            if ($search_by) {
-                $search_by = $this->db->escapeLikeString($search_by);
-
-            // id	uuid	supplier	fuel_type	barrels	litters	receive_date	received_by	department_id	vehicle_model	plate	remarks	created_at	deleted	
-                $where .= " AND (";
-                $where .= " rc.id LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.uuid LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.supplier LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.fuel_type LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.barrels LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.litters LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.receive_date LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.department_id LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.vehicle_model LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.remarks LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.plate LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR u.first_name LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR u.last_name LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " )";
-            }
+        $options['role'] = $role;
+        $options['created_by'] = $created_by;
+        $options['department_id'] = $department_id;
 
 
-            $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
-            LEFT JOIN rise_users u on rc.received_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
-            where rc.received_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
+        $list_data = $this->Purchase_Receive_model->get_details($options);
+        // print_r($list_data);die();
+        
+        $list_data = get_array_value($list_data,'data') ? get_array_value($list_data,'data') : []; 
+        $recordsTotal =  get_array_value($list_data,'recordsTotal');
+        $recordsFiltered =  get_array_value($list_data,'recordsFiltered');
 
-            $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_fuel_receives rc
-            where received_by LIKE '$created_by' and department_id LIKE '$department_id' and rc.deleted=0 $extraWhere")->getRow()->affected;
             $result = array();
+            foreach ($list_data as $data) {
+                $result[] = $this->_make_row($data);
+            }
+            echo json_encode(array("data" => $result,
+                        'recordsTotal'=>$recordsTotal,
+                        'recordsFiltered'=>$recordsFiltered
+                    ));
 
-        } else {
-            $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
-            LEFT JOIN rise_users u on rc.received_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
-            where rc.received_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and  rc.deleted=0 $extraWhere");
-
-            $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_fuel_receives rc
-            where received_by LIKE '$created_by' and department_id LIKE '$department_id' and  rc.deleted=0 $extraWhere")->getRow()->affected;
-            $result = array();
-        }
-
-
-        $result_data = array();
-        foreach ($list_data as $data) {
-            $result_data[] = $this->_make_row($data);
-        }
-
-        $result["data"] = $result_data;
-        $result["recordsTotal"] = $total_rows;
-        $result["recordsFiltered"] = $total_rows;
 
         // var_dump($result);
         // die();
