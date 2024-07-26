@@ -10,10 +10,11 @@
                 <div class="col-sm-6  b-r-2">
            
                     <div class="pt-2  text-center">
-                        <div class="">
+                        <div class="d-inline">
                             <div class="color-tag border-circle me-3 wh10" style="background-color: #e78000;"></div><?php echo $v?->department; ?>                        
-                            <span class="strong float-end"><?php echo $v?->count; ?></span>
-                        </div>
+                           
+                        </div> 
+                        <span class="strong float-end"><?php echo $v?->count; ?></span>
                     </div>
   
                 </div>
@@ -21,10 +22,11 @@
                 <div class="col-sm-6  b-r-2">
            
                     <div class="pt-2  text-center">
-                        <div class="">
+                        <div class="d-inline">
                             <div class="color-tag border-circle me-3 wh10" style="background-color: #e78000;"></div><?php echo $v?->department; ?>                        
-                            <span class="strong float-end"><?php echo $v?->count; ?></span>
-                        </div>
+                          
+                        </div>  
+                        <span class="strong float-end"><?php echo $v?->count; ?></span>
                     </div>
 
                 </div>
