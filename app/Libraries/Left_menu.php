@@ -198,7 +198,7 @@ class Left_menu {
                 $team_submenu["timeline"] = array("name" => "timeline", "url" => "timeline", "class" => "send");
             }
 
-                $team_submenu["employee_ashboard"] = array("name" => "employee_ashboard", "url" => "dashboard/view/2", "class" => "send");
+                $team_submenu["employee_ashboard"] = array("name" => "employee_ashboard", "url" => "dashboard/view/1", "class" => "send");
 
                 if ($this->ci->login_user->is_admin || $role =="Administrator" || $role == "HRM") {
                     $team_submenu["departments"] = array("name" => "departments", "url" => "departments", "class" => "server");
