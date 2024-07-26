@@ -23,7 +23,7 @@
            
                     <div class="pt-3 px-3 b-b">
                         <div class="d-inline">
-                            <div class="color-tag border-circle me-3 wh10" style="background-color: #86afeb;"></div><?php echo $v?->department; ?>                        
+                            <div class="color-tag border-circle me-3 wh10" style="background-color: #89e762;"></div><?php echo $v?->department; ?>                        
                           
                         </div>  
                         <span class="strong float-end"><?php echo $v?->count; ?></span>
