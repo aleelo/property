@@ -9,7 +9,7 @@
             if($i%2 == 0 ){?>                
                 <div class="col-sm-6  b-r-2">
            
-                    <div class="pt-2  px-3 b-b">
+                    <div class="pt-3  px-3 b-b">
                         <div class="d-inline">
                             <div class="color-tag border-circle me-3 wh10" style="background-color: #e78000;"></div><?php echo $v?->department; ?>                        
                            
@@ -21,7 +21,7 @@
             <?php }else{?>
                 <div class="col-sm-6  b-r-2">
            
-                    <div class="pt-2 px-3 b-b">
+                    <div class="pt-3 px-3 b-b">
                         <div class="d-inline">
                             <div class="color-tag border-circle me-3 wh10" style="background-color: #e78000;"></div><?php echo $v?->department; ?>                        
                           
