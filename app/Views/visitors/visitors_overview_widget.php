@@ -14,7 +14,7 @@ $progress = $total_points ? round(($completed_points / $total_points) * 100) : 0
                 <a href="<?php echo get_uri('visitors/index/Pending'); ?>" class="text-default">
                     <div class="pt-3 pb10 text-center">
                         <div class="b-r">
-                            <h4 class="strong mb-1 mt-0" style="color: #01B393;"><?php echo $visitors_info->pending; ?></h4>
+                            <h4 class="strong mb-1 mt-0 text-warning" ><?php echo $visitors_info->pending; ?></h4>
                             <span><?php echo 'Pending'; ?></span>
                         </div>
                     </div>
@@ -24,7 +24,7 @@ $progress = $total_points ? round(($completed_points / $total_points) * 100) : 0
                 <a href="<?php echo get_uri('visitors/index/Approved'); ?>" class="text-default">
                     <div class="pt-3 pb10 text-center">
                         <div class="b-r">
-                            <h4 class="strong mb-1 mt-0 text-danger"><?php echo $visitors_info->approved; ?></h4>
+                            <h4 class="strong mb-1 mt-0 "  style="color: #01B393;"><?php echo $visitors_info->approved; ?></h4>
                             <span><?php echo 'Approved'; ?></span>
                         </div>
                     </div>
@@ -34,7 +34,7 @@ $progress = $total_points ? round(($completed_points / $total_points) * 100) : 0
                 <a href="<?php echo get_uri('visitors/index/Rejected'); ?>" class="text-default">
                     <div class="pt-3 pb10 text-center">
                         <div>
-                            <h4 class="strong mb-1 mt-0 text-warning"><?php echo $visitors_info->rejected; ?></h4>
+                            <h4 class="strong mb-1 mt-0 text-danger"><?php echo $visitors_info->rejected; ?></h4>
                             <span><?php echo 'Rejected'; ?></span>
                         </div>
                     </div>
