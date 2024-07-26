@@ -57,6 +57,25 @@
                     </div>
                 </div>
             </div>            
+        <?php }elseif(!$model_info?->id){?>
+            <div class="form-group" id="s2id_request_container">
+                <div class="row">
+                    <label for="request_id" class="col-3"><?php echo app_lang('purchase_request'); ?></label>
+                    <div class="col-9">
+                        <?php
+                        echo form_dropdown(array(
+                            "id" => "request_id",
+                            "name" => "request_id",
+                            "class" => "form-control select2",
+                            "placeholder" => app_lang('purchase_request'),
+                            "autofocus" => true,
+                            "data-rule-required" => true,
+                            "data-msg-required" => app_lang("field_required"),
+                        ),$requests_dropdown,[$model_info?->request_id]);
+                        ?>
+                    </div>
+                </div>
+            </div>            
         <?php }?>
 
         <div class="form-group">
