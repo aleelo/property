@@ -456,7 +456,7 @@ class Purchase_Request extends Security_Controller
         validate_numeric_value($purchase_id);
         if ($purchase_id && $status) {
             //change the draft status of the invoice
-            $this->Purchase_Request_model->update_order_status($purchase_id, $status);
+            $this->Purchase_Request_model->update_status($purchase_id, $status);
 
             //save extra information for cancellation
             // if ($status == "cancelled") {
