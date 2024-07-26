@@ -20,7 +20,7 @@
                                 <td class="invoice-info-container invoice-header-style-one" style="float: right; vertical-align: top; text-align: left">
                                 
                                     <span class="invoice-info-title" style="font-size:20px; font-weight: bold;background-color: #287ec9; color: #fff;">&nbsp;
-                                    <?php echo app_lang("purchase_order").': #'.$purchase_info->id; ?>&nbsp;</span><br />
+                                    <?php echo 'Purchase: #'.get_PO_ID($purchase_info->id); ?>&nbsp;</span><br />
                                    
                               
                                     <?php                                        
@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="clearfix">
-                            <?php if ($can_add_purchase) { ?>
+                            <?php if ($can_add_purchase && $purchase_info->status !== "cancelled") { ?>
                                 <div class="float-start mt20 ml15">
                                     <?php echo modal_anchor(get_uri("purchase_order/item_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_item'), array("class" => "btn btn-info text-white", "title" => app_lang('add_item'), "data-post-purchase_order_id" => $purchase_info->id)); ?>
                                 </div>
@@ -70,13 +70,30 @@
                 </div>
             </div>
         </div>
+        <?php 
+            
+            if (strtolower($purchase_info->status) === "pending") {
+                $status_class = "bg-warning";
+            } else if (strtolower($purchase_info->status) === "approved") {
+                $status_class = " bg-primary";//btn-success
+            } else if (strtolower($purchase_info->status) === "complete") {
+                $status_class = " btn-success";//btn-success
+            } else if (strtolower($purchase_info->status) === "cancelled" ) {
+                $status_class = " bg-danger";//btn-success
+            
+            } else {
+                $status_class = " bg-secondary";
+            }
+
+            $status_meta = "<span class='badge $status_class'>" . app_lang($purchase_info->status) . "</span>";
+        ?>
         <div class="col-md-3 d-flex align-items-stretch">
             <div class="card p15 w-100">
                 <div class="clearfix p20">
                     <div class="row">
                     <div id="invoice-status-bar">
                         <div class="col-md-12 mb15">
-                            <strong><?php echo app_lang('status') . ": "; ?></strong><?php echo $purchase_info->status; ?>
+                            <strong><?php echo app_lang('status') . ": "; ?></strong><?php echo $status_meta; ?>
                         </div>
                         <div class="col-md-12 mb15">
                             <strong><?php echo app_lang('created_at') . ": "; ?></strong>

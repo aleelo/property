@@ -794,7 +794,7 @@ class Security_Controller extends App_Controller {
 
     
     public function get_department_name($id){
-        $d = $this->db->query("SELECT nameSo from departments where id = $id")->getRow();
+        $d = $this->db->query("SELECT nameSo from departments where id = $id  and deleted=0")->getRow();
         
         if(empty($d)){
             return '';
@@ -819,7 +819,7 @@ class Security_Controller extends App_Controller {
         $job_info = $this->db->query("SELECT d.nameSo,t.* from rise_team_member_job_info t 
         left join rise_users u on u.id=t.user_id 
         left join departments d on d.id=t.department_id 
-        where t.user_id = $user_id")->getRow();
+        where t.user_id = $user_id  and u.deleted=0")->getRow();
 
         if(empty($job_info)){
             return null;
@@ -846,9 +846,9 @@ class Security_Controller extends App_Controller {
         if ($this->login_user->is_admin || $role == 'Administrator'  || $role == 'Access Control' || $role == 'HRM' || $perm == "all") {
             $created_by = '%';
             $dept_id = '%';
-        } else if ($role == 'Director'|| $role == 'Secretary') {
+        } else if ($role == 'Director') {
             $created_by = '%';
-        } else if ($perm == "own" || in_array($role,['Employee','ID Printer'])) {
+        } else if ($perm == "own" || in_array($role,['Employee','ID Printer','Secretary','Supervisor'])) {
             $created_by = $this->login_user->id;
         }else{
             
@@ -1081,8 +1081,116 @@ class Security_Controller extends App_Controller {
         }
     }
 
+    public function get_purchase_orders_for_receive($options = array()) {
+        $status = get_array_value($options,'status');
+        
+        // if($status){
+        //     $options = array(
+        //         'status' => $status
+        //     );
+        // }        
+
+        $orders = $this->Purchase_Order_model->get_details($options)->getResult();
+        $ordersArr = array(''=>'---Choose Purchaser Order---');
+ 
+        foreach($orders as $o){
+             $ordersArr[$o->id] = $this->get_PO_ID($o->id).' - '. $o->product_type .' - '.$o->supplier. ' - '.date_format(new \DateTime($o->order_date),'F d, Y');
+        }
+        
+        return $ordersArr;
+    }
+
+    public function get_purchase_requests_for_order($options = array()) {
+        $status = get_array_value($options,'status');
+        
+        // if($status){
+        //     $options = array(
+        //         'status' => $status
+        //     );
+        // }        
+
+        $requests = $this->Purchase_Request_model->get_details($options)->getResult();
+        $requestsArr = array(''=>'---Choose Purchaser Request---');
+ 
+        foreach($requests as $o){
+             $requestsArr[$o->id] = $this->get_PR_ID($o->id).' - '. $o->product_type .' - '.$o->supplier. ' - '.date_format(new \DateTime($o->request_date),'F d, Y');
+        }
+        
+        return $requestsArr;
+    }
+
+    public function get_purchase_requests_dropdown_js($options = array()) {
+        $status = get_array_value($options,'status');
+        
+        $requests = $this->Purchase_Request_model->get_details($options)->getResult();
+        $requestsArr =  array('id'=>'','text' => '---Choose Purchaser Request---');
+ 
+        foreach($requests as $o){
+             $requestsArr[] = array('id' => $o->id,'text' => $this->get_PR_ID($o->id).' - '. $o->product_type .' - '.$o->supplier. ' - '.date_format(new \DateTime($o->request_date),'F d, Y'));
+        }
+        
+        return $requestsArr;
+    }
+    public function get_purchase_orders_dropdown_js($options = array()) {
+        $status = get_array_value($options,'status');
+        
+        // if($status){
+        //     $options = array(
+        //         'status' => $status
+        //     );
+        // }        
+
+        $orders = $this->Purchase_Order_model->get_details($options)->getResult();
+        $ordersArr[] = array('id'=>'','text' => '---Choose Purchaser Order---');
+ 
+        foreach($orders as $o){
+             $ordersArr[] = array('id' => $o->id,'text' => $this->get_PO_ID($o->id).' - '. $o->product_type .' - '.$o->supplier. ' - '.date_format(new \DateTime($o->order_date),'F d, Y'));
+        }
+        
+        return json_encode($ordersArr);
+    }
+
+    public function get_PO_ID($order_id) {
+        $options = array(
+            'id' => $order_id
+        );
+
+        // die($order_id);
+
+        $o = $this->Purchase_Order_model->get_details($options)->getRow();
+        if($o){
+    
+            // print_r($o);die;
+            $poid = 'PO'.str_pad($o?->id,4,'0',STR_PAD_LEFT);
+           
+            return $poid;
+
+        }else{
+            return '';
+        }
+        
+    }
+    public function get_PR_ID($order_id) {
+        $options = array(
+            'id' => $order_id
+        );
+
+        if($order_id){
+            $o = $this->Purchase_Request_model->get_details($options)->getRow();
+    
+            // print_r($o);die;
+            $poid = 'PR'.str_pad($o->id,4,'0',STR_PAD_LEFT);
+           
+            return $poid;
+
+        }else{
+            return '';
+        }
+        
+    }
+
     public function get_employees_dropdown() {
-        $employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'")->getResult();
+        $employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'  and deleted=0")->getResult();
         $temp_array = array('' => '---Choose Department Head---');
 
         if(!$employees){
@@ -1095,9 +1203,20 @@ class Security_Controller extends App_Controller {
 
         return $temp_array;
     }
-    public function get_employees_dropdown_for_table() {
-        $employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'")->getResult();
-        $temp_array[] = array('id' => '', 'text' => '---Choose Employee---');
+    public function get_employees_dropdown_for_table($label = '---Choose Employee---') {
+        $employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'  and deleted=0")->getResult();
+        $temp_array[] = array('id' => '', 'text' => $label);
+  
+        foreach($employees as $e){
+            $temp_array[] = array('id' => $e->id, 'text' => $e->name);
+        }
+
+        return json_encode($temp_array);
+    }
+
+    public function get_teams_members_dropdown_js($label = '---Choose Employee---') {
+        $employees = $this->db->query("SELECT id,concat(first_name,' ',last_name) as name FROM rise_users where user_type = 'Staff'  and deleted=0")->getResult();
+        $temp_array[] = array('id' => '', 'text' => $label);
   
         foreach($employees as $e){
             $temp_array[] = array('id' => $e->id, 'text' => $e->name);
@@ -1116,7 +1235,7 @@ class Security_Controller extends App_Controller {
             $dept_id = '%';
         }
 
-        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id'");
+        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id' and deleted=0");
         
         $data = array('' => '---Choose Department---');
 
@@ -1166,7 +1285,7 @@ class Security_Controller extends App_Controller {
             $dept_id = '%';
         }
 
-        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id'");
+        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id' and deleted=0");
         $data[] = array('id' => '', 'text' => '---Choose Department---');
 
         if(!$depts){
@@ -1190,7 +1309,7 @@ class Security_Controller extends App_Controller {
             $dept_id = '%';
         }
 
-        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id'");
+        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id' and deleted=0");
         $data[] = array('id' => '', 'text' => '---Choose Department---');
 
         if(!$depts){

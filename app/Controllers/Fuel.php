@@ -589,41 +589,7 @@ class Fuel extends Security_Controller
     }
 
     
-    function confirm_dispense() {
-
-        $this->validate_submitted_data(array(
-            "id" => "required|numeric",
-            "driver_name" => "required"
-        ));
-
-        $id = $this->request->getPost('id');
-        $driver_name = $this->request->getPost('driver_name');
-        // die($status);
-        $role = $this->get_user_role();
-        $data = array('driver_name' => $driver_name,'status'=>'dispensed');
-
-        $save_id = $this->Fuel_Request_model->ci_save($data, $id);
-
-        if ($save_id) {
-
-            // $notification_options = array("leave_id" => $id, "to_user_id" => $applicatoin_info->applicant_id);
-
-            // if ($status == "approved") {
-            //     log_notification("leave_approved_HR", $notification_options);//leave_approved
-            // } else if ($status == "pending") {
-            //     log_notification("leave_approved_Director", $notification_options);
-            // } else if ($status == "rejected") {
-            //     log_notification("leave_rejected", $notification_options);
-            // } else if ($status == "canceled") {
-            //     log_notification("leave_canceled", $notification_options);
-            // }
-
-            echo json_encode(array("success" => true, "data" => $this->request_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
-        } else {
-            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
-        }
-    }
-
+    
      //update request status
      function update_status() {
 

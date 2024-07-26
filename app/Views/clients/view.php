@@ -131,15 +131,16 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        setTimeout(function () {
-            var tab = "<?php echo $tab; ?>";
-            if (tab === "info") {
+        setTimeout(function () { 
+            var hash = window.location.hash.substring(1);
+            
+            if (hash === "info") {
                 $("[data-bs-target='#client-info']").trigger("click");
-            } else if (tab === "projects") {
+            } else if (hash === "projects") {
                 $("[data-bs-target='#client-projects']").trigger("click");
-            } else if (tab === "invoices") {
+            } else if (hash === "invoices") {
                 $("[data-bs-target='#client-invoices']").trigger("click");
-            } else if (tab === "payments") {
+            } else if (hash === "payments") {
                 $("[data-bs-target='#client-payments']").trigger("click");
             }
         }, 210);

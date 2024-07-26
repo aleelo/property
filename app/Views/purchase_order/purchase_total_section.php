@@ -15,12 +15,12 @@
                 <td></td>
             <?php } ?>
         </tr>
+        <tr>
+            <td><?php echo app_lang("balance"); ?></td>
+            <td><?php echo to_currency($purchase_total_summary->balance, '$'); ?></td>
+            <?php if ($can_edit_purchase) { ?>
+                <td></td>
+            <?php } ?>
+        </tr>
     <?php } ?>
-    <tr>
-        <td><?php echo app_lang("balance"); ?></td>
-        <td><?php echo to_currency($purchase_total_summary->balance, '$'); ?></td>
-        <?php if ($can_edit_purchase) { ?>
-            <td></td>
-        <?php } ?>
-    </tr>
 </table>

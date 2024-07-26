@@ -41,6 +41,33 @@ if (!function_exists('get_uri')) {
     }
 
 }
+ 
+if (!function_exists('get_item_details')) {
+
+    function get_item_details($item_id = 0,$purchase_order_id) {
+      
+        $ci = new Security_Controller(false);
+        $options = array(
+            'item_id' => $item_id,
+            'purchase_order_id' => $purchase_order_id
+        );
+
+        $result = $ci->Purchase_Order_Items_model->get_item_details($options);
+
+        $obj = new \stdClass();
+
+        $obj->orderTotal = $result->orderTotal;
+        $obj->orderQty = $result->orderQty;
+
+        $obj->receiveTotal = $result->receiveTotal;
+        $obj->receiveQty = $result->receiveQty;
+
+        $obj->balance = $result->balance;    
+        $obj->remainder = $result->remainder;    
+        return $obj;
+    }
+
+}
 
 /**
  * use this to print file path
@@ -848,6 +875,52 @@ if (!function_exists('get_invoice_making_data')) {
         }
     }
 
+}
+
+
+if (!function_exists('get_PO_ID')) {
+    function get_PO_ID($order_id) {
+        $options = array(
+            'id' => $order_id
+        );
+
+        if($order_id){
+            
+           $model = model("App\Models\Purchase_Order_model");
+            $o = $model->get_details($options)->getRow();
+
+            // print_r($o);die;
+            $poid = 'PO'.str_pad($o->id,4,'0',STR_PAD_LEFT);
+        
+            return $poid;
+
+        }else{
+            return '';
+        }
+        
+    }
+}
+
+if (!function_exists('get_PR_ID')) {
+    function get_PR_ID($order_id) {
+        $options = array(
+            'id' => $order_id
+        );
+
+        if($order_id){
+            $model = model("App\Models\Purchase_Request_model");
+            $o = $model->get_details($options)->getRow();
+
+            // print_r($o);die;
+            $poid = 'PR'.str_pad($o->id,4,'0',STR_PAD_LEFT);
+        
+            return $poid;
+
+        }else{
+            return '';
+        }
+        
+    }
 }
 
 

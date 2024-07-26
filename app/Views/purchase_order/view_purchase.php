@@ -5,9 +5,14 @@
                 <div class="invoice-title-section">
                     <div class="page-title no-bg clearfix mb5 no-border">
                         <h1 class="pl0">
-                            <span><i data-feather="shopping-cart" class='icon'></i></span>
-                          
-                            <?php echo $purchase_info->id; ?>
+                                                      
+                        <?php  $procLink = "<span class='invoice-info-title' style='padding: 5px; font-weight: bold;color: #287ec9;'>
+                           <i data-feather='shopping-cart' class='icon'></i></span> <a href='".get_uri('purchase_order')."' class='b_b' style='color: #287ec9;font-size: 20px;'>Purchase Order</a> / ";
+                            
+                            echo $procLink."
+                            <span>
+                                    <font style='font-weight: bold;color: #287ec9;'> Purchase Order: #".get_PO_ID($purchase_info->id)."</font></span>"; ?>
+                           
                            
                         </h1>
 
@@ -22,23 +27,27 @@
                                     <i data-feather="tool" class="icon-16"></i> <?php echo app_lang('actions'); ?>
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
-                                    <?php if ($purchase_status !== "cancelled" && $can_add_purchase) { ?>
+                                    <?php if (strtolower($purchase_info->status) !== "cancelled" && $can_add_purchase) { ?>
                                     
-                                    <li role="presentation"><?php echo modal_anchor(get_uri("purchase_order/send_invoice_modal_form/" . $purchase_info->id), "<i data-feather='mail' class='icon-16'></i> " . app_lang('email_invoice_to_client'), array("title" => app_lang('email_invoice_to_client'), "data-post-id" => $purchase_info->id, "role" => "menuitem", "tabindex" => "-1", "class" => "dropdown-item")); ?> </li>
+                                    <!-- <li role="presentation"><?php //echo modal_anchor(get_uri("purchase_order/send_invoice_modal_form/" . $purchase_info->id), "<i data-feather='mail' class='icon-16'></i> " . app_lang('email_invoice_to_client'), array("title" => app_lang('email_invoice_to_client'), "data-post-id" => $purchase_info->id, "role" => "menuitem", "tabindex" => "-1", "class" => "dropdown-item")); ?> </li> -->
                                        
-                                    <li role="presentation"><?php echo anchor(get_uri("purchase_order/download_pdf/" . $purchase_info->id), "<i data-feather='download' class='icon-16'></i> " . app_lang('download_pdf'), array("title" => app_lang('download_pdf'), "class" => "dropdown-item")); ?> </li>
-                                    <li role="presentation"><?php echo anchor(get_uri("purchase_order/download_pdf/" . $purchase_info->id . "/view"), "<i data-feather='file-text' class='icon-16'></i> " . app_lang('view_pdf'), array("title" => app_lang('view_pdf'), "target" => "_blank", "class" => "dropdown-item")); ?> </li>
-                                    <li role="presentation"><?php echo anchor(get_uri("purchase_order/preview/" . $purchase_info->id . "/1"), "<i data-feather='search' class='icon-16'></i> " . app_lang('preview'), array("title" => app_lang('preview'), "target" => "_blank", "class" => "dropdown-item")); ?> </li>
-                                    <li role="presentation"><?php echo js_anchor("<i data-feather='printer' class='icon-16'></i> " . app_lang('print'), array('title' => app_lang('print'), 'id' => 'print-invoice-btn', "class" => "dropdown-item")); ?> </li>
+                                    <!-- <li role="presentation"><?php //echo anchor(get_uri("purchase_order/download_pdf/" . $purchase_info->id), "<i data-feather='download' class='icon-16'></i> " . app_lang('download_pdf'), array("title" => app_lang('download_pdf'), "class" => "dropdown-item")); ?> </li>
+                                    <li role="presentation"><?php //echo anchor(get_uri("purchase_order/download_pdf/" . $purchase_info->id . "/view"), "<i data-feather='file-text' class='icon-16'></i> " . app_lang('view_pdf'), array("title" => app_lang('view_pdf'), "target" => "_blank", "class" => "dropdown-item")); ?> </li>
+                                    <li role="presentation"><?php //echo anchor(get_uri("purchase_order/preview/" . $purchase_info->id . "/1"), "<i data-feather='search' class='icon-16'></i> " . app_lang('preview'), array("title" => app_lang('preview'), "target" => "_blank", "class" => "dropdown-item")); ?> </li>
+                                    <li role="presentation"><?php //echo js_anchor("<i data-feather='printer' class='icon-16'></i> " . app_lang('print'), array('title' => app_lang('print'), 'id' => 'print-invoice-btn', "class" => "dropdown-item")); ?> </li> -->
 
-                                        <li role="presentation" class="dropdown-divider"></li>
+                                        <!-- <li role="presentation" class="dropdown-divider"></li> -->
                                       
-                                        <li role="presentation"><?php echo modal_anchor(get_uri('purchase_order/modal_form'), "<i data-feather='edit' class='icon-16'></i> " . app_lang('edit_invoice'), array("title" => app_lang('edit_invoice'), "data-post-id" => $purchase_info->id, "role" => "menuitem", "tabindex" => "-1", "class" => "dropdown-item")); ?> </li>
+                                        <!-- <li role="presentation"><?php //echo modal_anchor(get_uri('purchase_order/order_modal_form'), "<i data-feather='edit' class='icon-16'></i> " . app_lang('edit_purchase_order'), array("title" => app_lang('edit_purchase_order'), "data-post-id" => $purchase_info->id, "role" => "menuitem", "tabindex" => "-1", "class" => "dropdown-item")); ?> </li> -->
 
-                                        <?php if ($purchase_status == "draft" && $purchase_status !== "cancelled") { ?>
-                                            <li role="presentation"><?php echo ajax_anchor(get_uri("purchase_order/update_purchase_status/" . $purchase_info->id . "/not_paid"), "<i data-feather='check' class='icon-16'></i> " . app_lang('mark_invoice_as_not_paid'), array("data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
-                                        <?php } else if ($purchase_status == "not_paid" || $purchase_status == "overdue" || $purchase_status == "partially_paid") { ?>
-                                            <li role="presentation"><?php echo js_anchor("<i data-feather='x' class='icon-16'></i> " . app_lang('mark_invoice_as_cancelled'), array('title' => app_lang('mark_invoice_as_cancelled'), "data-action-url" => get_uri("purchase_order/update_purchase_status/" . $purchase_info->id . "/cancelled"), "data-action" => "delete-confirmation", "data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
+                                        <?php if(strtolower($purchase_info->status) !== 'complete'){?>
+                                            <li role="presentation"><?php echo js_anchor("<i data-feather='x' class='icon-16'></i> " . app_lang('mark_as_cancelled'), array('title' => app_lang('mark_as_cancelled'), "data-action-url" => get_uri("purchase_order/update_purchase_status/" . $purchase_info->id . "/cancelled"), "data-action" => "delete-confirmation", "data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
+                                        <?php } ?>
+                                        <?php if(strtolower($purchase_info->status) === 'pending' || strtolower($purchase_info->status) === 'draft'){?>
+                                            <li role="presentation"><?php echo ajax_anchor(get_uri("purchase_order/update_purchase_status/" . $purchase_info->id . "/complete"),"<i data-feather='check' class='icon-16'></i> " . app_lang('mark_as_completed'), array('title' => app_lang('mark_as_completed'),  "data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
+                                        <?php } ?>
+                                        <?php if(strtolower($purchase_info->status) !== 'complete'){?>
+                                            <li role="presentation"><?php echo modal_anchor(get_uri("purchase_order/receive_order_modal_form/". $purchase_info->id),"<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('receive_purchase_order'), array('title' => app_lang('receive_purchase_order'),"data-post-purchase_order_id" => $purchase_info->id, "data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
                                         <?php } ?>
 
                                        

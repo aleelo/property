@@ -1468,6 +1468,36 @@ if (!function_exists('projects_overview_widget')) {
 
 }
 
+/**
+ * get access requests overview widget
+ * @param integer $user_id
+ * 
+ * @return html
+ */
+if (!function_exists('visitors_overview_widget')) {
+
+    function visitors_overview_widget() {
+        $ci = new Security_Controller(false);
+
+        if ($ci->login_user->is_admin) {
+            $options = array(
+                "user_id" => ""
+            );
+        } else {
+            $options = array(
+                "user_id" => $ci->login_user->id
+            );
+        }
+
+
+        $view_data["visitors_info"] = $ci->Visitors_model->count_visitors_status($options);
+
+        $template = new Template();
+        return $template->view("visitors/visitors_overview_widget", $view_data);
+    }
+
+}
+
 if (!function_exists('reminders_widget')) {
 
     function reminders_widget($return_reminders_only = false) {
@@ -1759,6 +1789,81 @@ if (!function_exists('invoice_overview_widget')) {
 
         $template = new Template();
         return $template->view("invoices/invoice_overview_widget", $view_data);
+    }
+
+}
+
+/**
+ * get total invoices overview widget
+ * @param string $type
+ * 
+ * @return html
+ */
+if (!function_exists('procurement_overview_widget')) {
+
+    function procurement_overview_widget($options = array()) {
+        $ci = new Security_Controller(false);
+
+        $today = get_my_local_time("Y-m-d");
+        $last_day_of_month = date('t');
+        $start_date = subtract_period_from_date(get_my_local_time("Y-m-01"), 11, "months");
+        $end_date = get_my_local_time("Y-m-$last_day_of_month");
+
+        $currency = get_array_value($options, "currency");
+        $currency = $currency ? $currency : get_setting("default_currency");
+
+        $currency_symbol = get_array_value($options, "currency_symbol");
+        $currency_symbol = $currency_symbol ? $currency_symbol : get_setting("currency_symbol");
+
+        $options["currency"] = $currency;
+        $options["start_date"] = $start_date;
+        $options["end_date"] = $end_date;
+        $info = $ci->Invoices_model->invoice_statistics($options);
+
+        $ticks = array();
+        $invoices_array = array();
+
+        $invoice_result_array = array();
+        foreach ($info->invoices as $invoice) {
+            $invoice_result_array[sprintf("%02d", $invoice->month)] = $invoice->total;
+        }
+
+        for ($i = 11; $i >= 0; $i--) {
+            $date_index = subtract_period_from_date($today, $i, "months", "Y-m-d");
+
+            $month = explode("-", $date_index)[1];
+
+            $index_value = get_array_value($invoice_result_array, $month);
+            if (!$index_value) {
+                $index_value = 0;
+            }
+
+            //for ticks
+            $dateObj = DateTime::createFromFormat('!m', $month);
+            $month_name = strtolower($dateObj->format('F')); // Month
+            $ticks[] = app_lang("short_$month_name");
+
+            $invoices_array[] = $index_value;
+        }
+
+        $view_data["ticks"] = json_encode($ticks);
+        $view_data["invoices"] = json_encode($invoices_array);
+        $view_data["currencies"] = $info->currencies;
+        $view_data["currency_symbol"] = clean_data($currency_symbol);
+
+        $purchase_info = $ci->Invoices_model->get_invoices_total_and_paymnts(array("currency" => $currency));
+
+        $view_data["total_invoices"] = $purchase_info->invoices_count;
+        $view_data["overdue_invoices"] = $purchase_info->overdue_count;
+        $view_data["not_paid_invoices"] = $purchase_info->not_paid_count;
+        $view_data["partially_paid_invoices"] = $purchase_info->partially_paid_count;
+        $view_data["fully_paid_invoices"] = $purchase_info->fully_paid_count;
+        $view_data["draft_invoices"] = $purchase_info->draft_count;
+
+        $view_data["invoices_info"] = $purchase_info;
+
+        $template = new Template();
+        return $template->view("procurement/procurement_overview_widget", $view_data);
     }
 
 }

@@ -41,6 +41,7 @@ class Left_menu {
             $access_order = get_array_value($permissions, "order");
             $access_visitor = get_array_value($permissions, "visitor");
             $access_fuel = get_array_value($permissions, "Fuel");
+            $access_procurement = get_array_value($permissions, "procurement");
             $access_items = ($this->ci->login_user->is_admin || $access_invoice || $access_estimate);
 
             $client_message_users = get_setting("client_message_users");
@@ -56,21 +57,27 @@ class Left_menu {
             }
 
 
-            if ($this->ci->login_user->is_admin || $access_client) {
-                $sidebar_menu["clients"] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
-            }
+            // if ($this->ci->login_user->is_admin || $access_client) {
+                // $sidebar_menu["clients"] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
+            // }
 
         
             $sidebar_menu["archives"] = array("name" => "archives", "url" => "archives", "class" => "layers");
             
-            if ($this->ci->login_user->is_admin || $role =="Administrator" || $role == "HRM") {
-                $sidebar_menu["departments"] = array("name" => "departments", "url" => "departments", "class" => "server");
-            }
 
-            if (($this->ci->login_user->is_admin || $access_visitor) && !in_array($role,["Employee","ID Printer"])) {
+            if (($this->ci->login_user->is_admin || $access_visitor) && !in_array($role,["Employee","ID Printer","Head of IDs"])) {
                 $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "#", "class" => "users");
                 $sidebar_menu["access_list"] = array("name" => "access_list", "url" => "visitors", "class" => "users");
                 $sidebar_menu["access_search"] = array("name" => "access_search", "url" => "visitors/access_search", "class" => "users");
+            }
+
+            if (($this->ci->login_user->is_admin || $access_procurement) && !in_array($role,["Employee","ID Printer"])) {
+                $sidebar_menu["procurement"] = array("name" => "procurement", "url" => "#", "class" => "shopping-cart");
+                $sidebar_menu["purchase_request"] = array("name" => "purchase_request", "url" => "purchase_request", "class" => "users");
+                $sidebar_menu["purchase_order"] = array("name" => "purchase_order", "url" => "purchase_order", "class" => "users");
+                $sidebar_menu["purchase_receive"] = array("name" => "purchase_receive", "url" => "purchase_receive", "class" => "users");
+                $sidebar_menu["purchase_items"] = array("name" => "purchase_items", "url" => "purchase_items", "class" => "users");
+                $sidebar_menu["suppliers"] = array("name" => "suppliers", "url" => "suppliers", "class" => "users");
             }
 
             if (($this->ci->login_user->is_admin || $access_fuel) && !in_array($role,["Employee","ID Printer"])) { //&& ($role != "Employee")
@@ -109,31 +116,31 @@ class Left_menu {
 
             $sales_submenu = array();
 
-            if (get_setting("module_invoice") == "1" && ($this->ci->login_user->is_admin || $access_invoice)) {
-                $sales_submenu[] = array("name" => "invoices", "url" => "invoices", "class" => "file-text");
-            }
+            // if (get_setting("module_invoice") == "1" && ($this->ci->login_user->is_admin || $access_invoice)) {
+            //     $sales_submenu[] = array("name" => "invoices", "url" => "invoices", "class" => "file-text");
+            // }
 
-            if (get_setting("module_order") == "1" && ($this->ci->login_user->is_admin || $access_order)) {
-                $sales_submenu[] = array("name" => "orders_list", "url" => "orders", "class" => "truck");
-                $sales_submenu[] = array("name" => "store", "url" => "store", "class" => "list");
-            }
+            // if (get_setting("module_order") == "1" && ($this->ci->login_user->is_admin || $access_order)) {
+            //     $sales_submenu[] = array("name" => "orders_list", "url" => "orders", "class" => "truck");
+            //     $sales_submenu[] = array("name" => "store", "url" => "store", "class" => "list");
+            // }
 
-            if (get_setting("module_invoice") == "1" && ($this->ci->login_user->is_admin || $access_invoice)) {
-                $sales_submenu[] = array("name" => "invoice_payments", "url" => "invoice_payments", "class" => "dollar-sign");
-                $show_payments_menu = true;
-            }
+            // if (get_setting("module_invoice") == "1" && ($this->ci->login_user->is_admin || $access_invoice)) {
+            //     $sales_submenu[] = array("name" => "invoice_payments", "url" => "invoice_payments", "class" => "dollar-sign");
+            //     $show_payments_menu = true;
+            // }
 
-            if ($access_items && (get_setting("module_invoice") == "1" || get_setting("module_estimate") == "1" )) {
-                $sales_submenu[] = array("name" => "items", "url" => "items", "class" => "list");
-            }
+            // if ($access_items && (get_setting("module_invoice") == "1" || get_setting("module_estimate") == "1" )) {
+            //     $sales_submenu[] = array("name" => "items", "url" => "items", "class" => "list");
+            // }
 
-            if (get_setting("module_contract") && ($this->ci->login_user->is_admin || $access_contract)) {
-                $sales_submenu[] = array("name" => "contracts", "url" => "contracts", "class" => "book-open");
-            }
+            // if (get_setting("module_contract") && ($this->ci->login_user->is_admin || $access_contract)) {
+            //     $sales_submenu[] = array("name" => "contracts", "url" => "contracts", "class" => "book-open");
+            // }
 
-            if (count($sales_submenu)) {
-                $sidebar_menu["sales"] = array("name" => "sales", "class" => "shopping-cart", "submenu" => $sales_submenu);
-            }
+            // if (count($sales_submenu)) {
+            //     $sidebar_menu["sales"] = array("name" => "sales", "class" => "shopping-cart", "submenu" => $sales_submenu);
+            // }
 
 
             $prospects_submenu = array();
@@ -152,9 +159,9 @@ class Left_menu {
                 $prospects_submenu["proposals"] = array("name" => "proposals", "url" => "proposals", "class" => "coffee");
             }
 
-            if (count($prospects_submenu)) {
-                $sidebar_menu["prospects"] = array("name" => "prospects", "url" => "estimates", "class" => "anchor", "submenu" => $prospects_submenu);
-            }
+            // if (count($prospects_submenu)) {
+            //     $sidebar_menu["prospects"] = array("name" => "prospects", "url" => "estimates", "class" => "anchor", "submenu" => $prospects_submenu);
+            // }
 
             if (get_setting("module_note") == "1") {
                 $sidebar_menu["notes"] = array("name" => "notes", "url" => "notes", "class" => "book");
@@ -191,6 +198,11 @@ class Left_menu {
                 $team_submenu["timeline"] = array("name" => "timeline", "url" => "timeline", "class" => "send");
             }
 
+                $team_submenu["employee_ashboard"] = array("name" => "employee_ashboard", "url" => "dashboard/view/2", "class" => "send");
+
+                if ($this->ci->login_user->is_admin || $role =="Administrator" || $role == "HRM") {
+                    $team_submenu["departments"] = array("name" => "departments", "url" => "departments", "class" => "server");
+                }
 
             if (get_setting("module_announcement") == "1"  && $role != 'ID Printer') {
                 $team_submenu["announcements"] = array("name" => "announcements", "url" => "announcements", "class" => "bell");

@@ -123,4 +123,41 @@ class Visitors_info extends App_Controller
         return $this->template->view('cardholders/employee_qr_code',$view_data);
     }
 
+    function confirm_dispense() {
+
+        $this->validate_submitted_data(array(
+            "id" => "required|numeric",
+            "driver_name" => "required"
+        ));
+
+        $id = $this->request->getPost('id');
+        $driver_name = $this->request->getPost('driver_name');
+        // die($status);
+        $data = array('driver_name' => $driver_name,'status'=>'dispensed');
+
+        $save_id = $this->Fuel_Request_model->ci_save($data, $id);
+        // $info = $this->Fuel_Request_model->get_one($id);
+
+        if ($save_id) {
+
+            // $notification_options = array("leave_id" => $id, "to_user_id" => $applicatoin_info->applicant_id);
+
+            // if ($status == "approved") {
+            //     log_notification("leave_approved_HR", $notification_options);//leave_approved
+            // } else if ($status == "pending") {
+            //     log_notification("leave_approved_Director", $notification_options);
+            // } else if ($status == "rejected") {
+            //     log_notification("leave_rejected", $notification_options);
+            // } else if ($status == "canceled") {
+            //     log_notification("leave_canceled", $notification_options);
+            // }
+
+            // return app_redirect('visitors_info/request_qrcode/'.$info->uuid);
+
+            echo json_encode(array("success" => true, 'id' => $save_id, 'message' => 'Successfully comfirmed!'));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
 }

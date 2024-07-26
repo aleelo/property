@@ -215,6 +215,7 @@ class Dashboard extends Security_Controller {
         
         $widget["team_members_agegroup_education_widget"] = true;
         $widget["team_members_by_department_widget"] = true;
+        $widget["visitors_overview_widget"] = true;
 
         if (can_access_reminders_module()) {
             $widget["next_reminder"] = true;
@@ -828,6 +829,7 @@ class Dashboard extends Security_Controller {
             $default_widgets_array = array(
                 "team_members_agegroup_education_widget",
                 "team_members_by_department_widget",
+                "visitors_overview_widget",
                 "open_projects",
                 "open_projects_list",
                 "completed_projects",
@@ -1082,14 +1084,18 @@ class Dashboard extends Security_Controller {
         // "team_members_agegroup_education_widget",
         // "team_members_by_department_widget",
         // print_r($widgets_array);
-        // echo $widget;die;
+        // echo $widget;die;visitors_overview_widget
 
         if (get_array_value($widgets_array, $widget)) {
             if ($widget == "team_members_agegroup_education_widget") {
                 return team_members_agegroup_education_widget();
             } if ($widget == "team_members_by_department_widget") {
                 return team_members_by_department_widget();
-            } if ($widget == "clock_in_out") {
+            }
+             if ($widget == "visitors_overview_widget") {
+                return visitors_overview_widget();
+            } 
+            if ($widget == "clock_in_out") {
                 return clock_widget();
             } else if ($widget == "events_today") {
                 return events_today_widget();

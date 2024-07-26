@@ -37,6 +37,8 @@ class App_Controller extends Controller {
     public $Purchase_Receive_model;
     public $Purchase_Item_model;
     public $Purchase_Order_Items_model;
+    public $Purchase_Request_model;
+    public $Purchase_Request_Items_model;
     public $Suppliers_model;
     public $Departments_model;
 
@@ -161,6 +163,8 @@ class App_Controller extends Controller {
             'Fuel_Request_model',
             'Cardholders_model',
             'Purchase_Order_model',
+            'Purchase_Request_model',
+            'Purchase_Request_Items_model',
             'Purchase_Receive_model',
             'Purchase_Item_model',
             'Purchase_Order_Items_model',

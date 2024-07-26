@@ -6,11 +6,12 @@
     </head>
     <body>
 
-<?php echo form_open(get_uri("fuel/confirm_dispense"), array("id" => "request-dispense-form", "class" => "general-form", "role" => "form")); ?>
+<?php echo form_open(get_uri("visitors_info/confirm_dispense"), array("id" => "request-dispense-form", "class" => "general-form", "role" => "form")); ?>
 <div class="d-flex justify-content-center">
     <div class="card col-md-4 col-xs-12 mt-3 shadow-lg">
     <div class="card-title text-center"><h4 class="fw-bold">Fuel Request Information #<?php echo $model_info->id; ?></h4></div>
 
+    <input type="hidden" name="id" value="<?php echo $model_info->id; ?>" />
      
           <!--   // id	uuid	requested_by	department_id	litters	vehicle_engine	plate	request_type	request_date	purpose	status	remarks		created_at	deleted	
          -->
@@ -36,7 +37,7 @@
         <div class="table-responsive ">
             <table class="table dataTable display mb-0">
                 <tr>
-                    <td class="w25p"> <?php echo app_lang('request_type'); ?></td>
+                    <td class="w35p"> <?php echo app_lang('request_type'); ?></td>
                     <td><?php echo $model_info->request_type; ?></td>
                 </tr>
                 <tr>
@@ -107,7 +108,6 @@
     </div>
 </div>
 
-<input type="hidden" name="id" value="<?php echo $model_info->id; ?>" />
 
 <?php echo form_close(); ?>
 
@@ -115,8 +115,12 @@
     $(document).ready(function () {
 
         $("#request-dispense-form").appForm({
-            onSuccess: function () {
-                location.reload();
+            onSuccess: function (result) {
+                appAlert.success(result.message, {duration: 10000})
+                setTimeout(function () {
+
+                    window.location.reload();
+                }, 3000);
             }
         });
 

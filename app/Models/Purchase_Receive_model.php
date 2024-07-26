@@ -35,13 +35,20 @@ class Purchase_Receive_model extends Crud_model {
             $where .= " AND $purchase_receive_table.department_id like '$department_id'";
         }
         
+        $start_date = $this->_get_clean_value($options, "start_date");        
+        $end_date = $this->_get_clean_value($options, "end_date");
+    
+        if($start_date){
+            $where .= " and $purchase_receive_table.receive_date between '$start_date' and '$end_date'";
+        }
+
         
         $limit_offset = "";
         $limit = $this->_get_clean_value($options, "limit");
         if ($limit) {
             $skip = $this->_get_clean_value($options, "skip");
             $offset = $skip ? $skip : 0;
-            $limit_offset = " LIMIT $limit OFFSET $offset ";
+            $limit_offset = " LIMIT $limit ";
         }
 
         $available_order_by_list = array(
@@ -77,7 +84,7 @@ class Purchase_Receive_model extends Crud_model {
         }
 
 
-        $sql = "SELECT SQL_CALC_FOUND_ROWS $purchase_receive_table.*,$suppliers_table.supplier_name as supplier,$suppliers_table.address,$suppliers_table.contact_person,
+        $sql = "SELECT SQL_CALC_FOUND_ROWS $purchase_receive_table.*,$suppliers_table.supplier_name as supplier,$suppliers_table.id as supplier_id,$suppliers_table.address,$suppliers_table.contact_person,
                 $suppliers_table.phone,$suppliers_table.email,$users_table.image as avatar,$departments_table.nameSo as department,
                 concat($users_table.first_name,' ',$users_table.last_name) user
                 FROM $purchase_receive_table
@@ -86,20 +93,51 @@ class Purchase_Receive_model extends Crud_model {
                 LEFT JOIN $departments_table ON $purchase_receive_table.department_id=$departments_table.id
                 WHERE $purchase_receive_table.deleted=0 $where  $order $limit_offset";
 
+        // print_r($sql);die;  
         $raw_query = $this->db->query($sql);
 
         $total_rows = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow();
 
-        // if ($limit) {
+        if ($limit) {
             // die($limit);
             return array(
                 "data" => $raw_query->getResult(),
                 "recordsTotal" => $total_rows->found_rows,
                 "recordsFiltered" => $total_rows->found_rows,
             );
-        // } else {
-        //     return $raw_query;
-        // }
+        } else {
+            return $raw_query;
+        }
     }
+
+    
+    function get_receive_items($options = array()) {
+        $purchase_receive_table = $this->db->prefixTable('purchase_receives');
+        $users_table = $this->db->prefixTable('users');
+        $purchase_items_table = $this->db->prefixTable('purchase_items');
+        $purchase_order_items_table = $this->db->prefixTable('purchase_order_items');
+        $purchase_receive_items_table = $this->db->prefixTable('purchase_receive_items');
+        
+        $where = "";
+        $purchase_order_id = $this->_get_clean_value($options, "purchase_order_id");
+        if ($purchase_order_id) {
+            $where .= " AND $purchase_receive_items_table.purchase_order_id=$purchase_order_id";
+        }
+
+        $item_id = $this->_get_clean_value($options, "item_id");
+        if ($item_id) {
+            $where .= " AND $purchase_receive_items_table.item_id=$item_id";
+        }
+        
+
+        $sql = "SELECT $purchase_receive_items_table.* FROM $purchase_receive_items_table
+                LEFT JOIN $purchase_items_table ON $purchase_items_table.id=$purchase_receive_items_table.item_id
+                LEFT JOIN $purchase_receive_table ON $purchase_receive_items_table.purchase_order_id=$purchase_receive_table.id
+                WHERE $purchase_receive_items_table.deleted=0 $where
+                ORDER BY $purchase_receive_table.id DESC";
+        
+        return $this->db->query($sql);
+    }
+
 
 }

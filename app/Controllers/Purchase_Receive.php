@@ -55,9 +55,9 @@ class Purchase_Receive extends Security_Controller
 
         return $this->template->rander("purchase_receive/index", $view_data);
     }
-    
-     /* load receive add/edit modal */
-     public function order_modal_form()
+
+     /* load receive add modal */
+     public function receive_modal_form()
      {
          $id = $this->request->getPost('id');
  
@@ -67,18 +67,59 @@ class Purchase_Receive extends Security_Controller
 
          $view_data['suppliers'] = $this->get_suppliers_for_select();
          
-        $view_data['order_details'] = $this->Purchase_Order_model->get_order_items(['purchase_order_id' => $id])?->getResult();
+        // $view_data['order_details'] = $this->Purchase_Order_model->get_order_items(['purchase_order_id' => $id])?->getResult();
 
+        $view_data['orders_dropdown'] = $this->get_purchase_orders_for_receive();
         
         $view_data['label_column'] = "col-md-3";
         $view_data['field_column'] = "col-md-9";
         
         $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loding from the lead's details view
-        $view_data['model_info'] = $this->Purchase_Order_model->get_one($id); //$this->Subscriptions_model->get_one($lead_id);//
+
+        if($id){
+            
+            $options = array('id' => $id);
+            $view_data['model_info'] = $this->Purchase_Receive_model->get_details($options)->getRow();
+        }else{
+            $view_data['model_info'] = new $this->Purchase_Receive_model;
+        }
         // print_r($view_data['model_info']);die;
-       
+               
  
-         return $this->template->view('purchase_receive/order_modal_form', $view_data);
+         return $this->template->view('purchase_receive/receive_modal_form', $view_data);
+     }
+
+     /* load receive edit modal */
+     public function receive_edit_modal_form()
+     {
+         $id = $this->request->getPost('id');
+ 
+         $this->validate_submitted_data(array(
+             "id" => "numeric",
+         ));
+
+         $view_data['suppliers'] = $this->get_suppliers_for_select();
+         
+        // $view_data['receive_details'] = $this->Purchase_Receive_model->get_receive_items(['purchase_order_id' => $id])?->getResult();
+
+        $view_data['orders_dropdown'] = $this->get_purchase_orders_for_receive();
+        
+        $view_data['label_column'] = "col-md-3";
+        $view_data['field_column'] = "col-md-9";
+        
+        $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loding from the lead's details view
+
+        if($id){
+            
+            $options = array('id' => $id);
+            $view_data['model_info'] = $this->Purchase_Receive_model->get_details($options)->getRow(); //$this->Subscriptions_model->get_one($lead_id);//
+        }else{
+            $view_data['model_info'] = new $this->Purchase_Receive_model;
+        }
+        // print_r($view_data['model_info']);die;
+               
+ 
+         return $this->template->view('purchase_receive/receive_edit_modal_form', $view_data);
      }
 
     //get owners dropdown
@@ -112,6 +153,69 @@ class Purchase_Receive extends Security_Controller
         return $dropdown;
     }
 
+    function order_details_json($id=0) {
+        
+        $order_id = $this->request->getPost('order_id');
+        $id = $id == 0 ? $order_id : $id;
+
+        // die('id: ' .$id);
+     
+        if($id){
+
+            $res = $this->Purchase_Order_model->get_details(['id' => $id])?->getRow();
+        }else{
+            $res = null;
+        }
+
+        // if (!$res) {
+        //     show_404();
+        // }
+
+        echo json_encode($res); 
+    }
+
+    function order_items_json($id=0) {
+        
+        $order_id = $this->request->getPost('order_id');
+        $id = $id == 0 ? $order_id : $id;     
+        
+        if($id){
+            $res = $this->Purchase_Order_model->get_order_items(['purchase_order_id' => $id])?->getResult();
+        }else{
+            $res = null;
+        }
+        // if (!$res) {
+        //     show_404();
+        // }
+
+        echo json_encode($res); 
+    }
+
+    function get_item_details_json($item_id=0, $purchase_order_id=0) {
+
+        $item_details = get_item_details($item_id, $purchase_order_id);
+
+        echo json_encode($item_details);
+    }
+
+    function receive_items_json($id=0) {
+        
+        $order_id = $this->request->getPost('order_id');
+        $id = $id == 0 ? $order_id : $id;     
+        
+        if($id){
+            $res = $this->Purchase_Receive_model->get_receive_items(['purchase_order_id' => $id])?->getResult();
+        }else{
+            $res = null;
+        }
+        // if (!$res) {
+        //     show_404();
+        // }
+
+        echo json_encode($res); 
+    }
+
+    
     /* insert or update a receive */
     public function save()
     {
@@ -119,48 +223,90 @@ class Purchase_Receive extends Security_Controller
 
         $this->validate_submitted_data(array(
             "id" => "numeric",
-            "fuel_type" => "required",
-            "supplier" => "required",
-            "receive_date" => "required",
-            "barrels" => "required",
-            "vehicle_model" => "required",
-            "plate" => "required",
+            "supplier_id" => "required",
+            "receive_date" => "required"
         ));
+        
+        $purchase_order_id = $this->request->getPost('purchase_order_id');
+        $order_id = $this->request->getPost('order_id');
+
+        $order_id = empty($order_id) ? $purchase_order_id : $order_id;
+      
+        // die('order_id: '. $order_id);
+        
            
         // fuel_type supplier receive_date barrels	litters	received_by	vehicle_model	plate	
         $input = array(
-            'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
-            "fuel_type" => $this->request->getPost('fuel_type'),
-            "supplier" => $this->request->getPost('supplier'),
+            "order_id" => $order_id,
+            "product_type" => $this->request->getPost('product_type'),
+            "supplier" => $this->request->getPost('supplier_id'),
             "department_id" => $this->get_user_department_id(),
             "receive_date" => $this->request->getPost('receive_date'),
-            "barrels" => $this->request->getPost('barrels'),
-            "litters" => $this->request->getPost('litters'),
-            "vehicle_model" => $this->request->getPost('vehicle_model'),
-            "plate" => $this->request->getPost('plate'),
             "received_by" => $this->login_user->id,
             "created_at" => date('Y-m-d'),
             "remarks" => $this->request->getPost('remarks'),
 
         );
 
+        if(!$id){
+            $input['uuid'] = $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid;
+        }
+
         $input = clean_data($input);
-        $save_id = $this->Fuel_Receive_model->ci_save($input, $id);
+        $save_id = $this->Purchase_Receive_model->ci_save($input, $id);
 
         
         if ($save_id) {
-            // save_custom_fields("leads", $save_id, $this->login_user->is_admin, $this->login_user->user_type);
+            // save items to receive:
+            $item_name = $this->request->getPost('item_name');
+            $item_id = $this->request->getPost('item_id');
+            $description = $this->request->getPost('description');
+            $quantity = $this->request->getPost('quantity');
+            $price = $this->request->getPost('price');
+            $total = $this->request->getPost('total');
+
+            if(count($item_name) > 0){
+                foreach($item_name as $k=>$item){
+                    $this->db->query("insert into `rise_purchase_receive_items`(`purchase_order_id`, `item_id`, `name`, `description`, `quantity`, `price`, `total`) VALUES
+                                        ($order_id,$item_id[$k],'$item_name[$k]','$description[$k]',$quantity[$k],$price[$k],$total[$k])");
+                }
+            }
+
+            //update statuses:        
+            $order_status = $this->Purchase_Order_model->check_order_status($order_id);
+            if($order_status == 0){
+                $op = array('status' => 'complete');
+            }else{
+                $op = array('status' => 'partial');
+            }
+
+            $this->Purchase_Order_model->ci_save($op, $order_id);
+
+            $this->Purchase_Receive_model->ci_save($op, $save_id);
+
             $data = $this->_row_data($save_id);
 
             if (!$id) { //create operation
                 
-                log_notification("fuel_receive_created", array("fuel_receive_id" => $save_id), $this->login_user->id);
+                log_notification("purchase_receive_created", array("purchase_receive_id" => $save_id), $this->login_user->id);
 
                 echo json_encode(array("success" => true, "data" =>  $data, 'id' => $save_id, 'view' => $this->request->getPost('view'),
                     'message' => app_lang('record_saved')));
+
             } else { //update operation
                 
-                log_notification("fuel_receive_updated", array("fuel_receive_id" => $id), $this->login_user->id);
+                // delete old items
+                $this->db->query("delete from `rise_purchase_receive_items` where `purchase_order_id` = $order_id");
+
+                // insert new items
+                if(count($item_name) > 0){
+                    foreach($item_name as $k=>$item){
+                        $this->db->query("insert into `rise_purchase_receive_items`(`purchase_order_id`, `item_id`, `name`, `description`, `quantity`, `price`, `total`) VALUES
+                                            ($order_id,$item_id[$k],'$item_name[$k]','$description[$k]',$quantity[$k],$price[$k],$total[$k])");
+                    }
+                }
+
+                log_notification("purchase_receive_updated", array("purchase_receive_id" => $id), $this->login_user->id);
 
                 echo json_encode(array("success" => true, "data" => $data, 'id' => $id, 'view' => $this->request->getPost('view'),
                     'message' => app_lang('record_updated')));
@@ -602,20 +748,6 @@ class Purchase_Receive extends Security_Controller
         return $this->template->view("purchase_receive/order_details_tab", $view_data);
     }
 
-    function order_details_json($id=0) {
-        
-        // $id = $this->request->getPost('order_id');
-     
-        $res = $this->Purchase_Order_model->get_order_items(['purchase_order_id' => $id])?->getResult();
-
-        // if (!$res) {
-        //     show_404();
-        // }
-
-        echo json_encode($res); 
-    }
-
-    
     function view($purchase_order_id = 0) {
         // die($purchase_order_id);
         if (!$purchase_order_id) {
@@ -811,30 +943,19 @@ class Purchase_Receive extends Security_Controller
 
         $id = $this->request->getPost('id');
         // $this->validate_lead_access($id);
+        $receive = $this->Purchase_Receive_model->get_one($id);
+        $order_id = $receive?->order_id;
 
-        if ($this->Purchase_Order_model->delete($id)) {
+        if ($this->Purchase_Receive_model->delete($id)) {
+            $this->db->query("DELETE FROM rise_purchase_receive_items WHERE purchase_order_id = $order_id");
+            $options = array('status' => 'Pending');
+            $this->Purchase_Order_model->ci_save($options,$order_id);
             echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
         }
     }
 
-/* delete or undo a request */
-public function r_delete()
-{
-    $this->validate_submitted_data(array(
-        "id" => "required|numeric",
-    ));
-
-    $id = $this->request->getPost('id');
-    // $this->validate_lead_access($id);
-
-    if ($this->Fuel_Request_model->delete($id)) {
-        echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
-    } else {
-        echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
-    }
-}
     /* list of receive report, prepared for datatable  */
     public function rec_rpt_list_data()
     {
@@ -1104,131 +1225,76 @@ public function r_delete()
         $recordsTotal =  get_array_value($list_data,'recordsTotal');
         $recordsFiltered =  get_array_value($list_data,'recordsFiltered');
 
-            $result = array();
-            foreach ($list_data as $data) {
-                $result[] = $this->_make_row($data);
-            }
-            echo json_encode(array("data" => $result,
-                        'recordsTotal'=>$recordsTotal,
-                        'recordsFiltered'=>$recordsFiltered
-                    ));
-
-
-        // var_dump($result);
-        // die();
-        echo json_encode($result);
-    }
-
-    
-    public function order_list_data()
-    {
-        
-        // $permissions = $this->login_user->permissions;
-
-        // $perm = get_array_value($permissions, $name);
-       
-        // $result = $this->check_access('lead');//here means documents for us.
-
-        $role = get_user_role();
-        $department_id = get_user_department_id();
-
-        $created_by = $this->login_user->id;
-
-        if ($this->login_user->is_admin || $role == 'Administrator'  || $role == 'Access Control' || $role == 'HRM' ) { //|| $perm == "all"
-            $created_by = '%';
-            $department_id = '%';
-        } else if ($role == 'Director'|| $role == 'Secretary') {
-            $created_by = '%';
-        } else if ($role == 'Employee') { //$perm == "own" || 
-            $created_by = $this->login_user->id;
-        }else{
-            
-            app_redirect("forbidden");
-        }
-        
-        $options = append_server_side_filtering_commmon_params([]);
-
-
-        $extraWhere = "";
-        //by this, we can handel the server side or client side from the app table prams.
-        if (get_array_value($options, "server_side")) {
-            $order_by = $options['order_by'];
-            $order_direction = $options['order_dir'];
-            $search_by = $options["search_by"] ;
-            $skip = $options["skip"] ;
-
-            
-            $limit_offset = "";
-            $limit = $options['limit'] ?? 10;
-            $where="rc.deleted=0";
-
-            if ($limit) {
-            
-                $offset = $skip ? $skip : 0;
-                $limit_offset = " LIMIT $limit OFFSET $offset ";
-            }
-
-            if ($order_by) {
-                $order_by = "$order_by $order_direction ";
-            }
-
-            if ($search_by) {
-                $search_by = $this->db->escapeLikeString($search_by);
-
-            // id	uuid	supplier	fuel_type	barrels	litters	receive_date	received_by	department_id	vehicle_model	plate	remarks	created_at	deleted	
-                $where .= " AND (";
-                $where .= " rc.id LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.uuid LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.supplier LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.product_type LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.quantity LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.order_date LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.department_id LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR rc.remarks LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR u.first_name LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR u.last_name LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " )";
-            }
-
-
-            $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user,s.supplier_name as supplier from rise_purchase_orders rc 
-            LEFT JOIN rise_users u on rc.ordered_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
-            LEFT JOIN rise_suppliers s on rc.supplier_id = s.id 
-            where rc.ordered_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
-
-            $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_purchase_orders rc
-            where ordered_by LIKE '$created_by' and department_id LIKE '$department_id' and rc.deleted=0 $extraWhere")->getRow()->affected;
-            $result = array();
-
-        } else {
-            $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user,s.supplier_name as supplier from rise_purchase_orders rc 
-            LEFT JOIN rise_users u on rc.ordered_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
-            LEFT JOIN rise_suppliers s on rc.supplier_id = s.id 
-            where rc.ordered_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and  rc.deleted=0 $extraWhere");
-
-            $list_data = $result->getResult();
-            $total_rows =$this->db->query("select count(*) as affected from rise_purchase_orders rc
-            where ordered_by LIKE '$created_by' and department_id LIKE '$department_id' and  rc.deleted=0 $extraWhere")->getRow()->affected;
-            $result = array();
-        }
-
-
-        $result_data = array();
+        $result = array();
         foreach ($list_data as $data) {
-            $result_data[] = $this->_make_order_row($data);
+            $result[] = $this->_make_row($data);
         }
 
-        $result["data"] = $result_data;
-        $result["recordsTotal"] = $total_rows;
-        $result["recordsFiltered"] = $total_rows;
 
-        // var_dump($result);
-        // die();
-        echo json_encode($result);
+        echo json_encode(array("data" => $result,
+                    'recordsTotal'=>$recordsTotal,
+                    'recordsFiltered'=>$recordsFiltered
+                ));
+
     }
+
+    private function _make_row($data)
+    {
+        // $image_url = get_avatar($data->contact_avatar);
+       
+        // id	uuid	supplier	fuel_type	barrels	litters	receive_date	received_by	department_id	vehicle_model	plate	remarks	created_at	deleted	
+        
+        $owner = "-";
+        if ($data->received_by) {
+            // $owner_image_url = get_avatar($data->owner_avatar);
+            // $owner_user = "<span class='avatar avatar-xs mr10'><img src='$owner_image_url' alt='...'></span> $data->user";
+            // $owner = get_team_member_profile_link($data->created_by, $owner_user);
+            $owner =$data->user;//$this->db->query("select * from rise_users where id = $data->created_by");
+            
+        }
+
+        if (strtolower($data->status) === "partial") {
+            $status_class = "bg-warning";
+        } else if (strtolower($data->status) === "approved") {
+            $status_class = "badge bg-success";//btn-success
+        }else if (strtolower($data->status) === "complete") {
+            $status_class = "badge btn-success";//btn-success
+        }  else if (strtolower($data->status) === "cancelled") {
+            $status_class = "bg-danger";//btn-success
+           
+        } else if (strtolower($data->status) === "rejected") {
+            $status_class = "bg-danger";
+        } else {
+            $status_class = "bg-secondary";
+        }
+
+        $status_meta = "<span class='badge $status_class'>" . app_lang($data->status) . "</span>";
+   
+
+        $row_data = array(
+            $data->id,
+            $this->get_PO_ID($data->order_id),
+            $data->product_type,
+            $data->supplier,
+            date_format(new \DateTime($data->receive_date),'F d, Y'),
+            $owner,
+            $data->remarks,
+            $status_meta,
+        );
+
+        // $row_data[] = js_anchor($data->document_title, array("style" => "background-color: green;",
+        // "class" => "badge", "data-id" => $data->id, "data-value" => $data->id, "data-act" => "update-lead-status"));
+
+        //open doc link:
+        // $link = "<a href='$data->webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
+
+        $row_data[] = modal_anchor(get_uri("purchase_receive/receive_edit_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => 'Edit Receive Information', "data-post-id" => $data->id))
+        // .modal_anchor(get_uri("purchase_receive/receive_details"), "<i data-feather='info' class='icon-16'></i>", array("class" => "info", "title" => 'Show Receive Information', "data-post-id" => $data->id))
+        . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => 'Delete Receive Information', "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("purchase_receive/delete"), "data-action" => "delete-confirmation"));
+
+        return $row_data;
+    }
+
     
     public function request_list_data()
     {
@@ -1353,200 +1419,11 @@ public function r_delete()
             "custom_fields" => $custom_fields,
             // "leads_only" => true
         );
-        $data = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
-        LEFT JOIN rise_users u on rc.received_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
-        where rc.id=$id")->getRow();
+        $data = $this->Purchase_Receive_model->get_details($options)->getRow();
         return $this->_make_row($data, $custom_fields);
     }
-
-    /* return a row of receive list table */
-    private function order_row_data($id)
-    {
-        $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
-        $options = array(
-            "id" => $id
-        );
-        
-        $data = $this->Purchase_Order_model->get_details($options)->getRow();
-
-        return $this->_make_order_row($data, $custom_fields);
-    }
     
-    private function request_row_data($id)
-    {
-        $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
-        $options = array(
-            "id" => $id,
-            "custom_fields" => $custom_fields,
-            // "leads_only" => true
-        );
-
-        $data = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
-        LEFT JOIN rise_users u on rc.requested_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
-        where rc.id=$id")->getRow();
-        return $this->_make_request_row($data, $custom_fields);
-    }
-
-    private function _make_row($data)
-    {
-        // $image_url = get_avatar($data->contact_avatar);
-       
-        // id	uuid	supplier	fuel_type	barrels	litters	receive_date	received_by	department_id	vehicle_model	plate	remarks	created_at	deleted	
-        
-        $owner = "-";
-        if ($data->received_by) {
-            // $owner_image_url = get_avatar($data->owner_avatar);
-            // $owner_user = "<span class='avatar avatar-xs mr10'><img src='$owner_image_url' alt='...'></span> $data->user";
-            // $owner = get_team_member_profile_link($data->created_by, $owner_user);
-            $owner =$data->user;//$this->db->query("select * from rise_users where id = $data->created_by");
-            
-        }
-
-        // $lead_labels = make_labels_view_data($data->labels_list, true);
-
-        $row_data = array(
-            $data->id,
-            $data->fuel_type,
-            $data->supplier,
-            $data->receive_date,
-            $data->barrels,
-            $data->litters,
-            $owner,
-            // $data->vehicle_model,
-            // $data->plate,
-            // format_to_date($data->created_at, false),
-        );
-
-        // $row_data[] = js_anchor($data->document_title, array("style" => "background-color: green;",
-        // "class" => "badge", "data-id" => $data->id, "data-value" => $data->id, "data-act" => "update-lead-status"));
-
-        //open doc link:
-        // $link = "<a href='$data->webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
-
-        $row_data[] = modal_anchor(get_uri("fuel/receive_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => 'Edit Receive Information', "data-post-id" => $data->id))
-        .modal_anchor(get_uri("fuel/receive_details"), "<i data-feather='info' class='icon-16'></i>", array("class" => "info", "title" => 'Show Receive Information', "data-post-id" => $data->id))
-        . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => 'Delete Receive Information', "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("fuel/delete"), "data-action" => "delete-confirmation"));
-
-        return $row_data;
-    }
-
-    private function _make_order_row($data)
-    {
-        // $image_url = get_avatar($data->contact_avatar);
-       
-        // id	uuid	supplier	fuel_type	barrels	litters	receive_date	received_by	department_id	vehicle_model	plate	remarks	created_at	deleted	
-        
-        $owner = "-";
-        if ($data->ordered_by) {
-            // $owner_image_url = get_avatar($data->owner_avatar);
-            // $owner_user = "<span class='avatar avatar-xs mr10'><img src='$owner_image_url' alt='...'></span> $data->user";
-            // $owner = get_team_member_profile_link($data->created_by, $owner_user);
-            $owner =$data->user;//$this->db->query("select * from rise_users where id = $data->created_by");
-            
-        }
-
-        if ($data->status === "Pending") {
-            $status_class = "bg-warning";
-        } else if ($data->status === "approved") {
-            $status_class = "badge bg-success";//btn-success
-        } else if ($data->status === "cancelled") {
-            $status_class = "bg-dark";//btn-success
-           
-        } else {
-            $status_class = "bg-dark";
-        }
-
-        $status_meta = "<span class='badge $status_class'>" . app_lang($data->status) . "</span>";
    
-        $fOrderDate = empty($data->order_date)? '' : date_format(new \DateTime($data->order_date),'F d, Y');
-        $row_data = array(
-            $data->id,
-            anchor(get_uri("purchase_receive/view/".$data->id), 'PO-'.str_pad($data->id,4,'0',STR_PAD_LEFT), array("title" => app_lang("purchase_details"), "data-post-id" => $data->id)),
-            // 'PO-'.str_pad($data->id,4,'0',STR_PAD_LEFT),
-            $data->product_type,
-            $data->supplier,
-            $fOrderDate,
-            $owner,
-            $status_meta,
-        );
-
-        // $row_data[] = js_anchor($data->document_title, array("style" => "background-color: green;",
-        // "class" => "badge", "data-id" => $data->id, "data-value" => $data->id, "data-act" => "update-lead-status"));
-
-        //open doc link:
-        // $link = "<a href='$data->webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
-
-        $row_data[] = modal_anchor(get_uri("purchase_receive/order_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => 'Edit Order Information', "data-post-id" => $data->id))
-        .modal_anchor(get_uri("purchase_receive/order_details"), "<i data-feather='info' class='icon-16'></i>", array("class" => "info", "title" => 'Show Order Information', "data-post-id" => $data->id))
-        . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => 'Delete Order Information', "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("purchase_receive/delete"), "data-action" => "delete-confirmation"));
-
-        return $row_data;
-    }
-
-
-
-    /* prepare a row of request list table */
-    private function _make_request_row($data, $custom_fields)
-    {
-        // $image_url = get_avatar($data->contact_avatar);
-       
-        // id	uuid	requested_by	department_id	litters	vehicle_engine	plate	request_type	request_date	purpose	status	remarks	created_at	deleted	
-        
-        $owner = "-";
-        if ($data->requested_by) {
-            // $owner_image_url = get_avatar($data->owner_avatar);
-            // $owner_user = "<span class='avatar avatar-xs mr10'><img src='$owner_image_url' alt='...'></span> $data->user";
-            // $owner = get_team_member_profile_link($data->created_by, $owner_user);
-            $owner =$data->user;//$this->db->query("select * from rise_users where id = $data->created_by");
-            
-        }
-
-        // $lead_labels = make_labels_view_data($data->labels_list, true);
-
-            if ($data->status === "pending") {
-                $status_class = "bg-warning";
-            } else if ($data->status === "approved") {
-                $status_class = "badge bg-success";//btn-success
-            }else if ($data->status === "dispensed") {
-                $status_class = "badge btn-success";//btn-success
-            }  else if ($data->status === "cancelled") {
-                $status_class = "bg-dark";//btn-success
-               
-            } else if ($data->status === "rejected") {
-                $status_class = "bg-danger";
-            } else {
-                $status_class = "bg-dark";
-            }
-
-            $status_meta = "<span class='badge $status_class'>" . app_lang($data->status) . "</span>";
-       
-
-        $row_data = array(
-            $data->id,
-            $data->request_type,
-            $data->fuel_type,
-            $data->litters,
-            $data->request_date,
-            $data->purpose,
-            $owner,
-            $status_meta
-        );
-
-        // $row_data[] = js_anchor($data->document_title, array("style" => "background-color: green;",
-        // "class" => "badge", "data-id" => $data->id, "data-value" => $data->id, "data-act" => "update-lead-status"));
-
-        //open doc link:
-        // $link = "<a href='$data->webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
-
-        $row_data[] = modal_anchor(get_uri("fuel/request_modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => 'Edit Fuel Request', "data-post-id" => $data->id))
-        .modal_anchor(get_uri("fuel/request_details"), "<i data-feather='info' class='icon-16'></i>", array("class" => "info", "title" => 'Show Request Information', "data-post-id" => $data->id))
-        . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => 'Delete Request', "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("fuel/r_delete"), "data-action" => "delete-confirmation"));
-
-        return $row_data;
-    }
-
    
     /* load estimates tab  */
 

@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table id="item-table" class="display" cellspacing="0" width="100%">            
+            <table id="purchase-item-table" class="display" cellspacing="0" width="100%">            
             </table>
         </div>
     </div>
@@ -16,12 +16,13 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#item-table").appTable({
+        $("#purchase-item-table").appTable({
             source: '<?php echo_uri("purchase_items/list_data") ?>',
             order: [[0, 'desc']],
             columns: [
-                {title: "<?php echo app_lang('title') ?> ", "class": "w20p all"},
-                {title: "<?php echo app_lang('description') ?>"},
+                {title: "<?php echo app_lang('id') ?> ", "class": "w50 all text-center"},
+                {title: "<?php echo app_lang('title') ?> ", "class": "w20p"},
+                {title: "<?php echo app_lang('description') ?>", "class": "w30p"},
                 // {title: "<?php //echo app_lang('category') ?>"},
                 {title: "<?php echo app_lang('unit_type') ?>", "class": "w100"},
                 {title: "<?php echo app_lang('price') ?>", "class": "text-right w100"},

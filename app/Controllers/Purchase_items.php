@@ -76,7 +76,7 @@ class Purchase_items extends Security_Controller {
             "name" => $this->request->getPost('name'),
             "description" => $this->request->getPost('description'),
             "unit_type" => $this->request->getPost('unit_type'),
-            "price" => unformat_currency($this->request->getPost('item_rate'))
+            "price" => unformat_currency($this->request->getPost('item_price'))
         );
 
         if ($id) {
@@ -142,6 +142,7 @@ class Purchase_items extends Security_Controller {
         $type = $data->unit_type ? $data->unit_type : "";
 
         return array(
+            $data->id,
             modal_anchor(get_uri("purchase_items/view"), $data->name, array("title" => app_lang("item_details"), "data-post-id" => $data->id)),
             nl2br($data->description ? $data->description : ""),
             $type,

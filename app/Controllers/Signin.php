@@ -76,7 +76,10 @@ class Signin extends App_Controller
         }
 
         //authentication success
+        
         $redirect = $this->request->getPost("redirect");
+    
+
         if ($redirect) {
             // die('redirecing');
             return redirect()->to($redirect);
@@ -169,20 +172,28 @@ class Signin extends App_Controller
             //redirects user to make azure login
             $this->aad_signin($email);
         }else{
+            $redirect = $this->request->getPost("redirect");
+          
             // local user login redirect to password page
-            app_redirect('signin/signin_password?email='.$email);           
+            app_redirect("signin/signin_password?email=".$email."&redirect=$redirect");  
+            
             
         }
 
     }
 
-    /**
+            // 'redirect_uri' => $env == 'development' ? 'https://localhost/eVilla/signin/aad_callback' : 'https://ev.villasomalia.gov.so/signin/aad_callback',
+  /**
      * authenticate azure active directory
      * to insure user make login throgh microsoft
      * then microsoft redirects to aad_callback function in signin controller
      */
     public function aad_signin($email)
     {
+        // 1. request authentication code first:
+        // 2. it redirects aad_callback function
+        // 3. request access token which gives you both refresh & access tokens
+
         $appid = getenv('AZURE_APP_ID'); //"a70c275e-7713-46eb-8a09-6d5a7c3b823d";
 
         $tennantid = getenv('AZURE_TENANT_ID'); //"695822cd-3aaa-446d-aac2-3ebb02854b8a";
@@ -194,12 +205,13 @@ class Signin extends App_Controller
 
         $session = \Config\Services::session();
         $session->set('state', session_id());
+        
+        $this->session->set('login_email', $email);
 
-        $params = array('client_id' => $appid,
-
+        $params = array(
+            'client_id' => $appid,
             'redirect_uri' => $env == 'development' ? 'https://localhost/eVilla/signin/aad_callback' : 'https://ev.villasomalia.gov.so/signin/aad_callback',
-
-            'response_type' => 'token',
+            'response_type' => 'code',
             'login_hint' => $email, //'admin@presidency@gov.so',
             // 'prompt'=>'consent',
             'scope' => 'https://graph.microsoft.com/User.Read', //User.Read
@@ -207,43 +219,92 @@ class Signin extends App_Controller
             'state' => $session->get('state'));
         // die($login_url . '?' . http_build_query($params));
         header('Location: ' . $login_url . '?' . http_build_query($params));
+
         exit();
+
+    }
+
+    // get access token
+    public function getAccesToken($code)
+    {
+        $appid = getenv('AZURE_APP_ID'); //"a70c275e-7713-46eb-8a09-6d5a7c3b823d";
+        $tennantid = getenv('AZURE_TENANT_ID'); //"695822cd-3aaa-446d-aac2-3ebb02854b8a";
+        $secret = getenv('AZURE_SECRET_ID'); //"e54c00ad-6cfd-4113-b46f-5a3de239d13b";
+        $env = getenv('ENVIRONMENT'); //ENVIRONMENT
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://login.microsoftonline.com/'.$tennantid.'/oauth2/v2.0/token?Content-Type=application%2Fx-www-form-urlencoded',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => 'client_id='.$appid.'&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret='.$secret.'&code='.$code.'&grant_type=client_credentials',//authorization_code
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/x-www-form-urlencoded',
+                'Cookie: fpc=AvtPK5Dz759HgjJgzmeSAChRGrKTAQAAAIgG3NwOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd',
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($response, true);
+        // var_dump($data);
+        // die();
+        // Get the web URL of the file from the array
+        $accessToken = $data["access_token"];
+        // $refresh_token = $data["refresh_token"];
+        
+        $this->session->set('aad_token', $accessToken);
+        $this->session->set('auth_code', $code);
+
+        curl_close($curl);
+        return $accessToken;
 
     }
 
     public function aad_callback()
     {
+        //request access token using the [authentication code] below:
+
+        $auth_code = get_array_value( $_GET,'code');
+        // die($auth_code);
+        $access_token = $this->getAccesToken($auth_code);
+        
         // replace # with ?
-
-        echo '
-            <script>
+        // echo '
+        //     <script>
                         
-                url = window.location.href;
+        //         url = window.location.href;
 
-                i=url.indexOf("#");
+        //         i=url.indexOf("#");
 
-                if(i>0) {
+        //         if(i>0) {
 
-                url=url.replace("#","?");
+        //         url=url.replace("#","?");
 
-                window.location.href=url;
-            }
+        //         window.location.href=url;
+        //     }
 
-            </script>
+        //     </script>
 
-             ';
+        //      ';
 
-          // echo array_key_exists('access_token', $_GET);
-        //    var_dump($_GET);
-        //    die();    
-        // sleep(1);
-           $token_exists = array_key_exists('access_token', $_GET);
+        // var_dump($access_token);
+        // var_dump($_GET);
 
-        if ($token_exists == 1 && $token_exists == true) {
+        //    die();   
 
-            $this->session->set('aad_token', $_GET['access_token']);
+        if ($access_token) {
 
             $t = $this->session->get('aad_token');
+            $login_email = $this->session->get('login_email');
+            
             // die('token: '.$t);
 
             $ch = curl_init();
@@ -252,7 +313,7 @@ class Signin extends App_Controller
 
                 'Conent-type: application/json'));
 
-            curl_setopt($ch, CURLOPT_URL, "https://graph.microsoft.com/v1.0/me");
+            curl_setopt($ch, CURLOPT_URL, "https://graph.microsoft.com/v1.0/users/".$login_email);
 
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
@@ -268,6 +329,11 @@ class Signin extends App_Controller
 
                 die('error=' . $rez['error']);
 
+                  //user with email not found in azure ie. authentication failed
+                  array_push($this->signin_validation_errors, app_lang("authentication_failed") . ', User is not registred in microsoft azure. Error: '. $rez['error']);
+                  $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
+                  app_redirect('signin');
+
             } else {
                 $email = $rez['userPrincipalName'];
                 // var_dump($rez);
@@ -281,7 +347,6 @@ class Signin extends App_Controller
                     } else {
                         app_redirect('dashboard/view');
                     }
-
                 } else {
 
                     // die('Get: inside ' . var_dump($_GET));
@@ -292,16 +357,14 @@ class Signin extends App_Controller
                     app_redirect('signin');
                 }
             }
-
         } else {
 
-            die();
+            // die();
             //AAD authentication failed
-            array_push($this->signin_validation_errors, app_lang("authentication_failed") . ', No access token');
+            array_push($this->signin_validation_errors, app_lang("authentication_failed") . ', No access token, contact your administrator');
             $this->session->setFlashdata("signin_validation_errors", $this->signin_validation_errors);
             app_redirect('signin');
         }
-
     }
 
     public function aad_signout()

@@ -5,15 +5,17 @@
 
           <?php 
           
-            if ($model_info->status === "Pending") {
+            if (strtolower($model_info->status) === "pending") {
                 $status_class = "bg-warning";
-            } else if ($model_info->status === "Approved") {
-                $status_class = "badge bg-success";//btn-success
-            } else if ($model_info->status === "Cancelled") {
-                $status_class = "bg-dark";//btn-success
+            } else if (strtolower($model_info->status) === "approved") {
+                $status_class = "bg-primary";//btn-success
+            } else if (strtolower($model_info->status) === "complete") {
+                $status_class = "btn-success";//btn-success
+            }  else if (strtolower($model_info->status) === "cancelled") {
+                $status_class = "bg-danger";//btn-success
             
             } else {
-                $status_class = "bg-dark";
+                $status_class = "bg-secondary";
             }
 
             $status_meta = "<span class='badge $status_class'>" . app_lang($model_info->status) . "</span>";
@@ -75,8 +77,12 @@
 
         <div class="form-group p-3" style="clear: both;">
             <div class="row">
-                <table class="table" id="add_items_table">
-                    <thead>
+                <table class="table" id="add_items_table" style="color: #56749b;">
+                      
+                <?php 
+                    $total = 0;
+                ?>
+                    <thead style="color: #547fb7;">
                         <tr>
                             <th>ID</th>
                             <th>Item Name</th>
@@ -89,19 +95,61 @@
                     </thead>
                     <tbody>
                         <?php foreach ($order_details as $index => $order) {?>
+                            <?php                                     
+                                $item_details = get_item_details($order->item_id, $order->purchase_order_id);
+
+                                if($item_details->remainder == 0 || $item_details->remainder ==  '-'){
+                                    $q = '';
+                                }else{
+
+                                    $q = "(".$item_details->remainder.")";
+                                }
+
+                                if($item_details->remainder == 0){
+                                    $color = '#69d669';
+                                }else if($item_details->remainder ==  '-'){
+
+                                    $color = "#ed3d3d";
+                                }else{
+                                    $color = "#de8d40";
+                                }
+
+                                // $color = $item_details->remainder == 0 ? '#69d669' : '#de8d40';
+                            ?>
                             <tr>
                                 <td><?php echo $index+1;?></td>
                                 <td><?php echo $order->name;?></td>
                                 <td><?php echo $order->description;?></td>
                                 <!-- <td><?php //echo $order->unit_type;?></td> -->
-                                <td><?php echo $order->quantity;?></td>
-                                <td><?php echo $order->price;?></td>
-                                <td><?php echo $order->total;?></td>
-                         
+                                <td style="color: <?php echo $color ?>"><?php echo $q.$order->quantity;?></td>
+                                <td style="color: <?php echo $color ?>"><?php echo $order->price;?></td>
+                                <td style="color: <?php echo $color ?>"><?php echo '$'.number_format($order->total,2);?></td>
+                                                           
+                                <?php 
+                                    $total += $order->total;
+                                ?>
                             </tr>
                         <?php } ?>
+                        <tr style="border-bottom: transparent;">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="font-weight: bold;"><?php echo '$'.number_format($total,2);?></td>
+                        </tr>
                     </tbody>
                 </table>       
+                
+                <div class="" style="">
+                    <div class="row">
+                        <h6><div class="d-inline-block mr5" style='background-color: #69d669;border-radius: 50%; height: 10px; width: 10px;'></div> Fully Received</h6>
+                        <h6><div class="d-inline-block mr5" style='background-color: #de8d40;border-radius: 50%; height: 10px; width: 10px;'></div> Partially Received</h6>
+                        <h6><div class="d-inline-block mr5" style='background-color: #ed3d3d;border-radius: 50%; height: 10px; width: 10px;'></div> Not Received</h6>
+                        <h6><div class="d-inline-block mr5" style='color: #de8d40; '>(...)</div> Total remaining items to recevie</h6>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>

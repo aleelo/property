@@ -16,7 +16,7 @@
 
     <div class="card">
         <div class="table-responsive">
-            <table id="purchase-receive-table" class="display" cellspacing="0" width="100%">            
+            <table id="purchase-order-table" class="display" cellspacing="0" width="100%">            
             </table>
         </div>
     </div>
@@ -32,7 +32,7 @@
     }
 
     // fuel_type supplier receive_date barrels	litters	received_by	vehicle_model	plate	
-    $("#purchase-receive-table").appTable({
+    $("#purchase-order-table").appTable({
     source: '<?php echo_uri("purchase_order/order_list_data") ?>',
             serverSide: true,
             // smartFilterIdentity: "all_leads_list", //a to z and _ only. should be unique to avoid conflicts
@@ -47,7 +47,7 @@
             columns: [
             {title: "<?php echo 'ID' ?>", "class": "all", order_by: "id"},
             {title: "<?php echo 'PO ID' ?>", "class": "all"},
-            {title: "<?php echo app_lang("product_type") ?>", "class": "all", order_by: "product_type"},
+            {title: "<?php echo app_lang("purchase_type") ?>", "class": "all", order_by: "product_type"},
             {title: "<?php echo app_lang("supplier") ?>", order_by: "supplier"},
             {title: "<?php echo app_lang("order_date") ?>", order_by: "order_date"},
             // {title: "<?php //echo app_lang("quantity") ?>", order_by: "quantity"},

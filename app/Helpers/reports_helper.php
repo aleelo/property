@@ -20,6 +20,7 @@ if (!function_exists('get_reports_topbar')) {
         $access_lead = get_array_value($permissions, "lead");
         $access_ticket = get_array_value($permissions, "ticket");
         $access_fuel = get_array_value($permissions, "fuel");
+        $access_procurement = get_array_value($permissions, "procurement");
 
         /*
           $access_order = get_array_value($permissions, "order");
@@ -41,6 +42,14 @@ if (!function_exists('get_reports_topbar')) {
             $fuel_dropdown["fuel_receive"] = array("name" => "fuel_receive", "url" => "fuel/fuel_receive_report");
             $fuel_dropdown["fuel_request"] = array("name" => "fuel_request", "url" => "fuel/fuel_request_report");
             $fuel_dropdown["fuel_daily_activity"] = array("name" => "fuel_daily_activity", "url" => "fuel/fuel_activity_report");
+          
+        }
+
+        $procurement_dropdown = array();
+        if (($ci->login_user->is_admin || $access_procurement)) {
+            $procurement_dropdown["purchase_request"] = array("name" => "purchase_request", "url" => "purchase_request/purchase_request_report");
+            $procurement_dropdown["purchase_order"] = array("name" => "purchase_order", "url" => "purchase_order/purchase_order_report");
+            $procurement_dropdown["purchase_receive"] = array("name" => "purchase_receive", "url" => "purchase_receive/purchase_receive_report");
           
         }
 
@@ -102,9 +111,9 @@ if (!function_exists('get_reports_topbar')) {
             $reports_menu[] = array("name" => "projects", "url" => "projects/team_members_summary", "class" => "command", "single_button" => true);
         }
 
-        if (get_setting("module_lead") == "1" && ($ci->login_user->is_admin || $access_lead == "all")) {
-            $reports_menu[] = array("name" => "leads", "url" => "leads/converted_to_client_report", "class" => "layers", "single_button" => true);
-        }
+        // if (get_setting("module_lead") == "1" && ($ci->login_user->is_admin || $access_lead == "all")) {
+        //     $reports_menu[] = array("name" => "leads", "url" => "leads/converted_to_client_report", "class" => "layers", "single_button" => true);
+        // }
 
         if (get_setting("module_ticket") == "1" && ($ci->login_user->is_admin || $access_ticket == "all")) {
             $reports_menu[] = array("name" => "tickets", "url" => "tickets/tickets_chart_report", "class" => "life-buoy", "single_button" => true);
@@ -112,6 +121,10 @@ if (!function_exists('get_reports_topbar')) {
 
         if ( ($ci->login_user->is_admin || $access_fuel == "all" || $access_fuel == "own")) {
             $reports_menu['fuel'] = array("name" => "fuel", "url" => "fuel", "class" => "droplet", "dropdown_item" => $fuel_dropdown);
+        }
+
+        if ( ($ci->login_user->is_admin || $access_fuel == "all" || $access_fuel == "own")) {
+            $reports_menu['procurement'] = array("name" => "procurement", "url" => "fuel", "class" => "droplet", "dropdown_item" => $procurement_dropdown);
         }
 
         if ($return_array) {

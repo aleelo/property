@@ -1,4 +1,4 @@
-<?php echo form_open(get_uri("purchase_items/save"), array("id" => "items-form", "class" => "general-form", "role" => "form")); ?>
+<?php echo form_open(get_uri("purchase_items/save"), array("id" => "purchase-items-form", "class" => "general-form", "role" => "form")); ?>
 <div id="items-dropzone" class="post-dropzone">
     <div class="modal-body clearfix">
         <div class="container-fluid">
@@ -96,22 +96,21 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var uploadUrl = "<?php echo get_uri("purchase_items/upload_file"); ?>";
-        var validationUri = "<?php echo get_uri("purchase_items/validate_items_file"); ?>";
+        // var uploadUrl = "<?php //echo get_uri("purchase_items/upload_file"); ?>";
+        // var validationUri = "<?php //echo get_uri("purchase_items/validate_items_file"); ?>";
 
-        var dropzone = attachDropzoneWithForm("#items-dropzone", uploadUrl, validationUri);
+        // var dropzone = attachDropzoneWithForm("#items-dropzone", uploadUrl, validationUri);
 
-        $("#items-form").appForm({
+        $("#purchase-items-form").appForm({
             onSuccess: function (result) {
-                if (window.refreshAfterUpdate) {
-                    window.refreshAfterUpdate = false;
-                    location.reload();
-                } else {
-                    $("#item-table").appTable({newData: result.data, dataId: result.id});
+                
+                $("#purchase-item-table").appTable({newData: result.data, dataId: result.id});
+                if (result.id) {
+               
                 }
             }
         });
 
-        $("#items-form .select2").select2();
+        $("#purchase-items-form .select2").select2();
     });
 </script>

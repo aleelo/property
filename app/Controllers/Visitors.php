@@ -54,12 +54,14 @@ class Visitors extends Security_Controller
         // $this->access_only_allowed_members();
         $this->check_module_availability("module_visitor");
         $role = $this->get_user_role();
-        $view_data['can_add_requests'] = $role == 'Access Controll' || $role == 'Secretary' || $role == 'Director'  || $role == 'HRM' || $role == 'admin' || $role == 'Administrator'; 
+        $allowed = array('Access Controll','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
+
+        $view_data['can_add_requests'] = in_array($role,$allowed) ? true : false; 
 
         // die($role != 'admin' );
 
         
-        if($role != 'Access Controll' && $role != 'admin' && $role != 'Administrator' && $role != 'Director' && $role != 'Secretary' && $role != 'HRM'){ //not allowed to others including 'admistrator' role
+        if(!in_array($role,$allowed) ){ //not allowed to others 
             app_redirect("forbidden");
         }
         
@@ -86,13 +88,16 @@ class Visitors extends Security_Controller
         }
 
         $view_data = $this->make_lead_modal_form_data($lead_id);
-        $depts = $this->db->query("select * from departments where id like '$dept_id'")->getResult();
+        $depts = $this->db->query("select * from departments where id like '$dept_id' and deleted=0")->getResult();
+        
 
         if($dept_id == '%'){
 
             $departments =array(
                 ''=>'Choose Office/Xafiiska'
             );
+        }else{
+            $departments=array();
         }
 
         foreach($depts as $d){
@@ -169,44 +174,6 @@ class Visitors extends Security_Controller
         return $dropdown;
     }
 
-    public function AccesToken()
-    {
-        $appid = getenv('AZURE_APP_ID'); //"a70c275e-7713-46eb-8a09-6d5a7c3b823d";
-        $tennantid = getenv('AZURE_TENANT_ID'); //"695822cd-3aaa-446d-aac2-3ebb02854b8a";
-        $secret = getenv('AZURE_SECRET_ID'); //"e54c00ad-6cfd-4113-b46f-5a3de239d13b";
-        $env = getenv('ENVIRONMENT'); //ENVIRONMENT
-
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://login.microsoftonline.com/'.$tennantid.'/oauth2/v2.0/token?Content-Type=application%2Fx-www-form-urlencoded',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => 'client_id='.$appid.'&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret='.$secret.'&grant_type=client_credentials',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/x-www-form-urlencoded',
-                'Cookie: fpc=AvtPK5Dz759HgjJgzmeSAChRGrKTAQAAAIgG3NwOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd',
-            ),
-        ));
-
-        $response = curl_exec($curl);
-
-        // Decode the JSON response into an associative array
-        $data = json_decode($response, true);
-        // var_dump($data);
-        // die();
-        // Get the web URL of the file from the array
-        $accessToken = $data["access_token"];
-
-        curl_close($curl);
-        return $accessToken;
-
-    }
     /* insert or update a lead */
 
     public function save()
@@ -860,6 +827,79 @@ class Visitors extends Security_Controller
 
     }
 
+    public function AccesToken()
+    {
+        $appid = getenv('AZURE_APP_ID'); //"a70c275e-7713-46eb-8a09-6d5a7c3b823d";
+        $tennantid = getenv('AZURE_TENANT_ID'); //"695822cd-3aaa-446d-aac2-3ebb02854b8a";
+        $secret = getenv('AZURE_SECRET_ID'); //"e54c00ad-6cfd-4113-b46f-5a3de239d13b";
+        $env = getenv('ENVIRONMENT'); //ENVIRONMENT
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://login.microsoftonline.com/'.$tennantid.'/oauth2/v2.0/token?Content-Type=application%2Fx-www-form-urlencoded',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => 'client_id='.$appid.'&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret='.$secret.'&grant_type=client_credentials',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/x-www-form-urlencoded',
+                'Cookie: fpc=AvtPK5Dz759HgjJgzmeSAChRGrKTAQAAAIgG3NwOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd',
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($response, true);
+        // var_dump($data);
+        // die();
+        // Get the web URL of the file from the array
+        $accessToken = $data["access_token"];
+
+        curl_close($curl);
+        return $accessToken;
+
+    }
+
+    public function convert_to_pdf($accessToken, $itemID)
+    {
+        // drive/items/026359A1-9231-4577-8173-AA699B18F7D8/content?format=pdf
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drive/items/' . $itemID . '/content?format=pdf',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $accessToken,
+            ),
+        ));
+
+        $json = curl_exec($curl);
+
+        curl_close($curl);
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($json, true);
+
+        print_r($data);die;
+
+        // Get the web URL of the file from the array
+        $webUrl = $data["webUrl"];
+
+        // Redirect to the web URL using the header function
+        header("Location: $webUrl");
+        exit;
+    }
     //opens document with [itemid] in sharepoint
     public function openDoc($accessToken, $itemID)
     {
@@ -1045,7 +1085,14 @@ class Visitors extends Security_Controller
             // send whatsapp message:
             // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
             
-            $visitor_info = $this->db->query("SELECT * FROM rise_visitors WHERE id = $id")->getRow();
+            $visitor_info = $this->db->query("SELECT v.*,d.item_id,d.drive_info FROM rise_visitors v
+            LEFT JOIN rise_visitor_document vd ON vd.visitor_id = v.id
+            left join rise_documents d on d.id = vd.document_id
+            WHERE v.id = $id")->getRow();
+
+            // $itemID = $visitor_info?->item_id;
+            // $drive_info = unserialize($visitor_info?->drive_info);
+            // print_r($drive_info);die;
             
             $options = array('id'=> $visitor_info->created_by); 
             $user_info = $this->Users_model->get_details($options)->getRow();
@@ -1057,7 +1104,9 @@ class Visitors extends Security_Controller
             $message = "Codsiga soo deynta #$id ee ku mudeysan: $visit_date waa la oggolaaday.\n";
            
             $messageType = "text";
-                                   
+            // $accessToken = $this->AccesToken();
+            // $d = $this->convert_to_pdf($accessToken, $itemID);                                
+
                        
             // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
             
@@ -1095,11 +1144,14 @@ class Visitors extends Security_Controller
         $role = $this->get_user_role();
         $department_id = $this->get_user_department_id();
 
-        if($role == 'Access Controll' || $role == 'admin' || $role == 'Administrator'){ //not allowed to others including 'admistrator' role
+        if($role == 'Access Controll' || $role == 'admin' || $role == 'Administrator'){ 
             $created_by = '%';
             $department_id = '%';
-        }elseif($role == 'Director' || $role == 'Secretary'){
+        }elseif($role == 'Director'){ 
             $created_by = '%';
+        
+        }elseif( $role == 'Secretary' || $role == 'Supervisor'){ 
+            $created_by = $this->login_user->id;
         }
         else{
             app_redirect("forbidden");
@@ -1196,8 +1248,11 @@ class Visitors extends Security_Controller
     {
         
         $role = $this->get_user_role();
-        $can_add_requests = $role == 'Access Controll' || $role == 'Secretary' || $role == 'Director'  || $role == 'HRM' || $role == 'admin' || $role == 'Administrator'; 
+        $allowed = array('Access Controll','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
 
+        $can_add_requests = in_array($role,$allowed); 
+
+        
         //primary contact
         // $image_url = get_avatar($data->contact_avatar);
         // $contact = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->primary_contact";
