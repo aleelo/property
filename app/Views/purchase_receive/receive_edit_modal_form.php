@@ -368,9 +368,12 @@
 
                             }
 
-                            localStorage.setItem('curTotal1', total);
-                           
-                            $('#add_items_table tbody').append("<tr style='border-bottom: transparent;' id='totalRow'><td colspan='4' style='border:0'></td><td>Total: </td><td style='font-weight: bold;'><span id='footer_total'>" + total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2, style: 'currency', currency: 'USD'}) + "</span></td></tr>");
+                            setTimeout(function() {
+
+                                localStorage.setItem('curTotal1', total);                           
+                                $('#add_items_table tbody').append("<tr style='border-bottom: transparent;' id='totalRow'><td colspan='4' style='border:0'></td><td>Total: </td><td style='font-weight: bold;'><span id='footer_total'>" + total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2, style: 'currency', currency: 'USD'}) + "</span></td></tr>");
+
+                            },1000);
 
                         }else{
                             $('#add_items_table tbody').html('');

@@ -265,28 +265,34 @@ class Purchase_Receive extends Security_Controller
             $price = $this->request->getPost('price');
             $total = $this->request->getPost('total');
 
-            if(count($item_name) > 0){
-                foreach($item_name as $k=>$item){
-                    $this->db->query("insert into `rise_purchase_receive_items`(`purchase_order_id`, `item_id`, `name`, `description`, `quantity`, `price`, `total`) VALUES
-                                        ($order_id,$item_id[$k],'$item_name[$k]','$description[$k]',$quantity[$k],$price[$k],$total[$k])");
-                }
-            }
-
-            //update statuses:        
-            $order_status = $this->Purchase_Order_model->check_order_status($order_id);
-            if($order_status == 0){
-                $op = array('status' => 'complete');
-            }else{
-                $op = array('status' => 'partial');
-            }
-
-            $this->Purchase_Order_model->ci_save($op, $order_id);
-
-            $this->Purchase_Receive_model->ci_save($op, $save_id);
 
             $data = $this->_row_data($save_id);
 
             if (!$id) { //create operation
+
+                
+                if(count($item_name) > 0){
+                    foreach($item_name as $k=>$item){
+                        $this->db->query("insert into `rise_purchase_receive_items`(`purchase_order_id`, `item_id`, `name`, `description`, `quantity`, `price`, `total`) VALUES
+                                            ($order_id,$item_id[$k],'$item_name[$k]','$description[$k]',$quantity[$k],$price[$k],$total[$k])");
+                    }
+                }
+
+                //update statuses:        
+                $order_status = $this->Purchase_Order_model->check_order_status($order_id);
+                
+            
+                if($order_status == 0){
+                    $op = array('status' => 'complete');
+                }else{
+                    $op = array('status' => 'partial');
+                }
+                // echo $order_status == 0 ? true: false;
+                // print_r($op);
+                // ;die;
+                $this->Purchase_Order_model->ci_save($op, $order_id);
+
+                $this->Purchase_Receive_model->ci_save($op, $save_id);
                 
                 log_notification("purchase_receive_created", array("purchase_receive_id" => $save_id), $this->login_user->id);
 
@@ -306,62 +312,23 @@ class Purchase_Receive extends Security_Controller
                     }
                 }
 
+                //update statuses:        
+                $order_status = $this->Purchase_Order_model->check_order_status($order_id);
+                
+            
+                if($order_status == 0){
+                    $op = array('status' => 'complete');
+                }else{
+                    $op = array('status' => 'partial');
+                }
+                // echo $order_status == 0 ? true: false;
+                // print_r($op);
+                // ;die;
+                $this->Purchase_Order_model->ci_save($op, $order_id);
+
+                $this->Purchase_Receive_model->ci_save($op, $save_id);
+                
                 log_notification("purchase_receive_updated", array("purchase_receive_id" => $id), $this->login_user->id);
-
-                echo json_encode(array("success" => true, "data" => $data, 'id' => $id, 'view' => $this->request->getPost('view'),
-                    'message' => app_lang('record_updated')));
-            }
-
-        } else {
-            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred').', Data not saved.'));
-        }
-    }
-
-    /* insert or update a order */
-    public function save_order()
-    {
-        $id = $this->request->getPost('id');
-
-        $this->validate_submitted_data(array(
-            "id" => "numeric",
-            "supplier_id" => "required",
-            "order_date" => "required",
-            "quantity" => "required"
-        ));
-           
-        // fuel_type supplier receive_date barrels	litters	received_by	vehicle_model	plate	
-        $input = array(
-            "product_type" => $this->request->getPost('product_type'),
-            "supplier_id" => $this->request->getPost('supplier_id'),
-            "department_id" => $this->get_user_department_id(),
-            "order_date" => $this->request->getPost('order_date'),
-            "ordered_by" => $this->login_user->id,
-            "created_at" => date('Y-m-d'),
-            "remarks" => $this->request->getPost('remarks'),
-
-        );
-
-        if(!$id){            
-            $input['uuid'] = $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid;
-        }
-
-        $input = clean_data($input);
-        $save_id = $this->Purchase_Order_model->ci_save($input, $id);
-
-        
-        if ($save_id) {
-            // save_custom_fields("leads", $save_id, $this->login_user->is_admin, $this->login_user->user_type);
-            $data = $this->order_row_data($save_id);
-
-            if (!$id) { //create operation
-                
-                log_notification("purchase_order_created", array("fuel_order_id" => $save_id), $this->login_user->id);
-
-                echo json_encode(array("success" => true, "data" =>  $data, 'id' => $save_id, 'view' => $this->request->getPost('view'),
-                    'message' => app_lang('record_saved')));
-            } else { //update operation
-                
-                log_notification("purchase_order_updated", array("fuel_order_id" => $id), $this->login_user->id);
 
                 echo json_encode(array("success" => true, "data" => $data, 'id' => $id, 'view' => $this->request->getPost('view'),
                     'message' => app_lang('record_updated')));
