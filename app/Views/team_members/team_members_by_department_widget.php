@@ -11,7 +11,7 @@
            
                     <div class="pt-3  px-3 b-b">
                         <div class="d-inline">
-                            <div class="color-tag border-circle me-3 wh10" style="background-color: #e78000;"></div><?php echo $v?->department; ?>                        
+                            <div class="color-tag border-circle me-3 wh10" style="background-color: #60a1ff;"></div><?php echo $v?->department; ?>                        
                            
                         </div> 
                         <span class="strong float-end"><?php echo $v?->count; ?></span>
@@ -23,7 +23,7 @@
            
                     <div class="pt-3 px-3 b-b">
                         <div class="d-inline">
-                            <div class="color-tag border-circle me-3 wh10" style="background-color: #e78000;"></div><?php echo $v?->department; ?>                        
+                            <div class="color-tag border-circle me-3 wh10" style="background-color: #86afeb;"></div><?php echo $v?->department; ?>                        
                           
                         </div>  
                         <span class="strong float-end"><?php echo $v?->count; ?></span>
