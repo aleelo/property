@@ -62,7 +62,7 @@ class Left_menu {
             // }
 
         
-            $sidebar_menu["archives"] = array("name" => "archives", "url" => "archives", "class" => "layers");
+            $sidebar_menu["archives"] = array("name" => "archives", "url" => "archives", "class" => "file-text");
             
 
             if (($this->ci->login_user->is_admin || $access_visitor) && !in_array($role,["Employee","ID Printer","Head of IDs"])) {
