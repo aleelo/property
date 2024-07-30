@@ -871,12 +871,13 @@ class Visitors extends Security_Controller
         // drive/items/026359A1-9231-4577-8173-AA699B18F7D8/content?format=pdf
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drive/items/' . $itemID . '/content?format=pdf',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
+            // CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drive/items/' . $itemID . '/content?format=pdf',
+            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drives/b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq/items/' . $itemID . '/content?format=pdf',
+            CURLOPT_RETURNTRANSFER => 1,
+            // CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
+            // CURLOPT_FOLLOWLOCATION => 1,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
@@ -884,21 +885,19 @@ class Visitors extends Security_Controller
             ),
         ));
 
-        $json = curl_exec($curl);
-
+        $res = curl_exec($curl);
+        $redirect_url = curl_getinfo($curl, CURLINFO_REDIRECT_URL);
         curl_close($curl);
 
         // Decode the JSON response into an associative array
-        $data = json_decode($json, true);
+        // $data = json_decode($res, true);
 
-        print_r($data);die;
-
-        // Get the web URL of the file from the array
-        $webUrl = $data["webUrl"];
+        // print_r('die: '.$res);
+        // print($redirect_url);die;
 
         // Redirect to the web URL using the header function
-        header("Location: $webUrl");
-        exit;
+        // header("Location: $json");
+        return $redirect_url;;
     }
     //opens document with [itemid] in sharepoint
     public function openDoc($accessToken, $itemID)
@@ -981,9 +980,17 @@ class Visitors extends Security_Controller
 
     public function access_search() {
 
+        $login_user_id = $this->login_user->id;
+        $role = get_user_role();
+        if(in_array($role, ['admin', 'Administrator','Access Controll'])){
+            $login_user_id = '%';
+        }else{
+            $login_user_id = $this->login_user->id;
+        }
+
         $today = date('Y-m-d');
         $visitors = $this->db->query("SELECT *,(select count(*) from rise_visitors_detail vd where v.id = vd.visitor_id) as count 
-        FROM rise_visitors v WHERE (end_date >= '$today') order by v.id desc limit 10")->getResult();
+        FROM rise_visitors v WHERE (end_date >= '$today') and v.created_by = like '$login_user_id'  order by v.id desc limit 10")->getResult();
         
         $data['visitors'] = $visitors;
 
@@ -992,9 +999,18 @@ class Visitors extends Security_Controller
 
     public function get_visitors_suggestion() {
         $search = $this->request->getPost('search');
+
+        $login_user_id = $this->login_user->id;
+        $role = get_user_role();
+        if(in_array($role, ['admin', 'Administrator','Access Controll'])){
+            $login_user_id = '%';
+        }else{
+            $login_user_id = $this->login_user->id;
+        }
+
         // die('s:'.$search);
         $today = date('Y-m-d');
-        $result = $this->db->query("SELECT * FROM rise_visitors WHERE (end_date >= '$today') and id like '%$search%'  order by visit_time desc limit 10")->getResult();
+        $result = $this->db->query("SELECT * FROM rise_visitors WHERE (end_date >= '$today') and id like '%$search%' and created_by = like '$login_user_id'   order by visit_time desc limit 10")->getResult();
 
         $result_array = array();
         foreach ($result as $v) {
@@ -1043,7 +1059,7 @@ class Visitors extends Security_Controller
         $id = $this->request->getPost('id');
         $status = $this->request->getPost('leave_status_input');
         $user_id = $this->login_user->id;
-
+        $redirect_url ='';
         $visitor_info = $this->db->query("SELECT * FROM rise_visitors WHERE id = $id")->getRow();
 
         if($status == 'Rejected'){
@@ -1090,7 +1106,7 @@ class Visitors extends Security_Controller
             left join rise_documents d on d.id = vd.document_id
             WHERE v.id = $id")->getRow();
 
-            // $itemID = $visitor_info?->item_id;
+            $itemID = $visitor_info?->item_id;
             // $drive_info = unserialize($visitor_info?->drive_info);
             // print_r($drive_info);die;
             
@@ -1104,25 +1120,21 @@ class Visitors extends Security_Controller
             $message = "Codsiga soo deynta #$id ee ku mudeysan: $visit_date waa la oggolaaday.\n";
            
             $messageType = "text";
-            // $accessToken = $this->AccesToken();
-            // $d = $this->convert_to_pdf($accessToken, $itemID);                                
 
-                       
+            //get file as pdf
+            // $accessToken = $this->AccesToken();
+            // $redirect_url = $this->convert_to_pdf($accessToken, $itemID);                      
+                                   
             // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
             
             $res = sendWhatsappMessage($phoneNumber, $message,$messageType);
             
-            if($res == 400){                
-                echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
-                die;
-            }
-
-            // die('error: '.$res);
-
-            if($res == 400){                
-                echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
-                die;
-            }
+            // print_r($res);  
+            // die($res == 400);
+            // if($res == 400){                
+            //     echo json_encode(array("success" => false, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
+            //     die;
+            // }
 
         }
         else{
@@ -1130,7 +1142,7 @@ class Visitors extends Security_Controller
         }
 
         
-        echo json_encode(array("success" => true, "data" => null, 'message' => app_lang('record_updated')));
+        echo json_encode(array("success" => true,"redirect_url" => $redirect_url, 'message' => 'successfully updated'));
     }
 
     /* list of leads, prepared for datatable  */

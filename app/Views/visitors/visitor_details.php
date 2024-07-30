@@ -147,7 +147,13 @@
         });
 
         $("#visitor-status-form").appForm({
-            onSuccess: function () {
+            onSuccess: function (res) {
+                if(res.redirect_url ){
+                    appAlert.success(res.message);
+                    
+                    window.open(res.redirect_url,'_blank');
+                    return false;
+                }
                 location.reload();
             }
         });
