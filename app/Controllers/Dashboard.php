@@ -15,6 +15,11 @@ class Dashboard extends Security_Controller {
     public function index($default = 0) {
 
         $view_data["dashboards"] = array();
+        $role = get_user_role();
+
+        if(in_array($role,['Employee','Supervisor','Secretary'])){
+            app_redirect('dashboard/employees');
+        }
 
         $dashboards = $this->Dashboards_model->get_details(array("user_id" => $this->login_user->id));
 
