@@ -1234,6 +1234,39 @@ if (!function_exists('open_tickets_list_widget')) {
 
 }
 
+if (!function_exists('open_tickets_widget')) {
+
+    function open_tickets_widget() {
+        $ci = new Security_Controller(false);
+
+        $Tickets_model = model("App\Models\Tickets_model");
+
+        if ($ci->login_user->user_type == "client") {
+            $client_id = $ci->login_user->client_id;
+            $options = array("client_id" => $client_id, "status" => "open");
+            $total = $Tickets_model->count_tickets($options);
+            $view_data['total'] = $total;
+
+            $template = new Template();
+            return $template->view("clients/tickets/open_tickets_widget", $view_data);
+        } else {
+            $template = new Template();
+            $show_assigned_tickets_only_user_id = $ci->login_user->id;
+            $role = $ci->get_user_role();
+            if($role == 'admin'){
+                $options = array("status" => "open");
+            }else{
+                $options = array("show_assigned_tickets_only_user_id" => $show_assigned_tickets_only_user_id, "status" => "open");
+            }
+        
+            $total = $Tickets_model->count_tickets($options);
+            $view_data['total'] = $total;
+
+            return $template->view("tickets/open_tickets_widget",$view_data);
+        }
+    }
+
+}
 /**
  * get total leads
  * @param boolean $return_as_data

@@ -76,7 +76,9 @@ class Signin extends App_Controller
         }
 
         //authentication success
-        
+        $role = get_user_role();
+        // die($role);
+               
         $redirect = $this->request->getPost("redirect");
     
 
@@ -85,7 +87,13 @@ class Signin extends App_Controller
             return redirect()->to($redirect);
         } else {
             // die('normal');
-            app_redirect('dashboard');
+            if(in_array($role,['Employee','Supervisor','Secretary'])){
+            
+                app_redirect('dashboard/employees');
+            }else{
+
+                app_redirect('dashboard');
+            }
         }
     }
 
@@ -341,11 +349,18 @@ class Signin extends App_Controller
                 if ($this->Users_model->authenticateAAD($email)) {
 
                     //authentication success
+                    $role = get_user_role();
                     $redirect = $this->request->getPost("redirect");
                     if ($redirect) {
                         return redirect()->to($redirect);
                     } else {
-                        app_redirect('dashboard/view');
+                        if(in_array($role,['Employee','Supervisor','Secretary'])){
+            
+                            app_redirect('dashboard/employees');
+                        }else{
+            
+                            app_redirect('dashboard/view');
+                        }
                     }
                 } else {
 

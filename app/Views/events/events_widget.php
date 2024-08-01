@@ -1,4 +1,4 @@
-<div class="card bg-white">
+<div class="card bg-white" style="min-height: 370px;">
     <div class="card-header">
         <i data-feather="calendar" class="icon-16"></i>&nbsp; <?php echo app_lang("events"); ?>
     </div>

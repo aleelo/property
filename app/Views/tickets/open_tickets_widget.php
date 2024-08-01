@@ -5,7 +5,7 @@
         </div>
         <div class="widget-details">
             <h1><?php echo $total; ?></h1>
-            <span class="bg-transparent-white"><?php echo anchor(get_uri("tickets"), app_lang("open_tickets"), array("class" => "white-link")); ?></span>
+            <span class="bg-transparent-white"><?php echo anchor(get_uri("tickets"), app_lang("open_tickets"), array("class" => "")); //white-link?></span>
         </div>
     </div>
 </div>

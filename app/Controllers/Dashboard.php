@@ -49,6 +49,44 @@ class Dashboard extends Security_Controller {
         $this->Settings_model->save_setting("user_" . $this->login_user->id . "_dashboard", "", "user");
     }
 
+    public function employees($default = 0) {
+
+        $view_data["dashboards"] = array();
+
+        $dashboards = $this->Dashboards_model->get_details(array("user_id" => $this->login_user->id));
+
+        if ($dashboards) {
+            $view_data["dashboards"] = $dashboards->getResult();
+        }
+
+        $view_data["dashboard_type"] = "default";
+        $this->show_staff_on_staff = false;
+
+        if ($this->login_user->user_type === "staff" && $this->show_staff_on_staff) {
+            //admin or team member dashboard
+            $staff_default_dashboard = get_setting("staff_default_dashboard");
+            $selected_dashboard_id = get_setting("user_" . $this->login_user->id . "_dashboard");
+
+            if ($staff_default_dashboard) {
+                return $this->view($staff_default_dashboard);
+            } else if (!$default && $selected_dashboard_id) {
+                return $this->view($selected_dashboard_id);
+            }
+
+            $view_data["widget_columns"] = $this->make_dashboard($this->_get_admin_and_team_dashboard_data());
+            $view_data["dashboard_id"] = 0;
+
+            $this->Settings_model->save_setting("user_" . $this->login_user->id . "_dashboard", "", "user");
+            return $this->template->rander("dashboards/custom_dashboards/view", $view_data);
+        } else {
+            // client dashboard
+
+            $this->_get_client_dashboard($view_data, false);
+        }
+
+        $this->Settings_model->save_setting("user_" . $this->login_user->id . "_dashboard", "", "user");
+    }
+
     private function _check_widgets_permissions() {
         if ($this->login_user->user_type === "staff" && $this->show_staff_on_staff) {
             $widgets = $this->_check_widgets_for_staffs();
@@ -271,23 +309,23 @@ class Dashboard extends Security_Controller {
 
         if ($show_invoice_info) {
             if (!in_array("projects", $hidden_menu)) {
-                $widget["total_projects"] = true;
+                $widget["total_projects"] = false;
             }
             if (!in_array("invoices", $hidden_menu)) {
-                $widget["total_invoices"] = true;
+                $widget["total_invoices"] = false;
             }
             if (!in_array("payments", $hidden_menu)) {
-                $widget["total_payments"] = true;
-                $widget["total_due"] = true;
+                $widget["total_payments"] = false;
+                $widget["total_due"] = false;
             }
         }
 
         if (!in_array("projects", $hidden_menu)) {
-            $widget["open_projects_list"] = true;
+            $widget["open_projects_list"] = false;
         }
 
         if (get_setting("client_can_view_activity") && get_setting("client_can_view_overview")) {
-            $widget["project_timeline"] = true;
+            $widget["project_timeline"] = false;
         }
 
         if ($show_events && !in_array("events", $hidden_menu)) {
@@ -295,7 +333,7 @@ class Dashboard extends Security_Controller {
         }
 
         if ($show_invoice_info && !in_array("invoices", $hidden_menu)) {
-            $widget["invoice_statistics"] = true;
+            $widget["invoice_statistics"] = false;
         }
 
         if ($show_events && !in_array("events", $hidden_menu)) {
@@ -886,13 +924,13 @@ class Dashboard extends Security_Controller {
             );
         } else {
             $default_widgets_array = array(
-                "total_projects",
-                "open_projects_list",
-                "project_timeline",
-                "total_invoices",
-                "total_payments",
-                "total_due",
-                "invoice_statistics",
+                // "total_projects",
+                // "open_projects_list",
+                // "project_timeline",
+                // "total_invoices",
+                // "total_payments",
+                // "total_due",
+                // "invoice_statistics",
                 "new_tickets",
                 "open_tickets",
                 "closed_tickets",
@@ -1341,6 +1379,9 @@ class Dashboard extends Security_Controller {
         $dashboard_view = "";
         // for cardholder in clien dashboard:
             
+        $role = get_user_role();
+        $view_data['role'] = $role;
+        
         $view_data["show_contact_info"] = false;
 
         if ($client_default_dashboard) {

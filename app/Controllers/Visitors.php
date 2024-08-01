@@ -897,7 +897,7 @@ class Visitors extends Security_Controller
 
         // Redirect to the web URL using the header function
         // header("Location: $json");
-        return $redirect_url;;
+        return $redirect_url;
     }
     //opens document with [itemid] in sharepoint
     public function openDoc($accessToken, $itemID)
