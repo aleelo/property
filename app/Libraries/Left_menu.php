@@ -71,7 +71,9 @@ class Left_menu {
                 $sidebar_menu["access_search"] = array("name" => "access_search", "url" => "visitors/access_search", "class" => "users");
             }
 
-            if (($this->ci->login_user->is_admin || $access_procurement) && !in_array($role,["Employee","ID Printer"])) {
+            $department_id = get_user_department_id();
+
+            if (($this->ci->login_user->is_admin || $access_procurement || $department_id == 193 || $department_id == 170 || $department_id == 199) && !in_array($role,["Employee","ID Printer"])) {
                 $sidebar_menu["procurement"] = array("name" => "procurement", "url" => "#", "class" => "shopping-cart");
                 $sidebar_menu["purchase_request"] = array("name" => "purchase_request", "url" => "purchase_request", "class" => "users");
                 $sidebar_menu["purchase_order"] = array("name" => "purchase_order", "url" => "purchase_order", "class" => "users");
