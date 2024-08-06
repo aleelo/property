@@ -67,28 +67,8 @@ class Dashboard extends Security_Controller {
         $view_data["dashboard_type"] = "default";
         $this->show_staff_on_staff = false;
 
-        if ($this->login_user->user_type === "staff" && $this->show_staff_on_staff) {
-            //admin or team member dashboard
-            $staff_default_dashboard = get_setting("staff_default_dashboard");
-            $selected_dashboard_id = get_setting("user_" . $this->login_user->id . "_dashboard");
-
-            if ($staff_default_dashboard) {
-                return $this->view($staff_default_dashboard);
-            } else if (!$default && $selected_dashboard_id) {
-                return $this->view($selected_dashboard_id);
-            }
-
-            $view_data["widget_columns"] = $this->make_dashboard($this->_get_admin_and_team_dashboard_data());
-            $view_data["dashboard_id"] = 0;
-
-            $this->Settings_model->save_setting("user_" . $this->login_user->id . "_dashboard", "", "user");
-            return $this->template->rander("dashboards/custom_dashboards/view", $view_data);
-        } else {
-            // client dashboard
-
-            $this->_get_client_dashboard($view_data, false);
-        }
-
+        $this->_get_client_dashboard($view_data, false);
+       
         $this->Settings_model->save_setting("user_" . $this->login_user->id . "_dashboard", "", "user");
     }
 
