@@ -67,7 +67,7 @@ class Dashboard extends Security_Controller {
         $view_data["dashboard_type"] = "default";
         $this->show_staff_on_staff = false;
 
-        $this->_get_client_dashboard($view_data, false);
+        $this->_get_client_dashboard_new($view_data, false);
        
         $this->Settings_model->save_setting("user_" . $this->login_user->id . "_dashboard", "", "user");
     }
@@ -1369,7 +1369,7 @@ class Dashboard extends Security_Controller {
         
         $view_data["show_contact_info"] = false;
 
-        if ($client_default_dashboard) {
+       if ($client_default_dashboard) {
             $view_data["widget_columns"] = $this->make_dashboard(unserialize($client_default_dashboard));
             $dashboard_view = "dashboards/custom_dashboards/view";
         } else {
@@ -1383,7 +1383,36 @@ class Dashboard extends Security_Controller {
             $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("projects", $this->login_user->is_admin, $this->login_user->user_type);
             $view_data['project_statuses'] = $this->Project_status_model->get_details()->getResult();
             $dashboard_view = "dashboards/client_dashboard";
+       }
+    }
+
+    private function _get_client_dashboard_new($view_data, $return_data = false) {
+        $widgets = $this->_check_widgets_permissions();
+        $client_default_dashboard = get_setting("client_default_dashboard");
+
+        if (!get_array_value($view_data, "dashboards")) {
+            $view_data["dashboards"] = array();
         }
+
+        $dashboard_view = "";
+        // for cardholder in clien dashboard:
+            
+        $role = get_user_role();
+        $view_data['role'] = $role;
+        
+        $view_data["show_contact_info"] = false;
+
+        $view_data['show_invoice_info'] = get_array_value($widgets, "show_invoice_info");
+        $view_data["show_project_info"] = true; //client can view projects
+        $view_data['hidden_menu'] = get_array_value($widgets, "hidden_menu");
+        $view_data['client_info'] = get_array_value($widgets, "client_info");
+        $view_data['client_id'] = get_array_value($widgets, "client_id");
+        $view_data['page_type'] = get_array_value($widgets, "page_type");
+        $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("projects", $this->login_user->is_admin, $this->login_user->user_type);
+        $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("projects", $this->login_user->is_admin, $this->login_user->user_type);
+        $view_data['project_statuses'] = $this->Project_status_model->get_details()->getResult();
+        $dashboard_view = "dashboards/client_dashboard";
+       
 
         if ($return_data) {
             return $this->template->view($dashboard_view, $view_data);
