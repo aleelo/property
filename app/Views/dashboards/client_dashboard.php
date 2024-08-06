@@ -44,8 +44,12 @@
                 <?php echo todo_list_widget(); ?>
             </div>
         
-            <div class="col-sm-12  widget-container">
+            <div class="col-sm-6  widget-container">
                 <?php echo sticky_note_widget("h370");; ?>
+            </div>
+                
+            <div class="col-sm-6  widget-container">
+                <?php echo open_tickets_list_widget(); ?>
             </div>
         
         </div>
