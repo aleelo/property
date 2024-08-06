@@ -2,7 +2,7 @@
     <?php //if ($show_invoice_info) { ?>
         <?php if (!in_array("projects", $hidden_menu) && $show_project_info) { ?>
             <div class="col-md-3 col-sm-6 widget-container">
-                <?php echo view("clients/info_widgets/tab", array("tab" => "projects")); ?>
+                <?php echo clock_widget();//view("clients/info_widgets/tab", array("tab" => "projects")); ?>
             </div>
         <?php } ?>
 
