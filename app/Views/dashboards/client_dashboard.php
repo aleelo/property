@@ -4,7 +4,7 @@
         echo view("dashboards/dashboard_header");
     }
 
-    if (in_array($role, ['ID Printer','Head of IDs','admin'])) { 
+    if (in_array($role, ['ID Printer','Head of IDs'])) { 
         echo announcements_alert_widget();
     }else{
 

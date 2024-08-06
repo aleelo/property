@@ -1,25 +1,25 @@
 <div class="row clearfix">
     <?php //if ($show_invoice_info) { ?>
-        <?php if (!in_array("projects", $hidden_menu) && $show_project_info) { ?>
+        <?php //if (!in_array("projects", $hidden_menu) && $show_project_info) { ?>
             <div class="col-md-3 col-sm-6 widget-container">
                 <?php echo clock_widget();//view("clients/info_widgets/tab", array("tab" => "projects")); ?>
             </div>
-        <?php } ?>
+        <?php //} ?>
 
-        <?php if (!in_array("invoices", $hidden_menu)) { ?>
+        <?php //if (!in_array("invoices", $hidden_menu)) { ?>
             <div class="col-md-3 col-sm-6  widget-container">
                 <?php echo my_open_tasks_widget(); //view("clients/info_widgets/tab", array("tab" => "total_invoiced")); ?>
             </div>
-        <?php } ?>
+        <?php //} ?>
 
-        <?php if (!in_array("payments", $hidden_menu) && !in_array("invoices", $hidden_menu)) { ?>
+        <?php //if (!in_array("payments", $hidden_menu) && !in_array("invoices", $hidden_menu)) { ?>
             <div class="col-md-3 col-sm-6  widget-container">
                 <?php echo open_tickets_widget();//view("clients/info_widgets/tab", array("tab" => "payments")); ?>
             </div>
             <div class="col-md-3 col-sm-6  widget-container">
                 <?php echo events_today_widget(); //view("clients/info_widgets/tab", array("tab" => "due")); ?>
             </div>
-        <?php } ?>
+        <?php //} ?>
 
 
 
