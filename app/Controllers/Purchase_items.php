@@ -50,7 +50,7 @@ class Purchase_items extends Security_Controller {
 
     function modal_form() {
         $this->access_only_team_members();
-        $this->validate_access_to_items();
+        // $this->validate_access_to_items();
 
         $this->validate_submitted_data(array(
             "id" => "numeric"
@@ -126,7 +126,7 @@ class Purchase_items extends Security_Controller {
 
     function list_data() {
         $this->access_only_team_members();
-        $this->validate_access_to_items();
+        // $this->validate_access_to_items();
 
         $list_data = $this->Purchase_Item_model->get_details([])->getResult();
         $result = array();
