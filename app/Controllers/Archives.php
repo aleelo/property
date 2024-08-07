@@ -79,10 +79,15 @@ class Archives extends Security_Controller {
         $client_id = $this->request->getPost('client_id');
         $department_id = $this->request->getPost('department_id');
 
+        if(!$department_id){
+            echo json_encode(array("success" => false, 'message' => 'Please set your department'));
+        }
+
 
         $files = $this->request->getPost("files");
         $success = false;
-        $now = get_current_utc_time();
+        $now = date('Y-m-d H:i:s');
+
 
         $target_path = getcwd() . "/" . get_general_file_path("archives", $department_id);
 

@@ -27,6 +27,26 @@
     </div>
 </div>
 
+    
+<div id="jstree_demo_div">
+        <ul>
+            <li data-jstree='{"icon":"ri-folder-6-line","color": "yellow"}' style="color: yellow" >Root node 1
+            <ul>
+                <li data-jstree='{"icon":"ri-folder-6-line"}' >Child node 1</li>
+                <li data-jstree='{"icon":"ri-folder-6-line"}' >
+                    <a href="#"> Child node 2</a>
+                </li>
+            </ul>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+<script>
+    $('#jstree_demo_div').jstree();
+    feather.replace();
+</script>
 <script type="text/javascript">
     $(document).ready(function () {
         setTimeout(function () {

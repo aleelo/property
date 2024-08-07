@@ -1384,6 +1384,13 @@ class Dashboard extends Security_Controller {
             $view_data['project_statuses'] = $this->Project_status_model->get_details()->getResult();
             $dashboard_view = "dashboards/client_dashboard";
        }
+
+       
+       if ($return_data) {
+            return $this->template->view($dashboard_view, $view_data);
+        } else {
+            echo $this->template->rander($dashboard_view, $view_data);
+        }
     }
 
     private function _get_client_dashboard_new($view_data, $return_data = false) {

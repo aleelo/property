@@ -72,12 +72,15 @@
     }
 
     array_push($css_files, "assets/css/custom-style.css"); //add to last. custom style should not be merged
+    array_push($css_files, "assets/css/jstree.min.css");
+    array_push($css_files, "assets/css/remixicon.min.css");
 
     load_css($css_files);
 
     load_js(array(
         "assets/js/app.all.js",
-        "assets/js/datatable/sum.js"
+        "assets/js/datatable/sum.js",
+        "assets/js/jstree.min.js"
     ));
     ?>
 
@@ -99,4 +102,5 @@
     margin-bottom: 15px;
 }
 </style>
+
 </head>
