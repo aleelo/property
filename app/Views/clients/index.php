@@ -28,7 +28,7 @@
 </div>
 
     
-<div id="jstree_demo_div">
+<!-- <div id="jstree_demo_div">
         <ul>
             <li data-jstree='{"icon":"ri-folder-6-line","color": "yellow"}' style="color: yellow" >Root node 1
             <ul>
@@ -41,7 +41,7 @@
         </ul>
     </div>
 
-</div>
+</div> -->
 
 <script>
     $('#jstree_demo_div').jstree();
