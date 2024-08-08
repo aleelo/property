@@ -1260,7 +1260,7 @@ class Leaves extends Security_Controller {
     public function send_leave_nulla_osta($data = array()) {
         
         $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta", true);
-        $email = 'nulla-osta@immigration.gov.so';//$data['EMAIL'];
+        $email = 'admin@presidency.gov.so';//nulla-osta@immigration.gov.so;
         $leave_id = $data['LEAVE_ID'];
         $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
                         a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
