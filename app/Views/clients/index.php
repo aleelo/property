@@ -26,9 +26,9 @@
         </div>
     </div>
 </div>
-
+<!-- 
     
-<!-- <div id="jstree_demo_div">
+<div id="jstree_demo_div">
         <ul>
             <li data-jstree='{"icon":"ri-folder-6-line","color": "yellow"}' style="color: yellow" >Root node 1
             <ul>
@@ -39,14 +39,15 @@
             </ul>
             </li>
         </ul>
-    </div>
+    </div> -->
 
-</div> -->
+</div>
 
 <script>
     $('#jstree_demo_div').jstree();
     feather.replace();
 </script>
+
 <script type="text/javascript">
     $(document).ready(function () {
         setTimeout(function () {

@@ -7,6 +7,8 @@ use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class Leaves extends Security_Controller {
@@ -371,8 +373,7 @@ class Leaves extends Security_Controller {
 
     /**
      * start document functions
-     */
-    
+     */    
      
     public function get_leave_pdf($path,$data,$mode='view'){
 
@@ -409,6 +410,7 @@ class Leaves extends Security_Controller {
         exit();
     }
 
+    
     // nolo osto search
     public function leave_nolosto_search() {
         $search = $this->request->getPost('searchTerm') ?? 0;
@@ -474,6 +476,58 @@ class Leaves extends Security_Controller {
 
     }
 
+    /**
+     * start document functions
+     */    
+     
+     public function get_leave_mail_pdf($id,$type,$mode='view'){
+        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
+        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
+        LEFT JOIN rise_users a on l.applicant_id = a.id
+        LEFT JOIN rise_users cb on l.applicant_id = cb.id
+        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
+        left join rise_leave_types t on t.id=l.leave_type_id 
+        where l.uuid = '$id'")->getRow();
+        
+        $view_data['leave_info'] = $leave_info;
+        
+        $pdf_file_name = "leave_document_info_".$id.".pdf";
+       
+        $options = new Options([
+            'enable_remote' => true,
+            'isRemoteEnabled' => true,
+            'chroot',base_url('files/system'),
+        ]);
+        
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+        $options = $dompdf->getOptions();
+        $dompdf->setOptions($options);
+        
+        // var_dump($options->get('chroot'));
+        // die();
+        // file_get_contents('visitors/',$dompdf->output());
+        $view_data['leave_info'] = $leave_info;
+
+        if($type == 'nulla_osta'){
+            $html = view('leaves/leave_nolosto_mail_pdf',$view_data);
+        }else if($type == 'passport_return'){
+            $html = view('leaves/leave_passport_return_mail_pdf',$view_data);
+        }
+        // print_r($html);
+        $dompdf->loadHtml($html);
+        
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream($pdf_file_name,['Attachment'=>0]);
+        exit();
+    }
 
     // leave return search
     public function leave_return_search() {
@@ -1225,8 +1279,59 @@ class Leaves extends Security_Controller {
         $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
         $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
         $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
-        $parser_data["LEAVE_URL"] = get_uri('leaves');
+        $parser_data["LEAVE_URL"] = get_uri('leaves/get_leave_mail_pdf/'.$leave_info?->uuid.'/nulla_osta');
         $parser_data["HTML_TEMPLATE"] = view('leaves/leave_nolosto_mail',$nolo_data);
+        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
+        $parser_data["LOGO_URL"] = get_logo_url();
+        $parser_data["SITE_URL"] = get_uri();
+        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
+        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
+
+        $message =  get_array_value($email_template, "message_default");
+        $subject =  get_array_value($email_template, "subject_default");
+
+        $message = $this->parser->setData($parser_data)->renderString($message);
+        $subject = $this->parser->setData($parser_data)->renderString($subject);
+
+        if (send_app_mail($email, $subject, $message)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function send_leave_nulla_osta_pdf($data = array(),$type) {
+        
+        if($type == 'nulla_osta'){
+
+            $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta_pdf", true);
+        }else if($type == 'passport_return'){
+            $email_template = $this->Email_templates_model->get_final_template("leave_passport_return_pdf", true);
+        }
+
+        
+        $email = 'nulla-osta@immigration.gov.so';//$data['EMAIL'];
+        $leave_id = $data['LEAVE_ID'];
+        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
+                        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
+                        
+                        LEFT JOIN rise_users a on l.applicant_id = a.id
+                        LEFT JOIN rise_users cb on l.applicant_id = cb.id
+                        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
+                        left join rise_leave_types t on t.id=l.leave_type_id 
+                        where l.id= $leave_id")->getRow();
+
+        $nolo_data['leave_info'] = $leave_info;
+
+        $url = get_uri('leaves/get_leave_mail_pdf/'.$leave_info?->uuid.','.$type);
+       
+        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
+        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
+        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
+        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
+        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
+        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
+        $parser_data["LEAVE_URL"] = $url;
         $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
         $parser_data["LOGO_URL"] = get_logo_url();
         $parser_data["SITE_URL"] = get_uri();
@@ -1249,7 +1354,7 @@ class Leaves extends Security_Controller {
     public function send_leave_passport_return($data = array()) {
         
         $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta", true);
-        $email = 'nulla-osta@immigration.gov.so';//$data['EMAIL'];
+        $email = 'admin@presidency.gov.so';//nulla-osta@immigration.gov.so;
         $leave_id = $data['LEAVE_ID'];
         $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
                         a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
@@ -1268,7 +1373,7 @@ class Leaves extends Security_Controller {
         $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
         $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
         $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
-        $parser_data["LEAVE_URL"] = get_uri('leaves');
+        $parser_data["LEAVE_URL"] = get_uri('leaves/get_leave_mail_pdf/'.$leave_info?->uuid.'/passport_return');
         $parser_data["HTML_TEMPLATE"] = view('leaves/leave_passport_return_mail',$nolo_data);
         $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
         $parser_data["LOGO_URL"] = get_logo_url();
