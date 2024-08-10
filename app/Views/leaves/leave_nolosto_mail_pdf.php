@@ -21,18 +21,17 @@
         <div class="shadow d-flex justify-content-center col-xs-12 mt-3 mb-3 " id="search-card1" style="display: flex;justify-content: center;">
             <?php if(!empty($leave_info)){ ?>
             <div class="" >                   
-                <div class="container" style=" background-color: #c8eaff;
+                <div class="container" style=" background-color: #e7f6ff;
             width: 440px; border-top-left-radius:  7px;border-top-right-radius:  7px;
             padding: 0px; color: #4f4f74;margin-left:auto;margin-right: auto;">
-                    <div class="ticket-header" style="padding: 0px !important;background-color: #6bc6ff !important;background-color: #3cb4ff;
+                    <div class="ticket-header" style="padding: 0px !important;background-color: #6bc6ff !important;background-color: #88d1ff !important;
             color: white;
             border-top-left-radius:  7px;
             border-top-right-radius:  7px;
             text-align: center;
             padding: 15px 5px;
             display: flex;
-            align-items: center;
-            justify-content: center;">
+            align-items: center;justify-content: center;height: 90px">
                         <img id="logo" src="<?php
                           $p = get_uri('assets/images/sys-logo-white.png');
                          
@@ -93,7 +92,7 @@
                                         <?php echo $leave_info->applicant_name; ?>
                                     </div>
                                     <p style="margin: 0;"><span class='badge bg-primary' style="border-radius: 20px;display: inline-block;
-                                    padding: 4px 5px;font-weight: normal;font-size: 85%;margin-top: 5px;background-color: #6690F4 !important;color: #fff;">
+                                    padding: 4px 7px;font-weight: normal;font-size: 85%;margin-top: 5px;background-color: #6690F4 !important;color: #fff;">
                                     <?php echo $leave_info->job_title; ?></span> </p>
                                 </div>
                             </div>

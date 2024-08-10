@@ -17,18 +17,18 @@
         
     </style>
 
-    <div class=" search-container" style="margin-left:auto;margin-right: auto;width: 100%;" id="search-container1" >
+    <div class=" search-container" style="margin-left:auto;margin-right: auto;display: flex;justify-content: center;" id="search-container1" >
 
         <div class="shadow d-flex justify-content-center col-xs-12 mt-3 mb-3 " id="search-card1" style="display: flex;justify-content: center">
             <?php if(!empty($leave_info)){ ?>
             <div class="" >                   
-                <div class="container" style=" background-color: #ffe2b3;
+                <div class="container" style=" background-color: #fff3e0;
             width: 440px;
             border-top-left-radius:  7px;
             border-top-right-radius:  7px;
             padding: 0px;
-            color: #b55300;">
-                    <div class="ticket-header" style="padding: 0px !important;background-color: #f4a82d !important;background-color: #3cb4ff;
+            color: #896c53;">
+                    <div class="ticket-header" style="padding: 0px !important;background-color: #ffbd52 !important;background-color: #3cb4ff;
             color: white;
             border-top-left-radius:  7px;
             border-top-right-radius:  7px;
@@ -36,7 +36,7 @@
             padding: 15px 5px;
             display: flex;
             align-items: center;
-            justify-content: center;margin-left:auto;margin-right: auto;">
+            justify-content: center;margin-left:auto;margin-right: auto;height: 90px">
                         <img id="logo" src="<?php 
                         $p = get_uri('assets/images/sys-logo-white.png');
                          
@@ -45,7 +45,7 @@
                         $logo_image = 'data:image/' . $type . ';base64,' . base64_encode($d);
                         
                         echo $logo_image;
-                        ?>" style="width: 400px;margin-top: 18px;padding:0;margin-bottom: 0;">
+                        ?>" style="width: 400px;margin-top: 22px;padding:0;margin-bottom: 0;">
                         &nbsp;&nbsp;
                     </div>
                     <div class="ticket-body" style=" padding: 20px 15px;">
@@ -97,7 +97,7 @@
                                         <?php echo $leave_info->applicant_name; ?>
                                     </div>
                                     <p style="margin: 0;"><span class='badge bg-primary' style="border-radius: 20px;display: inline-block;
-                                    padding: 4px 5px;font-weight: normal;font-size: 85%;margin-top: 5px;background-color: #f4a82d !important;color: #fff;">
+                                    padding: 4px 7px;font-weight: normal;font-size: 85%;margin-top: 5px;background-color: #f4a82d !important;color: #fff;">
                                     <?php echo $leave_info->job_title; ?></span> </p>
                                 </div>
                             </div>
@@ -155,6 +155,8 @@
 
         </div>
     </div>
+    </div>
+    
 
 
        
