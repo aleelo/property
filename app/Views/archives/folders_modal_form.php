@@ -3,17 +3,17 @@
 
     <div class="form-group">
             <div class="row">
-                <label for="service_type" class="<?php echo 'col-3'; ?>"><?php echo app_lang('document_type'); ?></label>
+                <label for="name" class="<?php echo 'col-3'; ?>"><?php echo app_lang('folder_name'); ?></label>
                 <div class="<?php echo 'col-9'; ?>">
                     <?php
-                    echo form_dropdown(array(
-                        "id" => "service_type",
-                        "name" => "service_type",
+                    echo form_input(array(
+                        "id" => "name",
+                        "name" => "name",
                         "class" => "form-control select2",
-                        "placeholder" => app_lang('document_type'),
+                        "placeholder" => app_lang('folder_name'),
                         "data-rule-required" => true,
                         "data-msg-required" => app_lang("field_required"),
-                    ),['Document'=>'Document','Media'=>'Media']);
+                    ));
                     ?>
                 </div>
             </div>

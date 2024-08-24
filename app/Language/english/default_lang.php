@@ -1245,6 +1245,12 @@ $lang["delete_client_group"] = "Delete client group";
 
 $lang["ticket_prefix"] = "Ticket prefix";
 $lang["add_a_task"] = "Add a task...";
+$lang["folders_list"] = "Folders List";
+$lang["add_folders"] = "Add Folders";
+$lang["add_folder"] = "Add Folder";
+$lang["edit_folder"] = "Edit Folder";
+$lang["delete_folder"] = "Delete Folder";
+$lang["folder_structure"] = "Folder Structure";
 
 $lang["add_task_status"] = "Add task status";
 $lang["edit_task_status"] = "Edit task status";

@@ -22,7 +22,54 @@ class Archives extends Security_Controller {
 
     }
 
+    function folders() {
+          
+        return $this->template->view("archives/folders");
 
+    }
+
+    function archives() {
+          
+        return $this->template->view("archives/archives");
+
+    }
+
+
+
+    public function processImages()
+    {
+        $location = "./img/photos";
+        $folder = opendir($location); // open folder
+
+        if ($folder) {
+            $index = 0;
+            while (false != ($image = readdir($folder))) { // read until end
+
+                if ($image != '.' && $image != '..') { // remove . and ..
+                    $ext = pathinfo($image, PATHINFO_EXTENSION);
+                    $filename = pathinfo($image, PATHINFO_FILENAME);
+
+                    //check image type:
+                    if(exif_imagetype($image) == IMAGETYPE_JPEG) {
+                        //JPEG
+                    }elseif(exif_imagetype($image) == IMAGETYPE_PNG){
+                        // PNG
+                    }
+
+                    // directory_map()
+                    dir()
+
+
+                    // sleep(0.2);
+
+                }
+                $index++;
+
+            }
+        }
+
+        echo "<br><br>" . $index . " Records Updated.";
+    }
     // private function can_view_files() {
     //     if ($this->login_user->user_type == "staff") {
     //         $this->access_only_allowed_members();
