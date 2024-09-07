@@ -59,7 +59,7 @@
                                 <?php echo modal_anchor(get_uri("purchase_request/item_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_item'), array("class" => "btn btn-info text-white", "title" => app_lang('add_item'), "data-post-purchase_request_id" => $purchase_info->id)); ?>
                             </div>
                             <div class="float-end pr15" id="invoice-total-section">
-                                <?php echo view("purchase_request/purchase_total_section", array("purchase_id" => $purchase_info->id,'purchase_total_summary'=>$purchase_total_summary, "can_add_purchase" => true, "can_edit_purchase" => true)); ?>
+                                <?php //echo view("purchase_request/purchase_total_section", array("purchase_id" => $purchase_info->id,'purchase_total_summary'=>$purchase_total_summary, "can_add_purchase" => true, "can_edit_purchase" => true)); ?>
                             </div>
                         </div>           
 
@@ -81,7 +81,7 @@
                             <?php echo format_to_relative_time($purchase_info->created_at); ?>
                         </div>
 
-                        <?php if ($purchase_info->ordered_by) { ?>
+                        <?php if ($purchase_info->requested_by) { ?>
                             <div class="col-md-12 mb15">
                                 <strong><?php echo app_lang('requested_by') . ": "; ?></strong>
                                 <?php echo get_team_member_profile_link($purchase_info->requested_by, $purchase_info->user); ?>
@@ -99,58 +99,3 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-        
-    $(document).ready(function () {
-                
-        var optionVisibility = false;
-        optionVisibility = true;
-      
-        var delay;
-        var taxableRows = [];
-
-        $("#purchase-item-table").appTable({
-            source: '<?php echo_uri("purchase_request/item_list_data/" . $purchase_info->id) ?>',
-            order: [[0, "asc"]],
-            hideTools: true,
-            displayLength: 100,
-            stateSave: false,
-            columns: [
-                {visible: false, searchable: false},
-                {title: '<?php echo app_lang("item") ?> ', sortable: false},
-                {title: '<?php echo app_lang("quantity") ?>', "class": "text-right w15p", sortable: false},
-                {title: '<?php echo app_lang("price") ?>', "class": "text-right w15p", sortable: false},
-                {title: '<?php echo app_lang("total") ?>', "class": "text-right w15p", sortable: false},
-                {title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100", sortable: false, visible: optionVisibility}
-            ],
-            // rowCallback: function (nRow, aData) {
-            //     var column = $("#purchase-item-table").DataTable().column(4);
-            //     var taxableColumn = "<?php //echo get_setting('taxable_column'); ?>";
-            //     if (taxableColumn == "always_show") {
-            //         column.visible(true);
-            //     } else if (taxableColumn == "never_show") {
-            //         column.visible(false);
-            //     } else {
-            //         taxableRows.push(aData[4]);
-            //         clearTimeout(delay);
-            //         delay = setTimeout(function () {
-            //             var unique = getUniqueArray(taxableRows);
-
-            //             if (unique.length === 2) {
-            //                 column.visible(true);
-            //             } else {
-            //                 column.visible(false);
-            //             }
-            //             taxableRows = [];
-            //         }, 100);
-            //     }
-
-            // },
-     
-        });
-
-        
-        feather.replace();
-    });
-</script>

@@ -2,6 +2,12 @@
 
 namespace App\Models;
 
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Common\Version;
+use chillerlan\QRCode\Output\QROutputInterface;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
+
 class Purchase_Request_model extends Crud_model {
 
     protected $table = 'purchase_requests';
@@ -146,4 +152,83 @@ class Purchase_Request_model extends Crud_model {
         return $this->db->query($sql);
     }
 
+     // Creates the Document Using the Provided Template
+     public function createDoc($data =array())
+     {
+ 
+         require_once ROOTPATH . 'vendor/autoload.php';
+ 
+         // Creating the new document...
+         // $phpWord = new \PhpOffice\PhpWord\PhpWord();
+         $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'Views/documents/'.$data['template']);
+        
+         $ext = pathinfo(APPPATH.'Views/documents/'.$data['template'],PATHINFO_EXTENSION);
+         $save_as_name = 'requisition_'.$data['id'].'_'.date('m').'.'.date('Y').'.'.$ext;
+         
+ 
+         $path_absolute = APPPATH . 'Views/documents/'.$save_as_name;
+         // var_dump($data);
+         // var_dump($save_as_name);
+         // die();
+         
+         $template->setValues([
+ 
+             'ref' => $data['ref_number'],
+             'date' => date('F d, Y',strtotime($data['created_at'])),
+             'visitDate' => $data['visit_date'],
+             'documentTitle'=>$data['document_title'],
+             'gatesText'=>$data['allowed_gates'],
+            //  'sqn'=>$data['id'],
+             'department'=>$data['department'],
+ 
+         ]);
+ 
+         if($data['remarks']){
+             $template->setValue('remarksTitle','Faahfaahin Dheeri ah:');
+             $template->setValue('remarks',$data['remarks']);
+         }else{
+             $template->setValue('remarksTitle','');
+             $template->setValue('remarks','');
+         }
+ 
+         $template->cloneRowAndSetValues(
+             'id',
+             $data['table']
+         );
+ 
+         $options = new QROptions([
+             'eccLevel' => EccLevel::H,
+             'outputBase64' => true,
+             'cachefile' => APPPATH . 'Views/documents/qrcode.png',
+             'outputType'=>QROutputInterface::GDIMAGE_PNG,
+             'logoSpaceHeight' => 17,
+             'logoSpaceWidth' => 17,
+             'scale' => 20,
+             'version' => Version::AUTO,
+ 
+           ]);
+ 
+         //   $template->setMacroChars()
+         //   $options->outputType = ;
+ 
+         $qrcode = (new QRCode($options))->render(get_uri('purchase_request/get_purchase_requisition_order_pdf/'.$data['uuid']));//->getQRMatrix(current_url())
+ 
+         // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
+ 
+         // // dump the output, with an additional logo
+         // $out = $qrOutputInterface->dump(APPPATH . 'Views/documents/qrcode.png', APPPATH . 'Views/documents/logo.png');
+ 
+         $template->setImageValue('qrcode',
+             [
+                 'path' => APPPATH . 'Views/documents/qrcode.png',
+                 'width' => '100',
+                 'height' => '100',
+                 'ratio' => false,
+             ]);          
+ 
+         $template->saveAs($path_absolute);
+ 
+         return $save_as_name;
+ 
+     }
 }

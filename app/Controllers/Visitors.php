@@ -767,11 +767,11 @@ class Visitors extends Security_Controller
     {
 
         $fileContents = file_get_contents(APPPATH . 'Views/documents/' . $path); // Read the contents of the image file
-
+        $driveId = 'b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq';
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drives/b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq/root:/'.$data['folder'].'/' . $path . ':/content',
+            CURLOPT_URL => "https://graph.microsoft.com/v1.0/drives/$driveId/root:/".$data['folder'].'/' . $path . ':/content',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -869,10 +869,11 @@ class Visitors extends Security_Controller
     public function convert_to_pdf($accessToken, $itemID)
     {
         // drive/items/026359A1-9231-4577-8173-AA699B18F7D8/content?format=pdf
+        $driveId = 'b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq';
         $curl = curl_init();
         curl_setopt_array($curl, array(
             // CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drive/items/' . $itemID . '/content?format=pdf',
-            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drives/b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq/items/' . $itemID . '/content?format=pdf',
+            CURLOPT_URL => "https://graph.microsoft.com/v1.0/drives/$driveId/items/" . $itemID . '/content?format=pdf',
             CURLOPT_RETURNTRANSFER => 1,
             // CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,

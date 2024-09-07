@@ -48,7 +48,8 @@
                                             <li role="presentation"><?php echo modal_anchor(get_uri("purchase_request/delivery_note_modal/" . $purchase_info->id),"<i data-feather='external-link' class='icon-16'></i> " . app_lang('process_for_delivery'), array('title' => app_lang('process_for_delivery'),  "data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
                                         <?php } ?>
 
-
+                                        <li role="presentation"><?php echo anchor(get_uri("purchase_request/get_purchase_requisition_slip_pdf/" . $purchase_info->id),"<i data-feather='external-link' class='icon-16'></i> " . app_lang('requisition_form'), array('title' => app_lang('requisition_form'), 'target' => '_blank',  "data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
+                                        <li role="presentation"><?php echo anchor(get_uri("purchase_request/get_purchase_requisition_slip_pdf/" . $purchase_info->id),"<i data-feather='external-link' class='icon-16'></i> " . app_lang('requisition_slip'), array('title' => app_lang('requisition_slip'), 'target' => '_blank',  "data-reload-on-success" => "1", "class" => "dropdown-item")); ?> </li>
                                        
                                     <?php } ?>
 

@@ -1255,6 +1255,8 @@ $lang["folder_structure"] = "Folder Structure";
 $lang["add_task_status"] = "Add task status";
 $lang["edit_task_status"] = "Edit task status";
 $lang["delete_task_status"] = "Delete task status";
+$lang["requisition_form"] = "Requisition Form";
+$lang["requisition_slip"] = "Requisition Slip";
 
 $lang["list"] = "List";
 $lang["employee_ashboard"] = "Employee Dashboard";

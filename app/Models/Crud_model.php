@@ -536,4 +536,144 @@ class Crud_model extends Model {
         $info->discount_type = $invoice_info->discount_type;
         return $info;
     }
+   
+    // Gets the created file and uploads it to the SharePoint Drive
+    public function uploadDoc($accessToken,$data, $path)
+    {
+
+        $fileContents = file_get_contents(APPPATH . 'Views/documents/' . $path); // Read the contents of the image file
+        $driveId = 'b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq';
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://graph.microsoft.com/v1.0/drives/$driveId/root:/".$data['folder'].'/' . $path . ':/content',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_POSTFIELDS => $fileContents,
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $accessToken,
+            ),
+        ));
+
+        $json = curl_exec($curl);
+
+        curl_close($curl);
+
+        // Decode the JSON response into an associative array
+        $res = json_decode($json, true);
+
+       
+        if(file_exists(APPPATH . 'Views/documents/'.$path)){
+            unlink(APPPATH . 'Views/documents/'.$path);
+        }       
+
+        //send whatsapp message:        
+        $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+        $message = "Codsi Soo deyn:.\n";
+        $messageType = "text";
+        
+        // get visitors details:
+        $id = $data['id'];
+        $department = $data['department'];
+       
+        // $jobinfo = $this->get_user_job_info($this->login_user->id);
+
+        if(!$department){
+            $department = 'N/A';
+        }
+
+        // $vdetails = $this->db->query("SELECT * FROM rise_visitors_detail WHERE visitor_id = $id")->getResult();
+        // $options = array('id'=> $this->login_user->id); 
+        // $user_info = $this->Users_model->get_details($options)->getRow();
+
+        $message.="\nWaxaa xaqiijin u baahan codsiga soo gelista ee #" . $id;
+    
+        $message.="\nee kayimid Xafiiska: " . $department;
+           
+        $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
+
+        
+        return $res;
+
+    }
+
+    public function AccesToken()
+    {
+        $appid = getenv('AZURE_APP_ID'); //"a70c275e-7713-46eb-8a09-6d5a7c3b823d";
+        $tennantid = getenv('AZURE_TENANT_ID'); //"695822cd-3aaa-446d-aac2-3ebb02854b8a";
+        $secret = getenv('AZURE_SECRET_ID'); //"e54c00ad-6cfd-4113-b46f-5a3de239d13b";
+        $env = getenv('ENVIRONMENT'); //ENVIRONMENT
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://login.microsoftonline.com/'.$tennantid.'/oauth2/v2.0/token?Content-Type=application%2Fx-www-form-urlencoded',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => 'client_id='.$appid.'&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret='.$secret.'&grant_type=client_credentials',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/x-www-form-urlencoded',
+                'Cookie: fpc=AvtPK5Dz759HgjJgzmeSAChRGrKTAQAAAIgG3NwOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd',
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($response, true);
+        // var_dump($data);
+        // die();
+        // Get the web URL of the file from the array
+        $accessToken = $data["access_token"];
+
+        curl_close($curl);
+        return $accessToken;
+
+    }
+
+    public function convert_to_pdf($accessToken, $itemID)
+    {
+        // drive/items/026359A1-9231-4577-8173-AA699B18F7D8/content?format=pdf
+        $driveId = 'b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq';
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            // CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drive/items/' . $itemID . '/content?format=pdf',
+            CURLOPT_URL => "https://graph.microsoft.com/v1.0/drives/$driveId/items/" . $itemID . '/content?format=pdf',
+            CURLOPT_RETURNTRANSFER => 1,
+            // CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            // CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $accessToken,
+            ),
+        ));
+
+        $res = curl_exec($curl);
+        $redirect_url = curl_getinfo($curl, CURLINFO_REDIRECT_URL);
+        curl_close($curl);
+
+        // Decode the JSON response into an associative array
+        // $data = json_decode($res, true);
+
+        // print_r('die: '.$res);
+        // print($redirect_url);die;
+
+        // Redirect to the web URL using the header function
+        // header("Location: $json");
+        return $redirect_url;
+    }
+
 }
