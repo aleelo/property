@@ -177,9 +177,10 @@ class Users_model extends Crud_model {
 
         // die($role);
 
-        $role = get_array_value($options,'role') ?? '%';
-        $created_by = get_array_value($options,'created_by') ?? '%';
-        $department_id = get_array_value($options,'department_id') ?? '%';
+        // print_r($options);die;
+        $role = get_array_value($options,'role');
+        $created_by = get_array_value($options,'created_by');
+        $department_id = get_array_value($options,'department_id');
 
         $where = "";
         $id = $this->_get_clean_value($options, "id");

@@ -340,6 +340,7 @@ class Team_members extends Security_Controller {
 
         $result = $this->check_access();//here means documents for us.
 
+        // print_r($result);die;
         $role = get_array_value($result,'role');
         $created_by = get_array_value($result,'created_by');
         $department_id = get_array_value($result,'department_id');
