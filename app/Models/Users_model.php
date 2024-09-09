@@ -245,7 +245,7 @@ class Users_model extends Crud_model {
             }
         }
 
-        if($user_type =='staff') {
+        if($user_type =='staff' && $department_id && $created_by) {
             $where .=" AND $users_table.id LIKE '$created_by' AND $team_member_job_info_table.department_id like '$department_id'";
         }else{
 
@@ -317,6 +317,8 @@ class Users_model extends Crud_model {
         $join_custom_fieds    
         WHERE $users_table.deleted=0  $where $custom_fields_where
         $order $limit_offset";
+
+        // die($sql);
 
         $raw_query = $this->db->query($sql);
 

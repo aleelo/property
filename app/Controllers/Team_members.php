@@ -453,17 +453,18 @@ class Team_members extends Security_Controller {
     function view($id = 0, $tab = "") {
         if ($id * 1) {
             validate_numeric_value($id);
-
+            
             //if team member's list is disabled, but the user can see his/her own profile.
             if (!$this->can_view_team_members_list() && $this->login_user->id != $id) {
                 app_redirect("forbidden");
             }
-
+            
             //we have an id. view the team_member's profie
             $options = array("id" => $id, "user_type" => "staff");
             $user_info = $this->Users_model->get_details($options)->getRow();
-           
-
+            
+            
+            // die($user_info);
             if ($user_info) {
 
                 // var_dump($user_info);
