@@ -342,6 +342,11 @@ class Users_model extends Crud_model {
 
         $total = empty($total_rows) ? 0 : $total_rows->total_rows;
         $found = empty($found_rows) ? 0 : $found_rows->found_rows;
+
+        if($offset > 0){
+            $found = $total;
+        }
+        
         if ($limit) {
             return array(
                 "data" => $raw_query->getResult(),
