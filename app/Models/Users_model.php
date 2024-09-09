@@ -315,20 +315,34 @@ class Users_model extends Crud_model {
         LEFT JOIN $clients_table ON $clients_table.id=$users_table.client_id
         LEFT JOIN $roles_table ON $roles_table.id=$users_table.role_id
         $join_custom_fieds    
-        WHERE $users_table.deleted=0  $where $custom_fields_where
+        WHERE $users_table.deleted=0 $where $custom_fields_where
         $order $limit_offset";
 
         // die($sql);
 
         $raw_query = $this->db->query($sql);
 
-        $total_rows = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow();
+        $total_rows = $this->db->query("SELECT COUNT(*) as total_rows 
+         FROM $users_table
+        LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id=$users_table.id
+        LEFT JOIN $clients_table ON $clients_table.id=$users_table.client_id
+        LEFT JOIN $roles_table ON $roles_table.id=$users_table.role_id
+        $join_custom_fieds    
+        WHERE $users_table.deleted=0  AND $users_table.user_type='staff' $where ")->getRow();
+
+        $found_rows = $this->db->query("SELECT COUNT(*) as found_rows 
+         FROM $users_table
+        LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id=$users_table.id
+        LEFT JOIN $clients_table ON $clients_table.id=$users_table.client_id
+        LEFT JOIN $roles_table ON $roles_table.id=$users_table.role_id
+        $join_custom_fieds    
+        WHERE $users_table.deleted=0  AND $users_table.user_type='staff' $where  $limit_offset")->getRow();
 
         if ($limit) {
             return array(
                 "data" => $raw_query->getResult(),
-                "recordsTotal" => $total_rows->found_rows,
-                "recordsFiltered" => $total_rows->found_rows,
+                "recordsTotal" => $total_rows->total_rows,
+                "recordsFiltered" => $found_rows->found_rows,
             );
         } else {
             return $raw_query;

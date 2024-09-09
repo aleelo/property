@@ -360,11 +360,22 @@ class Team_members extends Security_Controller {
         // var_dump($options);
         // die();
 
-        $list_data = $this->Users_model->get_details($options);
+        $options_all = append_server_side_filtering_commmon_params($options);
+
+        $list_data_all = $this->Users_model->get_details($options_all);
         
-        $list_data = get_array_value($list_data,'data') ?get_array_value($list_data,'data') : $list_data->getResult(); 
-       $recordsTotal =  get_array_value($list_data,'recordsTotal');
-       $recordsFiltered =  get_array_value($list_data,'recordsFiltered');
+        $limit = get_array_value($options_all,'limit');
+
+        if($limit){
+
+            $list_data = get_array_value($list_data_all,'data'); 
+        }else{
+            $list_data = $list_data_all->getResult();
+        }
+
+        // print_r($list_data);die;
+        $recordsTotal =  get_array_value($list_data_all,'recordsTotal');
+        $recordsFiltered =  get_array_value($list_data_all,'recordsFiltered');
 
         $result = array();
         foreach ($list_data as $data) {

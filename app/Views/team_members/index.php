@@ -43,7 +43,7 @@
                 {name: "department_id", class: "w200", options: <?php echo $departments_dropdown; ?>},
                 
             ],
-            // serverSide: true,
+            serverSide: true,
             columns: [
                 {title: '', "class": "w50 text-center all"},
                 {title: "<?php echo app_lang("name") ?>", "class": "w200 all"},
