@@ -318,31 +318,35 @@ class Users_model extends Crud_model {
         WHERE $users_table.deleted=0 $where $custom_fields_where
         $order $limit_offset";
 
-        // die($sql);
-
         $raw_query = $this->db->query($sql);
 
         $total_rows = $this->db->query("SELECT COUNT(*) as total_rows 
-         FROM $users_table
-        LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id=$users_table.id
-        LEFT JOIN $clients_table ON $clients_table.id=$users_table.client_id
-        LEFT JOIN $roles_table ON $roles_table.id=$users_table.role_id
-        $join_custom_fieds    
-        WHERE $users_table.deleted=0  AND $users_table.user_type='staff' $where ")->getRow();
+            FROM $users_table
+            LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id=$users_table.id
+            LEFT JOIN $clients_table ON $clients_table.id=$users_table.client_id
+            LEFT JOIN $roles_table ON $roles_table.id=$users_table.role_id
+            $join_custom_fieds    
+            WHERE $users_table.deleted=0  AND $users_table.user_type='staff' $where ")->getRow();
 
         $found_rows = $this->db->query("SELECT COUNT(*) as found_rows 
-         FROM $users_table
-        LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id=$users_table.id
-        LEFT JOIN $clients_table ON $clients_table.id=$users_table.client_id
-        LEFT JOIN $roles_table ON $roles_table.id=$users_table.role_id
-        $join_custom_fieds    
-        WHERE $users_table.deleted=0  AND $users_table.user_type='staff' $where  $limit_offset")->getRow();
+            FROM $users_table
+            LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id=$users_table.id
+            LEFT JOIN $clients_table ON $clients_table.id=$users_table.client_id
+            LEFT JOIN $roles_table ON $roles_table.id=$users_table.role_id
+            $join_custom_fieds    
+            WHERE $users_table.deleted=0  AND $users_table.user_type='staff' $where  $limit_offset")->getRow();
 
+        // print_r($found_rows);
+        // print_r($total_rows);
+        // die;
+
+        $total = empty($total_rows) ? 0 : $total_rows->total_rows;
+        $found = empty($found_rows) ? 0 : $found_rows->found_rows;
         if ($limit) {
             return array(
                 "data" => $raw_query->getResult(),
-                "recordsTotal" => $total_rows->total_rows,
-                "recordsFiltered" => $found_rows->found_rows,
+                "recordsTotal" => $total,
+                "recordsFiltered" => $found,
             );
         } else {
             return $raw_query;
