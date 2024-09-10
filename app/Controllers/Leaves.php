@@ -197,6 +197,7 @@ class Leaves extends Security_Controller {
                     'TOTAL_DAYS'=>$duration,
                     'LEAVE_TYPE'=>$leave_info->title,            
                     'LEAVE_DATE' => $duration == 1 ? $leave_data['start_date']: $leave_data['start_date'] .' - '.$leave_data['end_date'],
+                    'DOCUMENT_REF' => $doc_leave_data['ref_number'],
                 ];
     
                 $r = $this->send_leave_nulla_osta($leave_email_data);
@@ -355,6 +356,7 @@ class Leaves extends Security_Controller {
                     'TOTAL_DAYS'=>$duration,
                     'LEAVE_TYPE'=>$leave_info->title,            
                     'LEAVE_DATE' => $duration == 1 ? $leave_data['start_date']: $leave_data['start_date'] .' - '.$leave_data['end_date'],
+                    'DOCUMENT_REF' => $doc_leave_data['ref_number'],
                 ];
     
                 $r = $this->send_leave_nulla_osta($leave_email_data);
@@ -1227,7 +1229,7 @@ class Leaves extends Security_Controller {
         $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
         $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
         $parser_data["LEAVE_URL"] = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.'/nulla_osta');
-        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_nolosto_mail',$nolo_data);
+        $parser_data["HTML_TEMPLATE"] = ''; // view('leaves/leave_nolosto_mail',$nolo_data);
         $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
         $parser_data["LOGO_URL"] = get_logo_url();
         $parser_data["SITE_URL"] = get_uri();
