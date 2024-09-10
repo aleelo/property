@@ -257,6 +257,8 @@ class Users_model extends Crud_model {
         } else if ($user_type === "lead") {
             $custom_field_type = "lead_contacts";
         }
+        $skip_s = $this->_get_clean_value($options, "skip");
+        $offset_s = $skip_s ? $skip_s : 0;
 
         $limit_offset = "";
         $limit = $this->_get_clean_value($options, "limit");
@@ -343,10 +345,10 @@ class Users_model extends Crud_model {
         $total = empty($total_rows) ? 0 : $total_rows->total_rows;
         $found = empty($found_rows) ? 0 : $found_rows->found_rows;
 
-        if($offset > 0){
+        if($offset_s > 0){
             $found = $total;
         }
-        
+
         if ($limit) {
             return array(
                 "data" => $raw_query->getResult(),
