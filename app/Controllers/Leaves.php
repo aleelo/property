@@ -1228,6 +1228,7 @@ class Leaves extends Security_Controller {
         $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
         $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
         $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
+        $parser_data["DOCUMENT_REF"] = $data['DOCUMENT_REF'];
         $parser_data["LEAVE_URL"] = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.'/nulla_osta');
         $parser_data["HTML_TEMPLATE"] = ''; // view('leaves/leave_nolosto_mail',$nolo_data);
         $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
