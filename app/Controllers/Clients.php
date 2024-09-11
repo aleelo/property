@@ -743,6 +743,8 @@ class Clients extends Security_Controller {
         $this->access_only_allowed_members_or_contact_personally($contact_id);
         $view_data['user_info'] = $this->Users_model->get_one($contact_id);
         $view_data['can_edit_clients'] = $this->can_edit_clients();
+        
+        $view_data['role_dropdown'] = $this->_get_roles_dropdown();
         $this->_validate_client_view_access($view_data['user_info']->client_id);
         return $this->template->view("users/account_settings", $view_data);
     }
@@ -1064,7 +1066,8 @@ class Clients extends Security_Controller {
 
         $account_data = array(
             "email" => $email,            
-            "login_type" => $this->request->getPost('login_type')
+            "private_email" => $this->request->getPost('private_email'),
+            "login_type" => $this->request->getPost('login_type'),
         );
 
         //don't reset password if user doesn't entered any password
@@ -1073,10 +1076,27 @@ class Clients extends Security_Controller {
         }
 
         //only admin can disable other users login permission
-        if ($this->login_user->is_admin) {
-            $account_data['disable_login'] = $this->request->getPost('disable_login');
-        }
+        $role = $this->request->getPost('role');
+        $user_info = $this->Users_model->get_one($user_id);
 
+        if (!$this->is_own_id($user_id) && ($this->login_user->is_admin || (!$user_info->is_admin && $this->has_role_manage_permission() && !$this->is_admin_role($role)))) {
+            //only admin user/eligible user has permission to update team member's role
+            //but admin user/eligible user can't update his/her own role 
+            //eligible user can't update admin user's role or can't give admin role to anyone
+            $role_id = $role;
+
+            if ($this->login_user->is_admin && $role === "admin") {
+                $account_data["is_admin"] = 1;
+                $account_data["role_id"] = 0;
+            } else {
+                $account_data["is_admin"] = 0;
+                $account_data["role_id"] = $role_id;
+            }
+
+            $account_data['disable_login'] = $this->request->getPost('disable_login');
+            $account_data['status'] = $this->request->getPost('status') === "inactive" ? "inactive" : "active";
+            
+        }
 
         if ($this->Users_model->ci_save($account_data, $user_id)) {
 

@@ -48,13 +48,12 @@ class Visitors extends Security_Controller
     }
 
     /* load leads list view */
-
     public function index()
     {
         // $this->access_only_allowed_members();
         $this->check_module_availability("module_visitor");
         $role = $this->get_user_role();
-        $allowed = array('Access Controll','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
+        $allowed = array('Access Controll','Access Client','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
 
         $view_data['can_add_requests'] = in_array($role,$allowed) ? true : false; 
 
@@ -75,6 +74,36 @@ class Visitors extends Security_Controller
 
         return $this->template->rander("visitors/index", $view_data);
     }
+
+    
+    /* load leads list view */
+    public function client_index()
+    {
+        // $this->access_only_allowed_members();
+        $this->check_module_availability("module_visitor");
+        $role = $this->get_user_role();
+        $allowed = array('Access Controll','Access Client','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
+
+        $view_data['can_add_requests'] = in_array($role,$allowed) ? true : false; 
+
+        // die($role != 'admin' );
+
+        
+        if(!in_array($role,$allowed) ){ //not allowed to others 
+            app_redirect("forbidden");
+        }
+        
+        // $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
+        // $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("leads", $this->login_user->is_admin, $this->login_user->user_type);
+
+        // $view_data['lead_statuses'] = $this->Lead_status_model->get_details()->getResult();
+        // $view_data['lead_sources'] = $this->Lead_source_model->get_details()->getResult();
+        $view_data['owners_dropdown'] = $this->_get_owners_dropdown("filter");
+        $view_data['labels_dropdown'] = json_encode($this->make_labels_dropdown("client", "", true));
+
+        return $this->template->view("visitors/index", $view_data);
+    }
+
 
     /* load lead add/edit modal */
     public function modal_form()
@@ -111,7 +140,7 @@ class Visitors extends Security_Controller
 
     private function make_lead_modal_form_data($lead_id = 0)
     {
-        $this->access_only_allowed_members();
+        // $this->access_only_allowed_members();
 
         $this->validate_submitted_data(array(
             "id" => "numeric",
@@ -1149,7 +1178,7 @@ class Visitors extends Security_Controller
     /* list of leads, prepared for datatable  */
     public function list_data()
     {
-        $this->access_only_allowed_members();
+        // $this->access_only_allowed_members();
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
 
         // $show_own_leads_only_user_id = $this->show_own_leads_only_user_id();
@@ -1157,13 +1186,14 @@ class Visitors extends Security_Controller
         $role = $this->get_user_role();
         $department_id = $this->get_user_department_id();
 
+        // die($role);
         if($role == 'Access Controll' || $role == 'admin' || $role == 'Administrator'){ 
             $created_by = '%';
             $department_id = '%';
         }elseif($role == 'Director'){ 
             $created_by = '%';
         
-        }elseif( $role == 'Secretary' || $role == 'Supervisor'){ 
+        }elseif( $role == 'Secretary' || $role == 'Supervisor' || $role == 'Access Client'){ 
             $created_by = $this->login_user->id;
         }
         else{
@@ -1261,7 +1291,7 @@ class Visitors extends Security_Controller
     {
         
         $role = $this->get_user_role();
-        $allowed = array('Access Controll','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
+        $allowed = array('Access Controll','Access Client','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
 
         $can_add_requests = in_array($role,$allowed); 
 

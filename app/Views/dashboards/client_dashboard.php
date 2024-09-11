@@ -1,5 +1,8 @@
 <div id="page-content" class="page-wrapper clearfix">
     <?php
+
+use App\Controllers\Visitors;
+
     if (count($dashboards) && !get_setting("disable_dashboard_customization_by_clients")) {
         echo view("dashboards/dashboard_header");
     }
@@ -21,7 +24,11 @@
         <div class="">
             <?php echo view("cardholders/index"); ?>
         </div>
-    <?php }else{ ?>
+    <?php }else if(in_array($role, ['Access Client'])){ ?>
+        <div class="">
+            <?php echo (new Visitors())->client_index(); ?>
+        </div>
+        <?php }else { ?>
         <div class="row">
             <div class="col-md-8 col-sm-6">                    
                 <div class="row">

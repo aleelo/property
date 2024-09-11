@@ -1247,8 +1247,9 @@ if (!function_exists('open_tickets_widget')) {
             $total = $Tickets_model->count_tickets($options);
             $view_data['total'] = $total;
 
+            // die($total);
             $template = new Template();
-            return $template->view("clients/tickets/open_tickets_widget", $view_data);
+            return $template->view("tickets/open_tickets_widget", $view_data);
         } else {
             $template = new Template();
             $show_assigned_tickets_only_user_id = $ci->login_user->id;

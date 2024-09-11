@@ -57,9 +57,9 @@ class Left_menu {
             }
 
 
-            // if ($this->ci->login_user->is_admin || $access_client) {
-                // $sidebar_menu["clients"] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
-            // }
+            if ($this->ci->login_user->is_admin || $access_client) {
+                $sidebar_menu["clients"] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
+            }
 
         
             $sidebar_menu["archives"] = array("name" => "archives", "url" => "archives", "class" => "file-text");

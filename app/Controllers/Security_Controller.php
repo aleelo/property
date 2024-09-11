@@ -128,11 +128,11 @@ class Security_Controller extends App_Controller {
     //access only allowed team members
     protected function access_only_allowed_members() {
 
-        // var_dump($this->module_group);
-        // var_dump($this->access_type);
+        // print_r($this->module_group);
+        // print_r($this->access_type);
         // die();
-        if ($this->access_type === "all") {
-            return true; //can access if user has permission
+        if ($this->login_user->is_admin || $this->access_type === "all" || $this->access_type === "own") {
+            return true; //can access if user has permission or admin privileges
         } else if ($this->module_group === "ticket" && ($this->access_type === "specific" || $this->access_type === "assigned_only")) {
             return true; //can access if it's tickets module and user has a pertial access
         } else if ($this->module_group === "lead" && $this->access_type === "own") {
@@ -953,6 +953,7 @@ class Security_Controller extends App_Controller {
         }
         
         $role = $this->Roles_model->get_one($user->role_id);
+        // die($role->title);
         return $role->title;
     }
 

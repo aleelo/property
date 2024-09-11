@@ -119,7 +119,7 @@
                 </div>
             <?php } ?> 
 
-            <?php if ($user_info->user_type === "staff" && ($login_user->is_admin || (!$user_info->is_admin && get_array_value($login_user->permissions, "can_manage_user_role_and_permissions") && $login_user->id !== $user_info->id))) { ?>
+            <?php if (($login_user->is_admin || (!$user_info->is_admin && get_array_value($login_user->permissions, "can_manage_user_role_and_permissions") && $login_user->id !== $user_info->id))) { ?>
                 <div class="form-group">
                     <div class="row">
                         <label for="role" class=" col-md-2"><?php echo app_lang('role'); ?></label>
@@ -140,33 +140,36 @@
             <?php } ?>
 
             <?php if (isset($can_activate_deactivate_team_members) && $can_activate_deactivate_team_members && $user_info->id !== $login_user->id) { ?>
-                <div class="form-group">
-                    <div class="row">
-                        <label for="disable_login" class="col-md-2"><?php echo app_lang('disable_login'); ?></label>
-                        <div class="col-md-10">
-                            <?php
-                            echo form_checkbox("disable_login", "1", $user_info->disable_login ? true : false, "id='disable_login' class='ml15 form-check-input mt-2'");
-                            ?>
-                            <span id="disable-login-help-block" class="ml10 <?php echo $user_info->disable_login ? "" : "hide" ?>"><i data-feather="alert-triangle" class="icon-16 text-warning"></i> <?php echo app_lang("disable_login_help_message"); ?></span>
-                        </div>
-                    </div>
-                </div>
+                
+                <?php } ?>
 
-                <?php if ($user_info->user_type === "staff") { ?>
+                <?php
+                
+                if ($login_user->is_admin) { ?>
                     <div class="form-group">
                         <div class="row">
-                            <label for="user_status" class="col-md-2"><?php echo app_lang('mark_as_inactive'); ?></label>
+                            <label for="disable_login" class="col-md-2"><?php echo app_lang('disable_login'); ?></label>
                             <div class="col-md-10">
                                 <?php
-                                echo form_checkbox("status", "inactive", $user_info->status === "inactive" ? true : false, "id='user_status' class='ml15 form-check-input mt-2'");
+                                echo form_checkbox("disable_login", "1", $user_info->disable_login ? true : false, "id='disable_login' class='ml15 form-check-input mt-2'");
                                 ?>
-                                <span id="user-status-help-block" class="ml10 <?php echo $user_info->status === "inactive" ? "" : "hide" ?>"><i data-feather="alert-triangle" class="icon-16 text-warning"></i> <?php echo app_lang("mark_as_inactive_help_message"); ?></span>
+                                <span id="disable-login-help-block" class="ml10 <?php echo $user_info->disable_login ? "" : "hide" ?>"><i data-feather="alert-triangle" class="icon-16 text-warning"></i> <?php echo app_lang("disable_login_help_message"); ?></span>
                             </div>
                         </div>
                     </div>
-                <?php } ?>
 
-            <?php } ?>
+                        <div class="form-group">
+                            <div class="row">
+                                <label for="user_status" class="col-md-2"><?php echo app_lang('mark_as_inactive'); ?></label>
+                                <div class="col-md-10">
+                                    <?php
+                                    echo form_checkbox("status", "inactive", $user_info->status === "inactive" ? true : false, "id='user_status' class='ml15 form-check-input mt-2'");
+                                    ?>
+                                    <span id="user-status-help-block" class="ml10 <?php echo $user_info->status === "inactive" ? "" : "hide" ?>"><i data-feather="alert-triangle" class="icon-16 text-warning"></i> <?php echo app_lang("mark_as_inactive_help_message"); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                <?php } ?>
 
             <?php if ($user_info->user_type === "client" && $login_user->is_admin) { ?>
                 <div class="form-group hide" id="resend_login_details_section">

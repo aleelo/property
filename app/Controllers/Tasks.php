@@ -3420,7 +3420,8 @@ class Tasks extends Security_Controller {
     /* list of tasks, prepared for datatable  */
 
     function all_tasks_list_data($is_widget = 0) {
-        $this->access_only_team_members();
+        // $this->access_only_team_members();
+        $this->access_only_allowed_members();
 
         $project_id = $this->request->getPost('project_id');
 
