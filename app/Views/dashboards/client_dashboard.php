@@ -7,12 +7,12 @@ use App\Controllers\Visitors;
         echo view("dashboards/dashboard_header");
     }
 
-    if (in_array($role, ['ID Printer','Head of IDs'])) { 
-        echo announcements_alert_widget();
-    }else{
+    // if (in_array($role, ['ID Printer','Head of IDs'])) { 
+    //     echo announcements_alert_widget();
+    // }else{
 
-        echo last_announcement_widget();
-    }
+    // }
+    echo last_announcement_widget();
 
     app_hooks()->do_action('app_hook_dashboard_announcement_extension');
     ?>

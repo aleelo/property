@@ -827,6 +827,18 @@ class Security_Controller extends App_Controller {
         return $job_info;
     }
 
+    public function get_client_department_info(){
+
+        $login_user_client_id = $this->login_user->client_id;
+
+        $client_dept = $this->db->query("
+        select d.id,d.nameSo from rise_users u left join rise_clients c on u.id = c.created_by
+        left join rise_team_member_job_info t on t.user_id = u.id
+        left join departments d on t.department_id = d.id
+         where c.id like '$login_user_client_id' and u.deleted=0 and d.deleted = 0")->getRow();
+
+         return $client_dept ?? null;
+    }
     public function get_user_department_id(){
         $user_id = $this->login_user->id;
         $job_info = $this->db->query("SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id = $user_id")->getRow();

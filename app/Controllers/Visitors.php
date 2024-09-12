@@ -116,10 +116,6 @@ class Visitors extends Security_Controller
             $dept_id = '%';
         }
 
-        $view_data = $this->make_lead_modal_form_data($lead_id);
-        $depts = $this->db->query("select * from departments where id like '$dept_id' and deleted=0")->getResult();
-        
-
         if($dept_id == '%'){
 
             $departments =array(
@@ -129,10 +125,26 @@ class Visitors extends Security_Controller
             $departments=array();
         }
 
-        foreach($depts as $d){
-            $departments[$d->id] = $d->nameSo;
-        }
+        $view_data = $this->make_lead_modal_form_data($lead_id);
+        
+        if($this->login_user->user_type == 'staff'){
+            $depts = $this->db->query("select * from departments where id like '$dept_id' and deleted=0")->getResult();
+    
+            foreach($depts as $d){
+                $departments[$d->id] = $d->nameSo;
+            }
 
+            // SELECT t.department_id from rise_team_member_job_info t left join rise_users u on u.id=t.user_id where t.user_id 
+        }else if($this->login_user->user_type == 'client'){
+
+            $client_dept =$this->get_client_department_info();
+
+            //  print_r($client_dept);
+            if($client_dept){
+                $departments[$client_dept->id] = $client_dept->nameSo;
+            }
+        }
+        
         $view_data['departments'] = $departments;
 
         return $this->template->view('visitors/modal_form', $view_data);
