@@ -520,12 +520,19 @@ class Purchase_Request extends Security_Controller
         }
     }
 
-   public function get_requisition_order_document($id){
-       $purchase_info = $this->Purchase_Request_model->get_details(['id' => $id])->getRow();      
+   public function get_requisition_order_document($uuid){
+
+       $purchase_info = $this->Purchase_Request_model->get_details(['uuid' => $uuid])->getRow();      
+       $id = $purchase_info?->id;
        $items_info = $this->Purchase_Request_model->get_request_items(['purchase_request_id' => $id])->getResult();
 
        //get or generate document:
+       $request_doc =  $this->db->query("SELECT d.* FROM rise_documents d
+                    left join rise_purchase_request_document rd on d.id = rd.document_id where rd.request_id = $id")->getRow();
        
+       if(!$request_doc){
+        
+        echo 'Generating New Document for first time...';
        $arr_table = [];
        $index = 0;
 
@@ -533,10 +540,9 @@ class Purchase_Request extends Security_Controller
            $index = $index + 1;
            $arr_table[] = array(
                            'id'=>$index,
-                           'name'=>$item->name,
-                           // 'visitorMobile'=>$d->mobile,
+                           'item_name'=>$item->name,
                            'qty'=>$item->quantity,
-                           // 'image'=>$d->image
+                           'desc'=>$item->description,
                        );
                        
          
@@ -551,27 +557,25 @@ class Purchase_Request extends Security_Controller
        $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template->id");
        $sqn = $this->db->query("SELECT lpad(max(sqn),4,0) as sqn FROM rise_templates where id = $template->id")->getRow()->sqn;
        
-       $doc_visitor_data = [
-           'id'=>$save_id,
-           'uuid'=>$visitor_info->uuid,
-           'ref_number'=> $template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('y'),
+       $doc_request_data = [
+           'id'=>$id,
+           'uuid'=>$purchase_info->uuid,
+           'ref_number'=> $template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('Y'),
            'template' => $template->path,
            'folder' => $template->destination_folder,
            'date' => date('Y-m-d'),
-           'visit_date' => date('h:i a, F d, Y',strtotime($start_date.' '.$this->request->getPost('visit_time'))),
+           'prid' => $this->get_PR_ID($id),
+           'requested_by' => $purchase_info->user,
            'table' => $arr_table,
-           'images_table' => $image_block,
-           "document_title" => $visitor_info->document_title,
-           "allowed_gates" => $visitor_info->allowed_gates,
-           "department" => $this->get_department_name($visitor_info->department_id),
-           "remarks" => $this->request->getPost('remarks'),
-           "created_at" => $start_date
+           "department" => $this->get_department_name($purchase_info->department_id),
+           "remarks" => $purchase_info->remarks,
+           "created_at" => date('Y-m-d'),
        ];
 
        $doc_data = [
            'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
-           'document_title' =>'Visitors Request - '.$this->request->getPost('name'),
-           'ref_number' =>$template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('y'),
+           'document_title' =>'Requisition Document - '.$purchase_info->id,
+           'ref_number' =>$template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('Y'),
            "depertment" => $this->get_user_department_id(),
            "template" => $template->id,
            "created_by" => $this->login_user->id,
@@ -580,15 +584,15 @@ class Purchase_Request extends Security_Controller
 
        $doc_id = $this->Documents_model->ci_save($doc_data);
        $doc = $this->db->query("SELECT * FROM rise_documents where id = $doc_id")->getRow();
-       $this->db->query("insert into rise_visitor_document(visitor_id,document_id) values($save_id,$doc_id)");
-       $doc_visitor_data['document_id'] = $doc->id;
+       $this->db->query("insert into rise_purchase_request_document(request_id,document_id) values($id,$doc_id)");
+       $doc_request_data['document_id'] = $doc->id;
 
-       $path = $this->createDoc($doc_visitor_data);
-       $token = $this->AccesToken();  
-       $data = $this->uploadDoc($token,$doc_visitor_data,$path);   
+       $path = $this->Purchase_Request_model->createDoc($doc_request_data);
+       $token = $this->Purchase_Request_model->AccesToken();  
+       $data = $this->Purchase_Request_model->uploadDoc($token,$doc_request_data,$path);   
        
-       // var_dump($data['parentReference']);
-       // die();
+    //    print_r($data);
+    //    die();
 
        //send whatsup message to access team:
        // $r = $this->send_whatsup_message($number,'Test Message');
@@ -619,10 +623,22 @@ class Purchase_Request extends Security_Controller
            
            $this->Documents_model->ci_save($u_data, $doc->id);
 
-           // echo $webUrl;
-           // die();
+        //    echo $webUrl;
+        //    die();
+
+           app_redirect($webUrl, true);
+        //    header("Location: $webUrl");
 
        }
+       
+    }else{
+        //use existing one:
+        $webUrl = $request_doc->webUrl;
+        // echo $webUrl;
+        // die();
+        app_redirect($webUrl, true);
+        header("Location: $webUrl");
+    }
 
     }
 

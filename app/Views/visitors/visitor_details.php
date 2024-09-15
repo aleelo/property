@@ -130,7 +130,7 @@
         <button data-status="Approved" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('approve'); ?></button>
     <?php } elseif ($visitor_info->status === "Approved" ) { ?>
         <a target="_blank" type="submit" href="<?php echo get_uri("visitors/access_request_pdf/".$visitor_info->uuid);?>" class="btn btn-success btn-sm"><span data-feather="file" class="icon-16"></span> <?php echo 'Show PDF'; ?></a>
-        <?php if ($can_approve_requests) { ?>
+        <?php if ($can_open_document) { ?>
             <a href='<?php echo $webUrl?>' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i> Edit</a>
         <?php } ?>
         <?php } ?>

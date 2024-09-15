@@ -126,7 +126,7 @@ class Visitors extends Security_Controller
         }
 
         $view_data = $this->make_lead_modal_form_data($lead_id);
-        
+
         if($this->login_user->user_type == 'staff'){
             $depts = $this->db->query("select * from departments where id like '$dept_id' and deleted=0")->getResult();
     
@@ -583,9 +583,10 @@ class Visitors extends Security_Controller
             if (@ob_get_length())
                 @ob_clean();
 
-            $visitor_info = $this->db->query("SELECT v.*,cb.image as created_avatar FROM rise_visitors v 
+            $visitor_info = $this->db->query("SELECT v.*,d.nameSo as department,cb.image as created_avatar FROM rise_visitors v 
 
                             LEFT JOIN rise_visitors_detail vd on v.id = vd.visitor_id
+                            LEFT JOIN departments d on v.department_id = d.id
                             LEFT JOIN rise_users cb on v.created_by = cb.id
                             WHERE v.uuid = '$id'
 
@@ -1068,7 +1069,8 @@ class Visitors extends Security_Controller
 
         $res = $this->check_access('visitor');
         $role = get_array_value($res, 'role');
-        $data['can_approve_requests'] = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin'; 
+        $data['can_approve_requests'] = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin';         
+        $can_open_document = $role == 'Access Controll' || $role == 'admin';
 
         $visitor_info = $this->db->query("SELECT v.*,cb.image as created_avatar,ab.image as approved_avatar,rb.image as rejected_avatar,
                         concat(cb.first_name,' ',cb.last_name) as created_by,concat(rb.first_name,' ',rb.last_name) as rejected_by,
@@ -1091,6 +1093,7 @@ class Visitors extends Security_Controller
         $data['visitor_info'] = $visitor_info;
         $data['visitor_details'] =  $visitor_details;
         $data['webUrl'] =  empty($doc) ? '' : $doc->webUrl;
+        $data['can_open_document'] = $can_open_document;
       
 
         return $this->template->view('visitors/visitor_details',$data);
@@ -1303,6 +1306,7 @@ class Visitors extends Security_Controller
     {
         
         $role = $this->get_user_role();
+        $can_open_document = $role == 'Access Controll' || $role == 'admin';
         $allowed = array('Access Controll','Access Client','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
 
         $can_add_requests = in_array($role,$allowed); 
@@ -1360,7 +1364,7 @@ class Visitors extends Security_Controller
 
         $webUrl = empty($doc) ? '' : $doc->webUrl;
 
-        if(($can_add_requests)){
+        if(($can_open_document)){
 
             $link = "<a href='$webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
         }else{

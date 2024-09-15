@@ -142,7 +142,8 @@ class Security_Controller extends App_Controller {
         } else if ($this->module_group === "estimate" && $this->access_type === "own") {
             return true; //can access if it's estimates module and user has a pertial access
         } else {
-            app_redirect("forbidden");
+            // app_redirect("forbidden");
+            return false;
         }
     }
 

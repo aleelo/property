@@ -31,6 +31,11 @@ class Purchase_Request_model extends Crud_model {
             $where .= " AND $purchase_request_table.id=$id";
         }
 
+        $uuid = $this->_get_clean_value($options, "uuid");
+        if ($uuid) {
+            $where .= " AND $purchase_request_table.uuid='$uuid'";
+        }
+
         $requested_by = $this->_get_clean_value($options, "requested_by");
         if ($requested_by) {
             $where .= " AND $purchase_request_table.requested_by like '$requested_by'";
@@ -171,25 +176,21 @@ class Purchase_Request_model extends Crud_model {
          // var_dump($save_as_name);
          // die();
          
-         $template->setValues([
- 
-             'ref' => $data['ref_number'],
+         $template->setValues([ 
+             'prid' => $data['prid'],
              'date' => date('F d, Y',strtotime($data['created_at'])),
-             'visitDate' => $data['visit_date'],
-             'documentTitle'=>$data['document_title'],
-             'gatesText'=>$data['allowed_gates'],
-            //  'sqn'=>$data['id'],
              'department'=>$data['department'],
+             'requested_by' => $data['requested_by'],
  
          ]);
  
-         if($data['remarks']){
-             $template->setValue('remarksTitle','Faahfaahin Dheeri ah:');
-             $template->setValue('remarks',$data['remarks']);
-         }else{
-             $template->setValue('remarksTitle','');
-             $template->setValue('remarks','');
-         }
+        //  if($data['remarks']){
+        //      $template->setValue('remarksTitle','Faahfaahin Dheeri ah:');
+        //      $template->setValue('remarks',$data['remarks']);
+        //  }else{
+        //      $template->setValue('remarksTitle','');
+        //      $template->setValue('remarks','');
+        //  }
  
          $template->cloneRowAndSetValues(
              'id',

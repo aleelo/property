@@ -595,7 +595,7 @@ class Crud_model extends Model {
     
         $message.="\nee kayimid Xafiiska: " . $department;
            
-        $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
+        // $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
 
         
         return $res;
