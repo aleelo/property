@@ -459,7 +459,7 @@ class Visitors extends Security_Controller
                 'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
                 'document_title' =>'Visitors Request - '.$this->request->getPost('name'),
                 'ref_number' =>$template->ref_prefix.'/'.$sqn.'/'.date('m').'/'.date('y'),
-                "depertment" => $this->get_user_department_id(),
+                "depertment" => $this->login_user->user_type == 'staff' ? $this->get_user_department_id() : $this->get_client_department_info()?->nameSo,
                 "template" => $template->id,
                 "created_by" => $this->login_user->id,
                 "created_at" => date('Y-m-d H:i:s')
