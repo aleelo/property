@@ -549,7 +549,7 @@ class Visitors extends Security_Controller
                 
                 log_notification("visitor_created", array("visitor_id" => $save_id), $this->login_user->id);
 
-                echo json_encode(array("success" => true, "data" => $this->_make_row($visitor_info, null), 'webUrl'=>$webUrl, 'id' => $save_id, 'view' => $this->request->getPost('view'),
+                echo json_encode(array("success" => true, "data" => $this->_make_row($visitor_info, null), 'webUrl'=>$this->login_user->user_type == "staff" ? $webUrl : '', 'id' => $save_id, 'view' => $this->request->getPost('view'),
                     'message' => app_lang('record_saved')));
             } else { //update operation
                 
