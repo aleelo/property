@@ -1291,9 +1291,9 @@ class Clients extends Security_Controller {
         }
 
         $contact_link = anchor(get_uri("clients/contact_profile/" . $data->id), $full_name . $primary_contact) . $removal_request_pending;
-        if ($this->login_user->user_type === "client") {
-            $contact_link = $full_name; //don't show clickable link to client
-        }
+        // if ($this->login_user->user_type === "client") {
+        //     $contact_link = $full_name; //don't show clickable link to client
+        // }
 
         $client_info = $this->Clients_model->get_one($data->client_id);
 

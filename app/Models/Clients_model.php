@@ -33,7 +33,7 @@ class Clients_model extends Crud_model {
 
         $client_id = $this->_get_clean_value($options, "client_id");
         if ($client_id) {
-            $where .= " AND $users_table.client_id=$client_id";
+            $where .= " AND $users_table.client_id like '$client_id'";
         }
 
         $custom_field_type = "clients";

@@ -335,9 +335,9 @@ class Left_menu {
             $access_client = get_array_value($permissions, "client") || $this->ci->login_user->is_admin;
             $access_visitor = get_array_value($permissions, "visitor");
             
-            $sidebar_menu[] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
-            if (in_array($role,["Client Supervisor"]) && $access_client) {
-            }
+            // if (in_array($role,["Client Supervisor"]) && $access_client) {
+            //     $sidebar_menu[] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
+            // }
 
             if (($this->ci->login_user->is_admin || $access_visitor) && !in_array($role,["Employee","ID Printer","Head of IDs"])) {
                 $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "#", "class" => "users");
