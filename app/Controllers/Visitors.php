@@ -53,7 +53,7 @@ class Visitors extends Security_Controller
         // $this->access_only_allowed_members();
         $this->check_module_availability("module_visitor");
         $role = $this->get_user_role();
-        $allowed = array('Access Controll','Access Client','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
+        $allowed = array('Access Controll','Access Client','Client Supervisor','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
 
         $view_data['can_add_requests'] = in_array($role,$allowed) ? true : false; 
 
@@ -82,7 +82,7 @@ class Visitors extends Security_Controller
         // $this->access_only_allowed_members();
         $this->check_module_availability("module_visitor");
         $role = $this->get_user_role();
-        $allowed = array('Access Controll','Access Client','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
+        $allowed = array('Access Controll','Access Client','Client Supervisor','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
 
         $view_data['can_add_requests'] = in_array($role,$allowed) ? true : false; 
 
@@ -1208,7 +1208,7 @@ class Visitors extends Security_Controller
         }elseif($role == 'Director'){ 
             $created_by = '%';
         
-        }elseif( $role == 'Secretary' || $role == 'Supervisor' || $role == 'Access Client'){ 
+        }elseif( $role == 'Secretary' || $role == 'Supervisor' || $role == 'Access Client' || $role == 'Client Supervisor'){ 
             $created_by = $this->login_user->id;
         }
         else{
@@ -1307,7 +1307,7 @@ class Visitors extends Security_Controller
         
         $role = $this->get_user_role();
         $can_open_document = $role == 'Access Controll' || $role == 'admin';
-        $allowed = array('Access Controll','Access Client','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
+        $allowed = array('Access Controll','Access Client','Client Supervisor','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
 
         $can_add_requests = in_array($role,$allowed); 
 
