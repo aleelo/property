@@ -37,7 +37,8 @@ class Clients extends Security_Controller {
         $view_data["allowed_client_groups"] = $this->allowed_client_groups;
 
         $view_data['tab'] = clean_data($tab);
-
+        $view_data['user_type'] = $this->login_user->user_type;
+        $view_data['client_id'] = $this->login_user->client_id;
         
 
         return $this->template->rander("clients/index", $view_data);
