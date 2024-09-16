@@ -31,6 +31,11 @@ class Clients_model extends Crud_model {
             $where .= " AND $clients_table.id=$id";
         }
 
+        $client_id = $this->_get_clean_value($options, "client_id");
+        if ($client_id) {
+            $where .= " AND $users_table.client_id=$client_id";
+        }
+
         $custom_field_type = "clients";
 
         $leads_only = $this->_get_clean_value($options, "leads_only");
@@ -442,7 +447,28 @@ class Clients_model extends Crud_model {
 
         $where = "";
 
+        $Users_model = model("App\Models\Users_model");
+        $login_user_id = $Users_model->login_user_id();
+        $user = $Users_model->get_access_info($login_user_id);
+
+        $Roles_model = model("App\Models\Roles_model");
+        
+        $r = $Roles_model->get_one($user->role_id);
+
+        if($user->is_admin){
+            $role = 'Admin';
+        }else{
+            $role = $r->title;
+        }
+
+        
         $show_own_clients_only_user_id = $this->_get_clean_value($options, "show_own_clients_only_user_id");
+        
+        if($user->user_type == 'client'){
+            $client_id = $user->client_id;
+            $where .= " AND $clients_table.id=$client_id";
+        }
+
         if ($show_own_clients_only_user_id) {
             $where .= " AND $clients_table.created_by=$show_own_clients_only_user_id";
         }

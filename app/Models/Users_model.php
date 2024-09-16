@@ -214,7 +214,8 @@ class Users_model extends Crud_model {
             $where .= " AND $users_table.last_name='$last_name'";
         }
 
-        if ($client_id) {
+        // die($client_id);
+        if ($client_id && $user_type == 'client') {
             $where .= " AND $users_table.client_id=$client_id";
         }
 
@@ -660,6 +661,27 @@ class Users_model extends Crud_model {
 
         $where = "";
         $show_own_clients_only_user_id = $this->_get_clean_value($options, "show_own_clients_only_user_id");
+
+        
+        $Users_model = model("App\Models\Users_model");
+        $login_user_id = $Users_model->login_user_id();
+        $user = $Users_model->get_access_info($login_user_id);
+
+        $Roles_model = model("App\Models\Roles_model");
+        
+        $r = $Roles_model->get_one($user->role_id);
+
+        if($user->is_admin){
+            $role = 'Admin';
+        }else{
+            $role = $r->title;
+        }
+        
+        if($user->user_type == 'client'){
+            $client_id = $user->client_id;
+            $where .= " AND $users_table.client_id=$client_id";
+        }
+
         if ($show_own_clients_only_user_id) {
             $where .= " AND $users_table.client_id IN(SELECT $clients_table.id FROM $clients_table WHERE $clients_table.deleted=0 AND $clients_table.created_by=$show_own_clients_only_user_id)";
         }

@@ -203,10 +203,18 @@ class Clients extends Security_Controller {
 
     function list_data() {
 
+        //get login client user id
+        if($this->login_user->user_type == 'client'){
+            $client_id = $this->login_user->client_id ?? '';
+        }else{
+            $client_id = '%';
+        }
+
         $this->access_only_allowed_members();
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("clients", $this->login_user->is_admin, $this->login_user->user_type);
         $options = array(
             "custom_fields" => $custom_fields,
+            "client_id" => $client_id,
             "custom_field_filter" => $this->prepare_custom_field_filter_values("clients", $this->login_user->is_admin, $this->login_user->user_type),
             "group_id" => $this->request->getPost("group_id"),
             "show_own_clients_only_user_id" => $this->show_own_clients_only_user_id(),
@@ -1211,6 +1219,10 @@ class Clients extends Security_Controller {
 
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("client_contacts", $this->login_user->is_admin, $this->login_user->user_type);
 
+        if(!$client_id){
+            $client_id = $this->login_user->client_id;
+        }
+// die($client_id);
         $options = array(
             "user_type" => "client",
             "client_id" => $client_id,
