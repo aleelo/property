@@ -330,6 +330,15 @@ class Left_menu {
 
             $sidebar_menu[] = $dashboard_menu;
 
+            $permissions = $this->ci->login_user->permissions;
+
+            $access_visitor = get_array_value($permissions, "visitor");
+
+            if (($this->ci->login_user->is_admin || $access_visitor) && !in_array($role,["Employee","ID Printer","Head of IDs"])) {
+                $sidebar_menu["access_requests"] = array("name" => "access_requests", "url" => "#", "class" => "users");
+                $sidebar_menu["access_list"] = array("name" => "access_list", "url" => "visitors", "class" => "users");
+                $sidebar_menu["access_search"] = array("name" => "access_search", "url" => "visitors/access_search", "class" => "users");
+            }
             
             if (!in_array("card_holders", $hidden_menu) ) {
                 $team_submenu["card_holders"] = array("name" => "card_holders", "url" => "cardholders", "class" => "users");//team_members                
