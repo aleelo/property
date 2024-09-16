@@ -1199,7 +1199,7 @@ class Visitors extends Security_Controller
         // $show_own_leads_only_user_id = $this->show_own_leads_only_user_id();
         
         $role = $this->get_user_role();
-        $department_id = $this->get_user_department_id();
+        $department_id = $this->login_user->user_type == 'staff' ? $this->get_user_department_id() : $this->get_client_department_info()?->id;
 
         // die($role);
         if($role == 'Access Controll' || $role == 'admin' || $role == 'Administrator'){ 
