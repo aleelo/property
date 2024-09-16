@@ -63,7 +63,6 @@
                                 <tr>
                                     <th style="width:20px">#</th>
                                     <th>Magaca</th>
-                                    <th>Telefoon</th>
                                     <th>Xogta Gaadiidka</th>
                                 </tr>
                             </thead>
@@ -73,8 +72,9 @@
                                 <?php foreach ($visitor_details as $d){?>
                                     <tr>
                                         <td><?php echo $i; ?></td>
-                                        <td><img width="50" src="<?php echo get_visitor_avatar($d->image);?>" class="rounded" style="margin-right: 10px;" /><span><?php echo $d->visitor_name; ?></span></td>
-                                        <td><?php echo $d->mobile; ?></td>
+                                        <!-- <img width="50" src="<?php echo get_visitor_avatar($d->image);?>" class="rounded" style="margin-right: 10px;" /> -->
+                                        <td>
+                                            <span><?php echo $d->visitor_name; ?></span></td>
                                         <td><?php echo $d->vehicle_details; ?></td>
                                     </tr>
                                 <?php
