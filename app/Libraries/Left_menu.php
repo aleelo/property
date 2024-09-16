@@ -340,8 +340,8 @@ class Left_menu {
                 $sidebar_menu["access_search"] = array("name" => "access_search", "url" => "visitors/access_search", "class" => "users");
             }
             
-            if (!in_array("card_holders", $hidden_menu) && in_array($role,["ID Printer","Head of IDs"]) || $this->ci->login_user->id == 1549) {
-                $team_submenu["card_holders"] = array("name" => "card_holders", "url" => "cardholders", "class" => "users");//team_members                
+            if ((!in_array("card_holders", $hidden_menu) && in_array($role,["ID Printer","Head of IDs"]) ) || $this->ci->login_user->id == 1549 || $this->ci->login_user->is_admin) {
+                $sidebar_menu[] = array("name" => "card_holders", "url" => "cardholders", "class" => "users");             
             }
 
             if (get_setting("module_event") == "1" && !in_array("events", $hidden_menu)) {

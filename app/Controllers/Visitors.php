@@ -1069,7 +1069,7 @@ class Visitors extends Security_Controller
 
         $res = $this->check_access('visitor');
         $role = get_array_value($res, 'role');
-        $data['can_approve_requests'] = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin';         
+        $data['can_approve_requests'] = $role == 'Access Controll' || $role == 'Administrator' || $role == 'admin' || $role == 'Client Supervisor';         
         $can_open_document = $role == 'Access Controll' || $role == 'admin';
 
         $visitor_info = $this->db->query("SELECT v.*,cb.image as created_avatar,ab.image as approved_avatar,rb.image as rejected_avatar,
