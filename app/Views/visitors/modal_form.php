@@ -125,7 +125,7 @@
                 } else {
                     appAlert.success(result.message, {duration: 10000});
 
-                        if(result.webUrl != null) {
+                        if(result.webUrl != null && result.webUrl != '') {
                             let newTab = window.open();
                             newTab.location.target = '_blank';
                             newTab.location.href = result.webUrl;
