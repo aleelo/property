@@ -190,7 +190,7 @@
                                 $options = new chillerlan\QRCode\QROptions([
                                     'eccLevel' => chillerlan\QRCode\Common\EccLevel::L,
                                     'outputBase64' => true,
-                                    // 'cachefile' => ROOTPATH . 'files/system/qrcode.png',
+                                    'cachefile' => ROOTPATH . 'files/system/qrcode.png',
                                     'outputType'=>chillerlan\QRCode\Output\QROutputInterface::GDIMAGE_PNG,
                                     'logoSpaceHeight' => 17,
                                     'logoSpaceWidth' => 17,
