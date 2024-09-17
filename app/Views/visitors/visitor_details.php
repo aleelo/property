@@ -134,6 +134,10 @@
             <a href='<?php echo $webUrl?>' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i> Edit</a>
         <?php } ?>
         <?php } ?>
+
+    <?php if($visitor_info->status === "Pending" && !$can_approve_requests){ ?>
+        <span class="text-warning">Contact Administrator for approval.</span>
+    <?php } ?>
 </div>
 <?php echo form_close(); ?>
 
