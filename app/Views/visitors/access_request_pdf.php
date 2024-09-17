@@ -75,18 +75,18 @@
                             display: flex;
                             align-items: center;justify-content: center;height: 90px">
                             <img id="logo" src="<?php
-                                $p = get_uri('assets/images/sys-logo-white.png');
+                                $p = get_uri('assets/images/villa-ict-logo-white.png');
                             
                                 $type = pathinfo($p, PATHINFO_EXTENSION);
                                 $d = file_get_contents($p);
                                 $logo_image = 'data:image/' . $type . ';base64,' . base64_encode($d);
                                 
                                 echo $logo_image;
-                                ?>" style="width: 400px;margin-top: 25px;padding:0;margin-bottom: 0;">
+                                ?>" style="width: 430px;margin-top: 0px;padding:0;margin-bottom: 0;">
                             &nbsp;&nbsp;
                         </div>
                         <div class="ticket-body" style=" padding: 20px 15px;">
-                            <h2 class="text-center " style="margin-bottom: 15px;color: #264a78;text-align:center;margin-top: 0;"><?php echo 'CODSI SOO DEYN' ?></h2>
+                            <h2 class="text-center " style="margin-bottom: 15px;color: #264a78;text-align:center;margin-top: 0;"><?php echo 'Oggolaanshaha Soo Gelista' ?></h2>
                             <div class="ticket-name">
                                 <p style=" font-size: 0.9rem;
                                     color: #12123f;font-weight: 300;margin:0;">Waaxda/Xafiiska:</p>

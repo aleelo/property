@@ -608,7 +608,9 @@ class Visitors extends Security_Controller
             $data['qrcode'] = $qr;
 
             //download pdf:
-            $this->get_access_pdf('visitors/access_request_pdf', $data);
+            return view('visitors/access_request_pdf', $data);
+            // $this->get_access_pdf('visitors/access_request_pdf', $data);
+
             // prepare_pdf('visitors/access_request_pdf',$data,'view');           
             // return $this->template->view('visitors/access_request_pdf',$data);
 
@@ -638,6 +640,8 @@ class Visitors extends Security_Controller
         // file_get_contents('visitors/',$dompdf->output());
 
         $html = view($path,$data);
+
+        // return $html;
         $dompdf->loadHtml($html);
         
 
