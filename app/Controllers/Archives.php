@@ -41,34 +41,34 @@ class Archives extends Security_Controller {
         $location = "./img/photos";
         $folder = opendir($location); // open folder
 
-        if ($folder) {
-            $index = 0;
-            while (false != ($image = readdir($folder))) { // read until end
+        // if ($folder) {
+        //     $index = 0;
+        //     while (false != ($image = readdir($folder))) { // read until end
 
-                if ($image != '.' && $image != '..') { // remove . and ..
-                    $ext = pathinfo($image, PATHINFO_EXTENSION);
-                    $filename = pathinfo($image, PATHINFO_FILENAME);
+        //         if ($image != '.' && $image != '..') { // remove . and ..
+        //             $ext = pathinfo($image, PATHINFO_EXTENSION);
+        //             $filename = pathinfo($image, PATHINFO_FILENAME);
 
-                    //check image type:
-                    if(exif_imagetype($image) == IMAGETYPE_JPEG) {
-                        //JPEG
-                    }elseif(exif_imagetype($image) == IMAGETYPE_PNG){
-                        // PNG
-                    }
+        //             //check image type:
+        //             if(exif_imagetype($image) == IMAGETYPE_JPEG) {
+        //                 //JPEG
+        //             }elseif(exif_imagetype($image) == IMAGETYPE_PNG){
+        //                 // PNG
+        //             }
 
-                    // directory_map()
-                    dir()
+        //             // directory_map()
+        //             dir();
 
 
-                    // sleep(0.2);
+        //             // sleep(0.2);
 
-                }
-                $index++;
+        //         }
+        //         $index++;
 
-            }
-        }
+        //     }
+        // }
 
-        echo "<br><br>" . $index . " Records Updated.";
+        //echo "<br><br>" . $index . " Records Updated.";
     }
     // private function can_view_files() {
     //     if ($this->login_user->user_type == "staff") {
