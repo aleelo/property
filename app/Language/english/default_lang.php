@@ -56,6 +56,8 @@ $lang["suppliers_list"] = "Suppliers List";
 
 $lang["leave_nulla_osta"] = "Leave Nulla Osta";
 $lang["leave_passport_return"] = "Leave Passport Return";
+$lang["leave_nulla_osta_pdf"] = "Leave Nulla Osta PDF";
+$lang["leave_passport_return_pdf"] = "Leave Passport Return PDF";
 $lang["new_leave_request"] = "New Leave Request";
 $lang["leave_request_approved"] = "Leave Request Approved";
 $lang["leave_request_rejected"] = "Leave Request Rejected";

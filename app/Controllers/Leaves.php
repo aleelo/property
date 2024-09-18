@@ -200,7 +200,10 @@ class Leaves extends Security_Controller {
                     'DOCUMENT_REF' => $doc_leave_data['ref_number'],
                 ];
     
-                $r = $this->send_leave_nulla_osta($leave_email_data);
+                $this->send_leave_nulla_osta($leave_email_data);
+                // $this->send_leave_nulla_osta_pdf($leave_email_data, 'passport_return');
+                $this->send_leave_nulla_osta_pdf($leave_email_data, 'nulla_osta');
+                
 
         }
 
@@ -359,7 +362,9 @@ class Leaves extends Security_Controller {
                     'DOCUMENT_REF' => $doc_leave_data['ref_number'],
                 ];
     
-                $r = $this->send_leave_nulla_osta($leave_email_data);
+                $this->send_leave_nulla_osta($leave_email_data);
+                // $this->send_leave_nulla_osta_pdf($leave_email_data, 'passport_return');
+                $this->send_leave_nulla_osta_pdf($leave_email_data, 'nulla_osta');
         }
 
 
@@ -1206,6 +1211,7 @@ class Leaves extends Security_Controller {
         }
     }
 
+    //for HR head
     public function send_leave_nulla_osta($data = array()) {
         
         $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta", true);
@@ -1230,7 +1236,7 @@ class Leaves extends Security_Controller {
         $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
         $parser_data["DOCUMENT_REF"] = $data['DOCUMENT_REF'];
         $parser_data["LEAVE_URL"] = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.'/nulla_osta');
-        $parser_data["HTML_TEMPLATE"] = ''; // view('leaves/leave_nolosto_mail',$nolo_data);
+        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_nolosto_mail',$nolo_data);
         $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
         $parser_data["LOGO_URL"] = get_logo_url();
         $parser_data["SITE_URL"] = get_uri();
@@ -1250,6 +1256,7 @@ class Leaves extends Security_Controller {
         }
     }
 
+    //for migration after approve
     public function send_leave_nulla_osta_pdf($data = array(),$type) {
         
         if($type == 'nulla_osta'){
@@ -1260,7 +1267,7 @@ class Leaves extends Security_Controller {
         }
 
         
-        $email = 'nulla-osta@immigration.gov.so';//$data['EMAIL'];
+        $email = 'alihaile2020@gmail.com';//'nulla-osta@immigration.gov.so';
         $leave_id = $data['LEAVE_ID'];
         $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
                         a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
@@ -1348,7 +1355,7 @@ class Leaves extends Security_Controller {
     public function send_leave_request_email($data = array()) {
         
         $email_template = $this->Email_templates_model->get_final_template("new_leave_request", true);
-        $email = 'info@revenuedirectorate.gov.so';//$data['EMAIL'];
+        $email = 'admin@presidency.gov.so';//$data['EMAIL'];
 
         $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
         $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
