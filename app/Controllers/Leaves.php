@@ -1280,7 +1280,7 @@ class Leaves extends Security_Controller {
 
         $nolo_data['leave_info'] = $leave_info;
 
-        $url = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.','.$type);
+        $url = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.'/'.$type);
        
         $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
         $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
