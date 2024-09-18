@@ -1267,7 +1267,7 @@ class Leaves extends Security_Controller {
         }
 
         
-        $email = 'alihaile2020@gmail.com';//'nulla-osta@immigration.gov.so';
+        $email = 'nulla-osta@immigration.gov.so';//'alihaile2020@gmail.com';
         $leave_id = $data['LEAVE_ID'];
         $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
                         a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
