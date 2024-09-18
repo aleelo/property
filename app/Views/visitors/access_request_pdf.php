@@ -51,15 +51,9 @@
            
         </style>
     </head>
-    <body style="background: #fff !important;">
-        
-        
-    <style>    
-           
+    <body style="background: #fff !important; margin: 0;">
                
-           </style>
-       
-           <div class=" search-container" style="margin-left:auto;margin-right: auto;width: 100%;font-family: 'system-ui';" id="search-container1" >
+           <div class=" search-container" style="margin-left:auto;margin-right: auto;margin-top: 15px;width: 100%;font-family: 'system-ui';" id="search-container1" >
        
                <div class="shadow d-flex justify-content-center col-xs-12 mt-3 mb-3 " id="search-card1" style="display: flex;justify-content: center;">
                                 
