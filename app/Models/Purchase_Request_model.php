@@ -23,7 +23,7 @@ class Purchase_Request_model extends Crud_model {
         $purchase_request_table = $this->db->prefixTable('purchase_requests');
         $users_table = $this->db->prefixTable('users');
         $suppliers_table = $this->db->prefixTable('suppliers');
-        $departments_table = 'departments';
+        $departments_table = $this->db->prefixTable('departments');
         
         $where = "";
         $id = $this->_get_clean_value($options, "id");

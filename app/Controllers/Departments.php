@@ -69,11 +69,11 @@ class Departments extends Security_Controller {
        
 
             if($id){
-                $this->db->query("update departments set nameSo='$nameSo',nameEn='$nameEn',head_id=$head_id,email='$email',remarks='$remarks' where id=$id");
+                $this->db->query("update rise_departments set nameSo='$nameSo',nameEn='$nameEn',head_id=$head_id,email='$email',remarks='$remarks' where id=$id");
                 $save_id = $id;
             }else{
 
-                $this->db->query("insert into departments (nameSo,nameEn,head_id,email,remarks) values('$nameSo','$nameEn',$head_id,'$email','$remarks')");
+                $this->db->query("insert into rise_departments (nameSo,nameEn,head_id,email,remarks) values('$nameSo','$nameEn',$head_id,'$email','$remarks')");
                 $save_id = $this->db->insertID();
             }
 
@@ -100,7 +100,7 @@ class Departments extends Security_Controller {
 
         $id = $this->request->getPost('id');
     
-        if ($this->db->query("delete from departments where id = $id")) {
+        if ($this->db->query("delete from rise_departments where id = $id")) {
             echo json_encode(array("success" => true, "id" => $id, 'message' => app_lang('record_deleted')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));

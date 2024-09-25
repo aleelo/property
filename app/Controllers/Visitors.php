@@ -128,7 +128,7 @@ class Visitors extends Security_Controller
         $view_data = $this->make_lead_modal_form_data($lead_id);
 
         if($this->login_user->user_type == 'staff'){
-            $depts = $this->db->query("select * from departments where id like '$dept_id' and deleted=0")->getResult();
+            $depts = $this->db->query("select * from rise_departments where id like '$dept_id' and deleted=0")->getResult();
     
             foreach($depts as $d){
                 $departments[$d->id] = $d->nameSo;
@@ -586,7 +586,7 @@ class Visitors extends Security_Controller
             $visitor_info = $this->db->query("SELECT v.*,d.nameSo as department,cb.image as created_avatar FROM rise_visitors v 
 
                             LEFT JOIN rise_visitors_detail vd on v.id = vd.visitor_id
-                            LEFT JOIN departments d on v.department_id = d.id
+                            LEFT JOIN rise_departments d on v.department_id = d.id
                             LEFT JOIN rise_users cb on v.created_by = cb.id
                             WHERE v.uuid = '$id'
 
@@ -1070,11 +1070,12 @@ class Visitors extends Security_Controller
     public function visitor_details(){
 
         $id = $this->request->getPost('id');
-
+        
         $res = $this->check_access('visitor');
         $role = get_array_value($res, 'role');
-        $data['can_approve_requests'] = $role == 'Access Controll' || $role == 'admin' || $role == 'Client Supervisor';         
-        $can_open_document = $role == 'Access Controll' || $role == 'admin';
+        $user_department_id = $this->get_user_department_id();
+        $data['can_approve_requests'] = ($role == 'Access Controll' || $role == 'admin' || $role == 'Client Supervisor') && ($role == 'Director' && $user_department_id == 204);         
+        $can_open_document = $role == 'Access Controll' || $role == 'admin'  && ($role == 'Director' && $user_department_id == 204);
 
         $visitor_info = $this->db->query("SELECT v.*,cb.image as created_avatar,ab.image as approved_avatar,rb.image as rejected_avatar,
                         concat(cb.first_name,' ',cb.last_name) as created_by,concat(rb.first_name,' ',rb.last_name) as rejected_by,
@@ -1308,9 +1309,10 @@ class Visitors extends Security_Controller
 
     private function _make_row($data)
     {
+        $user_department_id = $this->get_user_department_id();
         
         $role = $this->get_user_role();
-        $can_open_document = $role == 'Access Controll' || $role == 'admin';
+        $can_open_document = $role == 'Access Controll' || $role == 'admin'  && ($role == 'Director' && $user_department_id == 204);
         $allowed = array('Access Controll','Access Client','Client Supervisor','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
 
         $can_add_requests = in_array($role,$allowed); 

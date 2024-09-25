@@ -13,7 +13,7 @@ class Departments_model extends Crud_model {
 
     
     function get_details($options = array()) {
-        $departments_table = 'departments';
+        $departments_table = $this->db->prefixTable('departments');
         $users_table = $this->db->prefixTable('users');
         
         $where = "";

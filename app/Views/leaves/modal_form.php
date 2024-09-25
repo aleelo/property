@@ -2,10 +2,12 @@
 <div id="leaves-dropzone" class="post-dropzone">
     <div class="modal-body clearfix">
         <div class="container-fluid">
+
             <?php if ($form_type == "assign_leave") { ?>
+
                 <div class="form-group">
                     <div class="row">
-                        <label for="applicant_id" class=" col-md-3"><?php echo app_lang('team_member'); ?></label>
+                        <label for="applicant_id" class="col-md-3 text-right"><?php echo app_lang('team_member'); ?></label>
                         <div class=" col-md-9">
                             <?php
                             if (isset($team_members_info)) {
@@ -21,11 +23,12 @@
                         </div>
                     </div>
                 </div>
+
             <?php } ?>
 
             <div class="form-group">
                 <div class="row">
-                    <label for="leave_type" class=" col-md-3"><?php echo app_lang('leave_type'); ?></label>
+                    <label for="leave_type" class=" col-md-3 text-right"><?php echo app_lang('leave_type'); ?></label>
                     <div class=" col-md-9">
                         <?php
                         echo form_dropdown("leave_type_id", $leave_types_dropdown, "", "class='select2 validate-hidden' id='leave_type_id' data-rule-required='true', data-msg-required='" . app_lang('field_required') . "'");
@@ -33,9 +36,60 @@
                     </div>
                 </div>
             </div>
+
+            
+         
+            <div class="form-group">
+                <div class="row">
+                    <label for="flight_included_no" class="col-md-3 text-right"><?php echo app_lang('is_flight_included'); ?></label>
+                    <div class=" col-md-9">
+                    <?php
+                        echo form_radio(array(
+                            "id" => "flight_included_no",
+                            "class" => "form-check-input",
+                            "name" => "flight_included",
+                            "data-rule-required" => true,
+                            "data-msg-required" => app_lang("field_required"),
+                                ), "0", false);
+                        ?>
+                        <label for="flight_included_no" class="mr15" ><?php echo app_lang('no'); ?></label>
+
+                        <?php
+                        echo form_radio(array(
+                            "id" => "flight_included_yes",
+                            "class" => "form-check-input",
+                            "name" => "flight_included",
+                            "data-rule-required" => true,
+                            "data-msg-required" => app_lang("field_required"),
+                                ), "1", false);
+                        ?>
+                        <label for="flight_included_yes" class="mr15" ><?php echo app_lang('yes'); ?></label>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <label for="reason" class=" col-md-3 text-right"><?php echo app_lang('reason'); ?></label>
+                    <div class=" col-md-9">
+                        <?php
+                        echo form_textarea(array(
+                            "id" => "reason",
+                            "name" => "reason",
+                            "class" => "form-control",
+                            "placeholder" => app_lang('reason'),
+                            "data-rule-required" => true,
+                            "data-msg-required" => app_lang("field_required"),
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+
             <div class=" form-group">
                 <div class="row">
-                    <label for="duration" class=" col-md-3"><?php echo app_lang('duration'); ?></label>
+                    <label for="duration" class="col-md-3 text-right"><?php echo app_lang('duration'); ?></label>
                     <div class="col-md-9">
 
                         <?php
@@ -70,7 +124,7 @@
 
             <div id="single_day_section"  class="form-group date_section">
                 <div class="row">
-                    <label id="date_label" for="single_date" class=" col-md-3"><?php echo app_lang('date'); ?></label>
+                    <label id="date_label" for="single_date" class="col-md-3 text-right"><?php echo app_lang('date'); ?></label>
                     <div class="col-md-9">
                         <?php
                         echo form_input(array(
@@ -81,25 +135,30 @@
                             "autocomplete" => "off",
                             "data-rule-required" => true,
                             "data-msg-required" => app_lang("field_required"),
+                            // "value" => date('d F Y')
                         ));
                         ?>
                     </div>
                 </div>
             </div>
+
             <div id="multiple_days_section" class="hide date_section">
                 <div class="form-group">
                     <div class="row">
-                        <label for="start_date" class=" col-md-3"><?php echo app_lang('start_date'); ?></label>
+                        <label for="start_date" class="col-md-3 text-right"><?php echo app_lang('start_date'); ?></label>
                         <div class=" col-md-9">
                             <?php
                             echo form_input(array(
                                 "id" => "start_date",
                                 "name" => "start_date",
+                                
                                 "class" => "form-control",
                                 "placeholder" => app_lang('start_date'),
                                 "autocomplete" => "off",
                                 "data-rule-required" => true,
-                                "data-msg-required" => app_lang("field_required")
+                                "data-msg-required" => app_lang("field_required"),
+                            // "value" => date('d F Y')
+
                             ));
                             ?>
                         </div>
@@ -108,7 +167,7 @@
 
                 <div class="form-group">
                     <div class="row">
-                        <label for="end_date" class=" col-md-3"><?php echo app_lang('end_date'); ?></label>
+                        <label for="end_date" class="col-md-3 text-right"><?php echo app_lang('end_date'); ?></label>
                         <div class=" col-md-9">
                             <?php
                             echo form_input(array(
@@ -129,15 +188,40 @@
                 </div>
             </div>
 
-            <div id="total_days_section" class="hide date_section">
-                <div class="form-group">
-                    <div class="row">
-                        <label for="total_days" class="col-md-3"><?php echo app_lang('total_days'); ?></label>
-                        <div class="col-md-9 total-days">
+            <div id="total_days_section" class="date_section">
 
+                <div class="form-group">
+                     <div class="row">
+                        <div class="col-md-3 text-right allowed-days-label">
+                        </div>
+                        <div class="col-md-3 allowed-days-display">
+                        </div>
+                        <div class="col-md-2 text-right taken-days-display-label">
+                        </div>
+                        <div class="col-md-2 taken-days-display">
                         </div>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <div class="row">
+                    <div class="col-md-3 text-right total-days-label">
+                        </div>
+                        <div class="col-md-9 total-days">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                     <div class="row">
+                        <div class="col-md-3 text-right remaining-days-label">
+                        </div>
+                        <div class="col-md-9 remaining-days">
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
 
             <div id="hours_section" class="hide date_section">
@@ -176,54 +260,7 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <div class="row">
-                    <label for="flight_included_no" class=" col-md-3"><?php echo app_lang('is_flight_included'); ?></label>
-                    <div class=" col-md-9">
-                    <?php
-                        echo form_radio(array(
-                            "id" => "flight_included_no",
-                            "class" => "form-check-input",
-                            "name" => "flight_included",
-                            "data-rule-required" => true,
-                            "data-msg-required" => app_lang("field_required"),
-                                ), "0", false);
-                        ?>
-                        <label for="flight_included_no" class="mr15" ><?php echo app_lang('no'); ?></label>
 
-                        <?php
-                        echo form_radio(array(
-                            "id" => "flight_included_yes",
-                            "class" => "form-check-input",
-                            "name" => "flight_included",
-                            "data-rule-required" => true,
-                            "data-msg-required" => app_lang("field_required"),
-                                ), "1", false);
-                        ?>
-                        <label for="flight_included_yes" class="mr15" ><?php echo app_lang('yes'); ?></label>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="row">
-                    <label for="reason" class=" col-md-3"><?php echo app_lang('reason'); ?></label>
-                    <div class=" col-md-9">
-                        <?php
-                        echo form_textarea(array(
-                            "id" => "reason",
-                            "name" => "reason",
-                            "class" => "form-control",
-                            "placeholder" => app_lang('reason'),
-                            "data-rule-required" => true,
-                            "data-msg-required" => app_lang("field_required"),
-                        ));
-                        ?>
-                    </div>
-                </div>
-            </div>
 
             <?php echo view("includes/dropzone_preview"); ?>
         </div>
@@ -232,68 +269,187 @@
     <div class="modal-footer">
         <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class="icon-16"></i> <?php echo app_lang("upload_file"); ?></button>
         <button type="button" class="btn btn-default" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('close'); ?></button>
-        <button type="submit" class="btn btn-primary"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang($form_type); ?></button>
+        <button type="submit" id="submit_button" class="btn btn-primary"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang($form_type); ?></button>
     </div>
 </div>
 <?php echo form_close(); ?>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        var uploadUrl = "<?php echo get_uri("leaves/upload_file"); ?>";
-        var validationUri = "<?php echo get_uri("leaves/validate_leaves_file"); ?>";
+   $(document).ready(function () {
+    var allowed_days = 0;  // Initialize allowed days globally
+    var taken_days = 0;    // Initialize taken days globally
+    var unlimited_days = false;  // Flag for unlimited days
 
-        var dropzone = attachDropzoneWithForm("#leaves-dropzone", uploadUrl, validationUri);
+    function getCurrentDate() {
+        var today = new Date();
+        var day = ("0" + today.getDate()).slice(-2);
+        var month = ("0" + (today.getMonth() + 1)).slice(-2);
+        var year = today.getFullYear();
+        return year + "-" + month + "-" + day;
+    }
 
-        $("#leave-form").appForm({
-            onSuccess: function (result) {
-                
-                appAlert.success(result.message, {duration: 15000});
+    // Set the default date to today's date
+    var currentDate = getCurrentDate();
+    $('#single_date').val(currentDate);
+    $('#start_date').val(currentDate);
 
-                if(result.webUrl != null) {
-                    let newTab = window.open();
-                    newTab.location.target = '_blank';
-                    newTab.location.href = result.webUrl;
+    // Handle form success
+    $("#leave-form").appForm({
+        onSuccess: function (result) {
+            appAlert.success(result.message, {duration: 15000});
+
+            if (result.webUrl != null && result.flight_included == 1) {
+                let newTab = window.open();
+                newTab.location.target = '_blank';
+                newTab.location.href = result.webUrl;
+            }
+
+            location.reload();
+        }
+    });
+
+    // Fetch allowed days and taken days dynamically when leave type changes
+    $('#leave_type_id').change(function () {
+        get_allowed_days();
+    });
+
+    function get_allowed_days() {
+        var leave_type_id = $('#leave_type_id').val();
+        var applicant_id = $('#applicant_id').val();
+
+        $.ajax({
+            url: "<?php echo get_uri('leaves/get_allowed_days'); ?>",
+            type: "POST",
+            data: {
+                leave_type_id: leave_type_id,
+                form_type: "<?php echo $form_type ?>",
+                applicant_id: applicant_id,
+            },
+            success: function (response) {
+                var data = JSON.parse(response);
+                allowed_days = data.allowed_days;
+                taken_days = data.taken_days;
+                unlimited_days = $.trim(allowed_days.toLowerCase()) === 'unlimited';  // Check if leave type has unlimited days
+
+                 // Update the displayed allowed days
+                updateAllowedDays();
+            }
+        });
+    }
+
+     // Update the displayed allowed days
+    function updateAllowedDays() {
+       
+        if (unlimited_days) {
+                    $('div.allowed-days-label').html('Allowed Days: ').css('color', 'green');
+                    $('div.allowed-days-display').html('Unlimited').css('color', 'green');
+                    $('div.taken-days-display-label').html('Taken Days: ').css('color', 'purple');
+                    $('div.taken-days-display').html(taken_days + ' - Days').css('color', 'purple');
+                    $('#submit_button').prop('disabled', false);  // Enable submit button for unlimited days
+                    // Hide remaining and requested days, since they don't apply
+                    $('div.remaining-days').html('');
+                    $('div.total-days').html('');
+                } else {
+                    $('div.allowed-days-label').html('Allowed Days: ').css('color', 'blue');
+                    $('div.allowed-days-display').html(allowed_days + ' - Days').css('color', 'blue');
+                    $('div.taken-days-display-label').html('Taken Days: ').css('color', 'purple');
+                    $('div.taken-days-display').html(taken_days + ' - Days').css('color', 'purple');
+                    handleDurationChange();  // Recalculate based on the selected duration
                 }
-                
-                location.reload();
-            }
-        });
+    }
 
-        setDatePicker("#start_date, #end_date");
+    // When start, end, or single day is changed, recalculate remaining days
+    $('#start_date, #end_date, #single_date').change(function () { //
+        alert(unlimited_days);
+        if (!unlimited_days) {
+            get_allowed_days();  // Call the function to recalculate based on the selected duration
+        }
+    });
 
-        setDatePicker("#single_date, #hour_date");
+    // Function to handle duration change and trigger the correct calculation
+    function handleDurationChange() {
+        var selectedDuration = $('input[name="duration"]:checked').val();
 
+        if (selectedDuration === "single_day") {
+            calculateSingleDay();  // Calculate remaining days for a single day leave
+        } else if (selectedDuration === "multiple_days") {
+            calculateRemainingDays();  // Calculate remaining days for multiple days leave
+        }
+    }
 
-        $("#leave-form .select2").select2();
-
-        $(".duration").click(function () {
-            var value = $(this).val();
-            $(".date_section").addClass("hide");
-            if (value === "multiple_days") {
-                $("#multiple_days_section").removeClass("hide");
-            } else if (value === "hours") {
-                $("#hours_section").removeClass("hide");
-            } else {
-                $("#single_day_section").removeClass("hide");
-            }
-        });
-
-
-        $("#multiple_days_section").change(function () {
+    // Function to calculate the remaining days for multiple days leave
+    function calculateRemainingDays() {
+        if (!unlimited_days) {  // Only calculate remaining days if not unlimited
             var start_date = $('#start_date').val();
             var end_date = $('#end_date').val();
+
             if (start_date && end_date) {
-                $("#total_days_section").removeClass("hide");
+                var total_days = moment(end_date).diff(moment(start_date), 'days') + 1;
 
-                var start_date = moment($('#start_date').val(), getJsDateFormat().toUpperCase());
-                var end_date = moment($('#end_date').val(), getJsDateFormat().toUpperCase());
-                var total_days = end_date.diff(start_date, 'days');
+                $('div.total-days-label').html('Requested Days: ');
+                $('div.total-days').html(total_days + ' - Days');
 
-                $('div.total-days').html((total_days * 1) + 1); //count the starting day too
-            } else {
-                $("#total_days_section").addClass("hide");
+                var remaining_days = allowed_days - taken_days - total_days;
+
+                updateRemainingDays(remaining_days);
             }
-        });
+        }
+    }
 
+    // Function to calculate the remaining days for a single day leave
+    function calculateSingleDay() {
+        if (!unlimited_days) {  // Only calculate remaining days if not unlimited
+            var single_date = $('#single_date').val();
+
+            if (single_date) {
+                var total_days = 1;
+
+                $('div.total-days-label').html('Requested Days: ');
+                $('div.total-days').html(total_days + ' - Day');
+
+                var remaining_days = allowed_days - taken_days - total_days;
+
+                updateRemainingDays(remaining_days);
+            }
+        }
+    }
+
+    // Helper function to update the remaining days and enable/disable the submit button
+    function updateRemainingDays(remaining_days) {
+        if (remaining_days >= 0) {
+            $('div.remaining-days-label').html('Remaining Days: ').css('color', 'green');
+            $('div.remaining-days').html(remaining_days + ' - Days').css('color', 'green');
+            $('#submit_button').prop('disabled', false);  // Enable submit button
+        } else {
+            $('div.remaining-days-label').html('Remaining Days: ').css('color', 'red');
+            $('div.remaining-days').html(remaining_days + ' - Days' + ' (You have exceeded the allowed days)').css('color', 'red');
+            $('#submit_button').prop('disabled', true);  // Disable submit button
+        }
+    }
+
+    // Set date pickers for the dates
+    setDatePicker("#start_date, #end_date, #single_date, #hour_date");
+
+    $("#leave-form .select2").select2();
+
+    // Handle duration type radio buttons
+    $(".duration").click(function () {
+        var value = $(this).val();
+        $(".date_section").addClass("hide");
+        if (value === "multiple_days") {
+            $("#multiple_days_section").removeClass("hide");
+            handleDurationChange();  // Recalculate for multiple days
+        } else if (value === "hours") {
+            $("#hours_section").removeClass("hide");
+        } else {
+            $("#single_day_section").removeClass("hide");
+            handleDurationChange();  // Recalculate for single day
+        }
     });
+});
 </script>
+
+
+
+
+

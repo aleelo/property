@@ -820,7 +820,7 @@ class Purchase_Request extends Security_Controller
     
         $model_info = $this->db->query("select rc.*,u.image as avatar,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
         LEFT JOIN rise_users u on rc.requested_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
+        LEFT JOIN rise_departments dp on rc.department_id = dp.id 
         where rc.uuid='$id'")->getRow();
 
         if (!$model_info) {
@@ -1019,7 +1019,7 @@ class Purchase_Request extends Security_Controller
 
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
             LEFT JOIN rise_users u on rc.received_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             where rc.received_by LIKE '$received_by' and rc.department_id LIKE '$department_id'  $where");
 
             $list_data = $result->getResult();
@@ -1095,7 +1095,7 @@ class Purchase_Request extends Security_Controller
 
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
             LEFT JOIN rise_users u on rc.requested_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             where rc.requested_by LIKE '$requested_by' and rc.department_id LIKE '$department_id'  $where");
 
             $list_data = $result->getResult();
@@ -1280,7 +1280,7 @@ class Purchase_Request extends Security_Controller
 
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user,s.supplier_name as supplier from rise_purchase_requests rc 
             LEFT JOIN rise_users u on rc.requested_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             LEFT JOIN rise_suppliers s on rc.supplier_id = s.id 
             where rc.requested_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
 
@@ -1292,7 +1292,7 @@ class Purchase_Request extends Security_Controller
         } else {
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user,s.supplier_name as supplier from rise_purchase_requests rc 
             LEFT JOIN rise_users u on rc.ordered_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             LEFT JOIN rise_suppliers s on rc.supplier_id = s.id 
             where rc.requested_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and  rc.deleted=0 $extraWhere");
 

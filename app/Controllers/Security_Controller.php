@@ -795,7 +795,7 @@ class Security_Controller extends App_Controller {
 
     
     public function get_department_name($id){
-        $d = $this->db->query("SELECT nameSo from departments where id = $id  and deleted=0")->getRow();
+        $d = $this->db->query("SELECT nameSo from rise_departments where id = $id  and deleted=0")->getRow();
         
         if(empty($d)){
             return '';
@@ -807,7 +807,7 @@ class Security_Controller extends App_Controller {
         $user_id = $this->login_user->id;
         $job_info = $this->db->query("SELECT d.nameSo from rise_team_member_job_info t 
         left join rise_users u on u.id=t.user_id 
-        left join departments d on d.id=t.department_id 
+        left join rise_departments d on d.id=t.department_id 
         where t.user_id = $user_id")->getRow();
 
         if(empty($job_info)){
@@ -819,7 +819,7 @@ class Security_Controller extends App_Controller {
     public function get_user_job_info($user_id){
         $job_info = $this->db->query("SELECT d.nameSo,t.* from rise_team_member_job_info t 
         left join rise_users u on u.id=t.user_id 
-        left join departments d on d.id=t.department_id 
+        left join rise_departments d on d.id=t.department_id 
         where t.user_id = $user_id  and u.deleted=0")->getRow();
 
         if(empty($job_info)){
@@ -835,7 +835,7 @@ class Security_Controller extends App_Controller {
         $client_dept = $this->db->query("
         select d.id,d.nameSo from rise_users u left join rise_clients c on u.id = c.created_by
         left join rise_team_member_job_info t on t.user_id = u.id
-        left join departments d on t.department_id = d.id
+        left join rise_departments d on t.department_id = d.id
          where c.id like '$login_user_client_id' and u.deleted=0 and d.deleted = 0")->getRow();
 
          return $client_dept ?? null;
@@ -1250,7 +1250,7 @@ class Security_Controller extends App_Controller {
             $dept_id = '%';
         }
 
-        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id' and deleted=0");
+        $depts = $this->db->query("select id,nameSo from rise_departments where id like '$dept_id' and deleted=0");
         
         $data = array('' => '---Choose Department---');
 
@@ -1300,7 +1300,7 @@ class Security_Controller extends App_Controller {
             $dept_id = '%';
         }
 
-        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id' and deleted=0");
+        $depts = $this->db->query("select id,nameSo from rise_departments where id like '$dept_id' and deleted=0");
         $data[] = array('id' => '', 'text' => '---Choose Department---');
 
         if(!$depts){
@@ -1324,7 +1324,7 @@ class Security_Controller extends App_Controller {
             $dept_id = '%';
         }
 
-        $depts = $this->db->query("select id,nameSo from departments where id like '$dept_id' and deleted=0");
+        $depts = $this->db->query("select id,nameSo from rise_departments where id like '$dept_id' and deleted=0");
         $data[] = array('id' => '', 'text' => '---Choose Department---');
 
         if(!$depts){
@@ -1479,6 +1479,76 @@ class Security_Controller extends App_Controller {
             }
         } else {
             return true;
+        }
+    }
+
+
+    //leave form emof functions
+    protected function show_own_unit_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "can_manage_employee_for") == "own_unit" ? $this->login_user->id : false;
+        }
+    }
+
+    protected function show_own_section_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "can_manage_employee_for") == "own_section" ? $this->login_user->id : false;
+        }
+    }
+    
+    protected function show_own_department_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "can_manage_employee_for") == "own_department" ? $this->login_user->id : false;
+        }
+    }
+    
+    protected function show_own_documents_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "document") == "own" ? $this->login_user->id : false;
+        }
+    }
+    
+    protected function show_own_unit_documents_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "document") == "own_unit" ? $this->login_user->id : false;
+        }
+    }
+
+    protected function show_own_section_documents_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "document") == "own_section" ? $this->login_user->id : false;
+        }
+    }
+
+
+    protected function show_own_department_documents_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "document") == "own_department" ? $this->login_user->id : false;
+        }
+    }
+
+    protected function show_own_leaves_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "leave") == "own" ? $this->login_user->id : false;
+        }
+    }
+    
+    protected function show_own_unit_leaves_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "leave") == "own_unit" ? $this->login_user->id : false;
+        }
+    }
+
+    protected function show_own_section_leaves_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "leave") == "own_section" ? $this->login_user->id : false;
+        }
+    }
+
+
+    protected function show_own_department_leaves_only_user_id() {
+        if ($this->login_user->user_type === "staff") {
+            return get_array_value($this->login_user->permissions, "leave") == "own_department" ? $this->login_user->id : false;
         }
     }
 

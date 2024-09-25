@@ -22,7 +22,7 @@ class Visitors_info extends App_Controller
        
         $model_info = $this->db->query("select rc.*,u.image as avatar,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
         LEFT JOIN rise_users u on rc.requested_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
+        LEFT JOIN rise_departments dp on rc.department_id = dp.id 
         where rc.uuid='$id'")->getRow();
 
         if (!$model_info) {
@@ -61,7 +61,7 @@ class Visitors_info extends App_Controller
                                     LEFT JOIN rise_users cb on v.created_by = cb.id
                                     LEFT JOIN rise_users ab on v.approved_by = ab.id
                                     LEFT JOIN rise_users rb on v.rejected_by = rb.id                                                    
-                                    LEFT JOIN departments d on d.id = v.department_id 
+                                    LEFT JOIN rise_departments d on d.id = v.department_id 
                                     LEFT JOIN rise_visitor_document dv on v.id = dv.visitor_id 
                                     LEFT JOIN rise_documents rd on rd.id = dv.document_id 
                                     WHERE v.uuid = '$id'

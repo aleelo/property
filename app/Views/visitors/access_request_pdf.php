@@ -80,20 +80,24 @@
                             &nbsp;&nbsp;
                         </div>
                         <div class="ticket-body" style=" padding: 20px 15px;">
-                            <h2 class="text-center " style="margin-bottom: 15px;color: #264a78;text-align:center;margin-top: 0;"><?php echo 'Oggolaanshaha Soo Gelista' ?></h2>
+                            <div class="text-center" style="margin-bottom: 15px;line-height: 0.95;">
+                                <h2 class="text-center " style="margin-bottom: 0px;color: #264a78;text-align:center;margin-top: 0;"><?php echo 'Oggolaanshaha Soo Gelista' ?></h2>
+                                <span class="d-block">(Entry Authorization)</span>
+
+                            </div>
                             <div class="ticket-name">
                                 <p style=" font-size: 0.9rem;
-                                    color: #12123f;font-weight: 300;margin:0;">Waaxda/Xafiiska:</p>
+                                    color: #12123f;font-weight: 400;margin:0;">Waaxda/Xafiiska (Office):</p>
                                 <h2 style="font-size: 20px;margin:0;"><?php echo $visitor_info->department;?></h2>
                             </div>
                             <div class="ruler"  style="margin: 1rem 0; height: 1px; background: #20a3f6;"></div>
-                            <div class="ticket-number-date" style=" margin: 0 10%;">
+                            <div class="ticket-number-date" style=" margin: 0 6%;">
                                 <div style="float: left;">
-                                    <p style="font-size: 0.9rem;color: #12123f;margin:0;">CODSI LAMBER:</p>
+                                    <p style="font-size: 0.9rem;color: #12123f;margin:0;">CODSI LAMBER <span class="">(Request No.)</span>:</p>
                                     <h2 style="font-size: 20px;margin:0;" class="text-info"><?php echo '#' .$visitor_info->id;?></h2>
                                 </div>
                                 <div style="float: right;">
-                                    <p style="font-size: 0.9rem;color: #12123f;margin:0;">TAARIIKH:</p>
+                                    <p style="font-size: 0.9rem;color: #12123f;margin:0;">TAARIIKH <span class="">(Date)</span>:</p>
                                     <h2 style="font-size: 20px;margin:0;margin-bottom: 0px;">
                                     <?php echo date_format(new DateTime($visitor_info->created_at),'Y-m-d');?>
                                         <small style="font-size: 12px;font-weight: bold"><?php echo date("h:i a",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d').' '.$visitor_info->visit_time)); ?></small>
@@ -103,8 +107,9 @@
                             <div class="ruler"  style="margin: 1rem 0; height: 1px; background: #20a3f6;clear: both;"></div>
                             <div class="ticket-from-and-to justify-content-center" style="align-items: center;">
                                <div class="">
-                                <div style="width: 350px;">
+                                <div class="text-center" style="margin-bottom: 15px;line-height: 0.95;width: 350px;">
                                     <h3 style="padding: 3px;margin: 0px;text-align:center;font-weight: bold;color: #12123f;">LIISKA MARTIDA</h3>
+                                    <span class="d-block">(Guest List)</span>
                                 </div>
                                <table class="table b-t" style="margin-top: 10px;text-align: left;width:100%;background: transparent;color: #12123f;">
                                    
@@ -154,21 +159,21 @@
                             
                             <div class="ruler" style="margin: 1rem 0; height: 1px; background: #20a3f6;"></div>
                             <div class="bording" style=" margin-top: 10px;margin-left: auto;margin-right: auto;">
-                                <h4 style="text-align: center;">Faah faahin</h4>
-                                <div class="bording-content" style="padding: 20px 20px;border: 2px dashed #20a3f6;text-align: center;display:flex">
-                                    <div class="col-sm-6" style="width: 49%;display: inline-block">
-                                        <p style="margin:0;margin-bottom: 5px;font-weight: bold;">Mudada </p>
+                                <h4 style="text-align: center;">Faah faahin (Details)</h4>
+                                <div class="bording-content" style="padding: 10px;border: 2px dashed #20a3f6;text-align: center;display:flex">
+                                    <div class="col-sm-6" style="width: 49%;display: inline-block;padding-right: 20px;">
+                                        <p style="margin:0;margin-bottom: 5px;font-weight: bold;text-wrap: nowrap;">Mudada (Duration) </p>
                                         <h4 style="font-size: 14px;margin:0;"><?php
-                                        $days = $visitor_info->total_days == 1 ? '1 Maalin' : $visitor_info->total_days.' Maalmood';
-                                         echo $days.', ku eg: '.date_format(new DateTime($visitor_info->end_date),'F d, Y');?></h4>
+                                        $days = $visitor_info->total_days == 1 ? '1 day' : $visitor_info->total_days.' days';
+                                         echo $days.', ends: '.date_format(new DateTime($visitor_info->end_date),'F d, Y');?></h4>
                                     </div>
                                     <div class="col-sm-6"  style="width: 49%;display: inline-block">
-                                        <p style="margin:0;margin-bottom: 5px;font-weight: bold;">Albaabada (Gates)</p>
+                                        <p style="margin:0;margin-bottom: 5px;font-weight: bold;text-wrap: nowrap">Albaabada (Gates)</p>
                                         <h4 style="font-size: 14px;margin:0"><?php echo $visitor_info->allowed_gates;?></h4>
                                     </div>
                                     <?php if($vehicle_details){?>
-                                        <div class="col-sm-12" style="width: 100%;display: inline-block;margin-top: 20px;">
-                                            <p style="margin:0;margin-bottom: 5px;font-weight: bold;">Xogta Gaadiidka</p>
+                                        <div class="col-sm-12" style="width: 100%;display: inline-block;">
+                                            <p style="margin:0;margin-bottom: 5px;font-weight: bold;">Gaadiidka (Vehicle)</p>
                                             <h4 style="font-size: 14px;margin:0;"><?php echo $vehicle_details;?></h4>
                                         </div>
                                     <?php }?>

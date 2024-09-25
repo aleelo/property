@@ -17,7 +17,7 @@ class Purchase_Receive_model extends Crud_model {
         $purchase_receive_table = $this->db->prefixTable('purchase_receives');
         $users_table = $this->db->prefixTable('users');
         $suppliers_table = $this->db->prefixTable('suppliers');
-        $departments_table = 'departments';
+        $departments_table = $this->db->prefixTable('departments');
         
         $where = "";
         $id = $this->_get_clean_value($options, "id");

@@ -7,8 +7,6 @@ use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class Leaves extends Security_Controller {
@@ -20,16 +18,6 @@ class Leaves extends Security_Controller {
         $this->init_permission_checker("leave");
     }
 
-    //only admin or assigend members can access/manage other member's leave
-    //none admin users who has limited permission to manage other members leaves, can't manage his/her own leaves
-    protected function access_only_allowed_members($user_id = 0) {
-        if ($this->access_type !== "all") {
-            if ($user_id === $this->login_user->id || !array_search($user_id, $this->allowed_members)) {
-                app_redirect("forbidden");
-            }
-        }
-    }
-
     protected function can_delete_leave_application() {
         if ($this->login_user->is_admin || get_array_value($this->login_user->permissions, "can_delete_leave_application") == "1") {
             return true;
@@ -37,7 +25,9 @@ class Leaves extends Security_Controller {
     }
 
     function index($tab = "") {
+
         $this->check_module_availability("module_leave");
+        $this->access_only_allowed_members();
 
         $role = $this->get_user_role();
 
@@ -49,9 +39,414 @@ class Leaves extends Security_Controller {
         return $this->template->rander("leaves/index", $view_data);
     }
 
+
+    //update leave status
+    function update_status() {
+
+        $this->validate_submitted_data(array(
+            "id" => "required|numeric",
+            "status" => "required"
+        ));
+
+        $applicaiton_id = $this->request->getPost('id');
+        $status = $this->request->getPost('status');
+        $now = get_current_utc_time();
+
+        $role = $this->get_user_role();
+        
+        if($role === "Administrator" && $status === "approved"){
+            $status = 'approved';
+        }elseif($role == "Director" && $status === "approved"){
+            $status = 'pending';
+        }
+
+        $leave_data = array(
+            "checked_by" => $this->login_user->id,
+            "checked_at" => $now,
+            "status" => $status
+        );
+
+        //only allow to updte the status = accept or reject for admin or specefic user
+        //otherwise user can cancel only his/her own application
+        $applicatoin_info = $this->db->query("SELECT l.*,t.title FROM rise_leave_applications l 
+                        left join rise_leave_types t on t.id=l.leave_type_id where l.id = $applicaiton_id")->getRow();;
+
+        if ($status === "approved" || $status === "rejected") {
+            $this->access_only_allowed_members($applicatoin_info->applicant_id);
+        } else if ($status === "canceled" && $applicatoin_info->applicant_id != $this->login_user->id) {
+            //any user can't cancel other user's leave application
+            app_redirect("forbidden");
+        }
+        
+        //user can update only the applications where status = pending
+        // if (($applicatoin_info->status != "pending" || $applicatoin_info->status != "active") || !($status === "approved" || $status === "rejected" || $status === "canceled")) {
+            //     app_redirect("forbidden");
+            // }
+            
+            $save_id = $this->Leave_applications_model->ci_save($leave_data, $applicaiton_id);
+            if ($save_id) {
+                
+                $notification_options = array("leave_id" => $applicaiton_id, "to_user_id" => $applicatoin_info->applicant_id);
+                
+                if ($status == "approved") {
+                    log_notification("leave_approved_HR", $notification_options);//leave_approved
+                } else if ($status == "pending") {
+                    log_notification("leave_approved_Director", $notification_options);
+                } else if ($status == "rejected") {
+                    log_notification("leave_rejected", $notification_options);
+                } else if ($status == "canceled") {
+                    log_notification("leave_canceled", $notification_options);
+                }
+                
+                if ($status === "approved" ) {
+                                        
+                    // send whatsapp message:
+                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                                    
+                    $options = array('id'=> $applicatoin_info->applicant_id); 
+                    $user_info = $this->Users_model->get_details($options)->getRow();
+                    $leave_user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $applicatoin_info?->applicant_id")->getRow();
+                    // print_r($user_info);die;
+
+                    $start_date = date('F d,Y',strtotime($applicatoin_info->start_date));
+                    // send whatsapp message:
+                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                    $phoneNumber = $user_info->phone;
+                    $message = "Codsiga fasaxa #$applicaiton_id ee ku mudeysan: $start_date waa la oggolaaday.\n";
+                
+                    $messageType = "text";
+                                        
+                    $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
+
+                    if($resw == 400){                
+                        echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
+                        die;
+                    }
+
+                    //send passport return email
+                    $duration = (int)$applicatoin_info->total_days;
+        
+                    $leave_email_data = [
+                        'LEAVE_ID'=>$save_id,
+                        'UUID' => $applicatoin_info->uuid,
+                        'LEAVE_REASON' => $applicatoin_info->reason,
+                        'LEAVE_TITLE' => $applicatoin_info->title,
+                        'EMPLOYEE_NAME'=>$user_info->first_name.' '.$user_info->last_name,
+                        'JOB_TITLE'=>$user_info->job_title_so,
+                        // 'EMAIL'=>$user_info->private_email,
+                        'PASSPORT'=>$user_info->passport_no,            
+                        'TOTAL_DAYS'=>$duration,
+                        'LEAVE_TYPE'=>$applicatoin_info->title,            
+                        'LEAVE_DATE' => $duration == 1 ? $applicatoin_info->start_date: $applicatoin_info->start_date .' - '.$applicatoin_info->end_date,
+                    ];
+        
+                    $r = $this->send_leave_passport_return($leave_email_data);
+
+                    
+                     //send email to the user for leave status:
+                        if($leave_user_info->private_email){
+                            $leave_email_data = [
+                                'LEAVE_ID'=>$save_id,
+                                'LEAVE_TITLE' => $applicatoin_info->title,
+                                'EMPLOYEE_NAME'=>$leave_user_info->first_name.' '.$user_info->last_name,
+                                'LEAVE_STATUS'=>$status,                 
+                                'email'=>$leave_user_info->private_email,                 
+                            ];
+        
+
+                            $r = $this->send_notify_leave_status($leave_email_data);
+                        }
+
+
+                }elseif($status === "rejected"){
+
+                    
+                    // send whatsapp message:
+                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                                    
+                    $options = array('id'=> $applicatoin_info->applicant_id); 
+                    $user_info = $this->Users_model->get_details($options)->getRow();
+                    $leave_user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $applicatoin_info?->applicant_id")->getRow();
+
+                    $start_date = date('F d,Y',strtotime($applicatoin_info->start_date));
+                    // send whatsapp message:
+                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                    $phoneNumber = $user_info->phone;
+                    $message = "Codsiga fasaxa #$applicaiton_id ee ku mudeysan: $start_date waa la diiday.\n";
+                
+                    $messageType = "text";
+                    
+                    $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
+
+                    
+                    if($resw == 400){                
+                        echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
+                        die;
+                    }
+
+                     //send email to the user for leave status
+                        if($leave_user_info->private_email){
+                            $leave_email_data = [
+                                'LEAVE_ID'=>$save_id,
+                                'LEAVE_TITLE' => $applicatoin_info->title,
+                                'EMPLOYEE_NAME'=>$leave_user_info->first_name.' '.$user_info->last_name,
+                                'LEAVE_STATUS'=>$status,  
+                                'email'=>$leave_user_info->private_email,                 
+                            ];
+
+                            $r = $this->send_notify_leave_status($leave_email_data);
+                        }
+
+                }
+                      
+               
+            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
+    //for HR head
+    public function send_leave_nulla_osta($data = array()) {
+            
+        $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta", true);
+        $email = 'admin@presidency.gov.so';//nulla-osta@immigration.gov.so;
+        $leave_id = $data['LEAVE_ID'];
+        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
+                        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
+                        
+                        LEFT JOIN rise_users a on l.applicant_id = a.id
+                        LEFT JOIN rise_users cb on l.applicant_id = cb.id
+                        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
+                        left join rise_leave_types t on t.id=l.leave_type_id 
+                        where l.id= $leave_id")->getRow();
+
+        $nolo_data['leave_info'] = $leave_info;
+
+        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
+        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
+        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
+        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
+        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
+        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
+        $parser_data["DOCUMENT_REF"] = $data['DOCUMENT_REF'];
+        $parser_data["LEAVE_URL"] = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.'/nulla_osta');
+        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_nolosto_mail',$nolo_data);
+        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
+        $parser_data["LOGO_URL"] = get_logo_url();
+        $parser_data["SITE_URL"] = get_uri();
+        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
+        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
+
+        $message =  get_array_value($email_template, "message_default");
+        $subject =  get_array_value($email_template, "subject_default");
+
+        $message = $this->parser->setData($parser_data)->renderString($message);
+        $subject = $this->parser->setData($parser_data)->renderString($subject);
+
+        if (send_app_mail($email, $subject, $message)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //for migration after approve
+    public function send_leave_nulla_osta_pdf($data = array(),$type) {
+        
+        if($type == 'nulla_osta'){
+
+            $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta_pdf", true);
+        }else if($type == 'passport_return'){
+            $email_template = $this->Email_templates_model->get_final_template("leave_passport_return_pdf", true);
+        }
+
+        
+        $email = 'nulla-osta@immigration.gov.so';//'alihaile2020@gmail.com';
+        $leave_id = $data['LEAVE_ID'];
+        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
+                        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
+                        
+                        LEFT JOIN rise_users a on l.applicant_id = a.id
+                        LEFT JOIN rise_users cb on l.applicant_id = cb.id
+                        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
+                        left join rise_leave_types t on t.id=l.leave_type_id 
+                        where l.id= $leave_id")->getRow();
+
+        $nolo_data['leave_info'] = $leave_info;
+
+        $url = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.'/'.$type);
+    
+        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
+        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
+        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
+        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
+        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
+        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
+        $parser_data["LEAVE_URL"] = $url;
+        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
+        $parser_data["LOGO_URL"] = get_logo_url();
+        $parser_data["SITE_URL"] = get_uri();
+        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
+        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
+
+        $message =  get_array_value($email_template, "message_default");
+        $subject =  get_array_value($email_template, "subject_default");
+
+        $message = $this->parser->setData($parser_data)->renderString($message);
+        $subject = $this->parser->setData($parser_data)->renderString($subject);
+
+        if (send_app_mail($email, $subject, $message)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function send_leave_passport_return($data = array()) {
+        
+        $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta", true);
+        $email = 'admin@presidency.gov.so';//nulla-osta@immigration.gov.so;
+        $leave_id = $data['LEAVE_ID'];
+        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
+                        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
+                        
+                        LEFT JOIN rise_users a on l.applicant_id = a.id
+                        LEFT JOIN rise_users cb on l.applicant_id = cb.id
+                        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
+                        left join rise_leave_types t on t.id=l.leave_type_id 
+                        where l.id= $leave_id")->getRow();
+
+        $nolo_data['leave_info'] = $leave_info;
+
+        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
+        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
+        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
+        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
+        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
+        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
+        $parser_data["LEAVE_URL"] = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.'/passport_return');
+        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_passport_return_mail',$nolo_data);
+        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
+        $parser_data["LOGO_URL"] = get_logo_url();
+        $parser_data["SITE_URL"] = get_uri();
+        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
+        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
+
+        $message =  get_array_value($email_template, "message_default");
+        $subject =  get_array_value($email_template, "subject_default");
+
+        $message = $this->parser->setData($parser_data)->renderString($message);
+        $subject = $this->parser->setData($parser_data)->renderString($subject);
+
+        if (send_app_mail($email, $subject, $message)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public function send_leave_request_email($data = array()) {
+        
+        $email_template = $this->Email_templates_model->get_final_template("new_leave_request", true);
+        $email = 'admin@presidency.gov.so';//$data['EMAIL'];
+
+        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
+        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
+        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
+        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
+        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
+        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
+        $parser_data["LEAVE_URL"] = get_uri('leaves');
+        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
+        $parser_data["LOGO_URL"] = get_logo_url();
+        $parser_data["SITE_URL"] = get_uri();
+        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/email_header.png');
+        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/email_footer.png');
+
+        $message =  get_array_value($email_template, "message_default");
+        $subject =  get_array_value($email_template, "subject_default");
+
+        $message = $this->parser->setData($parser_data)->renderString($message);
+        $subject = $this->parser->setData($parser_data)->renderString($subject);
+
+        if (send_app_mail($email, $subject, $message)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function send_notify_leave_status($data = array()) {
+        
+        $email = $data['email'];
+        $status = $data['LEAVE_STATUS'];
+
+        if($status == 'approved'){
+            $email_template = $this->Email_templates_model->get_final_template("leave_request_approved", true);
+        }else if($status == 'rejected'){
+            $email_template = $this->Email_templates_model->get_final_template("leave_request_rejected", true);
+        }
+
+        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
+        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
+        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
+        $parser_data["LEAVE_URL"] = get_uri('leaves');
+        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
+        $parser_data["LOGO_URL"] = get_logo_url();
+        $parser_data["SITE_URL"] = get_uri();
+        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
+        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
+
+        $message =  get_array_value($email_template, "message_default");
+        $subject =  get_array_value($email_template, "subject_default");
+
+        $message = $this->parser->setData($parser_data)->renderString($message);
+        $subject = $this->parser->setData($parser_data)->renderString($subject);
+
+        if (send_app_mail($email, $subject, $message)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    // Edit Leave 
+
+    // function edit_leave_modal_form() {
+
+    //     $application_id = $this->request->getPost('id');
+        
+
+        // if ($applicant_id) {
+        //     $view_data['team_members_info'] = $this->Users_model->get_one($applicant_id);
+        // } else {
+
+        //     //show all members list to only admin and other members who has permission to manage all member's leave
+        //     //show only specific members list who has limited access
+        //     if ($this->access_type === "all") {
+        //         $where = array("user_type" => "staff");
+        //     } else {
+        //         $where = array("user_type" => "staff", "id !=" => $this->login_user->id, "where_in" => array("id" => $this->allowed_members));
+        //     }
+        // }
+
+    //     $view_data['team_members_dropdown'] = array("" => "-") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"));
+        
+    //     $view_data['model_info'] = $this->Leave_applications_model->get_one($application_id);
+
+    //     $view_data['leave_types_dropdown'] = array("" => "-") + $this->Leave_types_model->get_dropdown_list(array("title"), "id", array("status" => "active"));
+    //     $view_data['form_type'] = "assign_leave";
+
+    //     return $this->template->view('leaves/modal_form', $view_data);
+    // }
+
     //load assign leave modal 
 
     function assign_leave_modal_form($applicant_id = 0) {
+
+        $view_data = $this->team_members_dropdown();
 
         if ($applicant_id) {
             $view_data['team_members_info'] = $this->Users_model->get_one($applicant_id);
@@ -64,11 +459,12 @@ class Leaves extends Security_Controller {
             } else {
                 $where = array("user_type" => "staff", "id !=" => $this->login_user->id, "where_in" => array("id" => $this->allowed_members));
             }
-            $view_data['team_members_dropdown'] = array("" => "-") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id", $where);
+            // $view_data['team_members_dropdown'] = array("" => "-") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id", $where);
         }
 
         $view_data['leave_types_dropdown'] = array("" => "-") + $this->Leave_types_model->get_dropdown_list(array("title"), "id", array("status" => "active"));
         $view_data['form_type'] = "assign_leave";
+
         return $this->template->view('leaves/modal_form', $view_data);
     }
 
@@ -79,6 +475,40 @@ class Leaves extends Security_Controller {
         return $this->template->view('leaves/modal_form', $view_data);
     }
 
+
+    
+    private function team_members_dropdown()
+    {
+
+        $options = array(
+            "status" => $this->request->getPost("status"),
+            "show_own_leaves_only_user_id" => $this->show_own_leaves_only_user_id(),
+            "show_own_unit_leaves_only_user_id" => $this->show_own_unit_leaves_only_user_id(),
+            "show_own_section_leaves_only_user_id" => $this->show_own_section_leaves_only_user_id(),
+            "show_own_department_leaves_only_user_id" => $this->show_own_department_leaves_only_user_id(),
+            "user_type" => "staff",
+        );
+
+        $team_members = $this->Leave_applications_model->get_team_members_dropdown_permission($options);
+        
+        $team_members = get_array_value($team_members,'data') ? get_array_value($team_members,'data') : $team_members->getResult(); 
+        $recordsTotal =  get_array_value($team_members,'recordsTotal');
+        $recordsFiltered =  get_array_value($team_members,'recordsFiltered');
+
+        $temp_array = ['-'];
+        
+        $result = array();
+        foreach ($team_members as $t) {
+            $temp_array[$t->id] = $t->name;
+        }
+
+
+        $view_data["team_members_dropdown"] = $temp_array;
+        return $view_data;
+    }
+
+
+  
     // save: assign leave 
     function assign_leave() {
         $leave_data = $this->_prepare_leave_form_data();
@@ -91,28 +521,23 @@ class Leaves extends Security_Controller {
 
         $webUrl = null;
 
-        //hasn't full access? allow to update only specific member's record, excluding loged in user's own record
-        $this->access_only_allowed_members($leave_data['applicant_id']);
-
-        $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $applicant_id")->getRow();
-       
-        if(!$user_info){
-            
-            echo json_encode(array("success" => false, 'message' => 'Information is missing, Please fill your User & Job information'));
+        $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where j.user_id = $applicant_id")->getRow();
+      
+        if(!$user_info){            
+            echo json_encode(array("success" => false, 'message' => 'Information is missing'.', Please fill your User & Job information'));
         }
 
+        //hasn't full access? allow to update only specific member's record, excluding loged in user's own record
+        // $this->access_only_allowed_members($leave_data['applicant_id']);
+
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
-      
+        
         $leave_info = $this->db->query("SELECT l.*,t.title FROM rise_leave_applications l 
                         left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
 
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
         $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template->id");
         $sqn = $this->db->query("SELECT lpad(max(sqn),4,0) as sqn FROM rise_templates where id = $template->id")->getRow()->sqn;
-
-        // var_dump($leave_info);
-        // var_dump($save_id);
-        // die();
 
         $doc_leave_data = [
             'uuid' => $leave_info->uuid,
@@ -165,23 +590,14 @@ class Leaves extends Security_Controller {
             $webUrl = $data["webUrl"];
             $itemId = $data["id"];
 
-            $drive_ref = $data['parentReference'];
-            $driveId = $drive_ref['driveId'];
-
             //update item id and web url for document
-            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number'],'drive_info'=>@serialize($drive_ref));
+            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number']);
             
             $this->Documents_model->ci_save($u_data, $doc->id);
 
-            //convert doc to pdf using graph api:
-
-            // $res = $this->saveAsPDF($driveId,$itemId);
-
-
-            // var_dump($res);
+            // echo $webUrl;
             // die();
 
-            
             $duration = (int)$leave_info->total_days;
             
             //send email to the HRM for new leave notification:
@@ -203,53 +619,20 @@ class Leaves extends Security_Controller {
                 $this->send_leave_nulla_osta($leave_email_data);
                 // $this->send_leave_nulla_osta_pdf($leave_email_data, 'passport_return');
                 $this->send_leave_nulla_osta_pdf($leave_email_data, 'nulla_osta');
-                
-
         }
 
 
         if ($save_id) {
             log_notification("leave_assigned", array("leave_id" => $save_id, "to_user_id" => $applicant_id));
-            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id,'webUrl'=>$webUrl, 'message' => app_lang('record_saved')));
+            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id,'flight_included'=>$flight_included,'webUrl'=>$webUrl, 'message' => app_lang('record_saved')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
     }
 
-    public function saveAsPDF($driveId,$itemId) {
 
-    
-        $pdfApi = "https://graph.microsoft.com/v1.0/drive/items/$itemId/content?format=pdf";///drives/$driveId
-        $curl = curl_init();
-        $accessToken = $this->AccesToken();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $pdfApi,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer ' . $accessToken,
-            ),
-        ));
 
-        $json = curl_exec($curl);
 
-        curl_close($curl);
-
-        // var_dump($itemId);
-        // var_dump($driveId);
-        // var_dump($accessToken);
-        // die();
-        
-        // Decode the JSON response into an associative array
-        $data = json_decode($json, true);
-
-        return $data;
-    }
 
     /* save: apply leave */
 
@@ -267,8 +650,7 @@ class Leaves extends Security_Controller {
 
         $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where j.user_id = $applicant_id")->getRow();
       
-        if(!$user_info){
-            
+        if(!$user_info){            
             echo json_encode(array("success" => false, 'message' => 'Information is missing'.', Please fill your User & Job information'));
         }
 
@@ -276,7 +658,6 @@ class Leaves extends Security_Controller {
         // $this->access_only_allowed_members($leave_data['applicant_id']);
 
         $save_id = $this->Leave_applications_model->ci_save($leave_data);
-
         
         $leave_info = $this->db->query("SELECT l.*,t.title FROM rise_leave_applications l 
                         left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
@@ -378,9 +759,63 @@ class Leaves extends Security_Controller {
     }
 
 
+    public function get_allowed_days() {
+        $leave_type_id = $this->request->getPost('leave_type_id');
+        $applicant_id = $this->request->getPost('applicant_id');
+        $form_type = $this->request->getPost('form_type');
+
+        $user_id = $form_type == 'apply_leave' ? $this->login_user->id : $applicant_id;  // Assuming the user ID is stored in session
+    
+        // Get allowed days for the selected leave type
+        $allowed_days = $this->Leave_applications_model->get_allowed_days_by_type($leave_type_id);
+    
+        // Get the total days already taken by the user for the selected leave type
+        $taken_days = $this->Leave_applications_model->get_taken_days_by_type($user_id, $leave_type_id);
+    
+        // Return both allowed_days and taken_days
+        echo json_encode(array('allowed_days' => $allowed_days, 'taken_days' => $taken_days));
+    }
+    
+  
+
     /**
      * start document functions
-     */    
+     */
+     public function saveAsPDF($driveId,$itemId) {
+
+    
+        $pdfApi = "https://graph.microsoft.com/v1.0/drive/items/$itemId/content?format=pdf";///drives/$driveId
+        $curl = curl_init();
+        $accessToken = $this->AccesToken();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $pdfApi,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $accessToken,
+            ),
+        ));
+
+        $json = curl_exec($curl);
+
+        curl_close($curl);
+
+        // var_dump($itemId);
+        // var_dump($driveId);
+        // var_dump($accessToken);
+        // die();
+        
+        // Decode the JSON response into an associative array
+        $data = json_decode($json, true);
+
+        return $data;
+    }
+
      
     public function get_leave_pdf($path,$data,$mode='view'){
 
@@ -787,6 +1222,7 @@ class Leaves extends Security_Controller {
 
             $days = $d_diff->days + 1;
             $hours = $days * $hours_per_day;
+            
         } else if ($duration === "hours") {
 
             $this->validate_submitted_data(array(
@@ -828,15 +1264,6 @@ class Leaves extends Security_Controller {
         return $leave_data;
     }
 
-    // load pending approval tab
-    function pending_approval() {
-        return $this->template->view("leaves/pending_approval");
-    }
-
-    // load all applications tab 
-    function all_applications() {
-        return $this->template->view("leaves/all_applications");
-    }
 
     // load leave summary tab
     function summary() {
@@ -845,9 +1272,54 @@ class Leaves extends Security_Controller {
         return $this->template->view("leaves/summary", $view_data);
     }
 
+    // // load pending approval tab
+    // function pending_approval() {
+    //     return $this->template->view("leaves/pending_approval");
+    // }
+
+    // // list of pending leave application. prepared for datatable
+    // function pending_approval_list_data() {
+
+    //     $options = array(
+    //         "status" => "pending",
+    //         'view_type' => 'pending_list', 
+    //         "show_own_leaves_only_user_id" => $this->show_own_leaves_only_user_id(),
+    //         "show_own_unit_leaves_only_user_id" => $this->show_own_unit_leaves_only_user_id(),
+    //         "show_own_section_leaves_only_user_id" => $this->show_own_section_leaves_only_user_id(),
+    //         "show_own_department_leaves_only_user_id" => $this->show_own_department_leaves_only_user_id(),
+    //         "access_type" => $this->access_type, 
+    //         "allowed_members" => $this->allowed_members
+    //     );
+
+    //     $list_data = $this->Leave_applications_model->get_list($options)->getResult();
+
+    //     $result = array();
+    //     foreach ($list_data as $data) {
+    //         $result[] = $this->_make_row($data);
+    //     }
+    //     echo json_encode(array("data" => $result));
+        
+    // }
+
+    // load pending approval tab
+    function active_list() {
+        return $this->template->view("leaves/active_list");
+    }
+
     // list of pending leave application. prepared for datatable
-    function pending_approval_list_data() {
-        $options = array("status" => "pending",'view_type' => 'pending_list', "access_type" => $this->access_type, "allowed_members" => $this->allowed_members);
+    function active_list_data() {
+
+        $options = array(
+            "status" => "active",
+            'view_type' => 'active_list', 
+            "show_own_leaves_only_user_id" => $this->show_own_leaves_only_user_id(),
+            "show_own_unit_leaves_only_user_id" => $this->show_own_unit_leaves_only_user_id(),
+            "show_own_section_leaves_only_user_id" => $this->show_own_section_leaves_only_user_id(),
+            "show_own_department_leaves_only_user_id" => $this->show_own_department_leaves_only_user_id(),
+            "access_type" => $this->access_type, 
+            "allowed_members" => $this->allowed_members
+        );
+
         $list_data = $this->Leave_applications_model->get_list($options)->getResult();
 
         $result = array();
@@ -855,6 +1327,128 @@ class Leaves extends Security_Controller {
             $result[] = $this->_make_row($data);
         }
         echo json_encode(array("data" => $result));
+        
+    }
+
+    // load pending approval tab
+    function pending_list() {
+        return $this->template->view("leaves/pending_list");
+    }
+
+    // list of pending leave application. prepared for datatable
+    function pending_list_data() {
+
+        $options = array(
+            "status" => "active",
+            'view_type' => 'pending_list', 
+            "show_own_leaves_only_user_id" => $this->show_own_leaves_only_user_id(),
+            "show_own_unit_leaves_only_user_id" => $this->show_own_unit_leaves_only_user_id(),
+            "show_own_section_leaves_only_user_id" => $this->show_own_section_leaves_only_user_id(),
+            "show_own_department_leaves_only_user_id" => $this->show_own_department_leaves_only_user_id(),
+            "access_type" => $this->access_type, 
+            "allowed_members" => $this->allowed_members
+        );
+
+        $list_data = $this->Leave_applications_model->get_list($options)->getResult();
+
+        $result = array();
+        foreach ($list_data as $data) {
+            $result[] = $this->_make_row($data);
+        }
+        echo json_encode(array("data" => $result));
+        
+    }
+
+     // load pending approval tab
+     function approved_list() {
+        return $this->template->view("leaves/approved_list");
+    }
+
+    // list of pending leave application. prepared for datatable
+    function approved_list_data() {
+
+        $options = array(
+            "status" => "approved",
+            'view_type' => 'approved_list', 
+            "show_own_leaves_only_user_id" => $this->show_own_leaves_only_user_id(),
+            "show_own_unit_leaves_only_user_id" => $this->show_own_unit_leaves_only_user_id(),
+            "show_own_section_leaves_only_user_id" => $this->show_own_section_leaves_only_user_id(),
+            "show_own_department_leaves_only_user_id" => $this->show_own_department_leaves_only_user_id(),
+            "access_type" => $this->access_type, 
+            "allowed_members" => $this->allowed_members
+        );
+
+        $list_data = $this->Leave_applications_model->get_list($options)->getResult();
+
+        $result = array();
+        foreach ($list_data as $data) {
+            $result[] = $this->_make_row($data);
+        }
+        echo json_encode(array("data" => $result));
+        
+    }
+
+     // load pending approval tab
+     function rejected_list() {
+        return $this->template->view("leaves/rejected_list");
+    }
+
+    // list of pending leave application. prepared for datatable
+    function rejected_list_data() {
+
+        $options = array(
+            "status" => "rejected",
+            'view_type' => 'rejected_list', 
+            "show_own_leaves_only_user_id" => $this->show_own_leaves_only_user_id(),
+            "show_own_unit_leaves_only_user_id" => $this->show_own_unit_leaves_only_user_id(),
+            "show_own_section_leaves_only_user_id" => $this->show_own_section_leaves_only_user_id(),
+            "show_own_department_leaves_only_user_id" => $this->show_own_department_leaves_only_user_id(),
+            "access_type" => $this->access_type, 
+            "allowed_members" => $this->allowed_members
+        );
+
+        $list_data = $this->Leave_applications_model->get_list($options)->getResult();
+
+        $result = array();
+        foreach ($list_data as $data) {
+            $result[] = $this->_make_row($data);
+        }
+        echo json_encode(array("data" => $result));
+        
+    }
+
+     // load pending approval tab
+     function canceled_list() {
+        return $this->template->view("leaves/canceled_list");
+    }
+
+    // list of pending leave application. prepared for datatable
+    function canceled_list_data() {
+
+        $options = array(
+            "status" => "canceled",
+            'view_type' => 'canceled_list', 
+            "show_own_leaves_only_user_id" => $this->show_own_leaves_only_user_id(),
+            "show_own_unit_leaves_only_user_id" => $this->show_own_unit_leaves_only_user_id(),
+            "show_own_section_leaves_only_user_id" => $this->show_own_section_leaves_only_user_id(),
+            "show_own_department_leaves_only_user_id" => $this->show_own_department_leaves_only_user_id(),
+            "access_type" => $this->access_type, 
+            "allowed_members" => $this->allowed_members
+        );
+
+        $list_data = $this->Leave_applications_model->get_list($options)->getResult();
+
+        $result = array();
+        foreach ($list_data as $data) {
+            $result[] = $this->_make_row($data);
+        }
+        echo json_encode(array("data" => $result));
+        
+    }
+
+      // load all applications tab 
+      function all_applications() {
+        return $this->template->view("leaves/all_applications");
     }
 
     // list of all leave application. prepared for datatable 
@@ -868,7 +1462,19 @@ class Leaves extends Security_Controller {
         $end_date = $this->request->getPost('end_date');
         $applicant_id = $this->request->getPost('applicant_id');
 
-        $options = array("start_date" => $start_date, "end_date" => $end_date, "applicant_id" => $applicant_id, "login_user_id" => $this->login_user->id, "access_type" => $this->access_type, "allowed_members" => $this->allowed_members);
+        $options = array(
+            "start_date" => $start_date, 
+            "end_date" => $end_date, 
+            "applicant_id" => $applicant_id, 
+            "login_user_id" => $this->login_user->id, 
+            "show_own_leaves_only_user_id" => $this->show_own_leaves_only_user_id(),
+            "show_own_unit_leaves_only_user_id" => $this->show_own_unit_leaves_only_user_id(),
+            "show_own_section_leaves_only_user_id" => $this->show_own_section_leaves_only_user_id(),
+            "show_own_department_leaves_only_user_id" => $this->show_own_department_leaves_only_user_id(),
+            "access_type" => $this->access_type, 
+            "allowed_members" => $this->allowed_members
+        );
+
         $list_data = $this->Leave_applications_model->get_list($options)->getResult();
         $result = array();
         foreach ($list_data as $data) {
@@ -933,10 +1539,14 @@ class Leaves extends Security_Controller {
 
         return array(
             $data->id,
+            //$data->dp_name,
             get_team_member_profile_link($data->applicant_id, $meta_info->applicant_meta),
             $meta_info->leave_type_meta,
             $meta_info->date_meta,
             $meta_info->duration_meta,
+            // $meta_info->unit_name,
+            // $meta_info->section_name,
+            $meta_info->dp_name,
             $meta_info->status_meta,
             $actions
         );
@@ -1012,16 +1622,17 @@ class Leaves extends Security_Controller {
         }
 
 
+
         //checking the user permissiton to show/hide reject and approve button
         $can_manage_application = false;
-        if ($this->access_type === "all") {
+        if ($this->access_type === "own_section" || $this->access_type === "all") {
             $can_manage_application = true;
         } else if (array_search($info->applicant_id, $this->allowed_members) && $info->applicant_id !== $this->login_user->id) {
             $can_manage_application = true;
         }
 
         $role = $this->get_user_role();
-        $view_data['show_approve_reject'] = $role === 'admin' || $role === 'HRM' || $role === 'Director' || $role === 'Administrator';
+        $view_data['show_approve_reject'] = $role === 'admin' || $role === 'HRM' || $role === 'Director' || $role === 'Section Head'|| $role === 'Administrator';
 
         //has permission to manage the appliation? or is it own application?
         if (!$can_manage_application && $info->applicant_id !== $this->login_user->id) {
@@ -1029,6 +1640,7 @@ class Leaves extends Security_Controller {
         }
 
         $view_data['leave_info'] = $this->_prepare_leave_info($info);
+        $view_data['role']=$role;
         return $this->template->view("leaves/application_details", $view_data);
     }
 
@@ -1047,375 +1659,8 @@ class Leaves extends Security_Controller {
 
     }
 
-    //update leave status
-    function update_status() {
+   
 
-        $this->validate_submitted_data(array(
-            "id" => "required|numeric",
-            "status" => "required"
-        ));
-
-        $applicaiton_id = $this->request->getPost('id');
-        $status = $this->request->getPost('status');
-        $now = get_current_utc_time();
-
-        $role = $this->get_user_role();
-        if($role === "HRM" && $status === "approved"){
-            $status = 'approved';
-        }elseif($role == "Director" && $status === "approved"){
-            $status = 'pending';
-        }
-
-        $leave_data = array(
-            "checked_by" => $this->login_user->id,
-            "checked_at" => $now,
-            "status" => $status
-        );
-
-        //only allow to updte the status = accept or reject for admin or specefic user
-        //otherwise user can cancel only his/her own application
-        $applicatoin_info = $this->db->query("SELECT l.*,t.title FROM rise_leave_applications l 
-                        left join rise_leave_types t on t.id=l.leave_type_id where l.id = $applicaiton_id")->getRow();;
-
-        if ($status === "approved" || $status === "rejected") {
-            $this->access_only_allowed_members($applicatoin_info->applicant_id);
-        } else if ($status === "canceled" && $applicatoin_info->applicant_id != $this->login_user->id) {
-            //any user can't cancel other user's leave application
-            app_redirect("forbidden");
-        }
-        
-        //user can update only the applications where status = pending
-        // if (($applicatoin_info->status != "pending" || $applicatoin_info->status != "active") || !($status === "approved" || $status === "rejected" || $status === "canceled")) {
-            //     app_redirect("forbidden");
-            // }
-            
-            $save_id = $this->Leave_applications_model->ci_save($leave_data, $applicaiton_id);
-            if ($save_id) {
-                
-                $notification_options = array("leave_id" => $applicaiton_id, "to_user_id" => $applicatoin_info->applicant_id);
-                
-                if ($status == "approved") {
-                    log_notification("leave_approved_HR", $notification_options);//leave_approved
-                } else if ($status == "pending") {
-                    log_notification("leave_approved_Director", $notification_options);
-                } else if ($status == "rejected") {
-                    log_notification("leave_rejected", $notification_options);
-                } else if ($status == "canceled") {
-                    log_notification("leave_canceled", $notification_options);
-                }
-                
-                if ($status === "approved" ) {
-                                        
-                    // send whatsapp message:
-                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
-                                    
-                    $options = array('id'=> $applicatoin_info->applicant_id); 
-                    $user_info = $this->Users_model->get_details($options)->getRow();
-                    $leave_user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $applicatoin_info?->applicant_id")->getRow();
-
-                    $start_date = date('F d,Y',strtotime($applicatoin_info->start_date));
-                    // send whatsapp message:
-                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
-                    $phoneNumber = $user_info->phone;
-                    $message = "Codsiga fasaxa #$applicaiton_id ee ku mudeysan: $start_date waa la oggolaaday.\n";
-                
-                    $messageType = "text";
-                                        
-                    $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
-
-                    if($resw == 400){                
-                        echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
-                        die;
-                    }
-
-                    //send passport return email
-                    $duration = (int)$applicatoin_info->total_days;
-        
-                    $leave_email_data = [
-                        'LEAVE_ID'=>$save_id,
-                        'UUID' => $applicatoin_info->uuid,
-                        'LEAVE_REASON' => $applicatoin_info->reason,
-                        'LEAVE_TITLE' => $applicatoin_info->title,
-                        'EMPLOYEE_NAME'=>$user_info->first_name.' '.$user_info->last_name,
-                        'JOB_TITLE'=>$user_info->job_title_so,
-                        // 'EMAIL'=>$user_info->private_email,
-                        'PASSPORT'=>$user_info->passport_no,            
-                        'TOTAL_DAYS'=>$duration,
-                        'LEAVE_TYPE'=>$applicatoin_info->title,            
-                        'LEAVE_DATE' => $duration == 1 ? $applicatoin_info->start_date: $applicatoin_info->start_date .' - '.$applicatoin_info->end_date,
-                    ];
-        
-                    $r = $this->send_leave_passport_return($leave_email_data);
-
-                    
-                     //send email to the user for leave status:
-                        if($leave_user_info->private_email){
-                            $leave_email_data = [
-                                'LEAVE_ID'=>$save_id,
-                                'LEAVE_TITLE' => $applicatoin_info->title,
-                                'EMPLOYEE_NAME'=>$leave_user_info->first_name.' '.$user_info->last_name,
-                                'LEAVE_STATUS'=>$status,                 
-                                'email'=>$leave_user_info->private_email,                 
-                            ];
-        
-
-                            $r = $this->send_notify_leave_status($leave_email_data);
-                        }
-
-
-                }elseif($status === "rejected"){
-
-                    
-                    // send whatsapp message:
-                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
-                                    
-                    $options = array('id'=> $applicatoin_info->applicant_id); 
-                    $user_info = $this->Users_model->get_details($options)->getRow();
-                    $leave_user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $applicatoin_info?->applicant_id")->getRow();
-
-                    $start_date = date('F d,Y',strtotime($applicatoin_info->start_date));
-                    // send whatsapp message:
-                    // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
-                    $phoneNumber = $user_info->phone;
-                    $message = "Codsiga fasaxa #$applicaiton_id ee ku mudeysan: $start_date waa la diiday.\n";
-                
-                    $messageType = "text";
-                    
-                    $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
-
-                    
-                    if($resw == 400){                
-                        echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
-                        die;
-                    }
-
-                     //send email to the user for leave status
-                        if($leave_user_info->private_email){
-                            $leave_email_data = [
-                                'LEAVE_ID'=>$save_id,
-                                'LEAVE_TITLE' => $applicatoin_info->title,
-                                'EMPLOYEE_NAME'=>$leave_user_info->first_name.' '.$user_info->last_name,
-                                'LEAVE_STATUS'=>$status,  
-                                'email'=>$leave_user_info->private_email,                 
-                            ];
-
-                            $r = $this->send_notify_leave_status($leave_email_data);
-                        }
-
-                }
-                      
-               
-            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
-        } else {
-            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
-        }
-    }
-
-    //for HR head
-    public function send_leave_nulla_osta($data = array()) {
-        
-        $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta", true);
-        $email = 'admin@presidency.gov.so';//nulla-osta@immigration.gov.so;
-        $leave_id = $data['LEAVE_ID'];
-        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
-                        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
-                        
-                        LEFT JOIN rise_users a on l.applicant_id = a.id
-                        LEFT JOIN rise_users cb on l.applicant_id = cb.id
-                        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
-                        left join rise_leave_types t on t.id=l.leave_type_id 
-                        where l.id= $leave_id")->getRow();
-
-        $nolo_data['leave_info'] = $leave_info;
-
-        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
-        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
-        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
-        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
-        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
-        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
-        $parser_data["DOCUMENT_REF"] = $data['DOCUMENT_REF'];
-        $parser_data["LEAVE_URL"] = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.'/nulla_osta');
-        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_nolosto_mail',$nolo_data);
-        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
-        $parser_data["LOGO_URL"] = get_logo_url();
-        $parser_data["SITE_URL"] = get_uri();
-        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
-        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
-
-        $message =  get_array_value($email_template, "message_default");
-        $subject =  get_array_value($email_template, "subject_default");
-
-        $message = $this->parser->setData($parser_data)->renderString($message);
-        $subject = $this->parser->setData($parser_data)->renderString($subject);
-
-        if (send_app_mail($email, $subject, $message)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    //for migration after approve
-    public function send_leave_nulla_osta_pdf($data = array(),$type) {
-        
-        if($type == 'nulla_osta'){
-
-            $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta_pdf", true);
-        }else if($type == 'passport_return'){
-            $email_template = $this->Email_templates_model->get_final_template("leave_passport_return_pdf", true);
-        }
-
-        
-        $email = 'nulla-osta@immigration.gov.so';//'alihaile2020@gmail.com';
-        $leave_id = $data['LEAVE_ID'];
-        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
-                        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
-                        
-                        LEFT JOIN rise_users a on l.applicant_id = a.id
-                        LEFT JOIN rise_users cb on l.applicant_id = cb.id
-                        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
-                        left join rise_leave_types t on t.id=l.leave_type_id 
-                        where l.id= $leave_id")->getRow();
-
-        $nolo_data['leave_info'] = $leave_info;
-
-        $url = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.'/'.$type);
-       
-        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
-        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
-        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
-        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
-        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
-        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
-        $parser_data["LEAVE_URL"] = $url;
-        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
-        $parser_data["LOGO_URL"] = get_logo_url();
-        $parser_data["SITE_URL"] = get_uri();
-        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
-        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
-
-        $message =  get_array_value($email_template, "message_default");
-        $subject =  get_array_value($email_template, "subject_default");
-
-        $message = $this->parser->setData($parser_data)->renderString($message);
-        $subject = $this->parser->setData($parser_data)->renderString($subject);
-
-        if (send_app_mail($email, $subject, $message)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function send_leave_passport_return($data = array()) {
-        
-        $email_template = $this->Email_templates_model->get_final_template("leave_nulla_osta", true);
-        $email = 'admin@presidency.gov.so';//nulla-osta@immigration.gov.so;
-        $leave_id = $data['LEAVE_ID'];
-        $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
-                        a.image as applicant_avatar,CONCAT(cb.first_name, ' ',cb.last_name) AS checker_name,cb.image as checker_avatar,l.status,l.reason,a.passport_no,l.nolo_status FROM rise_leave_applications l 
-                        
-                        LEFT JOIN rise_users a on l.applicant_id = a.id
-                        LEFT JOIN rise_users cb on l.applicant_id = cb.id
-                        LEFT JOIN rise_team_member_job_info e on e.user_id = a.id
-                        left join rise_leave_types t on t.id=l.leave_type_id 
-                        where l.id= $leave_id")->getRow();
-
-        $nolo_data['leave_info'] = $leave_info;
-
-        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
-        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
-        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
-        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
-        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
-        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
-        $parser_data["LEAVE_URL"] = get_uri('visitors_info/get_leave_mail_pdf/'.$leave_info?->uuid.'/passport_return');
-        $parser_data["HTML_TEMPLATE"] = view('leaves/leave_passport_return_mail',$nolo_data);
-        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
-        $parser_data["LOGO_URL"] = get_logo_url();
-        $parser_data["SITE_URL"] = get_uri();
-        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
-        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
-
-        $message =  get_array_value($email_template, "message_default");
-        $subject =  get_array_value($email_template, "subject_default");
-
-        $message = $this->parser->setData($parser_data)->renderString($message);
-        $subject = $this->parser->setData($parser_data)->renderString($subject);
-
-        if (send_app_mail($email, $subject, $message)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    
-    public function send_leave_request_email($data = array()) {
-        
-        $email_template = $this->Email_templates_model->get_final_template("new_leave_request", true);
-        $email = 'admin@presidency.gov.so';//$data['EMAIL'];
-
-        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
-        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
-        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
-        $parser_data["LEAVE_REASON"] = $data['LEAVE_REASON'];
-        $parser_data["LEAVE_DATE"] = $data['LEAVE_DATE'];
-        $parser_data["TOTAL_DAYS"] = $data['TOTAL_DAYS'];
-        $parser_data["LEAVE_URL"] = get_uri('leaves');
-        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
-        $parser_data["LOGO_URL"] = get_logo_url();
-        $parser_data["SITE_URL"] = get_uri();
-        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/email_header.png');
-        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/email_footer.png');
-
-        $message =  get_array_value($email_template, "message_default");
-        $subject =  get_array_value($email_template, "subject_default");
-
-        $message = $this->parser->setData($parser_data)->renderString($message);
-        $subject = $this->parser->setData($parser_data)->renderString($subject);
-
-        if (send_app_mail($email, $subject, $message)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function send_notify_leave_status($data = array()) {
-        
-        $email = $data['email'];
-        $status = $data['LEAVE_STATUS'];
-
-        if($status == 'approved'){
-            $email_template = $this->Email_templates_model->get_final_template("leave_request_approved", true);
-        }else if($status == 'rejected'){
-            $email_template = $this->Email_templates_model->get_final_template("leave_request_rejected", true);
-        }
-
-        $parser_data["EMPLOYEE_NAME"] = $data['EMPLOYEE_NAME'];
-        $parser_data["LEAVE_ID"] = $data['LEAVE_ID'];
-        $parser_data["LEAVE_TITLE"] = $data['LEAVE_TITLE'];
-        $parser_data["LEAVE_URL"] = get_uri('leaves');
-        $parser_data["SIGNATURE"] = get_array_value($email_template, "signature_default");
-        $parser_data["LOGO_URL"] = get_logo_url();
-        $parser_data["SITE_URL"] = get_uri();
-        $parser_data["EMAIL_HEADER_URL"] = get_uri('assets/images/sys-logo.png');
-        $parser_data["EMAIL_FOOTER_URL"] = get_uri('assets/images/sys-logo.png');
-
-        $message =  get_array_value($email_template, "message_default");
-        $subject =  get_array_value($email_template, "subject_default");
-
-        $message = $this->parser->setData($parser_data)->renderString($message);
-        $subject = $this->parser->setData($parser_data)->renderString($subject);
-
-        if (send_app_mail($email, $subject, $message)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
     //    delete a leave application
 
     function delete() {

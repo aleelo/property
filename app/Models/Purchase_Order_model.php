@@ -16,7 +16,7 @@ class Purchase_Order_model extends Crud_model {
         $purchase_order_table = $this->db->prefixTable('purchase_orders');
         $users_table = $this->db->prefixTable('users');
         $suppliers_table = $this->db->prefixTable('suppliers');
-        $departments_table = 'departments';
+        $departments_table = $this->db->prefixTable('departments');
         
         $where = "";
         

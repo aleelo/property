@@ -311,7 +311,7 @@ class Users_model extends Crud_model {
         $custom_fields_where = get_array_value($custom_field_query_info, "where_string");
 
         //prepare full query string
-        $sql = "SELECT SQL_CALC_FOUND_ROWS $users_table.*, $roles_table.title AS role_title,
+        $sql = "SELECT SQL_CALC_FOUND_ROWS $users_table.*, $roles_table.title AS role_title,$team_member_job_info_table.job_title_so,$team_member_job_info_table.job_title_en,
             $team_member_job_info_table.date_of_hire, $team_member_job_info_table.salary, $team_member_job_info_table.salary_term $select_custom_fieds
         FROM $users_table
         LEFT JOIN $team_member_job_info_table ON $team_member_job_info_table.user_id=$users_table.id
@@ -886,7 +886,7 @@ class Users_model extends Crud_model {
         $sql = "SELECT CASE WHEN d.nameSo is null THEN 'No Department' ELSE d.nameSo END department,count(j.department_id) count
             FROM $users_table u            
             left join $team_member_job_info j on u.id = j.user_id
-            left join departments d on d.id = j.department_id
+            left join rise_departments  d on d.id = j.department_id
 
             WHERE u.deleted=0 AND u.user_type='staff' AND u.status='active' AND  d.nameSo is not null 
             Group by d.id";

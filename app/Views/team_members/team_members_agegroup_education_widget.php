@@ -15,7 +15,7 @@
     </div>
     <div class="rounded-bottom row p-3">
 
-        <div class="col-md-6 col b-r-2 ps-4 pe-4">
+        <div class="col-md-6 col b-r-2 ps-4 pe-4 mb-4">
             <h4>Employee Education Levels</h4>
             <div class="pb-2">
                 <div class="color-tag border-circle me-3 wh10" style="background-color: #9dacff;"></div>

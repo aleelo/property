@@ -474,15 +474,15 @@ class Dashboard extends Security_Controller {
 
         $fourth_row = $this->_get_fourth_row_of_admin_and_team_dashboard($widgets);
         $fifth_row = $this->_get_fifth_row_of_admin_and_team_dashboard($widgets);
-        // $sixth_row = $this->_get_sixth_row_of_admin_and_team_dashboard($widgets);
+        $sixth_row = $this->_get_sixth_row_of_admin_and_team_dashboard($widgets);
 
         $row_widgets = array(
             $first_row,
+            // $sixth_row,
             $second_row,
             $third_row,
             $fourth_row,
             $fifth_row,
-            // $sixth_row
         );
 
         return $row_widgets;
@@ -550,21 +550,21 @@ class Dashboard extends Security_Controller {
     private function _get_second_and_third_row_of_admin_and_team_dashboard_widget_columns($widgets) {
         $columns = array();
 
-        if (get_array_value($widgets, "projects_overview")) {
+        if (get_array_value($widgets, "team_members_overview")) { //projects_overview
             if (get_array_value($widgets, "next_reminder")) {
-                $columns[] = array("projects_overview", "next_reminder");
+                $columns[] = array("team_members_overview"); //next_reminder was here in array
             } else {
-                $columns[] = array("projects_overview");
+                $columns[] = array("team_members_overview");
             }
         }
 
 
-        if (get_array_value($widgets, "invoice_overview")) {
-            $columns[] = array("invoice_overview");
+        if (get_array_value($widgets, "team_members_agegroup_education_widget")) { //invoice_overview
+            $columns[] = array("team_members_agegroup_education_widget");
         }
 
-        if (get_array_value($widgets, "income_vs_expenses")) {
-            $columns[] = array("income_vs_expenses");
+        if (get_array_value($widgets, "team_members_by_department_widget")) {  //income_vs_expenses
+            $columns[] = array("team_members_by_department_widget");
         }
 
 
@@ -572,16 +572,16 @@ class Dashboard extends Security_Controller {
             $columns[] = array("all_tasks_overview");
         }
 
-        if (get_array_value($widgets, "team_members_overview")) {
+        if (get_array_value($widgets, "visitors_overview_widget")) { //team_members_overview
             if (get_array_value($widgets, "last_announcement")) {
-                $columns[] = array("team_members_overview", "last_announcement");
+                $columns[] = array("visitors_overview_widget", "last_announcement");
             } else {
-                $columns[] = array("team_members_overview");
+                $columns[] = array("visitors_overview_widget");
             }
         }
 
-        if (get_array_value($widgets, "ticket_status")) {
-            $columns[] = array("ticket_status");
+        if (get_array_value($widgets, "projects_overview")) {  //ticket_status
+            $columns[] = array("projects_overview","next_reminder");
         }
 
 
@@ -692,10 +692,17 @@ class Dashboard extends Security_Controller {
 
         $row = array();
         $columns = array();
-
-        $columns[] = array("sticky_note");//array("team_members_overview_widget");
-        $columns[] = array("team_members_by_department_widget");
+        // $access_leave = $this->get_access_info("leave");
+        // $access_attendance = $this->get_access_info("attendance");
+        // return team_members_overview_widget(array(
+        //     "leave_access_type" => $access_leave->access_type,
+        //     "leave_allowed_members" => $access_leave->allowed_members,
+        //     "attendance_access_type" => $access_attendance->access_type,
+        //     "attendance_allowed_members" => $access_attendance->allowed_members
+        // ));
+        $columns[] = array("team_members_overview"); //array("sticky_note");team_members_overview_widget
         $columns[] = array("team_members_agegroup_education_widget");
+        $columns[] = array("team_members_by_department_widget");
 
         $row["columns"] = $columns;
         $row["ratio"] = "4-4-4";

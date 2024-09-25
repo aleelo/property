@@ -448,7 +448,7 @@ class Fuel extends Security_Controller
         $id = $this->request->getPost('id');
         $model_info = $this->db->query("select rc.*,u.image as avatar,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
         LEFT JOIN rise_users u on rc.received_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
+        LEFT JOIN rise_departments dp on rc.department_id = dp.id 
         where rc.id=$id")->getRow();
 
         if (!$model_info) {
@@ -468,7 +468,7 @@ class Fuel extends Security_Controller
         $id = $this->request->getPost('id');
         $model_info = $this->db->query("select rc.*,u.image as avatar,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_orders rc 
         LEFT JOIN rise_users u on rc.ordered_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
+        LEFT JOIN rise_departments dp on rc.department_id = dp.id 
         where rc.id=$id")->getRow();
 
         if (!$model_info) {
@@ -488,7 +488,7 @@ class Fuel extends Security_Controller
         $id = $this->request->getPost('order_id');
         $model_info = $this->db->query("select rc.*,u.image as avatar,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_orders rc 
         LEFT JOIN rise_users u on rc.ordered_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
+        LEFT JOIN rise_departments dp on rc.department_id = dp.id 
         where rc.id=$id")->getRow();
 
         if (!$model_info) {
@@ -507,7 +507,7 @@ class Fuel extends Security_Controller
         $id = $this->request->getPost('id');
         $model_info = $this->db->query("select rc.*,u.image as avatar,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
         LEFT JOIN rise_users u on rc.requested_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
+        LEFT JOIN rise_departments dp on rc.department_id = dp.id 
         where rc.id=$id")->getRow();
 
         if (!$model_info) {
@@ -522,7 +522,7 @@ class Fuel extends Security_Controller
     
         $model_info = $this->db->query("select rc.*,u.image as avatar,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
         LEFT JOIN rise_users u on rc.requested_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
+        LEFT JOIN rise_departments dp on rc.department_id = dp.id 
         where rc.uuid='$id'")->getRow();
 
         if (!$model_info) {
@@ -700,7 +700,7 @@ public function r_delete()
 
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
             LEFT JOIN rise_users u on rc.received_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             where rc.received_by LIKE '$received_by' and rc.department_id LIKE '$department_id'  $where");
 
             $list_data = $result->getResult();
@@ -776,7 +776,7 @@ public function r_delete()
 
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
             LEFT JOIN rise_users u on rc.requested_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             where rc.requested_by LIKE '$requested_by' and rc.department_id LIKE '$department_id'  $where");
 
             $list_data = $result->getResult();
@@ -964,7 +964,7 @@ public function r_delete()
 
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
             LEFT JOIN rise_users u on rc.received_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             where rc.received_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
@@ -975,7 +975,7 @@ public function r_delete()
         } else {
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
             LEFT JOIN rise_users u on rc.received_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             where rc.received_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and  rc.deleted=0 $extraWhere");
 
             $list_data = $result->getResult();
@@ -1075,7 +1075,7 @@ public function r_delete()
 
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_orders rc 
             LEFT JOIN rise_users u on rc.ordered_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             where rc.ordered_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
@@ -1086,7 +1086,7 @@ public function r_delete()
         } else {
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_orders rc 
             LEFT JOIN rise_users u on rc.ordered_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             where rc.ordered_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and  rc.deleted=0 $extraWhere");
 
             $list_data = $result->getResult();
@@ -1189,7 +1189,7 @@ public function r_delete()
 
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
             LEFT JOIN rise_users u on rc.requested_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             where rc.requested_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
@@ -1200,7 +1200,7 @@ public function r_delete()
         } else {
             $result = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
             LEFT JOIN rise_users u on rc.requested_by = u.id 
-            LEFT JOIN departments dp on rc.department_id = dp.id 
+            LEFT JOIN rise_departments dp on rc.department_id = dp.id 
             where rc.requested_by LIKE '$created_by' and rc.department_id LIKE '$department_id' and  rc.deleted=0 $extraWhere");
 
             $list_data = $result->getResult();
@@ -1235,7 +1235,7 @@ public function r_delete()
         );
         $data = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_receives rc 
         LEFT JOIN rise_users u on rc.received_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
+        LEFT JOIN rise_departments dp on rc.department_id = dp.id 
         where rc.id=$id")->getRow();
         return $this->_make_row($data, $custom_fields);
     }
@@ -1251,7 +1251,7 @@ public function r_delete()
         );
         $data = $this->db->query("select o.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_orders o 
         LEFT JOIN rise_users u on o.ordered_by = u.id 
-        LEFT JOIN departments dp on o.department_id = dp.id 
+        LEFT JOIN rise_departments dp on o.department_id = dp.id 
         where o.id=$id")->getRow();
         return $this->_make_order_row($data, $custom_fields);
     }
@@ -1267,7 +1267,7 @@ public function r_delete()
 
         $data = $this->db->query("select rc.*,dp.nameSo as department,concat(u.first_name,' ',u.last_name) user from rise_fuel_requests rc 
         LEFT JOIN rise_users u on rc.requested_by = u.id 
-        LEFT JOIN departments dp on rc.department_id = dp.id 
+        LEFT JOIN rise_departments dp on rc.department_id = dp.id 
         where rc.id=$id")->getRow();
         return $this->_make_request_row($data, $custom_fields);
     }
