@@ -111,13 +111,13 @@
                         <label for="duration_mulitple_days" class="mr15" ><?php echo app_lang('mulitple_days'); ?></label>
 
                         <?php
-                        echo form_radio(array(
-                            "id" => "duration_hours",
-                            "class" => "duration form-check-input",
-                            "name" => "duration",
-                                ), "hours", false);
+                        // echo form_radio(array(
+                        //     "id" => "duration_hours",
+                        //     "class" => "duration form-check-input",
+                        //     "name" => "duration",
+                        //         ), "hours", false);
                         ?>
-                        <label for="duration_hours" ><?php echo app_lang('hours'); ?></label>
+                        <!-- <label for="duration_hours" ><?php //echo app_lang('hours'); ?></label> -->
                     </div>
                 </div>
             </div>
@@ -224,42 +224,42 @@
 
             </div>
 
-            <div id="hours_section" class="hide date_section">
+            <!-- <div id="hours_section" class="hide date_section">
                 <div class="clearfix">
                     <div class="row">
-                        <label for="hour_date" class=" col-md-3"><?php echo app_lang('date'); ?></label>
+                        <label for="hour_date" class=" col-md-3"><?php //echo app_lang('date'); ?></label>
                         <div class="col-md-4 form-group">
                             <?php
-                            echo form_input(array(
-                                "id" => "hour_date",
-                                "name" => "hour_date",
-                                "class" => "form-control",
-                                "placeholder" => app_lang('date'),
-                                "autocomplete" => "off",
-                                "data-rule-required" => true,
-                                "data-msg-required" => app_lang("field_required"),
-                            ));
+                            // echo form_input(array(
+                            //     "id" => "hour_date",
+                            //     "name" => "hour_date",
+                            //     "class" => "form-control",
+                            //     "placeholder" => app_lang('date'),
+                            //     "autocomplete" => "off",
+                            //     "data-rule-required" => true,
+                            //     "data-msg-required" => app_lang("field_required"),
+                            // ));
                             ?>
                         </div>
 
-                        <label for="hours" class=" col-md-2"><?php echo app_lang('hours'); ?></label>
+                        <label for="hours" class=" col-md-2"><?php //echo app_lang('hours'); ?></label>
                         <div class=" col-md-3">
                             <?php
-                            echo form_dropdown("hours", array(
-                                "01" => "01",
-                                "02" => "02",
-                                "03" => "03",
-                                "04" => "04",
-                                "05" => "05",
-                                "06" => "06",
-                                "07" => "07",
-                                "08" => "08",
-                                    ), "", "class='select2 validate-hidden' id='hours' data-rule-required='true', data-msg-required='" . app_lang('field_required') . "'");
+                            // echo form_dropdown("hours", array(
+                            //     "01" => "01",
+                            //     "02" => "02",
+                            //     "03" => "03",
+                            //     "04" => "04",
+                            //     "05" => "05",
+                            //     "06" => "06",
+                            //     "07" => "07",
+                            //     "08" => "08",
+                            //         ), "", "class='select2 validate-hidden' id='hours' data-rule-required='true', data-msg-required='" . app_lang('field_required') . "'");
                             ?>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
 
             <?php echo view("includes/dropzone_preview"); ?>
@@ -329,7 +329,7 @@
                 var data = JSON.parse(response);
                 allowed_days = data.allowed_days;
                 taken_days = data.taken_days;
-                unlimited_days = $.trim(allowed_days.toLowerCase()) === 'unlimited';  // Check if leave type has unlimited days
+                unlimited_days = $.trim(allowed_days) === 'Unlimited';  // Check if leave type has unlimited days
 
                  // Update the displayed allowed days
                 updateAllowedDays();
@@ -340,7 +340,7 @@
      // Update the displayed allowed days
     function updateAllowedDays() {
        
-        if (unlimited_days) {
+        if (unlimited_days) { 
                     $('div.allowed-days-label').html('Allowed Days: ').css('color', 'green');
                     $('div.allowed-days-display').html('Unlimited').css('color', 'green');
                     $('div.taken-days-display-label').html('Taken Days: ').css('color', 'purple');
@@ -349,6 +349,9 @@
                     // Hide remaining and requested days, since they don't apply
                     $('div.remaining-days').html('');
                     $('div.total-days').html('');
+                    $('div.remaining-days-label').html('');
+                    $('div.total-days-label').html('');
+                    
                 } else {
                     $('div.allowed-days-label').html('Allowed Days: ').css('color', 'blue');
                     $('div.allowed-days-display').html(allowed_days + ' - Days').css('color', 'blue');
@@ -360,7 +363,7 @@
 
     // When start, end, or single day is changed, recalculate remaining days
     $('#start_date, #end_date, #single_date').change(function () { //
-        alert(unlimited_days);
+       
         if (!unlimited_days) {
             get_allowed_days();  // Call the function to recalculate based on the selected duration
         }
@@ -369,6 +372,8 @@
     // Function to handle duration change and trigger the correct calculation
     function handleDurationChange() {
         var selectedDuration = $('input[name="duration"]:checked').val();
+
+        $('#total_days_section').removeClass("hide");
 
         if (selectedDuration === "single_day") {
             calculateSingleDay();  // Calculate remaining days for a single day leave

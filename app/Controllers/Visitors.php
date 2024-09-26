@@ -1074,8 +1074,8 @@ class Visitors extends Security_Controller
         $res = $this->check_access('visitor');
         $role = get_array_value($res, 'role');
         $user_department_id = $this->get_user_department_id();
-        $data['can_approve_requests'] = ($role == 'Access Controll' || $role == 'admin' || $role == 'Client Supervisor') && ($role == 'Director' && $user_department_id == 204);         
-        $can_open_document = $role == 'Access Controll' || $role == 'admin'  && ($role == 'Director' && $user_department_id == 204);
+        $data['can_approve_requests'] = ($role == 'Access Controll' || $role == 'admin' || $role == 'Client Supervisor') || ($role == 'Director' && $user_department_id == 204);         
+        $can_open_document = $role == 'Access Controll' || $role == 'admin'  || ($role == 'Director' && $user_department_id == 204);
 
         $visitor_info = $this->db->query("SELECT v.*,cb.image as created_avatar,ab.image as approved_avatar,rb.image as rejected_avatar,
                         concat(cb.first_name,' ',cb.last_name) as created_by,concat(rb.first_name,' ',rb.last_name) as rejected_by,
@@ -1312,7 +1312,7 @@ class Visitors extends Security_Controller
         $user_department_id = $this->get_user_department_id();
         
         $role = $this->get_user_role();
-        $can_open_document = $role == 'Access Controll' || $role == 'admin'  && ($role == 'Director' && $user_department_id == 204);
+        $can_open_document = $role == 'Access Controll' || $role == 'admin'  || ($role == 'Director' && $user_department_id == 204);
         $allowed = array('Access Controll','Access Client','Client Supervisor','Secretary','Director','HRM','admin','Administrator','Supervisor'); //these roles can access this page.
 
         $can_add_requests = in_array($role,$allowed); 

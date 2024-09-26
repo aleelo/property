@@ -37,11 +37,11 @@
 </div> -->
 
 <!-- Create a container for the chart -->
-<div id="departmentsChart" class="card bg-white" style="width: 100%; height: 280px; padding: 10px; background: white; margin-bottom: 10px;"></div>
+<div id="departmentsChart" class="card bg-white" style="width: 100%; height: 290px; padding: 10px; background: white; margin-bottom: 10px;"></div>
 
 <script>
     // Sample data (Replace this with your actual data from the backend)
-    var departmentData = [
+    var departmentsRowData = [
         { department: 'Hantidhawrka Gudaha', count: 2 },
         { department: 'La-taliyaha Arrimaha Sharciga', count: 1 },
         { department: 'Agaasimaha Guud', count: 48 },
@@ -64,50 +64,75 @@
         { department: 'Bangiga Hormarinta iyo Dibudhiska', count: 1 }
     ];
 
-    // Extract the department names and counts
-    var departmentNames = departmentData.map(function(item) {
-        return item.department;
-    });
-    var departmentCounts = departmentData.map(function(item) {
-        return item.count;
-    });
+      // Function to initialize the ECharts chart
+      function initDepartmentChart(departmentData) {
+        // Extract the department names and counts
+        var departmentNames = departmentData.map(function(item) {
+            return item.department.substr(0,30) + '...';
+        });
+     
+        var departmentCounts = departmentData.map(function(item) {
+            return item.count;
+        });
 
-    // Initialize the ECharts instance
-    var chart = echarts.init(document.getElementById('departmentsChart'));
+        // Initialize the ECharts instance
+        var chart = echarts.init(document.getElementById('departmentsChart'));
 
-    // Define the chart options
-    var options = {
-        title: {
-            text: 'Employee Departments Overview',
-            left: 'center'
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: { type: 'shadow' }
-        },
-        xAxis: {
-            type: 'category',
-            data: departmentNames,
-            axisLabel: {
-                interval: 0, // Show all labels
-                rotate: 25, // Rotate labels to avoid overlapping
-                fontSize: 9
+        // Define the chart options
+        var options = {
+            title: {
+                text: 'Employee Departments Overview',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: { type: 'shadow' }
+            },
+            xAxis: {
+                type: 'category',
+                data: departmentNames,
+                axisLabel: {
+                    interval: 0, // Show all labels
+                    rotate: 23, // Rotate labels to avoid overlapping
+                    fontSize: 9
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Employee Count'
+            },
+            series: [{
+                data: departmentCounts,
+                type: 'bar',
+                barWidth: '70%',
+                itemStyle: {
+                    color: '#4caf50'
+                }
+            }]
+        };
+
+        // Set the options for the chart
+        chart.setOption(options);
+    }
+
+    // AJAX call to fetch department data from the server
+    function fetchDepartmentData() {
+        $.ajax({
+            url: '<?php echo get_uri('team_members/get_departments_count_ajax') ?>', // Update the URL to match your route
+            method: 'GET',
+            success: function(response) {
+                // Parse the response JSON
+                var departmentData = JSON.parse(response);
+
+                // Initialize the chart with the data
+                initDepartmentChart(departmentData);
+            },
+            error: function(error) {
+                console.error('Error fetching department data:', error);
             }
-        },
-        yAxis: {
-            type: 'value',
-            name: 'Employee Count'
-        },
-        series: [{
-            data: departmentCounts,
-            type: 'bar',
-            barWidth: '70%',
-            itemStyle: {
-                color: '#4caf50'
-            }
-        }]
-    };
+        });
+    }
 
-    // Set the options for the chart
-    chart.setOption(options);
+    // Call the function to fetch data and initialize the chart
+    fetchDepartmentData();
 </script>

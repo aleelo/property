@@ -474,11 +474,10 @@ class Dashboard extends Security_Controller {
 
         $fourth_row = $this->_get_fourth_row_of_admin_and_team_dashboard($widgets);
         $fifth_row = $this->_get_fifth_row_of_admin_and_team_dashboard($widgets);
-        $sixth_row = $this->_get_sixth_row_of_admin_and_team_dashboard($widgets);
+        // $sixth_row = $this->_get_sixth_row_of_admin_and_team_dashboard($widgets);
 
         $row_widgets = array(
             $first_row,
-            // $sixth_row,
             $second_row,
             $third_row,
             $fourth_row,
