@@ -1,6 +1,6 @@
 <?php echo form_open(get_uri("team_members/add_team_member"), array("id" => "team_member-form", "class" => "general-form", "role" => "form")); ?>
 <div class="modal-body clearfix">
-    <div class="container-fluid">
+    <div class="container-fluid" id="team-dropzone" class="post-dropzone">
 
     <style>
         .app-alert.alert-danger {
@@ -273,7 +273,7 @@
 
             </div>
                 
-            <div role="tabpanel" class="tab-pane" id="job-info-tab">
+            <div role="tabpanel post-dropzone" class="tab-pane" id="job-info-tab">
                 
                     <div class="form-group">
                         <div class="row">
@@ -406,6 +406,40 @@
                         </div>
                     </div>
                 </div>
+                    <!-- start signature -->
+
+                <div class="form-group">
+                        <div class="row">
+                            <label for="has_signature" class=" col-md-3 col-xs-5 col-sm-4"><?php echo app_lang('has_signature'); ?></label>
+                            <div class=" col-md-2 col-xs-7 col-sm-8">
+                            
+                                <?php
+                                echo form_checkbox("recurring", "1", "" ? true : false, "id='signature_check' class='form-check-input'");
+                                ?>  
+
+                            </div>
+                    
+
+                            <div id="signature_field" class="<?php echo "hide"; ?>"> 
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label for="repeat_every" class=" col-md-3 col-xs-12"><?php  ?></label>
+                                        <div class="col-md-4 col-xs-6">
+                                            <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class="icon-16"></i> <?php echo app_lang("upload_file"); ?></button>
+                                            <?php 
+                                            echo view("includes/dropzone_preview");
+                                            ?>
+                                        </div>
+                                        
+                                    </div>
+                                </div>    
+
+                            </div>     
+                        
+                        </div>
+                    </div>
+                    <!-- end signature -->
             </div>
             
             <div role="tabpanel" class="tab-pane" id="account-info-tab">
@@ -514,6 +548,21 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        
+        var uploadUrl = "<?php echo get_uri("team_members/upload_file"); ?>";
+        var validationUri = "<?php echo get_uri("team_members/validate_team_file"); ?>";
+        var dropzone = attachDropzoneWithForm("#job-info-tab", uploadUrl, validationUri);
+
+
+        //show/hide signature field
+        $("#signature_check").click(function () {
+            if ($(this).is(":checked")) {
+                $("#signature_field").removeClass("hide");
+            } else {
+                $("#signature_field").addClass("hide");
+            }
+        });
+
         $("#team_member-form").appForm({
             onSuccess: function (result) {
                 if (result.success) {

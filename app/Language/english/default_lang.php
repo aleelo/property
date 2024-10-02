@@ -81,6 +81,8 @@ $lang["allow"] = "Allow";
 $lang["private_email"] = "Private Email";
 $lang["employee"] = "Employee";
 $lang["employees"] = "Employees";
+$lang["has_signature"] = "has signature";
+$lang["document_details"] = "Document Details";
 $lang["department_head"] = "Department Head";
 
 $lang["order_details"] = "Order Details";

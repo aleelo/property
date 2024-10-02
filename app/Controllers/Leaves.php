@@ -7,6 +7,7 @@ use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class Leaves extends Security_Controller {
@@ -156,7 +157,43 @@ class Leaves extends Security_Controller {
 
                             $r = $this->send_notify_leave_status($leave_email_data);
                         }
+                        
+                    /** update leave signature start */
+                        //get document row
+                        $doc = $this->db->query("select d.* from rise_documents d
+                        LEFT JOIN rise_leave_document ld on d.id = ld.document_id
+                        where d.deleted=0 and ld.leave_id =$applicaiton_id")->getRow();
 
+                        // $drive_info = unserialize($doc->drive_info);
+                        $itemID = $doc->item_id;
+                        $siteId = getenv('SITE_ID');
+                        $driveId = getenv('DRIVE_ID');
+                        $accessToken = $this->AccesToken();
+                        $imageArr = unserialize($user_info->signature);
+                        $signatureImageUrl = get_array_value($imageArr[0],'file_name');
+                        //   print_r($imageArr);die;
+
+                        if($signatureImageUrl){
+                            $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
+
+                            if($resultArr['success'] == true) {
+                                $localFilePath = $resultArr['result'];
+                                $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
+                                $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
+                            
+                            }else{                
+                                
+                                $result = $resultArr['result'];
+                                echo json_encode(array("success" => false, "data" => null, 'message' => $result));
+                                die;
+                            }
+                        }
+                        
+                        // print_r($respose);
+                        // print_r($s);
+                        // die;
+
+                    /**update leave signature end   */
 
                 }elseif($status === "rejected"){
 
@@ -177,7 +214,6 @@ class Leaves extends Security_Controller {
                     $messageType = "text";
                     
                     $resw = sendWhatsappMessage($phoneNumber, $message,$messageType);
-
                     
                     if($resw == 400){                
                         echo json_encode(array("success" => false, "data" => null, 'message' => 'Invalid whatsup phone number, Please update your number like: +25261xxxx'));
@@ -205,6 +241,119 @@ class Leaves extends Security_Controller {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
     }
+
+    /** start word update */
+    function downloadWordDocument($accessToken, $siteId, $driveId, $itemId) {
+        $url = "https://graph.microsoft.com/v1.0/drives/$driveId/items/$itemId/content";
+        
+        $headers = [
+            "Authorization: Bearer $accessToken"
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Follow redirects
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 10); // Set the maximum number of redirects
+
+        $response = curl_exec($ch);
+        $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
+        $redirect_url = curl_getinfo($ch, CURLINFO_REDIRECT_URL);
+        curl_close($ch);
+    
+        // print_r('response: '.$accessToken);
+        // print_r('redirect: '.$url);
+        // die;
+        // Debugging output
+        if ($curlError) {
+            echo "cURL Error: " . $curlError;
+           return array('success' => false, 'result' => $curlError); 
+        }
+    
+        if ($httpStatusCode != 200) {
+            echo "HTTP Status Code: " . $httpStatusCode;          
+        }
+    
+        if (empty($response)) {
+            echo "No response received!";            
+           return array('success' => false, 'result' => 'No response received'); 
+           
+        }
+        curl_close($ch);
+
+        $localFilePath = APPPATH . 'Views/documents/local_copy_'.date('hs').'.docx';  
+        file_put_contents($localFilePath, $response);
+
+        return array('success' => true, 'result' => $localFilePath); 
+    }
+
+    function updateWordDocument($localFilePath, $signatureImageUrl) {
+        // $localFilePath = APPPATH . 'Views/documents/'.$localFilePath;  
+        // $phpWord = IOFactory::load($localFilePath);
+
+        $template = new TemplateProcessor($localFilePath);
+
+        $template->setImageValue('signature',
+        [
+            'path' => ROOTPATH . 'assets/images/'.$signatureImageUrl,
+            'width' => '300',
+            'height' => '150',
+            'ratio' => true,
+        ]);
+
+        $template->saveAs($localFilePath);
+
+        // $section = $phpWord->addSection();
+        // $section->addText('This is new content added to the document.');
+        // $phpWord->save($localFilePath, 'Word2007');
+
+        // echo $localFilePath;
+        return $localFilePath;
+    }
+
+    function uploadUpdatedDocument($accessToken, $siteId, $driveId, $itemId, $updatedFilePath) {
+        $url = "https://graph.microsoft.com/v1.0/drives/$driveId/items/$itemId/content";
+        
+        $headers = [
+            "Authorization: Bearer $accessToken",
+            "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ];
+
+        $fileContents = file_get_contents($updatedFilePath);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fileContents);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Follow redirects
+        // curl_setopt($ch, CURLOPT_MAXREDIRS, 10); // Set the maximum number of redirects
+
+        $response = curl_exec($ch);
+        
+        $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+        
+        //  print_r('updatedFilePath: '.$updatedFilePath);
+        //  print_r('fileContents: '.$fileContents);
+        //  print_r('response: '.$response);
+        //  print_r('httpStatusCode: '.$httpStatusCode);
+        // print_r('curlError: '.$curlError);
+        // die;
+
+        //delete local file:
+        if(file_exists($updatedFilePath)){
+            unlink($updatedFilePath);
+        }
+
+        return json_decode($response, true);
+    }
+
+    /** end word update */
 
     //for HR head
     public function send_leave_nulla_osta($data = array()) {
@@ -535,6 +684,8 @@ class Leaves extends Security_Controller {
         $leave_info = $this->db->query("SELECT l.*,t.title FROM rise_leave_applications l 
                         left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
 
+        $flight_included = $leave_info->flight_included;
+
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
         $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template->id");
         $sqn = $this->db->query("SELECT lpad(max(sqn),4,0) as sqn FROM rise_templates where id = $template->id")->getRow()->sqn;
@@ -588,10 +739,12 @@ class Leaves extends Security_Controller {
 
             // Get the web URL of the file from the array
             $webUrl = $data["webUrl"];
+          
+            $drive_ref = $data['parentReference'];
             $itemId = $data["id"];
 
             //update item id and web url for document
-            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number']);
+            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number'],'drive_info'=>@serialize($drive_ref));
             
             $this->Documents_model->ci_save($u_data, $doc->id);
 
@@ -661,6 +814,8 @@ class Leaves extends Security_Controller {
         
         $leave_info = $this->db->query("SELECT l.*,t.title FROM rise_leave_applications l 
                         left join rise_leave_types t on t.id=l.leave_type_id where l.id = $save_id")->getRow();
+        
+        $flight_included = $leave_info->flight_included;
 
         $template = $this->db->query("SELECT * FROM rise_templates where destination_folder = 'Leave'")->getRow();
         $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template->id");
@@ -715,14 +870,16 @@ class Leaves extends Security_Controller {
 
             // Get the web URL of the file from the array
             $webUrl = $data["webUrl"];
+            
+            $drive_ref = $data['parentReference'];
             $itemId = $data["id"];
 
             //update item id and web url for document
-            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number']);
+            $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_leave_data['ref_number'],'drive_info'=>@serialize($drive_ref));
             
             $this->Documents_model->ci_save($u_data, $doc->id);
 
-            // echo $webUrl;
+            // print_r($data);
             // die();
 
             $duration = (int)$leave_info->total_days;
@@ -752,7 +909,7 @@ class Leaves extends Security_Controller {
 
         if ($save_id) {
             log_notification("leave_application_submitted", array("leave_id" => $save_id));
-            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
+            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id),'flight_included'=>$flight_included, 'id' => $save_id, 'message' => app_lang('record_saved')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }

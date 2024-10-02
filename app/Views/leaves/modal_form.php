@@ -348,7 +348,7 @@
                     $('#submit_button').prop('disabled', false);  // Enable submit button for unlimited days
                     // Hide remaining and requested days, since they don't apply
                     $('div.remaining-days').html('');
-                    $('div.total-days').html('');
+                    $('div.total-days').show();
                     $('div.remaining-days-label').html('');
                     $('div.total-days-label').html('');
                     
@@ -388,16 +388,20 @@
             var start_date = $('#start_date').val();
             var end_date = $('#end_date').val();
 
+            var remaining_days = allowed_days - taken_days - total_days;
             if (start_date && end_date) {
-                var total_days = moment(end_date).diff(moment(start_date), 'days') + 1;
 
-                $('div.total-days-label').html('Requested Days: ');
-                $('div.total-days').html(total_days + ' - Days');
+            var total_days = moment(end_date).diff(moment(start_date), 'days') + 1;
 
-                var remaining_days = allowed_days - taken_days - total_days;
+            $('div.total-days-label').html('Requested Days: ');
+            $('div.total-days').html(total_days + ' - Days');
 
                 updateRemainingDays(remaining_days);
             }
+        }else{
+            
+            $('div.total-days-label').html('Requested Days: ');
+                $('div.total-days').html(total_days + ' - Days');
         }
     }
 
@@ -416,19 +420,29 @@
 
                 updateRemainingDays(remaining_days);
             }
+        }else{
+            
+            $('div.total-days-label').html('Requested Days: ');
+                $('div.total-days').html(total_days + ' - Days');
         }
     }
 
     // Helper function to update the remaining days and enable/disable the submit button
     function updateRemainingDays(remaining_days) {
-        if (remaining_days >= 0) {
+        if (!unlimited_days) {  
+            if (remaining_days >= 0) {
+                $('div.remaining-days-label').html('Remaining Days: ').css('color', 'green');
+                $('div.remaining-days').html(remaining_days + ' - Days').css('color', 'green');
+                $('#submit_button').prop('disabled', false);  // Enable submit button
+            } else {
+                $('div.remaining-days-label').html('Remaining Days: ').css('color', 'red');
+                $('div.remaining-days').html(remaining_days + ' - Days' + ' (You have exceeded the allowed days)').css('color', 'red');
+                $('#submit_button').prop('disabled', true);  // Disable submit button
+            }
+        }else{
             $('div.remaining-days-label').html('Remaining Days: ').css('color', 'green');
             $('div.remaining-days').html(remaining_days + ' - Days').css('color', 'green');
-            $('#submit_button').prop('disabled', false);  // Enable submit button
-        } else {
-            $('div.remaining-days-label').html('Remaining Days: ').css('color', 'red');
-            $('div.remaining-days').html(remaining_days + ' - Days' + ' (You have exceeded the allowed days)').css('color', 'red');
-            $('#submit_button').prop('disabled', true);  // Disable submit button
+            $('#submit_button').prop('disabled', false);  
         }
     }
 

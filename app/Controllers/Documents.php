@@ -8,6 +8,7 @@ use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 class Documents extends Security_Controller
 {
@@ -208,6 +209,277 @@ class Documents extends Security_Controller
         return $accessToken;
 
     }
+//update leave status
+function update_status() {
+
+    $this->validate_submitted_data(array(
+        "id" => "required|numeric",
+        "status" => "required"
+    ));
+
+    $id = $this->request->getPost('id');
+    $status = $this->request->getPost('status');
+    $now = date('Y-m-d H:i:s');
+
+    $role = $this->get_user_role();
+    
+    if($role === "Administrator" && $status === "approved"){
+        $status = 'approved';
+    }elseif($role == "Director" && $status === "approved"){
+        $status = 'pending';
+    }
+
+    $update_data = array(
+        "checked_by" => $this->login_user->id,
+        "checked_at" => $now,
+        "status" => $status
+    );
+
+    //only allow to updte the status = accept or reject for admin or specefic user
+    //otherwise user can cancel only his/her own application
+    $document_info = $this->Documents_model->get_details(['id' => $id])->getRow();
+
+    if ($status === "approved" || $status === "rejected") {
+        $this->access_only_allowed_members($document_info->created_by);
+    } else if ($status === "canceled" && $document_info->created_by != $this->login_user->id) {
+        //any user can't cancel other user's leave application
+        app_redirect("forbidden");
+    }
+    
+    //user can update only the applications where status = pending
+    // if (($applicatoin_info->status != "pending" || $applicatoin_info->status != "active") || !($status === "approved" || $status === "rejected" || $status === "canceled")) {
+        //     app_redirect("forbidden");
+        // }
+        
+        $save_id = $this->Documents_model->ci_save($update_data, $id);
+        if ($save_id) {
+            
+            if ($status === "approved" ) {
+                                    
+                // send whatsapp message:
+                // $phoneNumber = getenv('TO_WHATSAPP_PHONE_NUMBER');
+                                
+                $options = array('id'=> $this->login_user->id); 
+                $user_info = $this->Users_model->get_details($options)->getRow();
+                // print_r($user_info);die;
+
+
+                /** update leave signature test */
+
+                    // $drive_info = unserialize($doc->drive_info);
+                    $itemID = $document_info->item_id;
+                    $siteId = getenv('SITE_ID');
+                    $driveId = getenv('DRIVE_ID');
+                    $accessToken = $this->AccesToken();
+
+                    $imageArr = unserialize($user_info->signature);
+                    $signatureImageUrl = get_array_value($imageArr[0],'file_name');
+                    //   print_r($imageArr);die;
+
+                    if($signatureImageUrl){
+                        $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
+
+                        if($resultArr['success'] == true) {
+                            $localFilePath = $resultArr['result'];
+                            $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
+                            $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
+                        
+                        }else{                
+                            
+                            $result = $resultArr['result'];
+                            echo json_encode(array("success" => false, "data" => null, 'message' => $result));
+                            die;
+                        }
+                    }
+                    
+                    // print_r($respose);
+                    // print_r($s);
+                    // die;
+
+                /** end update leave signature test */
+
+            }elseif($status === "rejected"){
+             
+            }
+                  
+           
+        echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
+    } else {
+        echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+    }
+}
+
+    /** start word update */
+    function downloadWordDocument($accessToken, $siteId, $driveId, $itemId) {
+        $url = "https://graph.microsoft.com/v1.0/drives/$driveId/items/$itemId/content";
+        
+        $headers = [
+            "Authorization: Bearer $accessToken"
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Follow redirects
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 10); // Set the maximum number of redirects
+
+        $response = curl_exec($ch);
+        $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
+        $redirect_url = curl_getinfo($ch, CURLINFO_REDIRECT_URL);
+        curl_close($ch);
+    
+        // print_r('response: '.$accessToken);
+        // print_r('redirect: '.$url);
+        // die;
+        // Debugging output
+        if ($curlError) {
+            echo "cURL Error: " . $curlError;
+           return array('success' => false, 'result' => $curlError); 
+        }
+    
+        if ($httpStatusCode != 200) {
+            echo "HTTP Status Code: " . $httpStatusCode;          
+        }
+    
+        if (empty($response)) {
+            echo "No response received!";            
+           return array('success' => false, 'result' => 'No response received'); 
+           
+        }
+        curl_close($ch);
+
+        $localFilePath = APPPATH . 'Views/documents/local_copy_'.date('hs').'.docx';  
+        file_put_contents($localFilePath, $response);
+
+        return array('success' => true, 'result' => $localFilePath); 
+    }
+
+    function updateWordDocument($localFilePath, $signatureImageUrl) {
+        // $localFilePath = APPPATH . 'Views/documents/'.$localFilePath;  
+        // $phpWord = IOFactory::load($localFilePath);
+
+        $template = new TemplateProcessor($localFilePath);
+
+        $template->setImageValue('signature',
+        [
+            'path' => ROOTPATH . 'assets/images/'.$signatureImageUrl,
+            'width' => '300',
+            'height' => '150',
+            'ratio' => true,
+        ]);
+
+        $template->saveAs($localFilePath);
+
+        // $section = $phpWord->addSection();
+        // $section->addText('This is new content added to the document.');
+        // $phpWord->save($localFilePath, 'Word2007');
+
+        // echo $localFilePath;
+        return $localFilePath;
+    }
+
+    function uploadUpdatedDocument($accessToken, $siteId, $driveId, $itemId, $updatedFilePath) {
+        $url = "https://graph.microsoft.com/v1.0/drives/$driveId/items/$itemId/content";
+        
+        $headers = [
+            "Authorization: Bearer $accessToken",
+            "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ];
+
+        $fileContents = file_get_contents($updatedFilePath);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fileContents);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Follow redirects
+        // curl_setopt($ch, CURLOPT_MAXREDIRS, 10); // Set the maximum number of redirects
+
+        $response = curl_exec($ch);
+        
+        $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+        
+        //  print_r('updatedFilePath: '.$updatedFilePath);
+        //  print_r('fileContents: '.$fileContents);
+        //  print_r('response: '.$response);
+        //  print_r('httpStatusCode: '.$httpStatusCode);
+        // print_r('curlError: '.$curlError);
+        // die;
+
+        //delete local file:
+        if(file_exists($updatedFilePath)){
+            unlink($updatedFilePath);
+        }
+
+        return json_decode($response, true);
+    }
+
+    /** end word update */
+
+    
+    // reaturn a row of leave application list table
+    function document_details() {
+        $this->validate_submitted_data(array(
+            "id" => "required|numeric"
+        ));
+
+        
+        $id = $this->request->getPost('id');
+        $options = array('id' => $id);
+
+        $info = $this->Documents_model->get_details($options)->getRow();
+        if (!$info) {
+            show_404();
+        }
+
+
+
+        //checking the user permissiton to show/hide reject and approve button
+        $can_manage_application = false;
+        if ($this->access_type === "own_section" || $this->access_type === "all") {
+            $can_manage_application = true;
+        } else if (array_search($info->created_by, $this->allowed_members) && $info->created_by !== $this->login_user->id) {
+            $can_manage_application = true;
+        }
+
+        $role = $this->get_user_role();
+        $view_data['show_approve_reject'] = $role === 'admin' || $role === 'HRM' || $role === 'Director' || $role === 'Section Head'|| $role === 'Administrator';
+
+        //has permission to manage the appliation? or is it own application?
+        if (!$can_manage_application && $info->created_by !== $this->login_user->id) {
+            app_redirect("forbidden");
+        }
+        
+        // status
+        
+        $style = '';
+
+        if ($info->status === "pending") {
+            $status_class = "bg-warning";
+        } else if ($info->status === "approved") {
+            $status_class = "badge bg-success";//btn-success
+        } else if ($info->status === "active") {
+            $status_class = "btn-dark";//btn-success
+            $style = "background-color:#a7abbf;";
+        } else if ($info->status === "rejected") {
+            $status_class = "bg-danger";
+        } else {
+            $status_class = "bg-dark";
+        }
+        $info->status_meta = "<span style='$style' class='badge $status_class'>" . app_lang($info->status) . "</span>";
+       
+
+        $view_data['document_info'] = $info;
+        $view_data['role']=$role;
+        return $this->template->view("documents/document_details", $view_data);
+    }
+    /** end word update */
 
     /* insert or update a lead */
     public function save()
@@ -286,8 +558,8 @@ class Documents extends Security_Controller
 
                 // Get the web URL of the file from the array
                 $webUrl = $data["webUrl"];
-                $itemId = $data["id"];
                 $drive_ref = $data['parentReference'];
+                $itemId = $data["id"];
 
                 //update item id and web url
                 $u_data = array('item_id' => $itemId, 'webUrl' => $webUrl, 'ref_number' => $input['ref_number'], 'drive_info' => @serialize($drive_ref));
@@ -488,85 +760,41 @@ class Documents extends Security_Controller
         $department_id = get_array_value($result, 'department_id');
         $created_by = get_array_value($result, 'created_by');
 
-        $options = append_server_side_filtering_commmon_params([]);
+        $options = array(
+            'created_by' => $created_by,
+            'department_id' => $department_id,
+            'role' => $role,
+            'created_by' => $created_by,
+        );
 
-        $extraWhere = " AND t.destination_folder NOT LIKE 'Visitor' AND t.destination_folder NOT LIKE 'Leave'";
-        //by this, we can handel the server side or client side from the app table prams.
-        if (get_array_value($options, "server_side")) {
-            $order_by = $options['order_by'];
-            $order_direction = $options['order_dir'];
-            $search_by = $options["search_by"];
-            $skip = $options["skip"];
+        $options_all = append_server_side_filtering_commmon_params($options);
 
-            $limit_offset = "";
-            $limit = $options['limit'] ?? 10;
-            $where = "d.deleted=0";
+        $list_data_all = $this->Documents_model->get_details($options_all);
+        
+        $limit = get_array_value($options_all,'limit');
 
-            if ($limit) {
+        if($limit){
 
-                $offset = $skip ? $skip : 0;
-                $limit_offset = " LIMIT $limit OFFSET $offset ";
-            }
-
-            if ($order_by) {
-                $order_by = "$order_by $order_direction ";
-            }
-
-            if ($search_by) {
-                $search_by = $this->db->escapeLikeString($search_by);
-
-                // `document_title`, `ref_number`, `depertment`, `template`, `item_id`,`created_by`, `created_at`
-                $where .= " AND (";
-                $where .= " d.id LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR d.document_title LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR d.ref_number LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR d.depertment LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR d.template LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR d.item_id LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR u.first_name LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR u.last_name LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " OR d.created_at LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= " )";
-            }
-
-            $result = $this->db->query("select d.*,t.name as template,dp.nameSo as depertment,concat(u.first_name,' ',u.last_name) user from rise_documents d
-            LEFT JOIN rise_users u on d.created_by = u.id
-            LEFT JOIN rise_templates t on d.template = t.id
-            LEFT JOIN rise_departments dp on d.depertment = dp.id
-            where d.created_by LIKE '$created_by' and d.depertment LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
-
-            $list_data = $result->getResult();
-            $total_rows = $this->db->query("select count(*) as affected from rise_documents d
-            LEFT JOIN rise_templates t on d.template = t.id
-            where created_by LIKE '$created_by' and depertment LIKE '$department_id' and d.deleted=0 $extraWhere")->getRow()->affected;
-            $result = array();
-
-        } else {
-            $result = $this->db->query("select d.*,t.name as template,dp.nameSo as depertment,concat(u.first_name,' ',u.last_name) user from rise_documents d
-            LEFT JOIN rise_users u on d.created_by = u.id
-            LEFT JOIN rise_templates t on d.template = t.id
-            LEFT JOIN rise_departments dp on d.depertment = dp.id
-            where d.created_by LIKE '$created_by' and d.depertment LIKE '$department_id' and  d.deleted=0 $extraWhere");
-
-            $list_data = $result->getResult();
-            $total_rows = $this->db->query("select count(*) as affected from rise_documents d
-            LEFT JOIN rise_templates t on d.template = t.id
-            where created_by LIKE '$created_by' and depertment LIKE '$department_id' and  d.deleted=0 $extraWhere")->getRow()->affected;
-            $result = array();
+            $list_data = get_array_value($list_data_all,'data'); 
+        }else{
+            $list_data = $list_data_all->getResult();
         }
 
-        $result_data = array();
+        // print_r($list_data);die;
+        $recordsTotal =  get_array_value($list_data_all,'recordsTotal');
+        $recordsFiltered =  get_array_value($list_data_all,'recordsFiltered');
+
+        $result = array();
         foreach ($list_data as $data) {
-            $result_data[] = $this->_make_row($data, $custom_fields);
+            $result[] = $this->_make_row($data, $custom_fields);
         }
-
-        $result["data"] = $result_data;
-        $result["recordsTotal"] = $total_rows;
-        $result["recordsFiltered"] = $total_rows;
 
         // var_dump($result);
         // die();
-        echo json_encode($result);
+        echo json_encode(array("data" => $result,
+            'recordsTotal'=>$recordsTotal,
+            'recordsFiltered'=>$recordsFiltered
+        ));
     }
 
     public function templates_list_data()
@@ -663,10 +891,9 @@ class Documents extends Security_Controller
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("leads", $this->login_user->is_admin, $this->login_user->user_type);
         $options = array(
             "id" => $id,
-            "custom_fields" => $custom_fields,
-            // "leads_only" => true
         );
-        $data = $this->Documents_model->get_one($id)->getRow();
+
+        $data = $this->Documents_model->get_details($options)->getRow();
         return $this->_make_row($data, $custom_fields);
     }
 
@@ -674,6 +901,11 @@ class Documents extends Security_Controller
 
     private function _make_row($data, $custom_fields)
     {
+        $option_icon = "info";
+        if ($data->status === "pending") {
+            $option_icon = "cloud-lightning";
+        }
+
         //primary contact
         // $image_url = get_avatar($data->contact_avatar);
         // $contact = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->primary_contact";
@@ -686,7 +918,7 @@ class Documents extends Security_Controller
             // $owner_image_url = get_avatar($data->owner_avatar);
             // $owner_user = "<span class='avatar avatar-xs mr10'><img src='$owner_image_url' alt='...'></span> $data->user";
             // $owner = get_team_member_profile_link($data->created_by, $owner_user);
-            $owner = $data->user; //$this->db->query("select * from rise_users where id = $data->created_by");
+            $owner = $data->created_by_user; //$this->db->query("select * from rise_users where id = $data->created_by");
 
         }
 
@@ -694,7 +926,7 @@ class Documents extends Security_Controller
 
         $row_data = array(
             $data->id,
-            modal_anchor(get_uri("documents/modal_form"), $data->document_title, array("class" => "edit", "title" => app_lang('edit_lead'), "data-post-id" => $data->id)),
+            modal_anchor(get_uri("documents/document_details"), $data->document_title, array("class" => "edit", "title" => app_lang('edit_lead'), "data-post-id" => $data->id)),
             // anchor(get_uri("documents/view/" . $data->id), ),
             $data->ref_number,
             $data->depertment,
@@ -704,20 +936,23 @@ class Documents extends Security_Controller
             format_to_date($data->created_at, false),
         );
 
-        // $row_data[] = js_anchor($data->document_title, array("style" => "background-color: green;",
-        // "class" => "badge", "data-id" => $data->id, "data-value" => $data->id, "data-act" => "update-lead-status"));
+        $role = $this->get_user_role();
+        $can_approve_documents = $role != 'Employee';
 
-        // foreach ($custom_fields as $field) {
-        //     $cf_id = "cfv_" . $field->id;
-        //     $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
-        // }
+        $can_manage_application = false;
+        if ($this->access_type === "all" && $can_approve_documents) {
+            $can_manage_application = true;
+            $document_details_link = modal_anchor(get_uri("documents/document_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('document_details'), "data-post-id" => $data->id));
+        } else if (array_search($data->applicant_id, $this->allowed_members) && $data->applicant_id !== $this->login_user->id && ($can_approve_documents)) {
+            $can_manage_application = true;
+        }
+
         //open doc link:
         $link = "<a href='$data->webUrl' class='btn btn-success' target='_blank' title='Open Document' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i>";
 
-        $row_data[] = modal_anchor(get_uri("documents/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit",
-            "title" => app_lang('edit_lead'), "data-post-id" => $data->id))
-        . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_lead'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("documents/delete"), "data-action" => "delete-confirmation"))
-            . $link;
+        $row_data[] = $document_details_link
+        . $link
+        . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_lead'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("documents/delete"), "data-action" => "delete-confirmation"));
 
         return $row_data;
     }

@@ -498,8 +498,8 @@ class Visitors extends Security_Controller
                 // echo print_r($data);
                 // die;
                 $webUrl = $data["webUrl"];
-                $itemId = $data["id"];
                 $drive_ref = $data['parentReference'];
+                $itemId = $data["id"];
 
                 //update item id and web url
                 $u_data= array('item_id' => $itemId,'webUrl' => $webUrl,'ref_number'=>$doc_data['ref_number'],'drive_info'=>@serialize($drive_ref));

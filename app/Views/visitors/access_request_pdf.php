@@ -79,7 +79,7 @@
                                 ?>" style="width: 430px;margin-top: 0px;padding:0;margin-bottom: 0;">
                             &nbsp;&nbsp;
                         </div>
-                        <div class="ticket-body" style=" padding: 20px 15px;">
+                        <div class="ticket-body" style=" padding: 12px 10px;">
                             <div class="text-center" style="margin-bottom: 15px;line-height: 0.95;">
                                 <h2 class="text-center " style="margin-bottom: 0px;color: #264a78;text-align:center;margin-top: 0;"><?php echo 'Oggolaanshaha Soo Gelista' ?></h2>
                                 <span class="d-block">(Entry Authorization)</span>
@@ -99,7 +99,7 @@
                                 <div style="float: right;">
                                     <p style="font-size: 0.9rem;color: #12123f;margin:0;">TAARIIKH <span class="">(Date)</span>:</p>
                                     <h2 style="font-size: 20px;margin:0;margin-bottom: 0px;">
-                                    <?php echo date_format(new DateTime($visitor_info->created_at),'Y-m-d');?>
+                                    <?php echo date_format(new DateTime($visitor_info->start_date),'Y-m-d');?>
                                         <small style="font-size: 12px;font-weight: bold"><?php echo date("h:i a",strtotime(date_format(new DateTime($visitor_info->start_date),'Y-m-d').' '.$visitor_info->visit_time)); ?></small>
                                 </h2>
                                 </div>
@@ -108,7 +108,7 @@
                             <div class="ticket-from-and-to justify-content-center" style="align-items: center;">
                                <div class="">
                                 <div class="text-center" style="margin-bottom: 15px;line-height: 0.95;width: 350px;">
-                                    <h3 style="padding: 3px;margin: 0px;text-align:center;font-weight: bold;color: #12123f;">LIISKA MARTIDA</h3>
+                                    <h3 style="padding: 3px;margin: 0px;text-align:center;font-weight: bold;color: #4b4b4b;">LIISKA MARTIDA</h3>
                                     <span class="d-block">(Guest List)</span>
                                 </div>
                                <table class="table b-t" style="margin-top: 10px;text-align: left;width:100%;background: transparent;color: #12123f;">
@@ -160,14 +160,14 @@
                             <div class="ruler" style="margin: 1rem 0; height: 1px; background: #20a3f6;"></div>
                             <div class="bording" style=" margin-top: 10px;margin-left: auto;margin-right: auto;">
                                 <h4 style="text-align: center;">Faah faahin (Details)</h4>
-                                <div class="bording-content" style="padding: 10px;border: 2px dashed #20a3f6;text-align: center;display:flex">
-                                    <div class="col-sm-6" style="width: 49%;display: inline-block;padding-right: 20px;">
+                                <div class="bording-content" style="padding: 13px 7px;border: 2px dashed #20a3f6;text-align: center;display:flex">
+                                    <div class="col-sm-6" style="width: 49%;display: inline-block;padding-right: 20px;padding-left: 10px;">
                                         <p style="margin:0;margin-bottom: 5px;font-weight: bold;text-wrap: nowrap;">Mudada (Duration) </p>
                                         <h4 style="font-size: 14px;margin:0;"><?php
                                         $days = $visitor_info->total_days == 1 ? '1 day' : $visitor_info->total_days.' days';
-                                         echo $days.', ends: '.date_format(new DateTime($visitor_info->end_date),'F d, Y');?></h4>
+                                         echo $days.', ends: '.date_format(new DateTime($visitor_info->end_date),'M d, Y');?></h4>
                                     </div>
-                                    <div class="col-sm-6"  style="width: 49%;display: inline-block">
+                                    <div class="col-sm-6"  style="width: 49%;display: inline-block;padding-right: 20px">
                                         <p style="margin:0;margin-bottom: 5px;font-weight: bold;text-wrap: nowrap">Albaabada (Gates)</p>
                                         <h4 style="font-size: 14px;margin:0"><?php echo $visitor_info->allowed_gates;?></h4>
                                     </div>

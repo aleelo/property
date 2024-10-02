@@ -222,6 +222,9 @@ class Team_members extends Security_Controller {
             $user_data["role_id"] = $role_id;
         }
 
+        $target_path = get_setting("images_file_path");
+        $signature = move_files_from_temp_dir_to_permanent_dir($target_path, "signature");
+        // $signature = unserialize($files_data);
 
         //add a new team member
         $user_id = $this->Users_model->ci_save($user_data);
@@ -240,6 +243,10 @@ class Team_members extends Security_Controller {
                 "employee_type" => $this->request->getPost('employee_type'),
                 "employee_id" => $this->request->getPost('employee_id'),
             );
+            
+            //add signature image
+            $job_data["signature"] = serialize($signature);
+
             $this->Users_model->save_job_info($job_data);
 
             save_custom_fields("team_members", $user_id, $this->login_user->is_admin, $this->login_user->user_type);
@@ -273,6 +280,217 @@ class Team_members extends Security_Controller {
         }
     }
 
+    
+    //show the job information of a team member
+    function job_info($user_id) {
+
+        validate_numeric_value($user_id);
+        if (!($this->login_user->is_admin || $this->login_user->id === $user_id || $this->has_job_info_manage_permission())) {
+            app_redirect("forbidden");
+        }
+
+        $view_data['departments'] = $this->get_departments_for_select();
+        // echo json_encode($view_data['departments']);
+        // die('ok');
+        
+        $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
+        $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
+
+        // var_dump($view_data['departments']);
+        // die();
+
+        $options = array("id" => $user_id);
+        $user_info = $this->Users_model->get_details($options)->getRow();
+
+        $view_data['user_id'] = $user_id;
+        $view_data['job_info'] = $this->Users_model->get_job_info($user_id);
+        $view_data['job_info']->job_title = $user_info->job_title;
+
+        $view_data['can_manage_team_members_job_information'] = $this->has_job_info_manage_permission();
+
+        return $this->template->view("team_members/job_info", $view_data);
+    }
+
+    private function has_job_info_manage_permission() {
+        return get_array_value($this->login_user->permissions, "job_info_manage_permission");
+    }
+
+    //save job information of a team member
+    function save_job_info() {
+        if (!($this->login_user->is_admin || $this->has_job_info_manage_permission())) {
+            app_redirect("forbidden");
+        }
+        
+        // var_dump($this->request->getPost());
+        // die();
+
+        $this->validate_submitted_data(array(
+            "user_id" => "required|numeric"
+        ));
+        $user_id = $this->request->getPost('user_id');
+       
+        $target_path = get_setting("images_file_path");
+        $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "signature");
+        $new_files = unserialize($files_data);
+
+        $job_data = array(
+            "user_id" => $user_id,
+            "salary" => unformat_currency($this->request->getPost('salary')),
+            "salary_term" => $this->request->getPost('salary_term'),
+            "date_of_hire" => $this->request->getPost('date_of_hire'),         
+               
+            "department_id" => $this->request->getPost('department_id'),
+            "section_id" => 0,
+            "job_title_en" => $this->request->getPost('job_title_en'),
+            "job_title_so" => $this->request->getPost('job_title_so'),
+            "employee_type" => $this->request->getPost('employee_type'),
+            "employee_id" => $this->request->getPost('employee_id')
+        );
+
+       
+        //we'll save the job title in users table
+        $user_data = array(
+            "job_title" => $this->request->getPost('job_title_en')
+        );
+
+        
+        if ($user_id) {
+            $user_j0b_info = $this->Users_model->get_details(['id' => $user_id])->getRow();
+            $images_file_path = get_setting("images_file_path");
+            $new_files = update_saved_files($images_file_path, $user_j0b_info->signature, $new_files);
+        }
+
+        $job_data["signature"] = serialize($new_files);
+
+        $this->Users_model->ci_save($user_data, $user_id);
+        if ($this->Users_model->save_job_info($job_data)) {
+            echo json_encode(array("success" => true, 'message' => app_lang('record_updated')));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
+    //show general information of a team member
+    function general_info($user_id) {
+        validate_numeric_value($user_id);
+        $this->update_only_allowed_members($user_id);
+
+        $view_data['departments'] = $this->Team_model->get_departments_for_select();
+        // array_unshift($view_data['departments'],'Choose Department');
+        $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
+        $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
+        $view_data['education_fields'] = $this->db->query("select id,name from education_industry")->getResult();
+
+        $view_data['user_info'] = $this->Users_model->get_one($user_id);
+        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("team_members", $user_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+
+        return $this->template->view("team_members/general_info", $view_data);
+    }
+
+    //save general information of a team member
+    function save_general_info($user_id) {
+        
+        validate_numeric_value($user_id);
+        $this->update_only_allowed_members($user_id);
+
+        $this->validate_submitted_data(array(
+            "first_name" => "required",
+            "last_name" => "required"
+        ));
+
+        $user_data = array(
+            "first_name" => $this->request->getPost('first_name'),
+            "last_name" => $this->request->getPost('last_name'),
+            "address" => $this->request->getPost('address'),
+            "phone" => $this->request->getPost('phone'),
+            "skype" => $this->request->getPost('skype'),
+            "gender" => $this->request->getPost('gender'),
+            "alternative_address" => $this->request->getPost('alternative_address'),
+            "alternative_phone" => $this->request->getPost('alternative_phone'),
+            "dob" => $this->request->getPost('dob'),
+            "ssn" => $this->request->getPost('ssn'),
+            "marital_status" => $this->request->getPost('marital_status'),
+            "emergency_name" => $this->request->getPost('emergency_name'),
+            "emergency_phone" => $this->request->getPost('emergency_phone'),
+            "birth_date" => $this->request->getPost('birth_date'),
+            "birth_place" => $this->request->getPost('birth_place'),
+            "education_level" => $this->request->getPost('education_level'),
+            "education_field" => $this->request->getPost('education_field'),
+            "education_school" => $this->request->getPost('education_school'),
+            "passport_no" => $this->request->getPost('passport_no'),
+        );
+
+        $user_data = clean_data($user_data);
+
+        $user_info_updated = $this->Users_model->ci_save($user_data, $user_id);
+
+        save_custom_fields("team_members", $user_id, $this->login_user->is_admin, $this->login_user->user_type);
+
+        if ($user_info_updated) {
+            echo json_encode(array("success" => true, 'message' => app_lang('record_updated')));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
+    }
+
+    //show social links of a team member
+    function social_links($user_id) {
+        //important! here id=user_id
+        validate_numeric_value($user_id);
+        $this->update_only_allowed_members($user_id);
+
+        $view_data['user_id'] = $user_id;
+        $view_data['model_info'] = $this->Social_links_model->get_one($user_id);
+        return $this->template->view("users/social_links", $view_data);
+    }
+
+    //save social links of a team member
+    function save_social_links($user_id) {
+        validate_numeric_value($user_id);
+        $this->update_only_allowed_members($user_id);
+
+        $id = 0;
+        $has_social_links = $this->Social_links_model->get_one($user_id);
+        if (isset($has_social_links->id)) {
+            $id = $has_social_links->id;
+        }
+
+        $social_link_data = array(
+            "facebook" => $this->request->getPost('facebook'),
+            "twitter" => $this->request->getPost('twitter'),
+            "linkedin" => $this->request->getPost('linkedin'),
+            "digg" => $this->request->getPost('digg'),
+            "youtube" => $this->request->getPost('youtube'),
+            "pinterest" => $this->request->getPost('pinterest'),
+            "instagram" => $this->request->getPost('instagram'),
+            "github" => $this->request->getPost('github'),
+            "tumblr" => $this->request->getPost('tumblr'),
+            "vine" => $this->request->getPost('vine'),
+            "whatsapp" => $this->request->getPost('whatsapp'),
+            "user_id" => $user_id,
+            "id" => $id ? $id : $user_id
+        );
+
+        $social_link_data = clean_data($social_link_data);
+
+        $this->Social_links_model->ci_save($social_link_data, $id);
+        echo json_encode(array("success" => true, 'message' => app_lang('record_updated')));
+    }
+
+    //show account settings of a team member
+    function account_settings($user_id) {
+        validate_numeric_value($user_id);
+        $this->can_access_user_settings($user_id);
+
+        $view_data['user_info'] = $this->Users_model->get_one($user_id);
+        if ($view_data['user_info']->is_admin) {
+            $view_data['user_info']->role_id = "admin";
+        }
+        $view_data['role_dropdown'] = $this->_get_roles_dropdown();
+        $view_data['can_activate_deactivate_team_members'] = $this->_can_activate_deactivate_team_member($view_data['user_info']);
+
+        return $this->template->view("users/account_settings", $view_data);
+    }
     /* open invitation modal */
 
     function invitation_modal() {
@@ -599,204 +817,6 @@ class Team_members extends Security_Controller {
         }
     }
 
-    //show the job information of a team member
-    function job_info($user_id) {
-
-        validate_numeric_value($user_id);
-        if (!($this->login_user->is_admin || $this->login_user->id === $user_id || $this->has_job_info_manage_permission())) {
-            app_redirect("forbidden");
-        }
-
-        $view_data['departments'] = $this->get_departments_for_select();
-        // echo json_encode($view_data['departments']);
-        // die('ok');
-        
-        $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
-        $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
-
-        // var_dump($view_data['departments']);
-        // die();
-
-        $options = array("id" => $user_id);
-        $user_info = $this->Users_model->get_details($options)->getRow();
-
-        $view_data['user_id'] = $user_id;
-        $view_data['job_info'] = $this->Users_model->get_job_info($user_id);
-        $view_data['job_info']->job_title = $user_info->job_title;
-
-        $view_data['can_manage_team_members_job_information'] = $this->has_job_info_manage_permission();
-
-        return $this->template->view("team_members/job_info", $view_data);
-    }
-
-    private function has_job_info_manage_permission() {
-        return get_array_value($this->login_user->permissions, "job_info_manage_permission");
-    }
-
-    //save job information of a team member
-    function save_job_info() {
-        if (!($this->login_user->is_admin || $this->has_job_info_manage_permission())) {
-            app_redirect("forbidden");
-        }
-        
-        // var_dump($this->request->getPost());
-        // die();
-
-        $this->validate_submitted_data(array(
-            "user_id" => "required|numeric"
-        ));
-        $user_id = $this->request->getPost('user_id');
-       
-        $job_data = array(
-            "user_id" => $user_id,
-            "salary" => unformat_currency($this->request->getPost('salary')),
-            "salary_term" => $this->request->getPost('salary_term'),
-            "date_of_hire" => $this->request->getPost('date_of_hire'),         
-               
-            "department_id" => $this->request->getPost('department_id'),
-            "section_id" => 0,
-            "job_title_en" => $this->request->getPost('job_title_en'),
-            "job_title_so" => $this->request->getPost('job_title_so'),
-            "employee_type" => $this->request->getPost('employee_type'),
-            "employee_id" => $this->request->getPost('employee_id')
-        );
-
-       
-        //we'll save the job title in users table
-        $user_data = array(
-            "job_title" => $this->request->getPost('job_title_en')
-        );
-
-
-        $this->Users_model->ci_save($user_data, $user_id);
-        if ($this->Users_model->save_job_info($job_data)) {
-            echo json_encode(array("success" => true, 'message' => app_lang('record_updated')));
-        } else {
-            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
-        }
-    }
-
-    //show general information of a team member
-    function general_info($user_id) {
-        validate_numeric_value($user_id);
-        $this->update_only_allowed_members($user_id);
-
-        $view_data['departments'] = $this->Team_model->get_departments_for_select();
-        // array_unshift($view_data['departments'],'Choose Department');
-        $view_data['education_levels'] = [''=>'Choose Education Level','Graduate'=>'Graduate','Bachelor'=>'Bachelor','Master'=>'Master','Doctor'=>'Doctor','Other/Skill'=>'Other/Skill'];
-        $view_data['sections'] = [''=>'Choose Department Section','1'=>'ICT & Cyber Security','2'=>'Other'];
-        $view_data['education_fields'] = $this->db->query("select id,name from education_industry")->getResult();
-
-        $view_data['user_info'] = $this->Users_model->get_one($user_id);
-        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("team_members", $user_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
-
-        return $this->template->view("team_members/general_info", $view_data);
-    }
-
-    //save general information of a team member
-    function save_general_info($user_id) {
-        
-        validate_numeric_value($user_id);
-        $this->update_only_allowed_members($user_id);
-
-        $this->validate_submitted_data(array(
-            "first_name" => "required",
-            "last_name" => "required"
-        ));
-
-        $user_data = array(
-            "first_name" => $this->request->getPost('first_name'),
-            "last_name" => $this->request->getPost('last_name'),
-            "address" => $this->request->getPost('address'),
-            "phone" => $this->request->getPost('phone'),
-            "skype" => $this->request->getPost('skype'),
-            "gender" => $this->request->getPost('gender'),
-            "alternative_address" => $this->request->getPost('alternative_address'),
-            "alternative_phone" => $this->request->getPost('alternative_phone'),
-            "dob" => $this->request->getPost('dob'),
-            "ssn" => $this->request->getPost('ssn'),
-            "marital_status" => $this->request->getPost('marital_status'),
-            "emergency_name" => $this->request->getPost('emergency_name'),
-            "emergency_phone" => $this->request->getPost('emergency_phone'),
-            "birth_date" => $this->request->getPost('birth_date'),
-            "birth_place" => $this->request->getPost('birth_place'),
-            "education_level" => $this->request->getPost('education_level'),
-            "education_field" => $this->request->getPost('education_field'),
-            "education_school" => $this->request->getPost('education_school'),
-            "passport_no" => $this->request->getPost('passport_no'),
-        );
-
-        $user_data = clean_data($user_data);
-
-        $user_info_updated = $this->Users_model->ci_save($user_data, $user_id);
-
-        save_custom_fields("team_members", $user_id, $this->login_user->is_admin, $this->login_user->user_type);
-
-        if ($user_info_updated) {
-            echo json_encode(array("success" => true, 'message' => app_lang('record_updated')));
-        } else {
-            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
-        }
-    }
-
-    //show social links of a team member
-    function social_links($user_id) {
-        //important! here id=user_id
-        validate_numeric_value($user_id);
-        $this->update_only_allowed_members($user_id);
-
-        $view_data['user_id'] = $user_id;
-        $view_data['model_info'] = $this->Social_links_model->get_one($user_id);
-        return $this->template->view("users/social_links", $view_data);
-    }
-
-    //save social links of a team member
-    function save_social_links($user_id) {
-        validate_numeric_value($user_id);
-        $this->update_only_allowed_members($user_id);
-
-        $id = 0;
-        $has_social_links = $this->Social_links_model->get_one($user_id);
-        if (isset($has_social_links->id)) {
-            $id = $has_social_links->id;
-        }
-
-        $social_link_data = array(
-            "facebook" => $this->request->getPost('facebook'),
-            "twitter" => $this->request->getPost('twitter'),
-            "linkedin" => $this->request->getPost('linkedin'),
-            "digg" => $this->request->getPost('digg'),
-            "youtube" => $this->request->getPost('youtube'),
-            "pinterest" => $this->request->getPost('pinterest'),
-            "instagram" => $this->request->getPost('instagram'),
-            "github" => $this->request->getPost('github'),
-            "tumblr" => $this->request->getPost('tumblr'),
-            "vine" => $this->request->getPost('vine'),
-            "whatsapp" => $this->request->getPost('whatsapp'),
-            "user_id" => $user_id,
-            "id" => $id ? $id : $user_id
-        );
-
-        $social_link_data = clean_data($social_link_data);
-
-        $this->Social_links_model->ci_save($social_link_data, $id);
-        echo json_encode(array("success" => true, 'message' => app_lang('record_updated')));
-    }
-
-    //show account settings of a team member
-    function account_settings($user_id) {
-        validate_numeric_value($user_id);
-        $this->can_access_user_settings($user_id);
-
-        $view_data['user_info'] = $this->Users_model->get_one($user_id);
-        if ($view_data['user_info']->is_admin) {
-            $view_data['user_info']->role_id = "admin";
-        }
-        $view_data['role_dropdown'] = $this->_get_roles_dropdown();
-        $view_data['can_activate_deactivate_team_members'] = $this->_can_activate_deactivate_team_member($view_data['user_info']);
-
-        return $this->template->view("users/account_settings", $view_data);
-    }
 
     //show my preference settings of a team member
     function my_preferences() {
