@@ -340,7 +340,8 @@ function update_status() {
         }
     
         if ($httpStatusCode != 200) {
-            echo "HTTP Status Code: " . $httpStatusCode;          
+            echo "HTTP Status Code: " . $httpStatusCode;         
+            print_r($response); 
         }
     
         if (empty($response)) {
