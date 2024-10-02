@@ -342,6 +342,7 @@ function update_status() {
         if ($httpStatusCode != 200) {
             echo "HTTP Status Code: " . $httpStatusCode;         
             print_r($response); 
+            print_r('accessToken: '.$accessToken);
         }
     
         if (empty($response)) {

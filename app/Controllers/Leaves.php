@@ -263,7 +263,6 @@ class Leaves extends Security_Controller {
         $redirect_url = curl_getinfo($ch, CURLINFO_REDIRECT_URL);
         curl_close($ch);
     
-        // print_r('response: '.$accessToken);
         // print_r('redirect: '.$url);
         // die;
         // Debugging output
@@ -274,7 +273,8 @@ class Leaves extends Security_Controller {
     
         if ($httpStatusCode != 200) {
             echo "HTTP Status Code: " . $httpStatusCode;        
-            print_r($response);          
+            print_r($response);
+            print_r('response: '.$accessToken);
         }
     
         if (empty($response)) {
