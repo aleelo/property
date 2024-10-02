@@ -342,6 +342,7 @@ function update_status() {
         if ($httpStatusCode != 200) {
             echo "HTTP Status Code: " . $httpStatusCode;         
             print_r($response); 
+            print_r('url: '.$url);
             print_r('accessToken: '.$accessToken);
         }
     
@@ -525,10 +526,9 @@ function update_status() {
             $input['id'] = $save_id;
 
             //get document row
-            $doc = $this->db->query("select d.*,t.name as template,t.ref_prefix,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d
-            LEFT JOIN rise_users u on d.created_by = u.id
-            LEFT JOIN rise_templates t on d.template = t.id
-            where d.deleted=0 and d.id =$save_id");
+            $options = array('id' => $id);
+
+            $doc = $this->Documents_model->get_details($options);
 
             $input['folder'] = $doc->getRow()->folder;
             $input['uuid'] = $doc->getRow()->uuid;
@@ -583,10 +583,10 @@ function update_status() {
 
             $updated = $this->Documents_model->ci_save($input, $id);
             //get document row
-            $doc = $this->db->query("select d.*,t.name as template,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d
-                    LEFT JOIN rise_users u on d.created_by = u.id
-                    LEFT JOIN rise_templates t on d.template = t.id
-                    where d.deleted=0 and d.id =$id");
+            
+        $options = array('id' => $id);
+
+        $doc = $this->Documents_model->get_details($options);
         }
 
         if ($save_id || $updated) {
