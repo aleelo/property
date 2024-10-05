@@ -43,7 +43,7 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="destination_folder" class="col-3"><?php echo app_lang('template_destination'); ?> <span title="Waa folder ka sharepoint aad ka abuurtay"> 
+        <label for="destination_folder" class="col-3"><?php echo app_lang('template_destination'); ?> <span title="Waa folder ka sharepoint"> 
             <span data-feather="info" class="icon-16 text-info"></span></span></label>
         <div class="col-9">
             <?php
@@ -52,7 +52,7 @@
                 "name" => "destination_folder",
                 "value" => $model_info->destination_folder,
                 "class" => "form-control",
-                "placeholder" => 'Geli Magaca folder ka sharepoint aad ka abuurtay',
+                "placeholder" => 'Geli Magaca folder ka sharepoint',
                 "autofocus" => true,
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),

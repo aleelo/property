@@ -48,7 +48,7 @@ class Documents extends Security_Controller
 
         $res = $this->check_access('lead');
         $role = get_array_value($res, 'role');
-        $can_add_template = $role == 'admin';
+        $can_add_template = true; //$role == 'admin';
         $view_data["can_add_template"] = $can_add_template;
         // $this->access_only_allowed_members();
         // $this->check_module_availability("module_lead");
@@ -69,7 +69,7 @@ class Documents extends Security_Controller
 
         $res = $this->check_access('lead');
         $role = get_array_value($res, 'role');
-        $can_add_template = $role == 'admin';
+        $can_add_template = true; //$role == 'admin';
         $view_data["can_add_template"] = $can_add_template;
         // $this->access_only_allowed_members();
         // $this->check_module_availability("module_lead");
@@ -940,12 +940,13 @@ function update_status() {
 
         $role = $this->get_user_role();
         $can_approve_documents = $role != 'Employee';
+        $document_details_link = '';
 
         $can_manage_application = false;
         if ($this->access_type === "all" && $can_approve_documents) {
             $can_manage_application = true;
             $document_details_link = modal_anchor(get_uri("documents/document_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('document_details'), "data-post-id" => $data->id));
-        } else if (array_search($data->applicant_id, $this->allowed_members) && $data->applicant_id !== $this->login_user->id && ($can_approve_documents)) {
+        } else if (array_search($data->created_by, $this->allowed_members) && $data->created_by !== $this->login_user->id && ($can_approve_documents)) {
             $can_manage_application = true;
         }
 

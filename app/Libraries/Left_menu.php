@@ -104,7 +104,7 @@ class Left_menu {
 
             $sidebar_menu["tasks"] = array("name" => "tasks", "url" => "tasks/all_tasks", "class" => "check-circle");
 
-            if (get_setting("module_lead") == "1" && ($this->ci->login_user->is_admin || $access_lead) && !in_array($role,["Employee","ID Printer"])) {
+            if (get_setting("module_lead") == "1" && ($this->ci->login_user->is_admin || $access_lead) && !in_array($role,["ID Printer"])) {
                 //was leads changed to: 'documents'
                 $sidebar_menu["leads"] = array("name" => "leads", "url" => "documents", "class" => "layers");
             }
