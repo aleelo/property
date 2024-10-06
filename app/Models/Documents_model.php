@@ -91,8 +91,8 @@ class Documents_model extends Crud_model {
 
         $extraWhere = " AND $templates_table.destination_folder NOT LIKE 'Visitor' AND $templates_table.destination_folder NOT LIKE 'Leave'";
                 
-        $sql = "SELECT $documents_table.*,$templates_table.name as template,$departments_table.nameSo as depertment,$users_table.image created_by_image,
-            $users_table.image checked_by_image,CONCAT($users_table.first_name,' ',$users_table.last_name) created_by_user,CONCAT($users_table.first_name,' ',$users_table.last_name) checked_by_user 
+        $sql = "SELECT $documents_table.*,$templates_table.name as template,$templates_table.destination_folder as folder,$templates_table.path,$templates_table.ref_prefix,$departments_table.nameSo as depertment,$users_table.image created_by_image,
+            CONCAT($users_table.first_name,' ',$users_table.last_name) created_by_user,ch.image checked_by_image,CONCAT(ch.first_name,' ',ch.last_name) checked_by_user 
             FROM $documents_table 
             LEFT JOIN $templates_table  on $documents_table.template = $templates_table.id
             LEFT JOIN $departments_table on $documents_table.depertment = $departments_table.id

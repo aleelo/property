@@ -203,7 +203,7 @@ class Documents extends Security_Controller
         // var_dump($data);
         // die();
         // Get the web URL of the file from the array
-        $accessToken = $data["access_token"];
+        $accessToken = get_array_value($data, "access_token");
 
         curl_close($curl);
         return $accessToken;
@@ -526,9 +526,10 @@ function update_status() {
             $input['id'] = $save_id;
 
             //get document row
-            $options = array('id' => $id);
+            $options = array('id' => $save_id);
 
             $doc = $this->Documents_model->get_details($options);
+            // print_r($doc->getRow());die;
 
             $input['folder'] = $doc->getRow()->folder;
             $input['uuid'] = $doc->getRow()->uuid;
@@ -566,9 +567,9 @@ function update_status() {
                 //update item id and web url
                 $u_data = array('item_id' => $itemId, 'webUrl' => $webUrl, 'ref_number' => $input['ref_number'], 'drive_info' => @serialize($drive_ref));
 
-                $this->Documents_model->ci_save($u_data, $doc->getRow()->id);
+                $this->Documents_model->ci_save($u_data, $save_id);
 
-                // echo $webUrl;
+                // print_r($u_data);
                 // die();
 
             }
@@ -942,10 +943,10 @@ function update_status() {
         $can_approve_documents = $role != 'Employee';
         $document_details_link = '';
 
+        $document_details_link = modal_anchor(get_uri("documents/document_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('document_details'), "data-post-id" => $data->id));
         $can_manage_application = false;
         if ($this->access_type === "all" && $can_approve_documents) {
             $can_manage_application = true;
-            $document_details_link = modal_anchor(get_uri("documents/document_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('document_details'), "data-post-id" => $data->id));
         } else if (array_search($data->created_by, $this->allowed_members) && $data->created_by !== $this->login_user->id && ($can_approve_documents)) {
             $can_manage_application = true;
         }
