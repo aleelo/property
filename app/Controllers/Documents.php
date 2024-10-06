@@ -273,10 +273,10 @@ function update_status() {
                     $accessToken = $this->AccesToken();
 
                     $imageArr = unserialize($user_info->signature);
-                    $signatureImageUrl = get_array_value($imageArr[0],'file_name');
                     //   print_r($imageArr);die;
-
-                    if($signatureImageUrl){
+                    
+                    if(!empty($imageArr)){
+                        $signatureImageUrl = get_array_value($imageArr[0],'file_name');
                         $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
 
                         if($resultArr['success'] == true) {
