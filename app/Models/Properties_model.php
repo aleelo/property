@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
-class Clients_model extends Crud_model {
+class Properties_model extends Crud_model {
 
     protected $table = null;
 
     function __construct() {
-        $this->table = 'clients';
+        $this->table = 'properties';
         parent::__construct($this->table);
     }
 
     function get_details($options = array()) {
-        $clients_table = $this->db->prefixTable('clients');
+        $properties_table = $this->db->prefixTable('properties');
+        $departments_table = $this->db->prefixTable('departments');
+
         $projects_table = $this->db->prefixTable('projects');
         $users_table = $this->db->prefixTable('users');
         $invoices_table = $this->db->prefixTable('invoices');
@@ -28,12 +30,7 @@ class Clients_model extends Crud_model {
         $where = "";
         $id = $this->_get_clean_value($options, "id");
         if ($id) {
-            $where .= " AND $clients_table.id=$id";
-        }
-
-        $client_id = $this->_get_clean_value($options, "client_id");
-        if ($client_id) {
-            $where .= " AND $users_table.client_id like '$client_id'";
+            $where .= " AND $properties_table.id=$id";
         }
 
         $custom_field_type = "clients";
@@ -41,72 +38,63 @@ class Clients_model extends Crud_model {
         $leads_only = $this->_get_clean_value($options, "leads_only");
         if ($leads_only) {
             $custom_field_type = "leads";
-            $where .= " AND $clients_table.is_lead=1";
+            $where .= " AND $properties_table.is_lead=1";
         }
 
         $status = $this->_get_clean_value($options, "status");
         if ($status) {
-            $where .= " AND $clients_table.lead_status_id='$status'";
+            $where .= " AND $properties_table.lead_status_id='$status'";
         }
 
         $source = $this->_get_clean_value($options, "source");
         if ($source) {
-            $where .= " AND $clients_table.lead_source_id='$source'";
+            $where .= " AND $properties_table.lead_source_id='$source'";
         }
 
         $owner_id = $this->_get_clean_value($options, "owner_id");
         if ($owner_id) {
-            $where .= " AND $clients_table.owner_id=$owner_id";
+            $where .= " AND $properties_table.owner_id=$owner_id";
         }
 
         $created_by = $this->_get_clean_value($options, "created_by");
         if ($created_by) {
-            $where .= " AND $clients_table.created_by=$created_by";
+            $where .= " AND $properties_table.created_by=$created_by";
         }
 
         $show_own_clients_only_user_id = $this->_get_clean_value($options, "show_own_clients_only_user_id");
         if ($show_own_clients_only_user_id) {
-            $where .= " AND ($clients_table.created_by=$show_own_clients_only_user_id OR $clients_table.owner_id=$show_own_clients_only_user_id)";
+            $where .= " AND $properties_table.section_head_id=$show_own_clients_only_user_id";
         }
 
-        if (!$id && !$leads_only) {
-            //only clients
-            $where .= " AND $clients_table.is_lead=0";
-        }
-
-        $group_id = $this->_get_clean_value($options, "group_id");
-        if ($group_id) {
-            $where .= " AND FIND_IN_SET('$group_id', $clients_table.group_ids)";
-        }
 
         $quick_filter = $this->_get_clean_value($options, "quick_filter");
         if ($quick_filter) {
-            $where .= $this->make_quick_filter_query($quick_filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table);
+            $where .= $this->make_quick_filter_query($quick_filter, $properties_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table);
         }
 
         $start_date = $this->_get_clean_value($options, "start_date");
         if ($start_date) {
-            $where .= " AND DATE($clients_table.created_date)>='$start_date'";
+            $where .= " AND DATE($properties_table.created_date)>='$start_date'";
         }
         $end_date = $this->_get_clean_value($options, "end_date");
         if ($end_date) {
-            $where .= " AND DATE($clients_table.created_date)<='$end_date'";
+            $where .= " AND DATE($properties_table.created_date)<='$end_date'";
         }
 
         $label_id = $this->_get_clean_value($options, "label_id");
         if ($label_id) {
-            $where .= " AND (FIND_IN_SET('$label_id', $clients_table.labels)) ";
+            $where .= " AND (FIND_IN_SET('$label_id', $properties_table.labels)) ";
         }
 
         $select_labels_data_query = $this->get_labels_data_query();
 
         $client_groups = $this->_get_clean_value($options, "client_groups");
-        $where .= $this->prepare_allowed_client_groups_query($clients_table, $client_groups);
+        $where .= $this->prepare_allowed_client_groups_query($properties_table, $client_groups);
 
         //prepare custom fild binding query
         $custom_fields = get_array_value($options, "custom_fields");
         $custom_field_filter = get_array_value($options, "custom_field_filter");
-        $custom_field_query_info = $this->prepare_custom_field_query_string($custom_field_type, $custom_fields, $clients_table, $custom_field_filter);
+        $custom_field_query_info = $this->prepare_custom_field_query_string($custom_field_type, $custom_fields, $properties_table, $custom_field_filter);
         $select_custom_fieds = get_array_value($custom_field_query_info, "select_string");
         $join_custom_fieds = get_array_value($custom_field_query_info, "join_string");
         $custom_fields_where = get_array_value($custom_field_query_info, "where_string");
@@ -123,12 +111,17 @@ class Clients_model extends Crud_model {
 
 
         $available_order_by_list = array(
-            "id" => $clients_table . ".id",
-            "company_name" => $clients_table . ".company_name",
-            "created_date" => $clients_table . ".created_date",
-            "primary_contact" => $users_table . ".first_name",
+            "id" => $properties_table . ".id",
+            "nameSo" => $properties_table . ".nameSo",
+            "short_name_SO" => $properties_table . ".short_name_SO",
+            "nameEn" => $properties_table . ".nameEn",
+            "short_name_EN" => $properties_table . ".short_name_EN",
+            "email" => $properties_table . ".email",
+            "DepNameSo" => $departments_table . ".nameSo",
+            "SectionHead" => "CONCAT($users_table.first_name, ' ', $users_table.last_name)",
+            "secretary" => "CONCAT(sec.first_name,' ',sec.last_name)",
+            "remarks" => $properties_table . ".remarks",
             "status" => "lead_status_title",
-            "owner_name" => "owner_details.owner_name",
             "primary_contact" => "primary_contact",
             "client_groups" => "client_groups"
         );
@@ -149,41 +142,33 @@ class Clients_model extends Crud_model {
             $labels_table = $this->db->prefixTable("labels");
 
             $where .= " AND (";
-            $where .= " $clients_table.id LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $clients_table.company_name LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " $properties_table.id LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.nameSo LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.short_name_SO LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.nameEn LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.short_name_EN LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.email LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $departments_table.nameSo LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " OR CONCAT($users_table.first_name, ' ', $users_table.last_name) LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR (SELECT GROUP_CONCAT($labels_table.title, ', ') FROM $labels_table WHERE FIND_IN_SET($labels_table.id, $clients_table.labels)) LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR CONCAT(sec.first_name,' ',sec.last_name) LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.remarks LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR (SELECT GROUP_CONCAT($labels_table.title, ', ') FROM $labels_table WHERE FIND_IN_SET($labels_table.id, $properties_table.labels)) LIKE '%$search_by%' ESCAPE '!' ";
 
             if ($leads_only) {
-                $where .= " OR owner_details.owner_name LIKE '%$search_by%' ESCAPE '!' ";
                 $where .= " OR $lead_status_table.title LIKE '%$search_by%' ESCAPE '!' ";
-                $where .= $this->get_custom_field_search_query($clients_table, "leads", $search_by);
+                $where .= $this->get_custom_field_search_query($properties_table, "leads", $search_by);
             } else {
-                $where .= $this->get_custom_field_search_query($clients_table, "clients", $search_by);
+                $where .= $this->get_custom_field_search_query($properties_table, "clients", $search_by);
             }
 
             $where .= " )";
         }
 
 
-        $sql = "SELECT SQL_CALC_FOUND_ROWS $clients_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS primary_contact, $users_table.id AS primary_contact_id, $users_table.image AS contact_avatar,  project_table.total_projects, IFNULL(invoice_details.payment_received,0) AS payment_received $select_custom_fieds,
-                IFNULL(invoice_details.invoice_value,0) AS invoice_value,
-                (SELECT GROUP_CONCAT($client_groups_table.title) FROM $client_groups_table WHERE FIND_IN_SET($client_groups_table.id, $clients_table.group_ids)) AS client_groups, $lead_status_table.title AS lead_status_title,  $lead_status_table.color AS lead_status_color,
-                owner_details.owner_name, owner_details.owner_avatar, $select_labels_data_query
-        FROM $clients_table
-        LEFT JOIN $users_table ON $users_table.client_id = $clients_table.id AND $users_table.deleted=0 AND $users_table.is_primary_contact=1 
-        LEFT JOIN (SELECT client_id, COUNT(id) AS total_projects FROM $projects_table WHERE deleted=0 AND project_type='client_project' GROUP BY client_id) AS project_table ON project_table.client_id= $clients_table.id
-        
-        LEFT JOIN (SELECT client_id, SUM(payments_table.payment_received) as payment_received, SUM($invoices_table.invoice_total) AS invoice_value FROM $invoices_table
-                   LEFT JOIN (SELECT invoice_id, SUM(amount) AS payment_received FROM $invoice_payments_table WHERE deleted=0 GROUP BY invoice_id) AS payments_table ON payments_table.invoice_id=$invoices_table.id AND $invoices_table.deleted=0 AND $invoices_table.status='not_paid'
-                   WHERE $invoices_table.deleted=0 AND $invoices_table.status='not_paid'
-                   GROUP BY $invoices_table.client_id    
-                   ) AS invoice_details ON invoice_details.client_id= $clients_table.id 
-                       
-        LEFT JOIN $lead_status_table ON $clients_table.lead_status_id = $lead_status_table.id 
-        LEFT JOIN (SELECT $users_table.id, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS owner_name, $users_table.image AS owner_avatar FROM $users_table WHERE $users_table.deleted=0 AND $users_table.user_type='staff') AS owner_details ON owner_details.id=$clients_table.owner_id
+        $sql = "SELECT SQL_CALC_FOUND_ROWS $properties_table.*
+        FROM $properties_table
         $join_custom_fieds               
-        WHERE $clients_table.deleted=0 $where $custom_fields_where  
+        WHERE $properties_table.deleted=0 $where $custom_fields_where  
         $order $limit_offset";
 
         // print_r($sql);die;
@@ -449,28 +434,7 @@ class Clients_model extends Crud_model {
 
         $where = "";
 
-        $Users_model = model("App\Models\Users_model");
-        $login_user_id = $Users_model->login_user_id();
-        $user = $Users_model->get_access_info($login_user_id);
-
-        $Roles_model = model("App\Models\Roles_model");
-        
-        $r = $Roles_model->get_one($user->role_id);
-
-        if($user->is_admin){
-            $role = 'Admin';
-        }else{
-            $role = $r->title;
-        }
-
-        
         $show_own_clients_only_user_id = $this->_get_clean_value($options, "show_own_clients_only_user_id");
-        
-        if($user->user_type == 'client'){
-            $client_id = $user->client_id;
-            $where .= " AND $clients_table.id=$client_id";
-        }
-
         if ($show_own_clients_only_user_id) {
             $where .= " AND $clients_table.created_by=$show_own_clients_only_user_id";
         }

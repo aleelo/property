@@ -61,6 +61,18 @@ class Left_menu {
                 $sidebar_menu["clients"] = array("name" => "clients", "url" => "clients", "class" => "briefcase");
             }
 
+            if ($this->ci->login_user->is_admin || $access_client) {
+                $sidebar_menu["others"] = array("name" => "others", "url" => "", "class" => "send");
+            }
+
+            if ($this->ci->login_user->is_admin || $access_client) {
+                $sidebar_menu["properties"] = array("name" => "properties", "url" => "properties", "class" => "coffee");
+            }
+
+            if ($this->ci->login_user->is_admin || $access_client) {
+                $sidebar_menu["agreements"] = array("name" => "agreements", "url" => "agreements", "class" => "repeat");
+            }
+
         
             $sidebar_menu["archives"] = array("name" => "archives", "url" => "archives", "class" => "file-text");
             
@@ -117,33 +129,6 @@ class Left_menu {
             $show_expenses_menu = false;
 
             $sales_submenu = array();
-
-            // if (get_setting("module_invoice") == "1" && ($this->ci->login_user->is_admin || $access_invoice)) {
-            //     $sales_submenu[] = array("name" => "invoices", "url" => "invoices", "class" => "file-text");
-            // }
-
-            // if (get_setting("module_order") == "1" && ($this->ci->login_user->is_admin || $access_order)) {
-            //     $sales_submenu[] = array("name" => "orders_list", "url" => "orders", "class" => "truck");
-            //     $sales_submenu[] = array("name" => "store", "url" => "store", "class" => "list");
-            // }
-
-            // if (get_setting("module_invoice") == "1" && ($this->ci->login_user->is_admin || $access_invoice)) {
-            //     $sales_submenu[] = array("name" => "invoice_payments", "url" => "invoice_payments", "class" => "dollar-sign");
-            //     $show_payments_menu = true;
-            // }
-
-            // if ($access_items && (get_setting("module_invoice") == "1" || get_setting("module_estimate") == "1" )) {
-            //     $sales_submenu[] = array("name" => "items", "url" => "items", "class" => "list");
-            // }
-
-            // if (get_setting("module_contract") && ($this->ci->login_user->is_admin || $access_contract)) {
-            //     $sales_submenu[] = array("name" => "contracts", "url" => "contracts", "class" => "book-open");
-            // }
-
-            // if (count($sales_submenu)) {
-            //     $sidebar_menu["sales"] = array("name" => "sales", "class" => "shopping-cart", "submenu" => $sales_submenu);
-            // }
-
 
             $prospects_submenu = array();
 

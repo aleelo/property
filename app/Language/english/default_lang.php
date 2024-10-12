@@ -49,6 +49,27 @@ $lang["contact_person"] = "Contact Person";
 $lang["complete"] = "Complete";
 $lang["Complete"] = "Complete";
 
+$lang["others"] = "Others";
+
+// Properties
+$lang["properties"] = "Properties";
+$lang["title_deed_no"] = "Title Deed No";
+$lang["area"] = "Area";
+$lang["property_value"] = "Property Value";
+$lang["properties_list"] = "Property List";
+$lang["add_property"] = "Add Property";
+$lang["edit_property"] = "Edit Property";
+$lang["delete_property"] = "Delete Property";
+
+// Agreements
+$lang["agreement"] = "Agreement";
+$lang["agreements"] = "Agreements";
+$lang["agreement_list"] = "Agreement List";
+$lang["add_agreement"] = "Add Agreement";
+$lang["edit_agreement"] = "Edit Agreement";
+$lang["delete_agreement"] = "Delete Agreement";
+
+
 $lang["add_supplier"] = "Add Supplier";
 $lang["add_suppliers"] = "Add Suppliers";
 $lang["edit_supplier"] = "Edit Supplier";

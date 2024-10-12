@@ -47,6 +47,7 @@ class App_Controller extends Controller {
     public $Announcements_model;
     public $Messages_model;
     public $Clients_model;
+    public $Properties_model;
     public $Projects_model;
     public $Milestones_model;
     public $Task_status_model;
@@ -102,6 +103,8 @@ class App_Controller extends Controller {
     public $Project_status_model;
     public $Subscriptions_model;
     public $Subscription_items_model;
+    public $Agreements_model;
+    public $Properties_owner_log_model;
     
     public function __construct() {
         //main template to make frame of this app
@@ -175,6 +178,7 @@ class App_Controller extends Controller {
             'Announcements_model',
             'Messages_model',
             'Clients_model',
+            'Properties_model',
             'Projects_model',
             'Milestones_model',
             'Task_status_model',
@@ -229,7 +233,9 @@ class App_Controller extends Controller {
             'Checklist_groups_model',
             'Project_status_model',
             'Subscriptions_model',
-            'Subscription_items_model'
+            'Subscription_items_model',
+            'Agreements_model',
+            'Properties_owner_log_model',
         );
     }
 
