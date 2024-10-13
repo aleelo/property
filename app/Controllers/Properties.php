@@ -99,7 +99,7 @@ class Properties extends Security_Controller {
 
     function Regions(){
         $regions_of_somalia = array(
-            "Awdal", "Bakool", "Banaadir", "Bari", "Bay", "Galguduud", "Gedo", "Hiiraan", "Jubbada Dhexe", "Jubbada Hoose",
+            " - ","Awdal", "Bakool", "Banaadir", "Bari", "Bay", "Galguduud", "Gedo", "Hiiraan", "Jubbada Dhexe", "Jubbada Hoose",
             "Mudug", "Nugaal", "Sanaag", "Shabeellaha Dhexe", "Shabeellaha Hoose","Sool", "Togdheer", "Woqooyi Galbeed"
         );
         return $regions_of_somalia;
@@ -107,7 +107,7 @@ class Properties extends Security_Controller {
 
     function Districts(){
         $districts_of_somalia = array(
-            "Baki", "Borama", "Dilla", "Lughaya", "Saylac", "El Barde", "Hoddur", "Rabdhure", "Tayeeglow", "Wajid",
+            " - ","Baki", "Borama", "Dilla", "Lughaya", "Saylac", "El Barde", "Hoddur", "Rabdhure", "Tayeeglow", "Wajid",
             "Abdiaziz", "Bondhere", "Daynile", "Dharkenley", "Hamar Jabjab", "Hamar Weyne", "Hawl Wadaag", "Hodan", "Howlwadag", "Karaan",
             "Shangani", "Shibis", "Wadajir", "Wardhigley", "Yaaqshid", "Alula", "Bandarbeyla", "Bosaso", "Qandala", "Iskushuban",
             "Ufayn", "Baidoa", "Buurhakaba", "Diinsoor", "Qansahdhere", "Abudwak", "Adado", "El Bur", "El Dher", "Guriel",
