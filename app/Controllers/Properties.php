@@ -61,7 +61,9 @@ class Properties extends Security_Controller {
         $view_data['field_column'] = "col-md-9";
 
         $view_data['label_column_2'] = "col-md-2 text-right";
-        $view_data['field_column_2'] = "col-md-4";
+        $view_data['field_column_2'] = "col-md-3";
+
+        $view_data['field_column_4'] = "col-md-4";
 
         $view_data['field_column_3'] = "col-md-10";
 
@@ -69,6 +71,9 @@ class Properties extends Security_Controller {
         $view_data["ticket_id"] = $this->request->getPost('ticket_id'); //needed only when loading from the ticket's details view and created by unknown client
         $view_data['model_info'] = $this->Properties_model->get_one($Sections_id);
         $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();
+
+        $view_data['regions'] = $this->Regions();
+        $view_data['districts'] = $this->Districts();
 
         $view_data['departments'] = array("" => " -- Choose Section Department -- ") + $this->Departments_model->get_dropdown_list(array("nameSo"), "id");
         $view_data['owners'] = array("" => " -- choose owner -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
@@ -92,7 +97,28 @@ class Properties extends Security_Controller {
         return $this->template->view('properties/modal_form', $view_data);
     }
 
-   
+    function Regions(){
+        $regions_of_somalia = array(
+            "Awdal", "Bakool", "Banaadir", "Bari", "Bay", "Galguduud", "Gedo", "Hiiraan", "Jubbada Dhexe", "Jubbada Hoose",
+            "Mudug", "Nugaal", "Sanaag", "Shabeellaha Dhexe", "Shabeellaha Hoose","Sool", "Togdheer", "Woqooyi Galbeed"
+        );
+        return $regions_of_somalia;
+    }
+
+    function Districts(){
+        $districts_of_somalia = array(
+            "Baki", "Borama", "Dilla", "Lughaya", "Saylac", "El Barde", "Hoddur", "Rabdhure", "Tayeeglow", "Wajid",
+            "Abdiaziz", "Bondhere", "Daynile", "Dharkenley", "Hamar Jabjab", "Hamar Weyne", "Hawl Wadaag", "Hodan", "Howlwadag", "Karaan",
+            "Shangani", "Shibis", "Wadajir", "Wardhigley", "Yaaqshid", "Alula", "Bandarbeyla", "Bosaso", "Qandala", "Iskushuban",
+            "Ufayn", "Baidoa", "Buurhakaba", "Diinsoor", "Qansahdhere", "Abudwak", "Adado", "El Bur", "El Dher", "Guriel",
+            "Bardera", "Belet Hawo", "Bur Dubo", "El Wak", "Garbaharey", "Luuq", "Beledweyne", "Bulo Burde", "Jalalaqsi", "Mataban",
+            "Bu'aale", "Jilib", "Saakow", "Afmadow", "Badhaadhe", "Kismayo", "Jamame", "Gaalkacyo", "Galdogob", "Harardhere",
+            "Hobyo", "Jariban", "Burtinle", "Eyl", "Garowe", "Badhan", "Ceerigaabo", "Dhahar", "Laasqoray", "Adale",
+            "Bal'ad", "Jowhar", "Mahaday", "Afgooye", "Baraawe", "Kurtunwarey", "Marka", "Qoryooley", "Wanlaweyn", "Ainabo",
+            "Laas Anod", "Taleh", "Burao", "Oodweyne", "Berbera", "Gabiley", "Hargeisa"
+        );
+        return $districts_of_somalia;
+    }
 
     /* insert or update a client */
     
@@ -113,6 +139,8 @@ class Properties extends Security_Controller {
         $data = array(
             "titleDeedNo" => $this->request->getPost('title_deed_no'),
             "owner_id" => $this->request->getPost('owner_id'),
+            "region" => $this->request->getPost('region'),
+            "district" => $this->request->getPost('district'),
             "address" => $this->request->getPost('address'),
             "type" => $this->request->getPost('type'),
             "area" => $this->request->getPost('area'),

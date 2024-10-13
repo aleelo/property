@@ -48,6 +48,39 @@
     </div>
 </div>
 
+<!-----------------------------------------  Region & Disctrict ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        
+        <label for="region" class=" <?php echo $label_column; ?>"><?php echo 'Region'; ?></label>
+        <div class="<?php echo $field_column_2; ?>">
+            <?php
+            echo form_dropdown(array(
+                "id" => "region",
+                "name" => "region",
+                "class" => "form-control select2",
+                "placeholder" => 'Region',
+                "autocomplete" => "off"
+            ),$regions,[$model_info->region]);
+            ?>
+        </div>
+        
+        <label for="district" class=" <?php echo $label_column_2; ?>"><?php echo 'District'; ?></label>
+        <div class="<?php echo $field_column_4; ?>">
+            <?php
+            echo form_dropdown(array(
+                "id" => "district",
+                "name" => "district",
+                "class" => "form-control select2",
+                "placeholder" => 'Owner Property',
+                "autocomplete" => "off"
+            ),$districts,[$model_info->district]);
+            ?>
+        </div>
+    </div>
+</div>
+
 <!----------------------------------------- Address  ------------------------------------>
 
 
