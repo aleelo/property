@@ -167,18 +167,38 @@ class Agreements_model extends Crud_model {
             $where .= " )";
         }
 
+        // $sql = "SELECT SQL_CALC_FOUND_ROWS 
+        // $agreements_table.*, 
+        // $properties_table.titleDeedNo as titleDeedNo,
+        // GROUP_CONCAT(DISTINCT CONCAT(buyer.first_name, ' ', buyer.last_name) SEPARATOR '\\n') as buyer, 
+        // GROUP_CONCAT(DISTINCT CONCAT(seller.first_name, ' ', seller.last_name) SEPARATOR '\\n') as seller,
+        // GROUP_CONCAT(DISTINCT CONCAT(witnes.first_name, ' ', witnes.last_name) SEPARATOR '\\n') as witness, 
+        // $templates_table.name as template_name
+        // FROM $agreements_table
+        // LEFT JOIN $properties_table ON $properties_table.id = $agreements_table.property_id
+        // LEFT JOIN $users_table as buyer ON FIND_IN_SET(buyer.id, $agreements_table.buyer_ids)
+        // LEFT JOIN $users_table as seller ON FIND_IN_SET(seller.id, $agreements_table.seller_ids)
+        // LEFT JOIN $users_table as witnes ON FIND_IN_SET(witnes.id, $agreements_table.witness_ids)
+        // LEFT JOIN $templates_table ON $templates_table.id = $agreements_table.document_id
+        // $join_custom_fieds               
+        // WHERE $agreements_table.deleted=0 
+        // $where 
+        // $custom_fields_where  
+        // $order 
+        // $limit_offset";
+
         $sql = "SELECT SQL_CALC_FOUND_ROWS 
         $agreements_table.*, 
         $properties_table.titleDeedNo as titleDeedNo,
-        GROUP_CONCAT(DISTINCT CONCAT(buyer.first_name, ' ', buyer.last_name) SEPARATOR '\\n') as buyer, 
-        GROUP_CONCAT(DISTINCT CONCAT(seller.first_name, ' ', seller.last_name) SEPARATOR '\\n') as seller,
-        GROUP_CONCAT(DISTINCT CONCAT(witnes.first_name, ' ', witnes.last_name) SEPARATOR '\\n') as witness, 
+        CONCAT(buyer.first_name, ' ', buyer.last_name) as buyer, 
+        CONCAT(seller.first_name, ' ', seller.last_name) as seller,
+        CONCAT(witnes.first_name, ' ', witnes.last_name) as witness, 
         $templates_table.name as template_name
         FROM $agreements_table
         LEFT JOIN $properties_table ON $properties_table.id = $agreements_table.property_id
-        LEFT JOIN $users_table as buyer ON FIND_IN_SET(buyer.id, $agreements_table.buyer_ids)
-        LEFT JOIN $users_table as seller ON FIND_IN_SET(seller.id, $agreements_table.seller_ids)
-        LEFT JOIN $users_table as witnes ON FIND_IN_SET(witnes.id, $agreements_table.witness_ids)
+        LEFT JOIN $users_table as buyer ON buyer.id = $agreements_table.buyer_ids
+        LEFT JOIN $users_table as seller ON seller.id = $agreements_table.seller_ids
+        LEFT JOIN $users_table as witnes ON witnes.id = $agreements_table.witness_ids
         LEFT JOIN $templates_table ON $templates_table.id = $agreements_table.document_id
         $join_custom_fieds               
         WHERE $agreements_table.deleted=0 
@@ -191,57 +211,58 @@ class Agreements_model extends Crud_model {
 
         $raw_query = $this->db->query($sql);
 
-        $results = $raw_query->getResult();
-
-        // Process results to split buyer, seller, witness names into lists
-        foreach ($results as &$result) {
-            // Convert the concatenated buyer names into a list (array)
-            if (!empty($result->buyer)) {
-                $result->buyer_list = explode('<br>', $result->buyer); // Creates an array of buyers
-            } else {
-                $result->buyer_list = [];
-            }
-
-            // Convert the concatenated seller names into a list (array)
-            if (!empty($result->seller)) {
-                $result->seller_list = explode('<br>', $result->seller); // Creates an array of sellers
-            } else {
-                $result->seller_list = [];
-            }
-
-            // Convert the concatenated witness names into a list (array)
-            if (!empty($result->witness)) {
-                $result->witness_list = explode('<br>', $result->witness); // Creates an array of witnesses
-            } else {
-                $result->witness_list = [];
-            }
-        }
-
-        // Return or process the results
         $total_rows = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow();
 
-        if ($this->_get_clean_value($options, "limit")) {
+        if ($limit) {
             return array(
-                "data" => $results,
+                "data" => $raw_query->getResult(),
                 "recordsTotal" => $total_rows->found_rows,
                 "recordsFiltered" => $total_rows->found_rows,
             );
         } else {
-            return $results;
+            return $raw_query;
         }
-        
+        // $results = $raw_query->getResult();
 
+        // // Process results to split buyer, seller, witness names into lists
+        // foreach ($results as &$result) {
+        //     // Convert the concatenated buyer names into a list (array)
+        //     if (!empty($result->buyer)) {
+        //         $result->buyer_list = explode('<br>', $result->buyer); // Creates an array of buyers
+        //     } else {
+        //         $result->buyer_list = [];
+        //     }
+
+        //     // Convert the concatenated seller names into a list (array)
+        //     if (!empty($result->seller)) {
+        //         $result->seller_list = explode('<br>', $result->seller); // Creates an array of sellers
+        //     } else {
+        //         $result->seller_list = [];
+        //     }
+
+        //     // Convert the concatenated witness names into a list (array)
+        //     if (!empty($result->witness)) {
+        //         $result->witness_list = explode('<br>', $result->witness); // Creates an array of witnesses
+        //     } else {
+        //         $result->witness_list = [];
+        //     }
+        // }
+
+        // Return or process the results
         // $total_rows = $this->db->query("SELECT FOUND_ROWS() as found_rows")->getRow();
 
-        // if ($limit) {
+        // if ($this->_get_clean_value($options, "limit")) {
         //     return array(
-        //         "data" => $raw_query->getResult(),
+        //         "data" => $results,
         //         "recordsTotal" => $total_rows->found_rows,
         //         "recordsFiltered" => $total_rows->found_rows,
         //     );
         // } else {
-        //     return $raw_query;
+        //     return $results;
         // }
+        
+
+      
     }
 
     private function make_quick_filter_query($filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table) {

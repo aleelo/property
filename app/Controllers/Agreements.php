@@ -186,9 +186,9 @@ class Agreements extends Security_Controller {
                     
                 $options = array('id'=>$save_id);
 
-                $partner = $this->Agreements_model->get_details($options)->getRow();
+                $agreement = $this->Agreements_model->get_details($options)->getRow();
 
-                $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $partner?->created_by")->getRow();
+                $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $agreement?->created_by")->getRow();
 
             }
 
@@ -274,6 +274,17 @@ class Agreements extends Security_Controller {
         );
         $data = $this->Agreements_model->get_details($options)->getRow();
         return $this->_make_row($data, $custom_fields);
+       // Fetch the data
+        // $data = $this->Agreements_model->get_details($options);
+        
+        // // Check if data is an array, get the first row
+        // if (is_array($data) && !empty($data)) {
+        //     $data = $data[0]; // assuming you're dealing with the first row of data
+        // }
+
+        // // Return processed data
+        // return $this->_make_row($data, $custom_fields);
+
     }
 
     /* prepare a row of client list table */
@@ -284,10 +295,10 @@ class Agreements extends Security_Controller {
             $data->id,
             // anchor(get_uri("agreements/view/" . $data->id), $data->titleDeedNo),
             $data->notary_ref,
-            $data->buyer_list,
-            $data->seller_list,
+            $data->buyer,
+            $data->seller,
             $data->agreement_type,
-            $data->witness_list,
+            $data->witness,
             $data->amount,
             $data->payment_method,
             $data->template_name,
