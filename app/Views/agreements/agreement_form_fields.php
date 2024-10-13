@@ -10,7 +10,6 @@
         <label for="property" class=" <?php echo $label_column; ?>"><?php echo 'Property'; ?></label>
         <div class=" col-md-9">
             <?php
-            // $properties = [''=>' -- choose property -- ','Dhul Bannaan'=>'Dhul Bannaan','Dhul Dhisan'=>'Dhul Dhisan','Dhul Beereed'=>'Dhul Beereed'];
             echo form_dropdown(array(
                 "id" => "property",
                 "name" => "property",
@@ -28,7 +27,7 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="notary_ref" class="<?php echo $label_column; ?> company_name_section"><?php echo 'notary_ref'; ?></label>
+        <label for="notary_ref" class="<?php echo $label_column; ?> company_name_section"><?php echo 'Notary Ref'; ?></label>
         <div class="<?php echo $field_column; ?>">
             <?php
             echo form_input(array(
@@ -36,7 +35,7 @@
                 "name" => "notary_ref",
                 "value" => $model_info->notary_ref,
                 "class" => "form-control company_name_input_section",
-                "placeholder" => 'notary_ref',
+                "placeholder" => 'Notary Ref',
             ));
             ?>
         </div>
@@ -93,14 +92,14 @@
         <label for="agreement_type" class=" <?php echo $label_column; ?>"><?php echo 'Agreement Type'; ?></label>
         <div class=" col-md-9">
             <?php
-            $seller = [''=>' -- choose agreement type -- ','Sale'=>'Sale','Lease'=>'Lease','Transfer'=>'Transfer','Gift (Hibeyn)'=>'Gift (Hibeyn)'];
+            $agreement_type = [''=>' -- choose agreement type -- ','Sale'=>'Sale','Lease'=>'Lease','Transfer'=>'Transfer','Gift (Hibeyn)'=>'Gift (Hibeyn)'];
             echo form_dropdown(array(
                 "id" => "agreement_type",
                 "name" => "agreement_type",
                 "class" => "form-control select2",
                 "placeholder" => 'Agreement Type',
                 "autocomplete" => "off"
-            ),$seller,[$model_info->agreement_type]);
+            ),$agreement_type,[$model_info->agreement_type]);
             ?>
         </div>
     </div>
@@ -156,13 +155,13 @@
         <label for="payment_method" class="<?php echo $label_column; ?> company_name_section"><?php echo app_lang('payment_method'); ?></label>
         <div class="<?php echo $field_column; ?>">
             <?php
-            echo form_input(array(
-                "id" => "payment_method",
-                "name" => "payment_method",
-                "value" => $model_info->payment_method,
-                "class" => "form-control company_name_input_section",
-                "placeholder" => app_lang('payment_method'),
-            ));
+                echo form_dropdown(array(
+                    "id" => "payment_method",
+                    "name" => "payment_method",
+                    "class" => "form-control select2",
+                    "placeholder" => 'Payment Method',
+                    "autocomplete" => "off"
+                ),$payment_method,[$model_info->payment_method]);
             ?>
         </div>
     </div>

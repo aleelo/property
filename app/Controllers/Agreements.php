@@ -75,6 +75,8 @@ class Agreements extends Security_Controller {
         $view_data['ower_log_id'] = $owner_log_info->id;
         $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();
 
+        $view_data['payment_method'] = $this->payment_method();
+
         $view_data['notaries'] = array("" => " -- choose notary -- ") + $this->Clients_model->get_dropdown_list(array("company_name"), "id");
         $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo"), "id");
         $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
@@ -100,6 +102,25 @@ class Agreements extends Security_Controller {
 
         return $this->template->view('agreements/modal_form', $view_data);
     }
+
+    function payment_method(){
+        $payment_methods_somali = array(
+            "" => " - ",
+            "Lacag Caddaan" => "Cash",
+            "Kaarka Bangiga" => "Bank Card",
+            "E-Dahab" => "E-Dahab",
+            "Zaad" => "Zaad",
+            "Sahal" => "Sahal",
+            "Waa Xisaabi Bangi" => "Bank Transfer",
+            "Kaarka Deynta" => "Credit Card",
+            "Kaarka Debit" => "Debit Card",
+            "PayPal" => "PayPal",
+            "Mobile Money" => "Mobile Money"
+        );
+        return $payment_methods_somali;
+    }
+
+
 
    
 
