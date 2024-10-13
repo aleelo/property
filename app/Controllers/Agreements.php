@@ -120,33 +120,24 @@ class Agreements extends Security_Controller {
         return $payment_methods_somali;
     }
 
-
-
-   
-
-    /* insert or update a client */
-    
     function save() {
-        
         $agreement_id = $this->request->getPost('id');
-        $ower_log_id = $this->request->getPost('ower_log_id');
-        // $this->_validate_client_manage_access($agreement_id);
-        
-        /* Validation Imput */
+    
+        /* Validation Input */
         $this->validate_submitted_data(array(
             "id" => "numeric",
         ));
-
+    
         $target_path = get_setting("agreements_file_path");
         $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "agreements");
         $new_files = unserialize($files_data);
-
+    
         $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
         $seller_ids = $this->request->getPost('seller_ids') ? implode(',', $this->request->getPost('seller_ids')) : null;
         $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
-
+    
         $property_id = $this->request->getPost('property');
-
+    
         $data = array(
             "property_id" => $property_id,
             "notary_ref" => $this->request->getPost('notary_ref'),
@@ -158,74 +149,184 @@ class Agreements extends Security_Controller {
             "seller_ids" => $seller_ids,
             "witness_ids" => $witness_ids,
         );
-
+    
         if ($this->login_user->user_type === "staff") {
             $data["labels"] = $this->request->getPost('labels');
         }
-
-
+    
         if (!$agreement_id) {
             $data["created_at"] = get_current_utc_time();
         }
-
+    
         if ($this->login_user->is_admin || get_array_value($this->login_user->permissions, "client") === "all") {
             $data["created_by"] = $this->request->getPost('created_by') ? $this->request->getPost('created_by') : $this->login_user->id;
         } else if (!$agreement_id) {
             $data["created_by"] = $this->login_user->id;
         }
-
+    
         if ($agreement_id) {
             $property_info = $this->Agreements_model->get_one($agreement_id);
             $timeline_file_path = get_setting("agreements_file_path");
-
+    
             $new_files = update_saved_files($timeline_file_path, $property_info->files, $new_files);
         }
-
+    
         $data["files"] = serialize($new_files);
-
         $data = clean_data($data);
-
+    
         $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
-
+    
         $property_info = $this->Properties_model->get_one($property_id);
-
-        $owner_log_data = array(
-            "property_id" => $property_info->id,
-            "owner_id" => $property_info->owner_id,
-            "agreement_id" => $save_id,
-            "created_by" =>$this->request->getPost('created_by') ? $this->request->getPost('created_by') : $this->login_user->id,
-            "created_at" => get_current_utc_time(),
-        );
-
-        $owner_log_data = clean_data($owner_log_data);
-
-        $owner_log_save_id = $this->Properties_owner_log_model->ci_save($owner_log_data, $ower_log_id);
-
-        if ($save_id) {
-
-            if(!$agreement_id){
-                    
-                $options = array('id'=>$save_id);
-
-                $agreement = $this->Agreements_model->get_details($options)->getRow();
-
-                $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $agreement?->created_by")->getRow();
-
+    
+        if ($agreement_id) {
+            // Check if the log already exists
+            $existing_log = $this->Properties_owner_log_model->get_one_where(array("agreement_id" => $agreement_id));
+            // print_r($existing_log); die($agreement_id);
+    
+            if ($existing_log) {
+                // Update the existing log
+                $owner_log_data = array(
+                    "property_id" => $property_info->id,
+                    "owner_id" => $property_info->owner_id,
+                    "agreement_id" => $save_id,
+                );
+    
+                $this->Properties_owner_log_model->ci_save($owner_log_data, $existing_log->id);
+            } else {
+                // Create new Properties_owner_log entry
+                $owner_log_data = array(
+                    "property_id" => $property_info->id,
+                    "owner_id" => $property_info->owner_id,
+                    "agreement_id" => $save_id,
+                    "created_by" => $this->login_user->id,
+                    "created_at" => get_current_utc_time(),
+                );
+    
+                $this->Properties_owner_log_model->ci_save($owner_log_data);
             }
-
+        }
+    
+        if ($save_id) {
+            if (!$agreement_id) {
+                $options = array('id' => $save_id);
+                $agreement = $this->Agreements_model->get_details($options)->getRow();
+            }
+    
             save_custom_fields("clients", $save_id, $this->login_user->is_admin, $this->login_user->user_type);
-
+    
             $ticket_id = $this->request->getPost('ticket_id');
             if ($ticket_id) {
                 $ticket_data = array("agreement_id" => $save_id);
                 $this->Tickets_model->ci_save($ticket_data, $ticket_id);
             }
-
+    
             echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'view' => $this->request->getPost('view'), 'message' => app_lang('record_saved')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
     }
+    
+    /* insert or update a client */
+    
+    // function save() {
+        
+    //     $agreement_id = $this->request->getPost('id');
+    //     // $this->_validate_client_manage_access($agreement_id);
+        
+    //     /* Validation Imput */
+    //     $this->validate_submitted_data(array(
+    //         "id" => "numeric",
+    //     ));
+
+    //     $target_path = get_setting("agreements_file_path");
+    //     $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "agreements");
+    //     $new_files = unserialize($files_data);
+
+    //     $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
+    //     $seller_ids = $this->request->getPost('seller_ids') ? implode(',', $this->request->getPost('seller_ids')) : null;
+    //     $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
+
+    //     $property_id = $this->request->getPost('property');
+
+    //     $data = array(
+    //         "property_id" => $property_id,
+    //         "notary_ref" => $this->request->getPost('notary_ref'),
+    //         "document_id" => $this->request->getPost('document_id'),
+    //         "agreement_type" => $this->request->getPost('agreement_type'),
+    //         "amount" => $this->request->getPost('amount'),
+    //         "payment_method" => $this->request->getPost('payment_method'),
+    //         "buyer_ids" => $buyer_ids,
+    //         "seller_ids" => $seller_ids,
+    //         "witness_ids" => $witness_ids,
+    //     );
+
+    //     if ($this->login_user->user_type === "staff") {
+    //         $data["labels"] = $this->request->getPost('labels');
+    //     }
+
+
+    //     if (!$agreement_id) {
+    //         $data["created_at"] = get_current_utc_time();
+    //     }
+
+    //     if ($this->login_user->is_admin || get_array_value($this->login_user->permissions, "client") === "all") {
+    //         $data["created_by"] = $this->request->getPost('created_by') ? $this->request->getPost('created_by') : $this->login_user->id;
+    //     } else if (!$agreement_id) {
+    //         $data["created_by"] = $this->login_user->id;
+    //     }
+
+    //     if ($agreement_id) {
+    //         $property_info = $this->Agreements_model->get_one($agreement_id);
+    //         $timeline_file_path = get_setting("agreements_file_path");
+
+    //         $new_files = update_saved_files($timeline_file_path, $property_info->files, $new_files);
+    //     }
+
+    //     $data["files"] = serialize($new_files);
+
+    //     $data = clean_data($data);
+
+    //     $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
+
+    //     $property_info = $this->Properties_model->get_one($property_id);
+
+    //     $owner_log_data = array(
+    //         "property_id" => $property_info->id,
+    //         "owner_id" => $property_info->owner_id,
+    //         "agreement_id" => $save_id,
+    //         "created_by" =>$this->request->getPost('created_by') ? $this->request->getPost('created_by') : $this->login_user->id,
+    //         "created_at" => get_current_utc_time(),
+    //     );
+
+    //     $owner_log_data = clean_data($owner_log_data);
+
+    //     $owner_log_save_id = $this->Properties_owner_log_model->ci_save($owner_log_data);
+
+    //     if ($save_id) {
+
+    //         if(!$agreement_id){
+                    
+    //             $options = array('id'=>$save_id);
+
+    //             $agreement = $this->Agreements_model->get_details($options)->getRow();
+
+    //             $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $agreement?->created_by")->getRow();
+
+    //         }
+
+    //         save_custom_fields("clients", $save_id, $this->login_user->is_admin, $this->login_user->user_type);
+
+    //         $ticket_id = $this->request->getPost('ticket_id');
+    //         if ($ticket_id) {
+    //             $ticket_data = array("agreement_id" => $save_id);
+    //             $this->Tickets_model->ci_save($ticket_data, $ticket_id);
+    //         }
+
+    //         echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'view' => $this->request->getPost('view'), 'message' => app_lang('record_saved')));
+    //     } else {
+    //         echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+    //     }
+    // }
 
     /* delete or undo a client */
 
