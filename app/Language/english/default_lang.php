@@ -68,6 +68,12 @@ $lang["agreement_list"] = "Agreement List";
 $lang["add_agreement"] = "Add Agreement";
 $lang["edit_agreement"] = "Edit Agreement";
 $lang["delete_agreement"] = "Delete Agreement";
+$lang["buyer"] = "Buyer";
+$lang["seller"] = "Seller";
+$lang["witness"] = "Witness";
+$lang["agreement_details"] = "Agreement Details";
+$lang["agreement_type"] = "Agreement Type";
+$lang["signed"] = "Signed";
 
 
 $lang["add_supplier"] = "Add Supplier";

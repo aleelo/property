@@ -496,6 +496,7 @@ function update_status() {
             // "ref_number" => "required",
             "template" => "required",
         ));
+        
         $template_id = $this->request->getPost('template');
 
         // `document_title`,`created_by`, `ref_number`, `depertment`, `template`, `item_id`, `created_at`
@@ -554,6 +555,7 @@ function update_status() {
                     $msg = $data['error']['code'] . ', ' . $data['error']['message'];
                 }
 
+                // print_r($data['error']);
                 echo json_encode(array("success" => false, 'message' => app_lang('error_occurred') . ', ' . $msg));
                 exit;
 
@@ -681,11 +683,12 @@ function update_status() {
     {
 
         $fileContents = file_get_contents(APPPATH . 'Views/documents/' . $path); // Read the contents of the image file
+        $driveId = getenv('DRIVE_ID');
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://graph.microsoft.com/v1.0/drives/b!8MDhRyTZNU-uuvRbSUgUjcJUZG2EIXtMhNwacBvbWpuUVVst2_9nR6TKaoBmnYQq/root:/' . $data['folder'] . '/' . $path . ':/content',
+            CURLOPT_URL => "https://graph.microsoft.com/v1.0/drives/$driveId/root:/" . $data['folder'] . '/' . $path . ':/content',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
