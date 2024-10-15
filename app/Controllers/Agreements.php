@@ -167,8 +167,22 @@ class Agreements extends Security_Controller {
             $save_id = null;
             $webUrl = null;
 
+
             if (!$agreement_id) {
                 $save_id = $this->Agreements_model->ci_save($input);
+
+                $buyers_info = $this->db->query("SELECT concat(bu_s.first_name,' ',bu_s.last_name) as buyer, 
+                concat(se_u.first_name,' ',se_u.last_name) as seller, 
+                concat(wi_u.first_name,' ',wi_u.last_name) as witness 
+                FROM rise_users bu_s 
+                LEFT JOIN rise_agreements ag ON ag.buyer_ids = bu_s.id 
+                LEFT JOIN rise_users se_u ON se_u.id = ag.seller_ids 
+                LEFT JOIN rise_users wi_u ON wi_u.id = ag.witness_ids 
+                WHERE ag.id = $save_id")->getRow();
+
+                $input['buyer'] = $buyers_info->buyer;
+                $input['seller'] = $buyers_info->seller;
+                $input['witness'] = $buyers_info->witness;
 
                 $template = $this->Templates_model->get_one($template_id);
                 $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template_id");
@@ -255,9 +269,9 @@ class Agreements extends Security_Controller {
         $template->setValues([
 
             'ref' => $data['ref_number'],
-            'buyer' => $data['buyer_ids'],
-            'seller' => $data['seller_ids'],
-            'witness' => $data['witness_ids'],
+            'buyer' => $data['buyer'],
+            'seller' => $data['seller'],
+            'witness' => $data['witness'],
             'agreement_type' => $data['agreement_type'],
             'property' => $data['property_id'],
             'amount' => $data['amount'],
@@ -424,7 +438,7 @@ class Agreements extends Security_Controller {
 
     // private function _make_row($data, $custom_fields) {
 
-    //     $meta_info = $this->_prepare_leave_info($data);
+    //     $meta_info = $this->_prepare_agreement_info($data);
 
     //     $option_icon = "info";
     //     if ($data->status === "pending") {
@@ -459,6 +473,9 @@ class Agreements extends Security_Controller {
 
     private function _make_row($data, $custom_fields) {
 
+        $meta_info = $this->_prepare_agreement_info($data);
+
+
         $option_icon = "info";
         if ($data->status === "pending") {
             $option_icon = "cloud-lightning";
@@ -474,7 +491,8 @@ class Agreements extends Security_Controller {
             $data->amount,
             $data->payment_method,
             $data->template_name,
-            format_to_date($data->created_at, false), // Date formatting as used in the first function
+            $meta_info->status_meta,
+            // format_to_date($data->created_at, false), // Date formatting as used in the first function
         );
     
         // Handle custom fields
@@ -503,7 +521,7 @@ class Agreements extends Security_Controller {
     }
     
 
-    private function _prepare_leave_info($data) {
+    private function _prepare_agreement_info($data) {
         $style = '';
 
         if (isset($data->status)) {
