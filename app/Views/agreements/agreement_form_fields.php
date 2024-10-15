@@ -172,17 +172,17 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="document_id" class=" <?php echo $label_column; ?>"><?php echo 'Document'; ?></label>
+        <label for="template_id" class=" <?php echo $label_column; ?>"><?php echo 'Template'; ?></label>
         <div class=" col-md-9">
             <?php
             // $documents = [''=>' -- choose document -- ','Dhul Bannaan'=>'Dhul Bannaan','Dhul Dhisan'=>'Dhul Dhisan','Dhul Beereed'=>'Dhul Beereed'];
             echo form_dropdown(array(
-                "id" => "document_id",
-                "name" => "document_id",
+                "id" => "template_id",
+                "name" => "template_id",
                 "class" => "form-control select2",
-                "placeholder" => 'Document',
+                "placeholder" => 'Template',
                 "autocomplete" => "off"
-            ),$documents,[$model_info->document_id]);
+            ),$documents,[$model_info->template_id]);
             ?>
         </div>
     </div>

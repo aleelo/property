@@ -2,6 +2,12 @@
 
 namespace App\Controllers;
 
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Common\Version;
+use chillerlan\QRCode\Output\QROutputInterface;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
+
 class Agreements extends Security_Controller {
 
     function __construct() {
@@ -120,115 +126,217 @@ class Agreements extends Security_Controller {
         return $payment_methods_somali;
     }
 
-    function save() {
-        $agreement_id = $this->request->getPost('id');
+    public function save()
+        {
+            $agreement_id = $this->request->getPost('id');
+
+            /* Validation Input */
+            // $this->validate_submitted_data(array(
+            //     "id" => "numeric",
+            //     "template_id" => "required",
+            //     "agreement_type" => "required",
+            //     "amount" => "required|numeric",
+            //     "payment_method" => "required",
+            // ));
+
+            $template_id = $this->request->getPost('template_id');
+            $property_id = $this->request->getPost('property');
+
+            $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
+            $seller_ids = $this->request->getPost('seller_ids') ? implode(',', $this->request->getPost('seller_ids')) : null;
+            $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
+            
+            $input = array(
+                'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
+                "property_id" => $property_id,
+                "notary_ref" => $this->request->getPost('notary_ref'),
+                "template_id" => $template_id,
+                "agreement_type" => $this->request->getPost('agreement_type'),
+                "amount" => $this->request->getPost('amount'),
+                "payment_method" => $this->request->getPost('payment_method'),
+
+                "buyer_ids" => $buyer_ids,
+                "seller_ids" => $seller_ids,
+                "witness_ids" => $witness_ids,
+
+                "created_by" => $this->request->getPost('created_by') ?: $this->login_user->id,
+                "created_at" => date('Y-m-d'),
+            );
+
+            $input = clean_data($input);
+            $save_id = null;
+            $webUrl = null;
+
+            if (!$agreement_id) {
+                $save_id = $this->Agreements_model->ci_save($input);
+
+                $template = $this->Templates_model->get_one($template_id);
+                $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template_id");
+                $sqn = $this->db->query("SELECT lpad(max(sqn),4,0) as sqn FROM rise_templates where id = $template_id")->getRow()->sqn;
+                $template_name = $template->path;
+                $input['template'] = $template_name;
+                $input['id'] = $save_id;
+
+                //get agreement row
+                $options = array('id' => $save_id);
+                $ag = $this->Agreements_model->get_details($options)->getRow();
+                
+                $input['folder'] = $ag->folder;
+                $input['uuid'] = $ag->uuid;
+                $input['ref_number'] = $ag->ref_prefix . '/' . $sqn . '/' . date('m') . '/' . date('y');
+                $token = $this->AccesToken();
+
+                //create/save agreement document
+                $docPath = $this->createDoc($input);
+
+                //upload to sharepoint
+                $data = $this->uploadDoc($token, $input, $docPath);
+
+                if (isset($data['error'])) {
+                    $msg = $data['error']['code'] . ', ' . $data['error']['message'];
+                    echo json_encode(array("success" => false, 'message' => app_lang('error_occurred') . ', ' . $msg));
+                    exit;
+                } else {
+                    $webUrl = $data["webUrl"];
+                    $drive_ref = $data['parentReference'];
+                    $itemId = $data["id"];
+
+                    //update item id and web url
+                    $u_data = array('item_id' => $itemId, 'webUrl' => $webUrl, 'ref_number' => $input['ref_number'], 'drive_info' => @serialize($drive_ref));
+                    $this->Agreements_model->ci_save($u_data, $save_id);
+                }
+
+            } else {
+                $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
+                $seller_ids = $this->request->getPost('seller_ids') ? implode(',', $this->request->getPost('seller_ids')) : null;
+                $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
+                $input = array(
+                    "property_id" => $property_id,
+                    "notary_ref" => $this->request->getPost('notary_ref'),
+                    "agreement_type" => $this->request->getPost('agreement_type'),
+                    "amount" => $this->request->getPost('amount'),
+                    "payment_method" => $this->request->getPost('payment_method'),
+                    "buyer_ids" => $buyer_ids,
+                    "seller_ids" => $seller_ids,
+                    "witness_ids" => $witness_ids,
+                );
+
+                $ag = $this->Agreements_model->ci_save($input, $agreement_id);
+            }
+
+            if ($save_id || $agreement_id) {
+                log_notification("agreement_created", array("agreement_id" => $save_id), $this->login_user->id);
+                echo json_encode(array("success" => true, "data" => $this->_make_row($ag, null), 'webUrl' => $webUrl, 'id' => $save_id, 'message' => app_lang('record_saved')));
+            } else {
+                echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+            }
+        }
+
+
     
-        /* Validation Input */
-        $this->validate_submitted_data(array(
-            "id" => "numeric",
+    // Creates the Document Using the Provided Template
+    public function createDoc($data = array())
+    {
+
+        require_once ROOTPATH . 'vendor/autoload.php';
+
+        // Creating the new document...
+
+        $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'Views/agreements/documents/' . $data['template']);
+
+        $ext = pathinfo(APPPATH . 'Views/agreements/documents/' . $data['template'], PATHINFO_EXTENSION);
+        $save_as_name = $data['id'] . '_' . date('m') . '_' . date('Y') . '.' . $ext;
+
+        $path_absolute = APPPATH . 'Views/agreements/documents/' . $save_as_name;
+        // var_dump($data);
+        // var_dump($save_as_name);
+        // die();
+
+        $template->setValues([
+
+            'ref' => $data['ref_number'],
+            'buyer' => $data['buyer_ids'],
+            'seller' => $data['seller_ids'],
+            'witness' => $data['witness_ids'],
+            'agreement_type' => $data['agreement_type'],
+            'property' => $data['property_id'],
+            'amount' => $data['amount'],
+            'date' => date('F d, Y', strtotime($data['created_at'])),
+
+        ]);
+
+        $options = new QROptions([
+            'eccLevel' => EccLevel::H,
+            'outputBase64' => true,
+            'cachefile' => APPPATH . 'Views/agreements/documents/qrcode.png',
+            'outputType' => QROutputInterface::GDIMAGE_PNG,
+            'logoSpaceHeight' => 17,
+            'logoSpaceWidth' => 17,
+            'scale' => 20,
+            'version' => Version::AUTO,
+
+        ]);
+
+        //   $options->outputType = ;
+
+        $qrcode = (new QRCode($options))->render(get_uri('visitors_info/show_document_qrcode/' . $data['uuid'])); //->getQRMatrix(current_url())
+
+        // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
+
+        // // dump the output, with an additional logo
+        // $out = $qrOutputInterface->dump(APPPATH . 'Views/documents/qrcode.png', APPPATH . 'Views/documents/logo.png');
+
+        $template->setImageValue('qrcode',
+            [
+                'path' => APPPATH . 'Views/agreements/documents/qrcode.png',
+                'width' => '100',
+                'height' => '100',
+                'ratio' => false,
+            ]);
+
+        $template->saveAs($path_absolute);
+
+        return $save_as_name;
+
+    }
+
+    // Gets the created file and uploads it to the SharePoint Drive
+    public function uploadDoc($accessToken, $data, $path)
+    {
+
+        $fileContents = file_get_contents(APPPATH . 'Views/agreements/documents/' . $path); // Read the contents of the image file
+        $driveId = getenv('DRIVE_ID');
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://graph.microsoft.com/v1.0/drives/$driveId/root:/" . $data['folder'] . '/' . $path . ':/content',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_POSTFIELDS => $fileContents,
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $accessToken,
+            ),
         ));
 
-        $document_id = $this->request->getPost('document_id');
-    
-        $target_path = get_setting("agreements_file_path");
-        $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "agreements");
-        $new_files = unserialize($files_data);
-    
-        $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
-        $seller_ids = $this->request->getPost('seller_ids') ? implode(',', $this->request->getPost('seller_ids')) : null;
-        $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
-    
-        $property_id = $this->request->getPost('property');
-    
-        $input = array(
-            "property_id" => $property_id,
-            "notary_ref" => $this->request->getPost('notary_ref'),
-            "document_id" => $document_id,
-            "agreement_type" => $this->request->getPost('agreement_type'),
-            "amount" => $this->request->getPost('amount'),
-            "payment_method" => $this->request->getPost('payment_method'),
-            "buyer_ids" => $buyer_ids,
-            "seller_ids" => $seller_ids,
-            "witness_ids" => $witness_ids,
-        );
-    
-        if ($this->login_user->user_type === "staff") {
-            $input["labels"] = $this->request->getPost('labels');
-        }
-    
-        if (!$agreement_id) {
-            $input["created_at"] = get_current_utc_time();
-        }
-    
-        if ($this->login_user->is_admin || get_array_value($this->login_user->permissions, "client") === "all") {
-            $input["created_by"] = $this->request->getPost('created_by') ? $this->request->getPost('created_by') : $this->login_user->id;
-        } else if (!$agreement_id) {
-            $input["created_by"] = $this->login_user->id;
-        }
-    
-        if ($agreement_id) {
-            $property_info = $this->Agreements_model->get_one($agreement_id);
-            $timeline_file_path = get_setting("agreements_file_path");
-    
-            $new_files = update_saved_files($timeline_file_path, $property_info->files, $new_files);
-        }
-    
-        $input["files"] = serialize($new_files);
+        $json = curl_exec($curl);
 
-        $input = clean_data($input);
-        $save_id = null;
-        $webUrl = null;
-    
-        $save_id = $this->Agreements_model->ci_save($input, $agreement_id);
-    
-        $property_info = $this->Properties_model->get_one($property_id);
-    
-        if ($agreement_id) {
-            // Check if the log already exists
-            $existing_log = $this->Properties_owner_log_model->get_one_where(array("agreement_id" => $agreement_id));
-            // print_r($existing_log); die($agreement_id);
-    
-            if ($existing_log) {
-                // Update the existing log
-                $owner_log_data = array(
-                    "property_id" => $property_info->id,
-                    "owner_id" => $property_info->owner_id,
-                    "agreement_id" => $save_id,
-                );
-    
-                $this->Properties_owner_log_model->ci_save($owner_log_data, $existing_log->id);
-            } else {
-                // Create new Properties_owner_log entry
-                $owner_log_data = array(
-                    "property_id" => $property_info->id,
-                    "owner_id" => $property_info->owner_id,
-                    "agreement_id" => $save_id,
-                    "created_by" => $this->login_user->id,
-                    "created_at" => get_current_utc_time(),
-                );
-    
-                $this->Properties_owner_log_model->ci_save($owner_log_data);
-            }
+        curl_close($curl);
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($json, true);
+
+        if (file_exists(APPPATH . 'Views/agreements/documents/' . $path)) {
+            unlink(APPPATH . 'Views/agreements/documents/' . $path);
         }
-    
-        if ($save_id) {
-            if (!$agreement_id) {
-                $options = array('id' => $save_id);
-                $agreement = $this->Agreements_model->get_details($options)->getRow();
-            }
-    
-            save_custom_fields("clients", $save_id, $this->login_user->is_admin, $this->login_user->user_type);
-    
-            $ticket_id = $this->request->getPost('ticket_id');
-            if ($ticket_id) {
-                $ticket_data = array("agreement_id" => $save_id);
-                $this->Tickets_model->ci_save($ticket_data, $ticket_id);
-            }
-    
-            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'view' => $this->request->getPost('view'), 'message' => app_lang('record_saved')));
-        } else {
-            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
-        }
+
+        return $data;
+
     }
     
     /* delete or undo a client */
@@ -314,16 +422,50 @@ class Agreements extends Security_Controller {
 
     /* prepare a row of client list table */
 
+    // private function _make_row($data, $custom_fields) {
+
+    //     $meta_info = $this->_prepare_leave_info($data);
+
+    //     $option_icon = "info";
+    //     if ($data->status === "pending") {
+    //         $option_icon = "cloud-lightning";
+    //     }
+
+    //     $row_data = array(
+    //         $data->id,
+    //         // anchor(get_uri("agreements/view/" . $data->id), $data->titleDeedNo),
+    //         $data->notary_ref,
+    //         $data->buyer,
+    //         $data->seller,
+    //         $data->agreement_type,
+    //         $data->witness,
+    //         $data->amount,
+    //         $data->payment_method,
+    //         $data->template_name,
+    //         $meta_info->status_meta,
+    //     );
+
+    //     foreach ($custom_fields as $field) {
+    //         $cf_id = "cfv_" . $field->id;
+    //         $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
+    //     }
+
+    //     $row_data[] = modal_anchor(get_uri("agreements/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_agreement'), "data-post-id" => $data->id))
+    //             .modal_anchor(get_uri("agreements/agreement_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('agreement_details'), "data-post-id" => $data->id))
+    //             . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_agreement'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("agreements/delete"), "data-action" => "delete-confirmation"));
+
+    //     return $row_data;
+    // }
+
     private function _make_row($data, $custom_fields) {
 
         $option_icon = "info";
         if ($data->status === "pending") {
             $option_icon = "cloud-lightning";
         }
-
+        // Prepare the row data
         $row_data = array(
             $data->id,
-            // anchor(get_uri("agreements/view/" . $data->id), $data->titleDeedNo),
             $data->notary_ref,
             $data->buyer,
             $data->seller,
@@ -332,22 +474,117 @@ class Agreements extends Security_Controller {
             $data->amount,
             $data->payment_method,
             $data->template_name,
-            $data->status,
+            format_to_date($data->created_at, false), // Date formatting as used in the first function
         );
-
-        foreach ($custom_fields as $field) {
-            $cf_id = "cfv_" . $field->id;
-            $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
-        }
-
+    
+        // Handle custom fields
+        // foreach ($custom_fields as $field) {
+        //     $cf_id = "cfv_" . $field->id;
+        //     $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
+        // }
+    
+        // User role checks for approving documents or agreements
+        $role = $this->get_user_role();
+        $can_approve_documents = $role != 'Employee';
+    
+        // Option for document/agreement details and links
+        $document_details_link = modal_anchor(get_uri("agreements/agreement_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('agreement_details'), "data-post-id" => $data->id));
+    
+        // Open agreement document link
+        $link = "<a href='$data->webUrl' class='btn btn-success' target='_blank' title='Open Agreement' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i></a>";
+    
+        // Final row data with actions (edit, view details, delete)
         $row_data[] = modal_anchor(get_uri("agreements/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_agreement'), "data-post-id" => $data->id))
-                .modal_anchor(get_uri("agreements/agreement_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('agreement_details'), "data-post-id" => $data->id))
-                . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_agreement'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("agreements/delete"), "data-action" => "delete-confirmation"));
-
+            . $document_details_link
+            . $link
+            . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_agreement'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("agreements/delete"), "data-action" => "delete-confirmation"));
+    
         return $row_data;
     }
+    
 
+    private function _prepare_leave_info($data) {
+        $style = '';
 
+        if (isset($data->status)) {
+            if ($data->status === "pending") {
+                // $status_class = "bg-warning";
+                $status_class = "btn-dark";
+                $style = "background-color:#6690f4;";
+            } else if ($data->status === "completed") {
+                $status_class = "btn-dark";
+                $style = "background-color:#08976d;";
+            } else if ($data->status === "signed") {
+                $status_class = "btn-dark";
+                $style = "background-color:#6341c5;";
+            } else {
+                $status_class = "bg-dark";
+            }
+            $data->status_meta = "<span style='$style' class='badge $status_class'>" . app_lang($data->status) . "</span>";
+        }
+
+        if (isset($data->start_date)) {
+            $date = format_to_date($data->start_date, FALSE);
+            if ($data->start_date != $data->end_date) {
+                $date = sprintf(app_lang('start_date_to_end_date_format'), format_to_date($data->start_date, FALSE), format_to_date($data->end_date, FALSE));
+            }
+            $data->date_meta = $date;
+        }
+
+        // if ($data->total_days > 1) {
+        //     $duration = $data->total_days . " " . app_lang("days");
+        // } else {
+        //     $duration = $data->total_days . " " . app_lang("day");
+        // }
+
+        // if ($data->total_hours > 1) {
+        //     $duration = $duration . " (" . $data->total_hours . " " . app_lang("hours") . ")";
+        // } else {
+        //     $duration = $duration . " (" . $data->total_hours . " " . app_lang("hour") . ")";
+        // }
+        // $data->duration_meta = $duration;
+        // $data->leave_type_meta = "<span style='background-color:" . $data->leave_type_color . "' class='color-tag float-start'></span>" . $data->leave_type_title;
+        return $data;
+    }
+
+    public function AccesToken()
+    {
+        $appid = getenv('AZURE_APP_ID'); //"a70c275e-7713-46eb-8a09-6d5a7c3b823d";
+        $tennantid = getenv('AZURE_TENANT_ID'); //"695822cd-3aaa-446d-aac2-3ebb02854b8a";
+        $secret = getenv('AZURE_SECRET_ID'); //"e54c00ad-6cfd-4113-b46f-5a3de239d13b";
+        $env = getenv('ENVIRONMENT'); //ENVIRONMENT
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://login.microsoftonline.com/' . $tennantid . '/oauth2/v2.0/token?Content-Type=application%2Fx-www-form-urlencoded',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => 'client_id=' . $appid . '&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=' . $secret . '&grant_type=client_credentials',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/x-www-form-urlencoded',
+                'Cookie: fpc=AvtPK5Dz759HgjJgzmeSAChRGrKTAQAAAIgG3NwOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd',
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($response, true);
+        // var_dump($data);
+        // die();
+        // Get the web URL of the file from the array
+        $accessToken = get_array_value($data, "access_token");
+
+        curl_close($curl);
+        return $accessToken;
+
+    }
 
     private function can_view_files() {
         if ($this->login_user->user_type == "staff") {
@@ -383,41 +620,24 @@ class Agreements extends Security_Controller {
             show_404();
         }
 
-        // //checking the user permissiton to show/hide reject and approve button
-        // $can_manage_application = false;
-        // if ($this->access_type === "own_section" || $this->access_type === "all") {
-        //     $can_manage_application = true;
-        // } else if (array_search($info->created_by, $this->allowed_members) && $info->created_by !== $this->login_user->id) {
-        //     $can_manage_application = true;
-        // }
-
         $role = $this->get_user_role();
-        // $view_data['show_approve_reject'] = $role === 'admin' || $role === 'HRM' || $role === 'Director' || $role === 'Section Head'|| $role === 'Administrator';
-
-        // //has permission to manage the appliation? or is it own application?
-        // if (!$can_manage_application && $info->created_by !== $this->login_user->id) {
-        //     app_redirect("forbidden");
-        // }
-        
-        // status
         
         $style = '';
 
         if ($info->status === "pending") {
-            $status_class = "bg-warning";
-        } else if ($info->status === "approved") {
-            $status_class = "badge bg-success";//btn-success
-        } else if ($info->status === "active") {
-            $status_class = "btn-dark";//btn-success
-            $style = "background-color:#a7abbf;";
-        } else if ($info->status === "rejected") {
-            $status_class = "bg-danger";
+            $status_class = "btn-dark";
+            $style = "background-color:#6690f4;";
+        } else if ($info->status === "completed") {
+            $status_class = "btn-dark";
+            $style = "background-color:#08976d;";
+        } else if ($info->status === "signed") {
+            $status_class = "btn-dark";
+            $style = "background-color:#6341c5;";
         } else {
             $status_class = "bg-dark";
         }
         $info->status_meta = "<span style='$style' class='badge $status_class'>" . app_lang($info->status) . "</span>";
        
-
         $view_data['agreement_info'] = $info;
         $view_data['role']=$role;
         return $this->template->view("agreements/agreement_details", $view_data);
@@ -474,15 +694,23 @@ class Agreements extends Security_Controller {
         $status = $this->request->getPost('status');
         $now = get_current_utc_time();
 
+        // print_r($agreement_id); print_r($status); die;
+
         $role = $this->get_user_role();
  
         $data = array(
-            "checked_by" => $this->login_user->id,
-            "checked_at" => $now,
             "status" => $status
         );
 
-        $save_id = $this->Leave_applications_model->ci_save($data, $agreement_id);
+        if ($status === "signed") {
+            $data["signed_by"] = $this->login_user->id;
+            $data["signed_at"] = $now;
+        } else if ($status === "completed") {
+            $data["completed_by"] = $this->login_user->id;
+            $data["completed_at"] = $now;
+        }
+
+        $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
         if ($save_id) {
             
             $notification_options = array("leave_id" => $agreement_id, );

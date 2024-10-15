@@ -193,13 +193,13 @@ class Agreements_model extends Crud_model {
         CONCAT(buyer.first_name, ' ', buyer.last_name) as buyer, 
         CONCAT(seller.first_name, ' ', seller.last_name) as seller,
         CONCAT(witnes.first_name, ' ', witnes.last_name) as witness, 
-        $templates_table.name as template_name
+        $templates_table.name as template_name,$templates_table.destination_folder as folder,$templates_table.path,$templates_table.ref_prefix
         FROM $agreements_table
         LEFT JOIN $properties_table ON $properties_table.id = $agreements_table.property_id
         LEFT JOIN $users_table as buyer ON buyer.id = $agreements_table.buyer_ids
         LEFT JOIN $users_table as seller ON seller.id = $agreements_table.seller_ids
         LEFT JOIN $users_table as witnes ON witnes.id = $agreements_table.witness_ids
-        LEFT JOIN $templates_table ON $templates_table.id = $agreements_table.document_id
+        LEFT JOIN $templates_table ON $templates_table.id = $agreements_table.template_id
         $join_custom_fieds               
         WHERE $agreements_table.deleted=0 
         $where 

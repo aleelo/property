@@ -48,25 +48,14 @@
 
 <?php echo form_open(get_uri("agreements/update_status"), array("id" => "leave-status-form", "class" => "general-form", "role" => "form")); ?>
 <input type="hidden" name="id" value="<?php echo $agreement_info->id; ?>" />
-<input id="leave_status_input" type="hidden" name="status" value="" />
+<input id="agreement_status_input" type="hidden" name="status" value="" />
 
 <div class="modal-footer">
 
     <button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('close'); ?></button>
-
-    <!-- Reject, Verify & Approve -->
-
-    <?php if ($agreement_info->status === "active" || $agreement_info->status === "pending") { ?>
-
-        <?php if ($role === 'admin' || $role === 'HRM' || $role === 'Administrator') { ?>
-            <!-- <button data-status="pending" type="submit" class="btn btn-warning btn-sm update-leave-status text-white"><span data-feather="check-circle" class="icon-16"></span> <?php //echo app_lang('verify'); ?></button> -->
-            <button data-status="signed" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('signed'); ?></button>
+            <button data-status="signed" type="submit" class="btn btn-success btn-sm update-leave-status" style="background-color: #6341c5; border-color: #6341c5;"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('signed'); ?>
             <button data-status="completed" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('completed'); ?></button>
-        <?php }else if ($role == 'Director' ) { ?>
-            <button data-status="pending" type="submit" class="btn btn-warning btn-sm update-leave-status text-white"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('verify'); ?></button>
-        <?php }?>
-
-    <?php } ?>
+</button>
 
     </div>
     <?php echo form_close(); ?>
@@ -75,7 +64,7 @@
     $(document).ready(function () {
 
         $(".update-leave-status").click(function () {
-            $("#leave_status_input").val($(this).attr("data-status"));
+            $("#agreement_status_input").val($(this).attr("data-status"));
         });
 
         $("#leave-status-form").appForm({
