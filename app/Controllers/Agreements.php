@@ -183,6 +183,7 @@ class Agreements extends Security_Controller {
                 $input['buyer'] = $buyers_info->buyer;
                 $input['seller'] = $buyers_info->seller;
                 $input['witness'] = $buyers_info->witness;
+                // $input['witness'] = $buyers_info->witness;
 
                 $template = $this->Templates_model->get_one($template_id);
                 $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template_id");
