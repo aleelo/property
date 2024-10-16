@@ -492,6 +492,7 @@ class Agreements extends Security_Controller {
             $data->amount,
             $data->payment_method,
             $data->template_name,
+            $meta_info->created_at_meta,
             $meta_info->status_meta,
             // format_to_date($data->created_at, false), // Date formatting as used in the first function
         );
@@ -542,12 +543,9 @@ class Agreements extends Security_Controller {
             $data->status_meta = "<span style='$style' class='badge $status_class'>" . app_lang($data->status) . "</span>";
         }
 
-        if (isset($data->start_date)) {
-            $date = format_to_date($data->start_date, FALSE);
-            if ($data->start_date != $data->end_date) {
-                $date = sprintf(app_lang('start_date_to_end_date_format'), format_to_date($data->start_date, FALSE), format_to_date($data->end_date, FALSE));
-            }
-            $data->date_meta = $date;
+        if (isset($data->created_at)) {
+            $date = format_to_date($data->created_at, FALSE);
+            $data->created_at_meta = $date;
         }
 
         // if ($data->total_days > 1) {
@@ -656,6 +654,11 @@ class Agreements extends Security_Controller {
             $status_class = "bg-dark";
         }
         $info->status_meta = "<span style='$style' class='badge $status_class'>" . app_lang($info->status) . "</span>";
+
+        if (isset($info->created_at)) {
+            $created_at = format_to_date($info->created_at, FALSE);
+            $info->created_at_meta = $created_at;
+        }
        
         $view_data['agreement_info'] = $info;
         $view_data['role']=$role;

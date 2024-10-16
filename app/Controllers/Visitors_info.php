@@ -99,6 +99,11 @@ class Visitors_info extends App_Controller
         LEFT JOIN rise_users wi_u ON wi_u.id = ag.witness_ids 
         LEFT JOIN rise_properties p ON p.id = ag.property_id
         WHERE ag.uuid ='$id'");
+
+        if (isset($agr->created_at)) {
+            $created_at = format_to_date($agr->created_at, FALSE);
+            $agr->created_at_meta = $created_at;
+        }
     
         $view_data['agreement'] = $agr->getRow();
 

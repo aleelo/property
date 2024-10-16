@@ -10,7 +10,7 @@
                 </tr>
                 <tr>
                     <td> <?php echo app_lang('created_at'); ?></td>
-                    <td><?php echo date_format(new \DateTime($agreement_info->created_at),'d M Y'); ?></td>
+                    <td><?php echo $agreement_info->created_at_meta; ?></td>
                 </tr>
                 <tr>
                     <td> <?php echo app_lang('buyer'); ?></td>

@@ -53,6 +53,7 @@
             {title: "<?php echo "Amount" ?>", order_by: "amount"},
             {title: "<?php echo "Payment Method" ?>", order_by: "payment_method"},
             {title: "<?php echo "Template Name" ?>", order_by: "template_name"},
+            {title: "<?php echo "created_at" ?>", order_by: "created_at"},
             {title: "<?php echo "Status" ?>", order_by: "status"}
 
             
