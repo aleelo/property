@@ -7,7 +7,7 @@
 
     <div class=" d-flex justify-content-center">
         <div class="card col-md-5 col-xs-12 mt-3 shadow-lg">
-            <div class="card-title text-center"><h4 class="fw-bold">Document Information #<?php echo $document->id; ?></h4></div>
+            <div class="card-title text-center"><h4 class="fw-bold">Document Information #<?php echo $agreement->id; ?></h4></div>
                 
             <div class="modal-body">
                 <div class="row">
@@ -15,16 +15,28 @@
                     <div class="table-responsive mb15">
                         <table class="table dataTable display b-t">
                             <tr>
-                                <th class=""> <?php echo app_lang('document_title'); ?></th>
-                                <td><?php echo $document->document_title; ?></td>
+                                <th class=""> <?php echo 'Title Deed NO'; ?></th>
+                                <td><?php echo $agreement->titleDeedNo; ?></td>
                             </tr>
                             <tr>
-                                <th class=""> <?php echo app_lang('ref_number'); ?></th>
-                                <td><?php echo $document->ref_number; ?></td>
+                                <th class=""> <?php echo 'Buyer'; ?></th>
+                                <td><?php echo $agreement->buyer; ?></td>
+                            </tr>
+                            <tr>
+                                <th class=""> <?php echo 'Seller'; ?></th>
+                                <td><?php echo $agreement->seller; ?></td>
+                            </tr>
+                            <tr>
+                                <th class=""> <?php echo 'Witness'; ?></th>
+                                <td><?php echo $agreement->witness; ?></td>
+                            </tr>
+                            <tr>
+                                <th class=""> <?php echo 'Ref Number'; ?></th>
+                                <td><?php echo $agreement->ref_number; ?></td>
                             </tr>
                             <tr>
                                 <th class=""> <?php echo app_lang('created_at'); ?></th>
-                                <td><?php echo $document->created_at; ?></td>
+                                <td><?php echo $agreement->created_at; ?></td>
                             </tr>
                         </table>
                     </div>

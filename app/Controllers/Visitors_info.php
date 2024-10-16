@@ -90,13 +90,17 @@ class Visitors_info extends App_Controller
     
     /** show document QR CODE */
     public function show_agreement_qrcode($id=0){
-        
-        $doc = $this->db->query("select d.*,t.name as template,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d 
-        LEFT JOIN rise_users u on d.created_by = u.id 
-        LEFT JOIN rise_templates t on d.template = t.id 
-        where d.deleted=0 and d.uuid ='$id'");
+        $agr = $this->db->query("SELECT ag.*, p.titleDeedNo, concat(bu_s.first_name,' ',bu_s.last_name) as buyer, 
+        concat(se_u.first_name,' ',se_u.last_name) as seller, 
+        concat(wi_u.first_name,' ',wi_u.last_name) as witness 
+        FROM rise_users bu_s 
+        LEFT JOIN rise_agreements ag ON ag.buyer_ids = bu_s.id 
+        LEFT JOIN rise_users se_u ON se_u.id = ag.seller_ids 
+        LEFT JOIN rise_users wi_u ON wi_u.id = ag.witness_ids 
+        LEFT JOIN rise_properties p ON p.id = ag.property_id
+        WHERE ag.uuid ='$id'");
     
-        $view_data['document'] = $doc->getRow();
+        $view_data['agreement'] = $agr->getRow();
 
 
         return $this->template->view('agreements/documents/agreement_qr_code',$view_data);

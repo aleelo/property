@@ -294,7 +294,7 @@ class Agreements extends Security_Controller {
 
         //   $options->outputType = ;
 
-        $qrcode = (new QRCode($options))->render(get_uri('visitors_info/show_document_qrcode/' . $data['uuid'])); //->getQRMatrix(current_url())
+        $qrcode = (new QRCode($options))->render(get_uri('visitors_info/show_agreement_qrcode/' . $data['uuid'])); //->getQRMatrix(current_url())
 
         // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
 
