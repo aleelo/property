@@ -101,8 +101,8 @@ class Visitors_info extends App_Controller
         WHERE ag.uuid ='$id'");
 
         if (isset($agr->created_at)) {
-            $created_at = format_to_date($agr->created_at, FALSE);
-            $agr->created_at_meta = $created_at;
+            $cre_at = format_to_date($agr->created_at, FALSE);
+            $agr->created_at_meta = $cre_at;
         }
     
         $view_data['agreement'] = $agr->getRow();
