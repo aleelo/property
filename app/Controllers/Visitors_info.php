@@ -90,22 +90,27 @@ class Visitors_info extends App_Controller
     
     /** show document QR CODE */
     public function show_agreement_qrcode($id=0){
-        $agr = $this->db->query("SELECT ag.*, p.titleDeedNo, concat(bu_s.first_name,' ',bu_s.last_name) as buyer, 
-        concat(se_u.first_name,' ',se_u.last_name) as seller, 
-        concat(wi_u.first_name,' ',wi_u.last_name) as witness 
+        $agr = $this->db->query("SELECT ag.*, p.titleDeedNo, 
+        GROUP_CONCAT(DISTINCT concat(bu_s.first_name, ' ', bu_s.last_name) SEPARATOR ', ') as buyers, 
+        GROUP_CONCAT(DISTINCT concat(se_u.first_name, ' ', se_u.last_name) SEPARATOR ', ') as sellers, 
+        GROUP_CONCAT(DISTINCT concat(wi_u.first_name, ' ', wi_u.last_name) SEPARATOR ', ') as witnesses
         FROM rise_users bu_s 
-        LEFT JOIN rise_agreements ag ON ag.buyer_ids = bu_s.id 
-        LEFT JOIN rise_users se_u ON se_u.id = ag.seller_ids 
-        LEFT JOIN rise_users wi_u ON wi_u.id = ag.witness_ids 
+        LEFT JOIN rise_users bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
+        LEFT JOIN rise_users se_u ON FIND_IN_SET(se_u.id, ag.seller_ids)
+        LEFT JOIN rise_users wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
         LEFT JOIN rise_properties p ON p.id = ag.property_id
-        WHERE ag.uuid ='$id'");
+        WHERE ag.uuid ='$id'")->getRow();
+
+        $view_data['buyers'] = $this->format_names($agr->buyers);
+        $view_data['sellers'] = $this->format_names($agr->sellers);
+        $view_data['witnesses'] = $this->format_names($agr->witnesses);
 
         if (isset($agr->created_at)) {
             $cre_at = format_to_date($agr->created_at, FALSE);
             $view_data['created_at_meta'] = $cre_at;
         }
     
-        $view_data['agreement'] = $agr->getRow();
+        $view_data['agreement'] = $agr;
 
 
         return $this->template->view('agreements/documents/agreement_qr_code',$view_data);
@@ -146,6 +151,20 @@ class Visitors_info extends App_Controller
         
         $view_data['model_info'] = $model_info;
         return $this->template->view('cardholders/employee_qr_code',$view_data);
+    }
+
+    private function format_names($names) {
+        $names_array = explode(',', $names);
+        $total_names = count($names_array);
+        
+        if ($total_names == 2) {
+            return $names_array[0] . " and " . $names_array[1];
+        } else if ($total_names > 2) {
+            $last_name = array_pop($names_array);
+            return implode(', ', $names_array) . " and " . $last_name;
+        }
+    
+        return $names; // If only one name, just return it
     }
 
     function confirm_dispense() {

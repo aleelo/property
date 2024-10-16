@@ -20,15 +20,15 @@
                             </tr>
                             <tr>
                                 <th class=""> <?php echo 'Buyer'; ?></th>
-                                <td><?php echo $agreement->buyer; ?></td>
+                                <td><?php echo $buyers; ?></td>
                             </tr>
                             <tr>
                                 <th class=""> <?php echo 'Seller'; ?></th>
-                                <td><?php echo $agreement->seller; ?></td>
+                                <td><?php echo $sellers; ?></td>
                             </tr>
                             <tr>
                                 <th class=""> <?php echo 'Witness'; ?></th>
-                                <td><?php echo $agreement->witness; ?></td>
+                                <td><?php echo $witnesses; ?></td>
                             </tr>
                             <tr>
                                 <th class=""> <?php echo 'Ref Number'; ?></th>
