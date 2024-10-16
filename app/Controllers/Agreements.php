@@ -169,21 +169,22 @@ class Agreements extends Security_Controller {
 
 
             if (!$agreement_id) {
+                
                 $save_id = $this->Agreements_model->ci_save($input);
 
-                $buyers_info = $this->db->query("SELECT concat(bu_s.first_name,' ',bu_s.last_name) as buyer, 
-                concat(se_u.first_name,' ',se_u.last_name) as seller, 
-                concat(wi_u.first_name,' ',wi_u.last_name) as witness 
-                FROM rise_users bu_s 
-                LEFT JOIN rise_agreements ag ON ag.buyer_ids = bu_s.id 
-                LEFT JOIN rise_users se_u ON se_u.id = ag.seller_ids 
-                LEFT JOIN rise_users wi_u ON wi_u.id = ag.witness_ids 
+                $buyers_info = $this->db->query("SELECT 
+                GROUP_CONCAT(DISTINCT concat(bu_s.first_name, ' ', bu_s.last_name) SEPARATOR ', ') as buyers, 
+                GROUP_CONCAT(DISTINCT concat(se_u.first_name, ' ', se_u.last_name) SEPARATOR ', ') as sellers, 
+                GROUP_CONCAT(DISTINCT concat(wi_u.first_name, ' ', wi_u.last_name) SEPARATOR ', ') as witnesses
+                FROM rise_agreements ag 
+                LEFT JOIN rise_users bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
+                LEFT JOIN rise_users se_u ON FIND_IN_SET(se_u.id, ag.seller_ids)
+                LEFT JOIN rise_users wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
                 WHERE ag.id = $save_id")->getRow();
 
-                $input['buyer'] = $buyers_info->buyer;
-                $input['seller'] = $buyers_info->seller;
-                $input['witness'] = $buyers_info->witness;
-                // $input['witness'] = $buyers_info->witness;
+                $input['buyer'] = $buyers_info->buyers;
+                $input['seller'] = $buyers_info->sellers;
+                $input['witness'] = $buyers_info->witnesses;
 
                 $template = $this->Templates_model->get_one($template_id);
                 $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template_id");
@@ -246,6 +247,7 @@ class Agreements extends Security_Controller {
                 echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
             }
         }
+        
 
 
     
@@ -353,6 +355,21 @@ class Agreements extends Security_Controller {
         return $data;
 
     }
+
+    private function format_names($names) {
+        $names_array = explode(',', $names);
+        $total_names = count($names_array);
+        
+        if ($total_names == 2) {
+            return $names_array[0] . " and " . $names_array[1];
+        } else if ($total_names > 2) {
+            $last_name = array_pop($names_array);
+            return implode(', ', $names_array) . " and " . $last_name;
+        }
+    
+        return $names; // If only one name, just return it
+    }
+    
     
     /* delete or undo a client */
 
