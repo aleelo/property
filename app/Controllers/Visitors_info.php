@@ -102,7 +102,7 @@ class Visitors_info extends App_Controller
 
         if (isset($agr->created_at)) {
             $cre_at = format_to_date($agr->created_at, FALSE);
-            $agr->created_at_meta = $cre_at;
+            $view_data['created_at_meta'] = $cre_at;
         }
     
         $view_data['agreement'] = $agr->getRow();

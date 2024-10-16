@@ -36,7 +36,7 @@
                             </tr>
                             <tr>
                                 <th class=""> <?php echo app_lang('created_at'); ?></th>
-                                <td><?php echo $agreement->created_at_meta; ?></td>
+                                <td><?php echo $created_at_meta; ?></td>
                             </tr>
                         </table>
                     </div>
