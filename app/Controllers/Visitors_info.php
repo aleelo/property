@@ -94,7 +94,7 @@ class Visitors_info extends App_Controller
         GROUP_CONCAT(DISTINCT concat(bu_s.first_name, ' ', bu_s.last_name) SEPARATOR ', ') as buyers, 
         GROUP_CONCAT(DISTINCT concat(se_u.first_name, ' ', se_u.last_name) SEPARATOR ', ') as sellers, 
         GROUP_CONCAT(DISTINCT concat(wi_u.first_name, ' ', wi_u.last_name) SEPARATOR ', ') as witnesses
-        FROM rise_users bu_s 
+        FROM rise_agreements ag 
         LEFT JOIN rise_users bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
         LEFT JOIN rise_users se_u ON FIND_IN_SET(se_u.id, ag.seller_ids)
         LEFT JOIN rise_users wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
