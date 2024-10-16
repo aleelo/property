@@ -775,6 +775,13 @@ class Agreements extends Security_Controller {
                    $driveId = getenv('DRIVE_ID');
                    $accessToken = $this->AccesToken();
                    $imageArr = unserialize($user_info->signature);
+                //    if (is_array($imageArr) && isset($imageArr[0])) {
+                //     $signatureImageUrl = get_array_value($imageArr[0], 'file_name');
+                //     } else {
+                //         // Handle the case where $imageArr is not an array or doesn't have the expected structure
+                //         echo json_encode(array("success" => false, "message" => "Invalid signature data"));
+                //         die;
+                //     }
                    $signatureImageUrl = get_array_value($imageArr[0],'file_name');
                    //   print_r($imageArr);die;
 
