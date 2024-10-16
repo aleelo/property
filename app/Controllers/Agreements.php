@@ -85,10 +85,10 @@ class Agreements extends Security_Controller {
 
         $view_data['notaries'] = array("" => " -- choose notary -- ") + $this->Clients_model->get_dropdown_list(array("company_name"), "id");
         $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo"), "id");
-        $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name", "phone"), "id");
-        $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name", "phone"), "id");
+        $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name", "hyphen", "phone"), "id");
+        $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name", "hyphen", "phone"), "id");
         $view_data['documents'] = array("" => " -- choose document -- ") + $this->Templates_model->get_dropdown_list(array("name"), "id");
-        $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name", "phone"), "id");
+        $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name", "hyphen", "phone"), "id");
 
 
         // $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name"," ","last_name")), "id");
