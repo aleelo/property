@@ -73,6 +73,7 @@ class Visitors_info extends App_Controller
     }
 
     
+    
     /** show document QR CODE */
     public function show_document_qrcode($id=0){
         
@@ -86,7 +87,20 @@ class Visitors_info extends App_Controller
 
         return $this->template->view('documents/document_qr_code',$view_data);
     }
+    
+    /** show document QR CODE */
+    public function show_agreement_qrcode($id=0){
+        
+        $doc = $this->db->query("select d.*,t.name as template,t.destination_folder as folder,concat(u.first_name,' ',u.last_name) user from rise_documents d 
+        LEFT JOIN rise_users u on d.created_by = u.id 
+        LEFT JOIN rise_templates t on d.template = t.id 
+        where d.deleted=0 and d.uuid ='$id'");
+    
+        $view_data['document'] = $doc->getRow();
 
+
+        return $this->template->view('agreements/documents/agreement_qr_code',$view_data);
+    }
 
     public function show_leave_qrcode($id=0) {
         $leave_info = $this->db->query("SELECT t.title as leave_type,t.color,l.start_date,l.end_date,l.total_days as duration,l.id,l.uuid,CONCAT(a.first_name, ' ',a.last_name) as applicant_name ,e.job_title_so as job_title,
