@@ -145,7 +145,7 @@ class Agreements extends Security_Controller {
             $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
             $seller_ids = $this->request->getPost('seller_ids') ? implode(',', $this->request->getPost('seller_ids')) : null;
             $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
-            
+
             $input = array(
                 'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
                 "property_id" => $property_id,
@@ -169,22 +169,47 @@ class Agreements extends Security_Controller {
 
 
             if (!$agreement_id) {
-                
+
                 $save_id = $this->Agreements_model->ci_save($input);
 
+                // $buyers_info = $this->db->query("SELECT 
+                // p.titleDeedNo,
+                // GROUP_CONCAT(DISTINCT concat(bu_s.first_name, ' ', bu_s.last_name) SEPARATOR ', ') as buyers, 
+                // GROUP_CONCAT(DISTINCT concat(se_u.first_name, ' ', se_u.last_name) SEPARATOR ', ') as sellers, 
+                // GROUP_CONCAT(DISTINCT concat(wi_u.first_name, ' ', wi_u.last_name) SEPARATOR ', ') as witnesses
+                // FROM rise_agreements ag 
+                // LEFT JOIN rise_users bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
+                // LEFT JOIN rise_users se_u ON FIND_IN_SET(se_u.id, ag.seller_ids)
+                // LEFT JOIN rise_users wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
+                // LEFT JOIN rise_properties p ON p.id = ag.property_id
+                // WHERE ag.id = $save_id")->getRow();
+
+                // $input['buyer'] = $buyers_info->buyers;
+                // $input['seller'] = $buyers_info->sellers;
+                // $input['witness'] = $buyers_info->witnesses;
+                // $input['property'] = $titleDeedNo;
+
                 $buyers_info = $this->db->query("SELECT 
-                GROUP_CONCAT(DISTINCT concat(bu_s.first_name, ' ', bu_s.last_name) SEPARATOR ', ') as buyers, 
-                GROUP_CONCAT(DISTINCT concat(se_u.first_name, ' ', se_u.last_name) SEPARATOR ', ') as sellers, 
-                GROUP_CONCAT(DISTINCT concat(wi_u.first_name, ' ', wi_u.last_name) SEPARATOR ', ') as witnesses
+                p.titleDeedNo,
+                GROUP_CONCAT(DISTINCT (bu_s.id) SEPARATOR ', ') as buyer_ids, 
+                GROUP_CONCAT(DISTINCT (se_u.id) SEPARATOR ', ') as seller_ids, 
+                GROUP_CONCAT(DISTINCT (wi_u.id) SEPARATOR ', ') as witness_ids
                 FROM rise_agreements ag 
                 LEFT JOIN rise_users bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
                 LEFT JOIN rise_users se_u ON FIND_IN_SET(se_u.id, ag.seller_ids)
                 LEFT JOIN rise_users wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
+                LEFT JOIN rise_properties p ON p.id = ag.property_id
                 WHERE ag.id = $save_id")->getRow();
 
-                $input['buyer'] = $buyers_info->buyers;
-                $input['seller'] = $buyers_info->sellers;
-                $input['witness'] = $buyers_info->witnesses;
+                 // Function to format names as per the requirement
+                $buyers_formatted = $this->format_names($buyer_ids);
+                $sellers_formatted = $this->format_names($seller_ids);
+                $witnesses_formatted = $this->format_names($witness_ids);
+
+                $input['buyer'] = $buyers_formatted;
+                $input['seller'] = $sellers_formatted;
+                $input['witness'] = $witnesses_formatted;
+                $input['property'] = $buyers_info->titleDeedNo;
 
                 $template = $this->Templates_model->get_one($template_id);
                 $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template_id");
@@ -276,7 +301,8 @@ class Agreements extends Security_Controller {
             'seller' => $data['seller'],
             'witness' => $data['witness'],
             'agreement_type' => $data['agreement_type'],
-            'property' => $data['property_id'],
+            'payment_method' => $data['payment_method'],
+            'property' => $data['property'],
             'amount' => $data['amount'],
             'date' => date('F d, Y', strtotime($data['created_at'])),
 
