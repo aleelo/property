@@ -131,13 +131,13 @@ class Agreements extends Security_Controller {
             $agreement_id = $this->request->getPost('id');
 
             /* Validation Input */
-            // $this->validate_submitted_data(array(
-            //     "id" => "numeric",
-            //     "template_id" => "required",
-            //     "agreement_type" => "required",
-            //     "amount" => "required|numeric",
-            //     "payment_method" => "required",
-            // ));
+            $this->validate_submitted_data(array(
+                "id" => "numeric",
+                "template_id" => "required",
+                // "agreement_type" => "required",
+                // "amount" => "required|numeric",
+                // "payment_method" => "required",
+            ));
 
             $template_id = $this->request->getPost('template_id');
             $property_id = $this->request->getPost('property');
