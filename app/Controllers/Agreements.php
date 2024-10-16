@@ -112,14 +112,14 @@ class Agreements extends Security_Controller {
     function payment_method(){
         $payment_methods_somali = array(
             "" => " - ",
-            "Lacag Caddaan" => "Cash",
-            "Kaarka Bangiga" => "Bank Card",
+            "Cash" => "Cash",
+            "Bank Card" => "Bank Card",
             "E-Dahab" => "E-Dahab",
             "Zaad" => "Zaad",
             "Sahal" => "Sahal",
-            "Waa Xisaabi Bangi" => "Bank Transfer",
-            "Kaarka Deynta" => "Credit Card",
-            "Kaarka Debit" => "Debit Card",
+            "Bank Transfer" => "Bank Transfer",
+            "Credit Card" => "Credit Card",
+            "Debit Card" => "Debit Card",
             "PayPal" => "PayPal",
             "Mobile Money" => "Mobile Money"
         );
