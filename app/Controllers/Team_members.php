@@ -329,7 +329,7 @@ class Team_members extends Security_Controller {
         ));
         $user_id = $this->request->getPost('user_id');
        
-        $target_path = get_setting("images_file_path");
+        $target_path = get_setting("signature_file_path");
         $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "signature");
         $new_files = unserialize($files_data);
 
@@ -356,7 +356,7 @@ class Team_members extends Security_Controller {
         
         if ($user_id) {
             $user_j0b_info = $this->Users_model->get_details(['id' => $user_id])->getRow();
-            $images_file_path = get_setting("images_file_path");
+            $images_file_path = get_setting("signature_file_path");
             $new_files = update_saved_files($images_file_path, $user_j0b_info->signature, $new_files);
         }
 
