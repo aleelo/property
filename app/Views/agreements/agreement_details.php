@@ -41,24 +41,24 @@
                     <td><?php echo $agreement_info->status_meta; ?></td>
                 </tr>
                 <tr>
-                    <td> <?php echo 'Sign Now?'; ?></td>
+                    <td> <?php echo 'Sign From'; ?></td>
                     <td>
                     <?php
                         echo form_radio(array(
-                            "id" => "sign_now_no",
-                            "name" => "sign_now",
+                            "id" => "sign_from_system",
+                            "name" => "sign_from",
                             "class" => "form-check-input",
                                 ), "no", ($agreement_info->sign_now === "no") ? true : false, "class='form-check-input'");
                         ?>
-                        <label for="sign_now_yes" class="mr15 p0"><?php echo 'No'; ?></label> 
+                        <label for="sign_from_system" class="mr15 p0"><?php echo 'System'; ?></label> 
                         <?php
                         echo form_radio(array(
-                            "id" => "sign_now_yes",
-                            "name" => "sign_now",
+                            "id" => "sign_from_manual",
+                            "name" => "sign_from",
                             "class" => "form-check-input",
                                 ), "yes", ($agreement_info->sign_now === "yes") ? true : false, "class='form-check-input'");
                         ?>
-                        <label for="sign_now_yes" class="p0 mr15"><?php echo 'Yes'; ?></label>
+                        <label for="sign_from_manual" class="p0 mr15"><?php echo 'Manual'; ?></label>
                     </td>
                 </tr>
               
