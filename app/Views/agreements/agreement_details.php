@@ -40,27 +40,29 @@
                     <td> <?php echo app_lang('status'); ?></td>
                     <td><?php echo $agreement_info->status_meta; ?></td>
                 </tr>
-                <tr>
-                    <td> <?php echo 'Sign From'; ?></td>
-                    <td>
-                    <?php
-                        echo form_radio(array(
-                            "id" => "sign_from_system",
-                            "name" => "sign_from",
-                            "class" => "form-check-input",
-                                ), "no", ($agreement_info->sign_now === "no") ? true : false, "class='form-check-input'");
-                        ?>
-                        <label for="sign_from_system" class="mr15 p0"><?php echo 'System'; ?></label> 
-                        <?php
-                        echo form_radio(array(
-                            "id" => "sign_from_manual",
-                            "name" => "sign_from",
-                            "class" => "form-check-input",
-                                ), "yes", ($agreement_info->sign_now === "yes") ? true : false, "class='form-check-input'");
-                        ?>
-                        <label for="sign_from_manual" class="p0 mr15"><?php echo 'Manual'; ?></label>
-                    </td>
-                </tr>
+                <?php if ($agreement_info->status === 'pending') { ?>
+                    <tr>
+                        <td> <?php echo 'Sign From'; ?></td>
+                        <td>
+                            <?php
+                            echo form_radio(array(
+                                "id" => "sign_from_system",
+                                "name" => "sign_from",
+                                "class" => "form-check-input",
+                            ), "System", ($agreement_info->sign_from === "System") ? true : false, "class='form-check-input'");
+                            ?>
+                            <label for="sign_from_system" class="mr15 p0"><?php echo 'System'; ?></label> 
+                            <?php
+                            echo form_radio(array(
+                                "id" => "sign_from_manual",
+                                "name" => "sign_from",
+                                "class" => "form-check-input",
+                            ), "Manual", ($agreement_info->sign_from === "Manual") ? true : false, "class='form-check-input'");
+                            ?>
+                            <label for="sign_from_manual" class="p0 mr15"><?php echo 'Manual'; ?></label>
+                        </td>
+                    </tr>
+                <?php } ?>
               
             </table>
         </div>
@@ -74,8 +76,12 @@
 <div class="modal-footer">
 
     <button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('close'); ?></button>
-            <button data-status="signed" type="submit" class="btn btn-success btn-sm update-leave-status" style="background-color: #6341c5; border-color: #6341c5;"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('signed'); ?>
-            <button data-status="completed" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('completed'); ?></button>
+    <?php if ($agreement_info->status === 'pending') { ?>
+        <button data-status="signed" type="submit" class="btn btn-success btn-sm update-leave-status" style="background-color: #6341c5; border-color: #6341c5;"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('signed'); ?>
+    <?php } ?>
+    <?php if ($agreement_info->status === 'pending' || $agreement_info->status === 'signed') { ?>
+        <button data-status="completed" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('completed'); ?></button>
+    <?php } ?>
 </button>
 
     </div>
