@@ -112,18 +112,14 @@ class Properties_model extends Crud_model {
 
         $available_order_by_list = array(
             "id" => $properties_table . ".id",
-            "nameSo" => $properties_table . ".nameSo",
-            "short_name_SO" => $properties_table . ".short_name_SO",
-            "nameEn" => $properties_table . ".nameEn",
-            "short_name_EN" => $properties_table . ".short_name_EN",
-            "email" => $properties_table . ".email",
-            "DepNameSo" => $departments_table . ".nameSo",
-            "SectionHead" => "CONCAT($users_table.first_name, ' ', $users_table.last_name)",
-            "secretary" => "CONCAT(sec.first_name,' ',sec.last_name)",
-            "remarks" => $properties_table . ".remarks",
-            "status" => "lead_status_title",
-            "primary_contact" => "primary_contact",
-            "client_groups" => "client_groups"
+            "titleDeedNo" => $properties_table . ".titleDeedNo",
+            "owner_name" => "CONCAT($users_table.first_name, ' ', $users_table.last_name)",
+            "address" => "CONCAT($properties_table.region,' ',$properties_table.district,' ',$properties_table.address)",
+            "type" => $properties_table . ".type",
+            "area" => $properties_table . ".area",
+            "propertyValue" => $properties_table . ".propertyValue",
+            "created_at" => $properties_table . ".created_at",
+            "status" => $properties_table . ".status",
         );
 
         $order_by = get_array_value($available_order_by_list, $this->_get_clean_value($options, "order_by"));
@@ -143,15 +139,14 @@ class Properties_model extends Crud_model {
 
             $where .= " AND (";
             $where .= " $properties_table.id LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $properties_table.nameSo LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $properties_table.short_name_SO LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $properties_table.nameEn LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $properties_table.short_name_EN LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $properties_table.email LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $departments_table.nameSo LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR CONCAT($users_table.first_name, ' ', $users_table.last_name) LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR CONCAT(sec.first_name,' ',sec.last_name) LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $properties_table.remarks LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.titleDeedNo LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR CONCAT($users_table.first_name,' ',$users_table.last_name) LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR CONCAT($properties_table.region,' ',$properties_table.district,' ',$properties_table.address) LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.type LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.area LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.propertyValue LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.created_at LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.status LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " OR (SELECT GROUP_CONCAT($labels_table.title, ', ') FROM $labels_table WHERE FIND_IN_SET($labels_table.id, $properties_table.labels)) LIKE '%$search_by%' ESCAPE '!' ";
 
             if ($leads_only) {
@@ -165,8 +160,10 @@ class Properties_model extends Crud_model {
         }
 
 
-        $sql = "SELECT SQL_CALC_FOUND_ROWS $properties_table.*
+        $sql = "SELECT SQL_CALC_FOUND_ROWS $properties_table.*,
+        CONCAT($users_table.first_name, ' ', $users_table.last_name) as owner_name
         FROM $properties_table
+        LEFT JOIN $users_table ON $users_table.id = $properties_table.owner_id
         $join_custom_fieds               
         WHERE $properties_table.deleted=0 $where $custom_fields_where  
         $order $limit_offset";
