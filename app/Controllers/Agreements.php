@@ -134,10 +134,15 @@ class Agreements extends Security_Controller {
             /* Validation Input */
             $this->validate_submitted_data(array(
                 "id" => "numeric",
+                "property_id" => "required",
+                "notary_ref" => "required",
+                "buyer_ids" => "required",
+                "seller_ids" => "required",
+                "witness_ids" => "required",
+                "agreement_type" => "required",
+                "amount" => "required|numeric",
+                "payment_method" => "required",
                 "template_id" => "required",
-                // "agreement_type" => "required",
-                // "amount" => "required|numeric",
-                // "payment_method" => "required",
             ));
 
             $template_id = $this->request->getPost('template_id');
@@ -733,94 +738,151 @@ class Agreements extends Security_Controller {
 
         $this->validate_submitted_data(array(
             "id" => "required|numeric",
-            "status" => "required"
+            "status" => "required",
+            "sign_from" => "required"
         ));
 
         $agreement_id = $this->request->getPost('id');
         $status = $this->request->getPost('status');
+        $sign_from = $this->request->getPost('sign_from');
         $now = get_current_utc_time();
 
-        // print_r($agreement_id); print_r($status); die;
+        // print_r($sign_from); die;
 
         $role = $this->get_user_role();
  
         $data = array(
-            "status" => $status
+            "status" => $status,
+            "sign_from" => $sign_from
         );
 
-        if ($status === "signed") {
-            $data["signed_by"] = $this->login_user->id;
-            $data["signed_at"] = $now;
-        } else if ($status === "completed") {
-            $data["completed_by"] = $this->login_user->id;
-            $data["completed_at"] = $now;
-        }
-
-        $login_user_id = $this->login_user->id;
-        
-        $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
-        
-        if ($save_id) {
-
-            $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.signature,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $login_user_id")->getRow();
-            
-            if ($status === "signed" ) {
-
-                   //get document row
-                   $ag = $this->db->query("SELECT ag.* FROM rise_agreements ag WHERE ag.id =$agreement_id")->getRow();
-
-                   // $drive_info = unserialize($doc->drive_info);
-                   $itemID = $ag->item_id;
-                   $siteId = getenv('SITE_ID');
-                   $driveId = getenv('DRIVE_ID');
-                   $accessToken = $this->AccesToken();
-                   $imageArr = unserialize($user_info->signature);
-                //    $signatureImageUrl = get_array_value($imageArr[0],'file_name');
-
-                   if (is_array($imageArr) && isset($imageArr[0])) {
-
-                    $signatureImageUrl = get_array_value($imageArr[0], 'file_name');
-
-                        if($signatureImageUrl){
-                            $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
-    
-                            if($resultArr['success'] == true) {
-                                $localFilePath = $resultArr['result'];
-                                $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
-                                $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
-                            
-                            }else{                
-                                
-                                $result = $resultArr['result'];
-                                echo json_encode(array("success" => false, "data" => null, 'message' => $result));
-                                die;
-                            }
-                        }
-                    } else {
-                        // Handle the case where $imageArr is not an array or doesn't have the expected structure
-                        echo json_encode(array("success" => false, "message" => "Invalid signature data"));
-                        die;
-                    }
+        if ($status === "Signed" ) {
                 
-                   //   print_r($imageArr);die;
+            if ($sign_from === 'System') {
 
-                //    if($signatureImageUrl){
-                //        $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
+                $login_user_id = $this->login_user->id;
+                $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.signature,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $login_user_id")->getRow();
 
-                //        if($resultArr['success'] == true) {
-                //            $localFilePath = $resultArr['result'];
-                //            $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
-                //            $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
+               //get document row
+               $ag = $this->db->query("SELECT ag.* FROM rise_agreements ag WHERE ag.id =$agreement_id")->getRow();
+
+               // $drive_info = unserialize($doc->drive_info);
+               $itemID = $ag->item_id;
+               $siteId = getenv('SITE_ID');
+               $driveId = getenv('DRIVE_ID');
+               $accessToken = $this->AccesToken();
+               $imageArr = unserialize($user_info->signature);
+            //    $signatureImageUrl = get_array_value($imageArr[0],'file_name');
+
+               if (is_array($imageArr) && isset($imageArr[0])) {
+
+                $signatureImageUrl = get_array_value($imageArr[0], 'file_name');
+
+                    if($signatureImageUrl){
+                        $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
+
+                        if($resultArr['success'] == true) {
+                            $localFilePath = $resultArr['result'];
+                            $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
+                            $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
+
+                            $data["signed_by"] = $this->login_user->id;
+                            $data["signed_at"] = $now;
+                            $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
+                        
+                        }else{                
+                            
+                            $result = $resultArr['result'];
+                            echo json_encode(array("success" => false, "data" => null, 'message' => $result));
+                            die;
+                        }
+                    }
+                } else {
+                    // Handle the case where $imageArr is not an array or doesn't have the expected structure
+                    echo json_encode(array("success" => false, "message" => "Invalid signature data"));
+                    die;
+                }
+            
+               //   print_r($imageArr);die;
+
+            //    if($signatureImageUrl){
+            //        $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
+
+            //        if($resultArr['success'] == true) {
+            //            $localFilePath = $resultArr['result'];
+            //            $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
+            //            $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
+                   
+            //        }else{                
                        
-                //        }else{                
-                           
-                //            $result = $resultArr['result'];
-                //            echo json_encode(array("success" => false, "data" => null, 'message' => $result));
-                //            die;
-                //        }
-                //    }
+            //            $result = $resultArr['result'];
+            //            echo json_encode(array("success" => false, "data" => null, 'message' => $result));
+            //            die;
+            //        }
+            //    }
+            } elseif ($sign_from === 'Manual') {
+            
+                $data["signed_by"] = $this->login_user->id;
+                $data["signed_at"] = $now;
+                $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
 
             }
+
+        } elseif ($status === "Completed" ) {
+
+            if ($sign_from === 'System') {
+
+                $login_user_id = $this->login_user->id;
+                $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.signature,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $login_user_id")->getRow();
+
+               //get document row
+               $ag = $this->db->query("SELECT ag.* FROM rise_agreements ag WHERE ag.id =$agreement_id")->getRow();
+
+               // $drive_info = unserialize($doc->drive_info);
+               $itemID = $ag->item_id;
+               $siteId = getenv('SITE_ID');
+               $driveId = getenv('DRIVE_ID');
+               $accessToken = $this->AccesToken();
+               $imageArr = unserialize($user_info->signature);
+            //    $signatureImageUrl = get_array_value($imageArr[0],'file_name');
+
+               if (is_array($imageArr) && isset($imageArr[0])) {
+
+                $signatureImageUrl = get_array_value($imageArr[0], 'file_name');
+
+                    if($signatureImageUrl){
+                        $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
+
+                        if($resultArr['success'] == true) {
+                            $localFilePath = $resultArr['result'];
+                            $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
+                            $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
+
+                            $data["completed_by"] = $this->login_user->id;
+                            $data["completed_at"] = $now;
+                            $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
+                        
+                        }else{                
+                            
+                            $result = $resultArr['result'];
+                            echo json_encode(array("success" => false, "data" => null, 'message' => $result));
+                            die;
+                        }
+                    }
+                } else {
+                    // Handle the case where $imageArr is not an array or doesn't have the expected structure
+                    echo json_encode(array("success" => false, "message" => "Invalid signature data"));
+                    die;
+                }
+
+            } elseif ($sign_from === 'Manual') {
+                $data["completed_by"] = $this->login_user->id;
+                $data["completed_at"] = $now;
+                $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
+            }
+        }
+
+        if ($save_id) {
             
             $notification_options = array("leave_id" => $agreement_id, );
                

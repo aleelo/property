@@ -15,7 +15,9 @@
                 "name" => "property",
                 "class" => "form-control select2",
                 "placeholder" => 'Property',
-                "autocomplete" => "off"
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
             ),$properties,[$model_info->property_id]);
             ?>
         </div>
@@ -36,6 +38,8 @@
                 "value" => $model_info->notary_ref,
                 "class" => "form-control company_name_input_section",
                 "placeholder" => 'Notary Ref',
+                'data-rule-required' => true,
+                'data-msg-required' =>   app_lang('field_required'),
             ));
             ?>
         </div>
@@ -57,6 +61,8 @@
                 "multiple" => "multiple",
                 "placeholder" => ' -- choose buyer -- ',
                 "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' =>   app_lang('field_required'),
             ),$buyers,$model_info->buyer_ids ? explode(',', $model_info->buyer_ids) : []); // Handle multiple values
             ?>
         </div>
@@ -78,28 +84,9 @@
                 "multiple" => "multiple",
                 "placeholder" => ' -- choose seller -- ',
                 "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' =>   app_lang('field_required'),
             ),$sellers,$model_info->seller_ids ? explode(',', $model_info->seller_ids) : []); // Handle multiple values
-            ?>
-        </div>
-    </div>
-</div>
-
-
-<!----------------------------------------- Agreement Type  ------------------------------------>
-
-<div class="form-group">
-    <div class="row">
-        <label for="agreement_type" class=" <?php echo $label_column; ?>"><?php echo 'Agreement Type'; ?></label>
-        <div class=" col-md-9">
-            <?php
-            $agreement_type = [''=>' -- choose agreement type -- ','Sale'=>'Sale','Lease'=>'Lease','Transfer'=>'Transfer','Gift (Hibeyn)'=>'Gift (Hibeyn)'];
-            echo form_dropdown(array(
-                "id" => "agreement_type",
-                "name" => "agreement_type",
-                "class" => "form-control select2",
-                "placeholder" => 'Agreement Type',
-                "autocomplete" => "off"
-            ),$agreement_type,[$model_info->agreement_type]);
             ?>
         </div>
     </div>
@@ -121,11 +108,38 @@
                 "multiple" => "multiple",
                 "placeholder" => ' -- choose seller -- ',
                 "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' =>   app_lang('field_required'),
             ),$witnesses,$model_info->witness_ids ? explode(',', $model_info->witness_ids) : []); // Handle multiple values
             ?>
         </div>
     </div>
 </div>
+
+
+<!----------------------------------------- Agreement Type  ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        <label for="agreement_type" class=" <?php echo $label_column; ?>"><?php echo 'Agreement Type'; ?></label>
+        <div class=" col-md-9">
+            <?php
+            $agreement_type = [''=>' -- choose agreement type -- ','Sale'=>'Sale','Lease'=>'Lease','Transfer'=>'Transfer','Gift (Hibeyn)'=>'Gift (Hibeyn)'];
+            echo form_dropdown(array(
+                "id" => "agreement_type",
+                "name" => "agreement_type",
+                "class" => "form-control select2",
+                "placeholder" => 'Agreement Type',
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' =>   app_lang('field_required'),
+            ),$agreement_type,[$model_info->agreement_type]);
+            ?>
+        </div>
+    </div>
+</div>
+
+
 
 <!----------------------------------------- Amount  ------------------------------------>
 
@@ -141,6 +155,8 @@
                 "value" => $model_info->amount,
                 "class" => "form-control company_name_input_section",
                 "placeholder" => app_lang('amount'),
+                'data-rule-required' => true,
+                'data-msg-required' =>   app_lang('field_required'),
             ));
             ?>
         </div>
@@ -160,7 +176,9 @@
                     "name" => "payment_method",
                     "class" => "form-control select2",
                     "placeholder" => 'Payment Method',
-                    "autocomplete" => "off"
+                    "autocomplete" => "off",
+                    'data-rule-required' => true,
+                    'data-msg-required' =>   app_lang('field_required'),
                 ),$payment_method,[$model_info->payment_method]);
             ?>
         </div>
@@ -181,7 +199,9 @@
                 "name" => "template_id",
                 "class" => "form-control select2",
                 "placeholder" => 'Template',
-                "autocomplete" => "off"
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' =>   app_lang('field_required'),
             ),$documents,[$model_info->template_id]);
             ?>
         </div>

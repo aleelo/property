@@ -40,7 +40,7 @@
                     <td> <?php echo app_lang('status'); ?></td>
                     <td><?php echo $agreement_info->status_meta; ?></td>
                 </tr>
-                <?php if ($agreement_info->status === 'pending') { ?>
+                <?php if ($agreement_info->status === 'pending' || $agreement_info->status === 'signed') { ?>
                     <tr>
                         <td> <?php echo 'Sign From'; ?></td>
                         <td>
@@ -71,34 +71,43 @@
 
 <?php echo form_open(get_uri("agreements/update_status"), array("id" => "leave-status-form", "class" => "general-form", "role" => "form")); ?>
 <input type="hidden" name="id" value="<?php echo $agreement_info->id; ?>" />
-<input id="agreement_status_input" type="hidden" name="status" value="" />
+<input type="hidden" name="status" id="agreement_status_input" value="" />
+<input type="hidden" name="sign_from" id="agreement_sign_from_input" value="" />
 
 <div class="modal-footer">
 
     <button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('close'); ?></button>
     <?php if ($agreement_info->status === 'pending') { ?>
-        <button data-status="signed" type="submit" class="btn btn-success btn-sm update-leave-status" style="background-color: #6341c5; border-color: #6341c5;"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('signed'); ?>
+        <button data-status="Signed" type="submit" class="btn btn-success btn-sm update-leave-status" style="background-color: #6341c5; border-color: #6341c5;"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('signed'); ?></button>
     <?php } ?>
     <?php if ($agreement_info->status === 'pending' || $agreement_info->status === 'signed') { ?>
-        <button data-status="completed" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('completed'); ?></button>
+        <button data-status="Completed" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('completed'); ?></button>
     <?php } ?>
-</button>
-
-    </div>
+</div>
     <?php echo form_close(); ?>
 
-<script type="text/javascript">
+    <script type="text/javascript">
     $(document).ready(function () {
-
+        // Update status when a button is clicked
         $(".update-leave-status").click(function () {
             $("#agreement_status_input").val($(this).attr("data-status"));
         });
 
+        // Update sign_from value based on selected radio button
+        $('input[name="sign_from"]').change(function () {
+            let selectedSignFrom = $('input[name="sign_from"]:checked').val();
+            $("#agreement_sign_from_input").val(selectedSignFrom);
+        });
+
+        // Initialize the form submission
         $("#leave-status-form").appForm({
             onSuccess: function () {
                 location.reload();
             }
         });
 
+        // Trigger setting the sign_from input when the page is ready (to ensure default selected value is captured)
+        let selectedSignFrom = $('input[name="sign_from"]:checked').val();
+        $("#agreement_sign_from_input").val(selectedSignFrom);
     });
-</script>    
+</script>
