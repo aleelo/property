@@ -276,6 +276,8 @@ class Properties extends Security_Controller {
 
     private function _make_row($data, $custom_fields) {
 
+        $meta_info = $this->_prepare_agreement_info($data);
+
         $row_data = array(
             $data->id,
             anchor(get_uri("properties/view/" . $data->id), $data->titleDeedNo),
@@ -283,8 +285,8 @@ class Properties extends Security_Controller {
             $data->type,
             $data->area,
             $data->propertyValue,
-            $data->created_at,
-            $data->status,
+            $meta_info->created_at_meta,
+            $meta_info->status_meta,
         );
 
         foreach ($custom_fields as $field) {
@@ -298,6 +300,32 @@ class Properties extends Security_Controller {
         return $row_data;
     }
 
+    private function _prepare_agreement_info($data) {
+        $style = '';
+
+        if (isset($data->status)) {
+            if ($data->status === "Registred") {
+                // $status_class = "bg-warning";
+                $status_class = "btn-dark";
+                $style = "background-color:#6690f4;";
+            } else if ($data->status === "Pending") {
+                $status_class = "btn-dark";
+                $style = "background-color:#ff9e08;";
+            } else if ($data->status === "Sold") {
+                $status_class = "btn-dark";
+                $style = "background-color:#08976d;";
+            } else {
+                $status_class = "bg-dark";
+            }
+            $data->status_meta = "<span style='$style' class='badge $status_class'>" . $data->status . "</span>";
+        }
+
+        if (isset($data->created_at)) {
+            $date = format_to_date($data->created_at, FALSE);
+            $data->created_at_meta = $date;
+        }
+        return $data;
+    }
 
 
     private function can_view_files() {

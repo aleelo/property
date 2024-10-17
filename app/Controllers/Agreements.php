@@ -468,43 +468,6 @@ class Agreements extends Security_Controller {
 
     }
 
-    /* prepare a row of client list table */
-
-    // private function _make_row($data, $custom_fields) {
-
-    //     $meta_info = $this->_prepare_agreement_info($data);
-
-    //     $option_icon = "info";
-    //     if ($data->status === "pending") {
-    //         $option_icon = "cloud-lightning";
-    //     }
-
-    //     $row_data = array(
-    //         $data->id,
-    //         // anchor(get_uri("agreements/view/" . $data->id), $data->titleDeedNo),
-    //         $data->notary_ref,
-    //         $data->buyer,
-    //         $data->seller,
-    //         $data->agreement_type,
-    //         $data->witness,
-    //         $data->amount,
-    //         $data->payment_method,
-    //         $data->template_name,
-    //         $meta_info->status_meta,
-    //     );
-
-    //     foreach ($custom_fields as $field) {
-    //         $cf_id = "cfv_" . $field->id;
-    //         $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
-    //     }
-
-    //     $row_data[] = modal_anchor(get_uri("agreements/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_agreement'), "data-post-id" => $data->id))
-    //             .modal_anchor(get_uri("agreements/agreement_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('agreement_details'), "data-post-id" => $data->id))
-    //             . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_agreement'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("agreements/delete"), "data-action" => "delete-confirmation"));
-
-    //     return $row_data;
-    // }
-
     private function _make_row($data, $custom_fields) {
 
         $meta_info = $this->_prepare_agreement_info($data);
@@ -530,13 +493,6 @@ class Agreements extends Security_Controller {
             $meta_info->status_meta,
             // format_to_date($data->created_at, false), // Date formatting as used in the first function
         );
-    
-        // Handle custom fields
-        // foreach ($custom_fields as $field) {
-        //     $cf_id = "cfv_" . $field->id;
-        //     $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
-        // }
-    
         // User role checks for approving documents or agreements
         $role = $this->get_user_role();
         $can_approve_documents = $role != 'Employee';
@@ -581,20 +537,6 @@ class Agreements extends Security_Controller {
             $date = format_to_date($data->created_at, FALSE);
             $data->created_at_meta = $date;
         }
-
-        // if ($data->total_days > 1) {
-        //     $duration = $data->total_days . " " . app_lang("days");
-        // } else {
-        //     $duration = $data->total_days . " " . app_lang("day");
-        // }
-
-        // if ($data->total_hours > 1) {
-        //     $duration = $duration . " (" . $data->total_hours . " " . app_lang("hours") . ")";
-        // } else {
-        //     $duration = $duration . " (" . $data->total_hours . " " . app_lang("hour") . ")";
-        // }
-        // $data->duration_meta = $duration;
-        // $data->leave_type_meta = "<span style='background-color:" . $data->leave_type_color . "' class='color-tag float-start'></span>" . $data->leave_type_title;
         return $data;
     }
 
