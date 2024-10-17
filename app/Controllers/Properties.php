@@ -99,24 +99,44 @@ class Properties extends Security_Controller {
 
     function Regions(){
         $regions_of_somalia = array(
-            ""," - ","Awdal", "Bakool", "Banaadir", "Bari", "Bay", "Galguduud", "Gedo", "Hiiraan", "Jubbada Dhexe", "Jubbada Hoose",
-            "Mudug", "Nugaal", "Sanaag", "Shabeellaha Dhexe", "Shabeellaha Hoose","Sool", "Togdheer", "Woqooyi Galbeed"
+            "Awdal" => "Awdal", "Bakool" => "Bakool", "Banaadir" => "Banaadir", "Bari" => "Bari", 
+            "Bay" => "Bay", "Galguduud" => "Galguduud", "Gedo" => "Gedo", "Hiiraan" => "Hiiraan", 
+            "Jubbada Dhexe" => "Jubbada Dhexe", "Jubbada Hoose" => "Jubbada Hoose",
+            "Mudug" => "Mudug", "Nugaal" => "Nugaal", "Sanaag" => "Sanaag", 
+            "Shabeellaha Dhexe" => "Shabeellaha Dhexe", "Shabeellaha Hoose" => "Shabeellaha Hoose", 
+            "Sool" => "Sool", "Togdheer" => "Togdheer", "Woqooyi Galbeed" => "Woqooyi Galbeed"
         );
+        
         return $regions_of_somalia;
     }
 
     function Districts(){
         $districts_of_somalia = array(
-            ""," - ","Baki", "Borama", "Dilla", "Lughaya", "Saylac", "El Barde", "Hoddur", "Rabdhure", "Tayeeglow", "Wajid",
-            "Abdiaziz", "Bondhere", "Daynile", "Dharkenley", "Hamar Jabjab", "Hamar Weyne", "Hawl Wadaag", "Hodan", "Howlwadag", "Karaan",
-            "Shangani", "Shibis", "Wadajir", "Wardhigley", "Yaaqshid", "Alula", "Bandarbeyla", "Bosaso", "Qandala", "Iskushuban",
-            "Ufayn", "Baidoa", "Buurhakaba", "Diinsoor", "Qansahdhere", "Abudwak", "Adado", "El Bur", "El Dher", "Guriel",
-            "Bardera", "Belet Hawo", "Bur Dubo", "El Wak", "Garbaharey", "Luuq", "Beledweyne", "Bulo Burde", "Jalalaqsi", "Mataban",
-            "Bu'aale", "Jilib", "Saakow", "Afmadow", "Badhaadhe", "Kismayo", "Jamame", "Gaalkacyo", "Galdogob", "Harardhere",
-            "Hobyo", "Jariban", "Burtinle", "Eyl", "Garowe", "Badhan", "Ceerigaabo", "Dhahar", "Laasqoray", "Adale",
-            "Bal'ad", "Jowhar", "Mahaday", "Afgooye", "Baraawe", "Kurtunwarey", "Marka", "Qoryooley", "Wanlaweyn", "Ainabo",
-            "Laas Anod", "Taleh", "Burao", "Oodweyne", "Berbera", "Gabiley", "Hargeisa"
+            "Baki" => "Baki", "Borama" => "Borama", "Dilla" => "Dilla", "Lughaya" => "Lughaya", 
+            "Saylac" => "Saylac", "El Barde" => "El Barde", "Hoddur" => "Hoddur", "Rabdhure" => "Rabdhure", 
+            "Tayeeglow" => "Tayeeglow", "Wajid" => "Wajid", "Abdiaziz" => "Abdiaziz", "Bondhere" => "Bondhere", 
+            "Daynile" => "Daynile", "Dharkenley" => "Dharkenley", "Hamar Jabjab" => "Hamar Jabjab", 
+            "Hamar Weyne" => "Hamar Weyne", "Hawl Wadaag" => "Hawl Wadaag", "Hodan" => "Hodan", 
+            "Howlwadag" => "Howlwadag", "Karaan" => "Karaan",
+            "Shangani" => "Shangani", "Shibis" => "Shibis", "Wadajir" => "Wadajir", "Wardhigley" => "Wardhigley", 
+            "Yaaqshid" => "Yaaqshid", "Alula" => "Alula", "Bandarbeyla" => "Bandarbeyla", "Bosaso" => "Bosaso", 
+            "Qandala" => "Qandala", "Iskushuban" => "Iskushuban", "Ufayn" => "Ufayn", "Baidoa" => "Baidoa", 
+            "Buurhakaba" => "Buurhakaba", "Diinsoor" => "Diinsoor", "Qansahdhere" => "Qansahdhere", 
+            "Abudwak" => "Abudwak", "Adado" => "Adado", "El Bur" => "El Bur", "El Dher" => "El Dher", "Guriel" => "Guriel",
+            "Bardera" => "Bardera", "Belet Hawo" => "Belet Hawo", "Bur Dubo" => "Bur Dubo", "El Wak" => "El Wak", 
+            "Garbaharey" => "Garbaharey", "Luuq" => "Luuq", "Beledweyne" => "Beledweyne", "Bulo Burde" => "Bulo Burde", 
+            "Jalalaqsi" => "Jalalaqsi", "Mataban" => "Mataban", "Bu'aale" => "Bu'aale", "Jilib" => "Jilib", 
+            "Saakow" => "Saakow", "Afmadow" => "Afmadow", "Badhaadhe" => "Badhaadhe", "Kismayo" => "Kismayo", 
+            "Jamame" => "Jamame", "Gaalkacyo" => "Gaalkacyo", "Galdogob" => "Galdogob", "Harardhere" => "Harardhere",
+            "Hobyo" => "Hobyo", "Jariban" => "Jariban", "Burtinle" => "Burtinle", "Eyl" => "Eyl", 
+            "Garowe" => "Garowe", "Badhan" => "Badhan", "Ceerigaabo" => "Ceerigaabo", "Dhahar" => "Dhahar", 
+            "Laasqoray" => "Laasqoray", "Adale" => "Adale", "Bal'ad" => "Bal'ad", "Jowhar" => "Jowhar", 
+            "Mahaday" => "Mahaday", "Afgooye" => "Afgooye", "Baraawe" => "Baraawe", "Kurtunwarey" => "Kurtunwarey", 
+            "Marka" => "Marka", "Qoryooley" => "Qoryooley", "Wanlaweyn" => "Wanlaweyn", "Ainabo" => "Ainabo",
+            "Laas Anod" => "Laas Anod", "Taleh" => "Taleh", "Burao" => "Burao", "Oodweyne" => "Oodweyne", 
+            "Berbera" => "Berbera", "Gabiley" => "Gabiley", "Hargeisa" => "Hargeisa"
         );
+        
         return $districts_of_somalia;
     }
 
@@ -281,7 +301,7 @@ class Properties extends Security_Controller {
         $row_data = array(
             $data->id,
             anchor(get_uri("properties/view/" . $data->id), $data->titleDeedNo),
-            $data->address,
+            $meta_info->address_meta,
             $data->type,
             $data->area,
             $data->propertyValue,
@@ -301,6 +321,9 @@ class Properties extends Security_Controller {
     }
 
     private function _prepare_agreement_info($data) {
+
+        $data->address_meta = $data->address.", ".$data->district.", ".$data->region.".";
+
         $style = '';
 
         if (isset($data->status)) {
