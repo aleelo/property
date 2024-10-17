@@ -188,6 +188,33 @@
     </div>
 </div>
 
+<!----------------------------------------- Sign Now ?  ------------------------------------>
+
+<div class="form-group">
+                <div class="row">
+                    <label for="sign_now_no" class="<?php echo $label_column; ?>"><?php echo 'Sign Now?'; ?></label>
+                    <div class=" col-md-9">
+                        <?php
+                        echo form_radio(array(
+                            "id" => "sign_now_no",
+                            "name" => "sign_now",
+                            "class" => "form-check-input",
+                                ), "no", ($model_info->sign_now === "no") ? true : false, "class='form-check-input'");
+                        ?>
+                        <label for="sign_now_yes" class="mr15 p0"><?php echo 'No'; ?></label> 
+                        <?php
+                        echo form_radio(array(
+                            "id" => "sign_now_yes",
+                            "name" => "sign_now",
+                            "class" => "form-check-input",
+                                ), "yes", ($model_info->sign_now === "yes") ? true : false, "class='form-check-input'");
+                        ?>
+                        <label for="sign_now_yes" class="p0 mr15"><?php echo 'Yes'; ?></label>
+                       
+                    </div>
+                </div>
+            </div>
+
 <!----------------------------------------- Files  ------------------------------------>
 
 <div class="form-group">

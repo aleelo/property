@@ -775,31 +775,52 @@ class Agreements extends Security_Controller {
                    $driveId = getenv('DRIVE_ID');
                    $accessToken = $this->AccesToken();
                    $imageArr = unserialize($user_info->signature);
-                   $signatureImageUrl = get_array_value($imageArr[0],'file_name');
+                //    $signatureImageUrl = get_array_value($imageArr[0],'file_name');
+
+                   if (is_array($imageArr) && isset($imageArr[0])) {
+
+                    $signatureImageUrl = get_array_value($imageArr[0], 'file_name');
+
+                        if($signatureImageUrl){
+                            $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
+    
+                            if($resultArr['success'] == true) {
+                                $localFilePath = $resultArr['result'];
+                                $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
+                                $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
+                            
+                            }else{                
+                                
+                                $result = $resultArr['result'];
+                                echo json_encode(array("success" => false, "data" => null, 'message' => $result));
+                                die;
+                            }
+                        }
+                    } else {
+                        // Handle the case where $imageArr is not an array or doesn't have the expected structure
+                        echo json_encode(array("success" => false, "message" => "Invalid signature data"));
+                        die;
+                    }
+                
                    //   print_r($imageArr);die;
 
-                   if($signatureImageUrl){
-                       $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
+                //    if($signatureImageUrl){
+                //        $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
 
-                       if($resultArr['success'] == true) {
-                           $localFilePath = $resultArr['result'];
-                           $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
-                           $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
+                //        if($resultArr['success'] == true) {
+                //            $localFilePath = $resultArr['result'];
+                //            $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
+                //            $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
                        
-                       }else{                
+                //        }else{                
                            
-                           $result = $resultArr['result'];
-                           echo json_encode(array("success" => false, "data" => null, 'message' => $result));
-                           die;
-                       }
-                   }
-                   
-                   // print_r($respose);
-                   // print_r($s);
-                   // die;
+                //            $result = $resultArr['result'];
+                //            echo json_encode(array("success" => false, "data" => null, 'message' => $result));
+                //            die;
+                //        }
+                //    }
 
-
-           }
+            }
             
             $notification_options = array("leave_id" => $agreement_id, );
                
