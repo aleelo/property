@@ -134,7 +134,7 @@ class Agreements extends Security_Controller {
             /* Validation Input */
             $this->validate_submitted_data(array(
                 "id" => "numeric",
-                "property_id" => "required",
+                "property" => "required",
                 "notary_ref" => "required",
                 "buyer_ids" => "required",
                 "seller_ids" => "required",
@@ -190,6 +190,9 @@ class Agreements extends Security_Controller {
                 LEFT JOIN rise_properties p ON p.id = ag.property_id
                 WHERE ag.id = $save_id")->getRow();
 
+                $doctor = $this->login_user->first_name . ' ' . $this->login_user->last_name;
+
+                $input['doctor'] = $doctor;
                 $input['buyer'] = $this->format_names($buyers_info->buyers);
                 $input['seller'] = $this->format_names($buyers_info->sellers);
                 $input['witness'] = $this->format_names($buyers_info->witnesses);
@@ -290,6 +293,7 @@ class Agreements extends Security_Controller {
             'payment_method' => $data['payment_method'],
             'property' => $data['property'],
             'amount' => $data['amount'],
+            'doctor' => $data['doctor'],
             'date' => date('F d, Y', strtotime($data['created_at'])),
 
         ]);
