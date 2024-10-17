@@ -517,11 +517,12 @@ class Agreements extends Security_Controller {
         // Prepare the row data
         $row_data = array(
             $data->id,
+            $data->titleDeedNo,
             $data->notary_ref,
             $data->buyer,
             $data->seller,
-            $data->agreement_type,
             $data->witness,
+            $data->agreement_type,
             $data->amount,
             $data->payment_method,
             $data->template_name,
