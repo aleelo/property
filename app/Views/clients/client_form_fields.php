@@ -73,28 +73,64 @@
     </div>
 <?php } ?>
 
-<?php if ($login_user->is_admin || get_array_value($login_user->permissions, "client") === "all") { ?>
-    <div class="form-group">
-        <div class="row">
-            <label for="created_by" class="<?php echo $label_column; ?>"><?php echo app_lang('owner'); ?>
-                <span class="help" data-container="body" data-bs-toggle="tooltip" title="<?php echo app_lang('the_person_who_will_manage_this_client') ?>"><i data-feather="help-circle" class="icon-16"></i></span>
-            </label>
-            <div class="<?php echo $field_column; ?>">
-                <?php
-                echo form_input(array(
-                    "id" => "created_by",
-                    "name" => "created_by",
-                    "value" => $model_info->created_by ? $model_info->created_by : $login_user->id,
-                    "class" => "form-control",
-                    "placeholder" => app_lang('owner'),
-                    "data-rule-required" => true,
-                    "data-msg-required" => app_lang("field_required")
-                ));
-                ?>
-            </div>
+<!-----------------------------------------  Mother Name ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        <label for="mother_name" class="<?php echo $label_column; ?>"><?php echo 'Mother Name'; ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            echo form_input(array(
+                "id" => "mother_name",
+                "name" => "mother_name",
+                "value" => $model_info->city,
+                "class" => "form-control",
+                "placeholder" => 'Mother Name'
+            ));
+            ?>
         </div>
     </div>
-<?php } ?>
+</div>
+
+
+<!-----------------------------------------  Region & Disctrict ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        
+        <label for="region" class=" <?php echo $label_column; ?>"><?php echo 'Region'; ?></label>
+        <div class="<?php echo $field_column_2; ?>">
+            <?php
+            echo form_dropdown(array(
+                "id" => "region",
+                "name" => "region",
+                "class" => "form-control select2",
+                "placeholder" => 'Region',
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
+            ),$regions,[$model_info->region]);
+            ?>
+        </div>
+        
+        <label for="district" class=" <?php echo $label_column_2; ?>"><?php echo 'District'; ?></label>
+        <div class="<?php echo $field_column_4; ?>">
+            <?php
+            echo form_dropdown(array(
+                "id" => "district",
+                "name" => "district",
+                "class" => "form-control select2",
+                "placeholder" => 'Owner Property',
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
+            ),$districts,[$model_info->district]);
+            ?>
+        </div>
+    </div>
+</div>
+
+<!----------------------------------------- Address ------------------------------------>
 
 <div class="form-group">
     <div class="row">
@@ -113,70 +149,7 @@
         </div>
     </div>
 </div>
-<div class="form-group">
-    <div class="row">
-        <label for="city" class="<?php echo $label_column; ?>"><?php echo app_lang('city'); ?></label>
-        <div class="<?php echo $field_column; ?>">
-            <?php
-            echo form_input(array(
-                "id" => "city",
-                "name" => "city",
-                "value" => $model_info->city,
-                "class" => "form-control",
-                "placeholder" => app_lang('city')
-            ));
-            ?>
-        </div>
-    </div>
-</div>
-<div class="form-group">
-    <div class="row">
-        <label for="state" class="<?php echo $label_column; ?>"><?php echo app_lang('state'); ?></label>
-        <div class="<?php echo $field_column; ?>">
-            <?php
-            echo form_input(array(
-                "id" => "state",
-                "name" => "state",
-                "value" => $model_info->state,
-                "class" => "form-control",
-                "placeholder" => app_lang('state')
-            ));
-            ?>
-        </div>
-    </div>
-</div>
-<div class="form-group">
-    <div class="row">
-        <label for="zip" class="<?php echo $label_column; ?>"><?php echo app_lang('zip'); ?></label>
-        <div class="<?php echo $field_column; ?>">
-            <?php
-            echo form_input(array(
-                "id" => "zip",
-                "name" => "zip",
-                "value" => $model_info->zip,
-                "class" => "form-control",
-                "placeholder" => app_lang('zip')
-            ));
-            ?>
-        </div>
-    </div>
-</div>
-<div class="form-group">
-    <div class="row">
-        <label for="country" class="<?php echo $label_column; ?>"><?php echo app_lang('country'); ?></label>
-        <div class="<?php echo $field_column; ?>">
-            <?php
-            echo form_input(array(
-                "id" => "country",
-                "name" => "country",
-                "value" => $model_info->country,
-                "class" => "form-control",
-                "placeholder" => app_lang('country')
-            ));
-            ?>
-        </div>
-    </div>
-</div>
+
 <div class="form-group">
     <div class="row">
         <label for="phone" class="<?php echo $label_column; ?>"><?php echo app_lang('phone'); ?></label>
@@ -193,144 +166,71 @@
         </div>
     </div>
 </div>
+
+<!----------------------------------------- Gender ------------------------------------>
+
 <div class="form-group">
     <div class="row">
-        <label for="website" class="<?php echo $label_column; ?>"><?php echo app_lang('website'); ?></label>
-        <div class="<?php echo $field_column; ?>">
+        <label for="gender" class="<?php echo $label_column; ?>"><?php echo app_lang('gender'); ?></label>
+        <div class=" col-md-9">
+            <?php
+            echo form_radio(array(
+                "id" => "gender_male",
+                "name" => "gender",
+                "class" => "form-check-input",
+                    ), "male", ($model_info->gender === "male") ? true : false, "class='form-check-input'");
+            ?>
+            <label for="gender_male" class="mr15 p0"><?php echo app_lang('male'); ?></label> 
+            <?php
+            echo form_radio(array(
+                "id" => "gender_female",
+                "name" => "gender",
+                "class" => "form-check-input",
+                    ), "female", ($model_info->gender === "female") ? true : false, "class='form-check-input'");
+            ?>
+            <label for="gender_female" class="p0 mr15"><?php echo app_lang('female'); ?></label>
+            
+        </div>
+    </div>
+</div>
+
+<!----------------------------------------- Place of Birth ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        <label for="birth_place" class=" col-md-3"><?php echo 'Place of Birth'; ?></label>
+        <div class=" col-md-9">
             <?php
             echo form_input(array(
-                "id" => "website",
-                "name" => "website",
-                "value" => $model_info->website,
+                "id" => "birth_place",
+                "name" => "birth_place",
+                "value" => $model_info->birth_place,
                 "class" => "form-control",
-                "placeholder" => app_lang('website')
+                "placeholder" => 'Place of Birth'
             ));
             ?>
         </div>
     </div>
 </div>
+
+<!----------------------------------------- Date of Birth ------------------------------------>
+
 <div class="form-group">
     <div class="row">
-        <label for="vat_number" class="<?php echo $label_column; ?>"><?php echo app_lang('vat_number'); ?></label>
-        <div class="<?php echo $field_column; ?>">
+        <label for="birth_date" class=" col-md-3"><?php echo 'Date of Birth'; ?></label>
+        <div class=" col-md-9">
             <?php
             echo form_input(array(
-                "id" => "vat_number",
-                "name" => "vat_number",
-                "value" => $model_info->vat_number,
+                "id" => "birth_date",
+                "name" => "birth_date",
+                "value" => $model_info->birth_date,
                 "class" => "form-control",
-                "placeholder" => app_lang('vat_number')
+                "placeholder" => 'Date of Birth'
             ));
             ?>
         </div>
     </div>
 </div>
-<div class="form-group">
-    <div class="row">
-        <label for="gst_number" class="<?php echo $label_column; ?>"><?php echo app_lang('gst_number'); ?></label>
-        <div class="<?php echo $field_column; ?>">
-            <?php
-            echo form_input(array(
-                "id" => "gst_number",
-                "name" => "gst_number",
-                "value" => $model_info->gst_number,
-                "class" => "form-control",
-                "placeholder" => app_lang('gst_number')
-            ));
-            ?>
-        </div>
-    </div>
-</div>
-
-<?php if ($login_user->user_type === "staff") { ?>
-    <div class="form-group">
-        <div class="row">
-            <label for="groups" class="<?php echo $label_column; ?>"><?php echo app_lang('client_groups'); ?></label>
-            <div class="<?php echo $field_column; ?>">
-                <?php
-                echo form_input(array(
-                    "id" => "group_ids",
-                    "name" => "group_ids",
-                    "value" => $model_info->group_ids,
-                    "class" => "form-control",
-                    "placeholder" => app_lang('client_groups')
-                ));
-                ?>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-
-
-<?php if ($login_user->is_admin && get_setting("module_invoice")) { ?>
-    <div class="form-group">
-        <div class="row">
-            <label for="currency" class="<?php echo $label_column; ?>"><?php echo app_lang('currency'); ?></label>
-            <div class="<?php echo $field_column; ?>">
-                <?php
-                echo form_input(array(
-                    "id" => "currency",
-                    "name" => "currency",
-                    "value" => $model_info->currency,
-                    "class" => "form-control",
-                    "placeholder" => app_lang('keep_it_blank_to_use_default') . " (" . get_setting("default_currency") . ")"
-                ));
-                ?>
-            </div>
-        </div>
-    </div>    
-    <div class="form-group">
-        <div class="row">
-            <label for="currency_symbol" class="<?php echo $label_column; ?>"><?php echo app_lang('currency_symbol'); ?></label>
-            <div class="<?php echo $field_column; ?>">
-                <?php
-                echo form_input(array(
-                    "id" => "currency_symbol",
-                    "name" => "currency_symbol",
-                    "value" => $model_info->currency_symbol,
-                    "class" => "form-control",
-                    "placeholder" => app_lang('keep_it_blank_to_use_default') . " (" . get_setting("currency_symbol") . ")"
-                ));
-                ?>
-            </div>
-        </div>
-    </div>
-
-<?php } ?>
-<?php if ($login_user->user_type === "staff") { ?>
-    <div class="form-group">
-        <div class="row">
-            <label for="client_labels" class="<?php echo $label_column; ?>"><?php echo app_lang('labels'); ?></label>
-            <div class="<?php echo $field_column; ?>">
-                <?php
-                echo form_input(array(
-                    "id" => "client_labels",
-                    "name" => "labels",
-                    "value" => $model_info->labels,
-                    "class" => "form-control",
-                    "placeholder" => app_lang('labels')
-                ));
-                ?>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-<?php echo view("custom_fields/form/prepare_context_fields", array("custom_fields" => $custom_fields, "label_column" => $label_column, "field_column" => $field_column)); ?> 
-
-<?php if ($login_user->is_admin && get_setting("module_invoice")) { ?>
-    <div class="form-group">
-        <div class="row">
-            <label for="disable_online_payment" class="<?php echo $label_column; ?> col-xs-8 col-sm-6"><?php echo app_lang('disable_online_payment'); ?>
-                <span class="help" data-container="body" data-bs-toggle="tooltip" title="<?php echo app_lang('disable_online_payment_description') ?>"><i data-feather="help-circle" class="icon-16"></i></span>
-            </label>
-            <div class="<?php echo $field_column; ?> col-xs-4 col-sm-6">
-                <?php
-                echo form_checkbox("disable_online_payment", "1", $model_info->disable_online_payment ? true : false, "id='disable_online_payment' class='form-check-input'");
-                ?>                       
-            </div>
-        </div>
-    </div>
-<?php } ?>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -366,6 +266,9 @@
                 $(".company_name_input_section").attr("placeholder", "Company name");
             }
         });
+        $("#client-form .select2").select2();
+        setDatePicker("#birth_date");
+
 
     });
 </script>

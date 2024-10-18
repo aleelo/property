@@ -77,6 +77,13 @@ class Clients extends Security_Controller {
         $view_data['label_column'] = "col-md-3";
         $view_data['field_column'] = "col-md-9";
 
+        $view_data['label_column_2'] = "col-md-2 text-right";
+        $view_data['field_column_2'] = "col-md-3";
+
+        $view_data['field_column_4'] = "col-md-4";
+
+        $view_data['field_column_3'] = "col-md-10";
+
         $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loading from the client's details view
         $view_data["ticket_id"] = $this->request->getPost('ticket_id'); //needed only when loading from the ticket's details view and created by unknown client
         $view_data['model_info'] = $this->Clients_model->get_one($client_id);
@@ -84,6 +91,9 @@ class Clients extends Security_Controller {
 
         //prepare groups dropdown list
         $view_data['groups_dropdown'] = $this->_get_groups_dropdown_select2_data();
+
+        $view_data['regions'] = $this->Regions();
+        $view_data['districts'] = $this->Districts();
 
         $view_data["team_members_dropdown"] = $this->get_team_members_dropdown();
 
@@ -94,6 +104,50 @@ class Clients extends Security_Controller {
         $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $client_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
 
         return $this->template->view('clients/modal_form', $view_data);
+    }
+
+    
+    function Regions(){
+        $regions_of_somalia = array(
+            "" => " -- ", "Awdal" => "Awdal", "Bakool" => "Bakool", "Banaadir" => "Banaadir", "Bari" => "Bari", 
+            "Bay" => "Bay", "Galguduud" => "Galguduud", "Gedo" => "Gedo", "Hiiraan" => "Hiiraan", 
+            "Jubbada Dhexe" => "Jubbada Dhexe", "Jubbada Hoose" => "Jubbada Hoose",
+            "Mudug" => "Mudug", "Nugaal" => "Nugaal", "Sanaag" => "Sanaag", 
+            "Shabeellaha Dhexe" => "Shabeellaha Dhexe", "Shabeellaha Hoose" => "Shabeellaha Hoose", 
+            "Sool" => "Sool", "Togdheer" => "Togdheer", "Woqooyi Galbeed" => "Woqooyi Galbeed"
+        );
+        
+        return $regions_of_somalia;
+    }
+
+    function Districts(){
+        $districts_of_somalia = array(
+            "" => " -- ", "Baki" => "Baki", "Borama" => "Borama", "Dilla" => "Dilla", "Lughaya" => "Lughaya", 
+            "Saylac" => "Saylac", "El Barde" => "El Barde", "Hoddur" => "Hoddur", "Rabdhure" => "Rabdhure", 
+            "Tayeeglow" => "Tayeeglow", "Wajid" => "Wajid", "Abdiaziz" => "Abdiaziz", "Bondhere" => "Bondhere", 
+            "Daynile" => "Daynile", "Dharkenley" => "Dharkenley", "Hamar Jabjab" => "Hamar Jabjab", 
+            "Hamar Weyne" => "Hamar Weyne", "Hawl Wadaag" => "Hawl Wadaag", "Hodan" => "Hodan", 
+            "Howlwadag" => "Howlwadag", "Karaan" => "Karaan",
+            "Shangani" => "Shangani", "Shibis" => "Shibis", "Wadajir" => "Wadajir", "Wardhigley" => "Wardhigley", 
+            "Yaaqshid" => "Yaaqshid", "Alula" => "Alula", "Bandarbeyla" => "Bandarbeyla", "Bosaso" => "Bosaso", 
+            "Qandala" => "Qandala", "Iskushuban" => "Iskushuban", "Ufayn" => "Ufayn", "Baidoa" => "Baidoa", 
+            "Buurhakaba" => "Buurhakaba", "Diinsoor" => "Diinsoor", "Qansahdhere" => "Qansahdhere", 
+            "Abudwak" => "Abudwak", "Adado" => "Adado", "El Bur" => "El Bur", "El Dher" => "El Dher", "Guriel" => "Guriel",
+            "Bardera" => "Bardera", "Belet Hawo" => "Belet Hawo", "Bur Dubo" => "Bur Dubo", "El Wak" => "El Wak", 
+            "Garbaharey" => "Garbaharey", "Luuq" => "Luuq", "Beledweyne" => "Beledweyne", "Bulo Burde" => "Bulo Burde", 
+            "Jalalaqsi" => "Jalalaqsi", "Mataban" => "Mataban", "Bu'aale" => "Bu'aale", "Jilib" => "Jilib", 
+            "Saakow" => "Saakow", "Afmadow" => "Afmadow", "Badhaadhe" => "Badhaadhe", "Kismayo" => "Kismayo", 
+            "Jamame" => "Jamame", "Gaalkacyo" => "Gaalkacyo", "Galdogob" => "Galdogob", "Harardhere" => "Harardhere",
+            "Hobyo" => "Hobyo", "Jariban" => "Jariban", "Burtinle" => "Burtinle", "Eyl" => "Eyl", 
+            "Garowe" => "Garowe", "Badhan" => "Badhan", "Ceerigaabo" => "Ceerigaabo", "Dhahar" => "Dhahar", 
+            "Laasqoray" => "Laasqoray", "Adale" => "Adale", "Bal'ad" => "Bal'ad", "Jowhar" => "Jowhar", 
+            "Mahaday" => "Mahaday", "Afgooye" => "Afgooye", "Baraawe" => "Baraawe", "Kurtunwarey" => "Kurtunwarey", 
+            "Marka" => "Marka", "Qoryooley" => "Qoryooley", "Wanlaweyn" => "Wanlaweyn", "Ainabo" => "Ainabo",
+            "Laas Anod" => "Laas Anod", "Taleh" => "Taleh", "Burao" => "Burao", "Oodweyne" => "Oodweyne", 
+            "Berbera" => "Berbera", "Gabiley" => "Gabiley", "Hargeisa" => "Hargeisa"
+        );
+        
+        return $districts_of_somalia;
     }
 
     /* insert or update a client */
