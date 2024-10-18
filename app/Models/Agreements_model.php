@@ -115,18 +115,17 @@ class Agreements_model extends Crud_model {
 
         $available_order_by_list = array(
             "id" => $agreements_table . ".id",
-            "nameSo" => $agreements_table . ".nameSo",
-            "short_name_SO" => $agreements_table . ".short_name_SO",
-            "nameEn" => $agreements_table . ".nameEn",
-            "short_name_EN" => $agreements_table . ".short_name_EN",
-            "email" => $agreements_table . ".email",
-            "DepNameSo" => $departments_table . ".nameSo",
-            "SectionHead" => "CONCAT($users_table.first_name, ' ', $users_table.last_name)",
-            "secretary" => "CONCAT(sec.first_name,' ',sec.last_name)",
-            "remarks" => $agreements_table . ".remarks",
-            "status" => "lead_status_title",
-            "primary_contact" => "primary_contact",
-            "client_groups" => "client_groups"
+            "titleDeedNo" => $properties_table . ".titleDeedNo",
+            "notary_ref" => $agreements_table . ".notary_ref",
+            "buyer" => "CONCAT(buyer.first_name, ' ', buyer.last_name)", 
+            "seller" => "CONCAT(seller.first_name, ' ', seller.last_name)", 
+            "witness" => "CONCAT(witnes.first_name, ' ', witnes.last_name)", 
+            "agreement_type" => $agreements_table . ".agreement_type",
+            "amount" => $agreements_table . ".amount",
+            "payment_method" => $agreements_table . ".payment_method",
+            "template_name" => $templates_table . ".name",
+            "created_at" => $agreements_table . ".created_at",
+            "status" => $agreements_table . ".status",
         );
 
         $order_by = get_array_value($available_order_by_list, $this->_get_clean_value($options, "order_by"));
@@ -146,15 +145,17 @@ class Agreements_model extends Crud_model {
 
             $where .= " AND (";
             $where .= " $agreements_table.id LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $agreements_table.nameSo LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $agreements_table.short_name_SO LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $agreements_table.nameEn LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $agreements_table.short_name_EN LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $agreements_table.email LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $departments_table.nameSo LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR CONCAT($users_table.first_name, ' ', $users_table.last_name) LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR CONCAT(sec.first_name,' ',sec.last_name) LIKE '%$search_by%' ESCAPE '!' ";
-            $where .= " OR $agreements_table.remarks LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $properties_table.titleDeedNo LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $agreements_table.notary_ref LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR CONCAT(buyer.first_name,' ',buyer.last_name) LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR CONCAT(seller.first_name,' ',seller.last_name) LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR CONCAT(witnes.first_name,' ',witnes.last_name) LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $agreements_table.agreement_type LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $agreements_table.amount LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $agreements_table.payment_method LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $templates_table.name LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $agreements_table.created_at LIKE '%$search_by%' ESCAPE '!' ";
+            $where .= " OR $agreements_table.status LIKE '%$search_by%' ESCAPE '!' ";
             $where .= " OR (SELECT GROUP_CONCAT($labels_table.title, ', ') FROM $labels_table WHERE FIND_IN_SET($labels_table.id, $agreements_table.labels)) LIKE '%$search_by%' ESCAPE '!' ";
 
             if ($leads_only) {
