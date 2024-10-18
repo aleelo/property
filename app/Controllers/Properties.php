@@ -99,7 +99,7 @@ class Properties extends Security_Controller {
 
     function Regions(){
         $regions_of_somalia = array(
-            "Awdal" => "Awdal", "Bakool" => "Bakool", "Banaadir" => "Banaadir", "Bari" => "Bari", 
+            "" => " -- ", "Awdal" => "Awdal", "Bakool" => "Bakool", "Banaadir" => "Banaadir", "Bari" => "Bari", 
             "Bay" => "Bay", "Galguduud" => "Galguduud", "Gedo" => "Gedo", "Hiiraan" => "Hiiraan", 
             "Jubbada Dhexe" => "Jubbada Dhexe", "Jubbada Hoose" => "Jubbada Hoose",
             "Mudug" => "Mudug", "Nugaal" => "Nugaal", "Sanaag" => "Sanaag", 
@@ -112,7 +112,7 @@ class Properties extends Security_Controller {
 
     function Districts(){
         $districts_of_somalia = array(
-            "Baki" => "Baki", "Borama" => "Borama", "Dilla" => "Dilla", "Lughaya" => "Lughaya", 
+            "" => " -- ", "Baki" => "Baki", "Borama" => "Borama", "Dilla" => "Dilla", "Lughaya" => "Lughaya", 
             "Saylac" => "Saylac", "El Barde" => "El Barde", "Hoddur" => "Hoddur", "Rabdhure" => "Rabdhure", 
             "Tayeeglow" => "Tayeeglow", "Wajid" => "Wajid", "Abdiaziz" => "Abdiaziz", "Bondhere" => "Bondhere", 
             "Daynile" => "Daynile", "Dharkenley" => "Dharkenley", "Hamar Jabjab" => "Hamar Jabjab", 
@@ -150,6 +150,14 @@ class Properties extends Security_Controller {
         /* Validation Imput */
         $this->validate_submitted_data(array(
             "id" => "numeric",
+            "title_deed_no" => "required",
+            "owner_id" => "required",
+            "region" => "required",
+            "district" => "required",
+            "address" => "required",
+            "type" => "required",
+            "area" => "required",
+            "property_value" => "required",
         ));
 
         $target_path = get_setting("properties_file_path");

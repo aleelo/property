@@ -17,7 +17,6 @@
                 "value" => $model_info->titleDeedNo,
                 "class" => "form-control company_name_input_section",
                 "placeholder" => app_lang('title_deed_no'),
-                //"autofocus" => true,
                 "data-rule-required" => true,
                 "data-msg-required" => app_lang("field_required"),
             ));
@@ -41,7 +40,9 @@
                 "name" => "owner_id",
                 "class" => "form-control select2",
                 "placeholder" => 'Owner Property',
-                "autocomplete" => "off"
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
             ),$owners,[$model_info->owner_id]);
             ?>
         </div>
@@ -61,7 +62,9 @@
                 "name" => "region",
                 "class" => "form-control select2",
                 "placeholder" => 'Region',
-                "autocomplete" => "off"
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
             ),$regions,[$model_info->region]);
             ?>
         </div>
@@ -74,7 +77,9 @@
                 "name" => "district",
                 "class" => "form-control select2",
                 "placeholder" => 'Owner Property',
-                "autocomplete" => "off"
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
             ),$districts,[$model_info->district]);
             ?>
         </div>
@@ -94,8 +99,9 @@
                 "name" => "address",
                 "class" => "form-control",
                 "placeholder" => 'Address',
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
                 "value" => $model_info->address
-
             ));
             ?>
         </div>
@@ -116,7 +122,9 @@
                 "name" => "type",
                 "class" => "form-control select2",
                 "placeholder" => 'Training Type',
-                "autocomplete" => "off"
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
             ),$type,[$model_info->type]);
             ?>
         </div>
@@ -138,6 +146,8 @@
                 "value" => $model_info->area,
                 "class" => "form-control company_name_input_section",
                 "placeholder" => app_lang('area'),
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
             ));
             ?>
         </div>
@@ -158,6 +168,8 @@
                 "value" => $model_info->propertyValue,
                 "class" => "form-control company_name_input_section",
                 "placeholder" => app_lang('property_value'),
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
             ));
             ?>
         </div>
