@@ -73,6 +73,7 @@
     </div>
 <?php } ?>
 
+
 <!-----------------------------------------  Mother Name ------------------------------------>
 
 <div class="form-group">
@@ -83,7 +84,7 @@
             echo form_input(array(
                 "id" => "mother_name",
                 "name" => "mother_name",
-                "value" => $model_info->city,
+                "value" => $model_info->mother_name,
                 "class" => "form-control",
                 "placeholder" => 'Mother Name'
             ));
@@ -92,6 +93,26 @@
     </div>
 </div>
 
+<!-----------------------------------------  Nationalities  ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        <label for="nationality" class="<?php echo $label_column; ?>"><?php echo 'Nationality'; ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            echo form_dropdown(array(
+                "id" => "nationality",
+                "name" => "nationality",
+                "class" => "form-control select2",
+                "placeholder" => 'Nationality',
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
+            ),$Nationalities,[$model_info->nationality]);
+            ?>
+        </div>
+    </div>
+</div>
 
 <!-----------------------------------------  Region & Disctrict ------------------------------------>
 
@@ -150,6 +171,27 @@
     </div>
 </div>
 
+<!----------------------------------------- Email ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        <label for="email" class="<?php echo $label_column; ?>"><?php echo app_lang('email'); ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            echo form_input(array(
+                "id" => "email",
+                "name" => "email",
+                "value" => $model_info->email,
+                "class" => "form-control",
+                "placeholder" => app_lang('email')
+            ));
+            ?>
+        </div>
+    </div>
+</div>
+
+<!----------------------------------------- Phone ------------------------------------>
+
 <div class="form-group">
     <div class="row">
         <label for="phone" class="<?php echo $label_column; ?>"><?php echo app_lang('phone'); ?></label>
@@ -178,7 +220,7 @@
                 "id" => "gender_male",
                 "name" => "gender",
                 "class" => "form-check-input",
-                    ), "male", ($model_info->gender === "male") ? true : false, "class='form-check-input'");
+                    ), "Male", ($model_info->gender === "Male") ? true : false, "class='form-check-input'");
             ?>
             <label for="gender_male" class="mr15 p0"><?php echo app_lang('male'); ?></label> 
             <?php
@@ -186,7 +228,7 @@
                 "id" => "gender_female",
                 "name" => "gender",
                 "class" => "form-check-input",
-                    ), "female", ($model_info->gender === "female") ? true : false, "class='form-check-input'");
+                    ), "Female", ($model_info->gender === "Female") ? true : false, "class='form-check-input'");
             ?>
             <label for="gender_female" class="p0 mr15"><?php echo app_lang('female'); ?></label>
             
@@ -232,30 +274,57 @@
     </div>
 </div>
 
+<!----------------------------------------- Photo ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        <label for="photo" class=" col-md-3"><?php echo 'Photo'; ?></label>
+        <div class=" col-md-9">
+            <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class="icon-16"></i> <?php echo "Upload Photo" ?></button>
+            <?php echo view("includes/dropzone_preview"); ?>
+            <?php echo view("includes/file_list", array("files" => $model_info->photo)); ?>
+        </div>
+    </div>
+</div>
+
+<!----------------------------------------- identification ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        <label for="identification" class=" col-md-3"><?php echo 'Identification'; ?></label>
+        <div class=" col-md-9">
+            <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class="icon-16"></i> <?php echo "Upload Identification" ?></button>
+            <?php echo view("includes/dropzone_preview"); ?>
+            <?php echo view("includes/file_list", array("files" => $model_info->identification)); ?>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function () {
+
         $('[data-bs-toggle="tooltip"]').tooltip();
 
-<?php if (isset($currency_dropdown)) { ?>
-            if ($('#currency').length) {
-                $('#currency').select2({data: <?php echo json_encode($currency_dropdown); ?>});
-            }
-<?php } ?>
+        <?php if (isset($currency_dropdown)) { ?>
+                    if ($('#currency').length) {
+                        $('#currency').select2({data: <?php echo json_encode($currency_dropdown); ?>});
+                    }
+        <?php } ?>
 
-<?php if (isset($groups_dropdown)) { ?>
-            $("#group_ids").select2({
-                multiple: true,
-                data: <?php echo json_encode($groups_dropdown); ?>
-            });
-<?php } ?>
+        <?php if (isset($groups_dropdown)) { ?>
+                    $("#group_ids").select2({
+                        multiple: true,
+                        data: <?php echo json_encode($groups_dropdown); ?>
+                    });
+        <?php } ?>
 
-<?php if ($login_user->is_admin || get_array_value($login_user->permissions, "client") === "all") { ?>
-            $('#created_by').select2({data: <?php echo $team_members_dropdown; ?>});
-<?php } ?>
+        <?php if ($login_user->is_admin || get_array_value($login_user->permissions, "client") === "all") { ?>
+                    $('#created_by').select2({data: <?php echo $team_members_dropdown; ?>});
+        <?php } ?>
 
-<?php if ($login_user->user_type === "staff") { ?>
-            $("#client_labels").select2({multiple: true, data: <?php echo json_encode($label_suggestions); ?>});
-<?php } ?>
+        <?php if ($login_user->user_type === "staff") { ?>
+                    $("#client_labels").select2({multiple: true, data: <?php echo json_encode($label_suggestions); ?>});
+        <?php } ?>
         $('.account_type').click(function () {
             var inputValue = $(this).attr("value");
             if (inputValue === "person") {

@@ -92,6 +92,7 @@ class Clients extends Security_Controller {
         //prepare groups dropdown list
         $view_data['groups_dropdown'] = $this->_get_groups_dropdown_select2_data();
 
+        $view_data['Nationalities'] = $this->Nationalities();
         $view_data['regions'] = $this->Regions();
         $view_data['districts'] = $this->Districts();
 
@@ -106,10 +107,36 @@ class Clients extends Security_Controller {
         return $this->template->view('clients/modal_form', $view_data);
     }
 
+    function Nationalities(){
+        $nationalities = [
+            '' => ' - ', 'Afghanistan' => 'Afghanistan', 'Albania' => 'Albania', 'Algeria' => 'Algeria', 'Andorra' => 'Andorra', 'Angola' => 'Angola', 'Antigua and Barbuda' => 'Antigua and Barbuda', 'Argentina' => 'Argentina', 'Armenia' => 'Armenia', 'Australia' => 'Australia',
+            'Austria' => 'Austria', 'Azerbaijan' => 'Azerbaijan', 'Bahamas' => 'Bahamas', 'Bahrain' => 'Bahrain', 'Bangladesh' => 'Bangladesh', 'Barbados' => 'Barbados', 'Belarus' => 'Belarus', 'Belgium' => 'Belgium', 'Belize' => 'Belize', 'Benin' => 'Benin',
+            'Bhutan' => 'Bhutan', 'Bolivia' => 'Bolivia', 'Bosnia and Herzegovina' => 'Bosnia and Herzegovina', 'Botswana' => 'Botswana', 'Brazil' => 'Brazil', 'Brunei' => 'Brunei', 'Bulgaria' => 'Bulgaria', 'Burkina Faso' => 'Burkina Faso', 'Burundi' => 'Burundi', 'Cabo Verde' => 'Cabo Verde',
+            'Cambodia' => 'Cambodia', 'Cameroon' => 'Cameroon', 'Canada' => 'Canada', 'Central African Republic' => 'Central African Republic', 'Chad' => 'Chad', 'Chile' => 'Chile', 'China' => 'China', 'Colombia' => 'Colombia', 'Comoros' => 'Comoros', 'Congo, Democratic Republic of the' => 'Congo, Democratic Republic of the',
+            'Congo, Republic of the' => 'Congo, Republic of the', 'Costa Rica' => 'Costa Rica', 'Croatia' => 'Croatia', 'Cuba' => 'Cuba', 'Cyprus' => 'Cyprus', 'Czech Republic' => 'Czech Republic', 'Denmark' => 'Denmark', 'Djibouti' => 'Djibouti', 'Dominica' => 'Dominica', 'Dominican Republic' => 'Dominican Republic',
+            'East Timor (Timor-Leste)' => 'East Timor (Timor-Leste)', 'Ecuador' => 'Ecuador', 'Egypt' => 'Egypt', 'El Salvador' => 'El Salvador', 'Equatorial Guinea' => 'Equatorial Guinea', 'Eritrea' => 'Eritrea', 'Estonia' => 'Estonia', 'Eswatini' => 'Eswatini', 'Ethiopia' => 'Ethiopia', 'Fiji' => 'Fiji',
+            'Finland' => 'Finland', 'France' => 'France', 'Gabon' => 'Gabon', 'Gambia' => 'Gambia', 'Georgia' => 'Georgia', 'Germany' => 'Germany', 'Ghana' => 'Ghana', 'Greece' => 'Greece', 'Grenada' => 'Grenada', 'Guatemala' => 'Guatemala',
+            'Guinea' => 'Guinea', 'Guinea-Bissau' => 'Guinea-Bissau', 'Guyana' => 'Guyana', 'Haiti' => 'Haiti', 'Honduras' => 'Honduras', 'Hungary' => 'Hungary', 'Iceland' => 'Iceland', 'India' => 'India', 'Indonesia' => 'Indonesia', 'Iran' => 'Iran',
+            'Iraq' => 'Iraq', 'Ireland' => 'Ireland', 'Israel' => 'Israel', 'Italy' => 'Italy', 'Ivory Coast' => 'Ivory Coast', 'Jamaica' => 'Jamaica', 'Japan' => 'Japan', 'Jordan' => 'Jordan', 'Kazakhstan' => 'Kazakhstan', 'Kenya' => 'Kenya',
+            'Kiribati' => 'Kiribati', 'Korea, North' => 'Korea, North', 'Korea, South' => 'Korea, South', 'Kosovo' => 'Kosovo', 'Kuwait' => 'Kuwait', 'Kyrgyzstan' => 'Kyrgyzstan', 'Laos' => 'Laos', 'Latvia' => 'Latvia', 'Lebanon' => 'Lebanon', 'Lesotho' => 'Lesotho',
+            'Liberia' => 'Liberia', 'Libya' => 'Libya', 'Liechtenstein' => 'Liechtenstein', 'Lithuania' => 'Lithuania', 'Luxembourg' => 'Luxembourg', 'Madagascar' => 'Madagascar', 'Malawi' => 'Malawi', 'Malaysia' => 'Malaysia', 'Maldives' => 'Maldives', 'Mali' => 'Mali',
+            'Malta' => 'Malta', 'Marshall Islands' => 'Marshall Islands', 'Mauritania' => 'Mauritania', 'Mauritius' => 'Mauritius', 'Mexico' => 'Mexico', 'Micronesia' => 'Micronesia', 'Moldova' => 'Moldova', 'Monaco' => 'Monaco', 'Mongolia' => 'Mongolia', 'Montenegro' => 'Montenegro',
+            'Morocco' => 'Morocco', 'Mozambique' => 'Mozambique', 'Myanmar' => 'Myanmar', 'Namibia' => 'Namibia', 'Nauru' => 'Nauru', 'Nepal' => 'Nepal', 'Netherlands' => 'Netherlands', 'New Zealand' => 'New Zealand', 'Nicaragua' => 'Nicaragua', 'Niger' => 'Niger',
+            'Nigeria' => 'Nigeria', 'North Macedonia' => 'North Macedonia', 'Norway' => 'Norway', 'Oman' => 'Oman', 'Pakistan' => 'Pakistan', 'Palau' => 'Palau', 'Panama' => 'Panama', 'Papua New Guinea' => 'Papua New Guinea', 'Paraguay' => 'Paraguay', 'Peru' => 'Peru',
+            'Philippines' => 'Philippines', 'Poland' => 'Poland', 'Portugal' => 'Portugal', 'Qatar' => 'Qatar', 'Romania' => 'Romania', 'Russia' => 'Russia', 'Rwanda' => 'Rwanda', 'Saint Kitts and Nevis' => 'Saint Kitts and Nevis', 'Saint Lucia' => 'Saint Lucia', 'Saint Vincent and the Grenadines' => 'Saint Vincent and the Grenadines',
+            'Samoa' => 'Samoa', 'San Marino' => 'San Marino', 'Sao Tome and Principe' => 'Sao Tome and Principe', 'Saudi Arabia' => 'Saudi Arabia', 'Senegal' => 'Senegal', 'Serbia' => 'Serbia', 'Seychelles' => 'Seychelles', 'Sierra Leone' => 'Sierra Leone', 'Singapore' => 'Singapore', 'Slovakia' => 'Slovakia',
+            'Slovenia' => 'Slovenia', 'Solomon Islands' => 'Solomon Islands', 'Somalia' => 'Somalia', 'South Africa' => 'South Africa', 'South Sudan' => 'South Sudan', 'Spain' => 'Spain', 'Sri Lanka' => 'Sri Lanka', 'Sudan' => 'Sudan', 'Suriname' => 'Suriname', 'Sweden' => 'Sweden',
+            'Switzerland' => 'Switzerland', 'Syria' => 'Syria', 'Taiwan' => 'Taiwan', 'Tajikistan' => 'Tajikistan', 'Tanzania' => 'Tanzania', 'Thailand' => 'Thailand', 'Togo' => 'Togo', 'Tonga' => 'Tonga', 'Trinidad and Tobago' => 'Trinidad and Tobago', 'Tunisia' => 'Tunisia',
+            'Turkey' => 'Turkey', 'Turkmenistan' => 'Turkmenistan', 'Tuvalu' => 'Tuvalu', 'Uganda' => 'Uganda', 'Ukraine' => 'Ukraine', 'United Arab Emirates' => 'United Arab Emirates', 'United Kingdom' => 'United Kingdom', 'United States' => 'United States', 'Uruguay' => 'Uruguay', 'Uzbekistan' => 'Uzbekistan'
+        ];
+        
+        return $nationalities;
+    }
+
     
     function Regions(){
         $regions_of_somalia = array(
-            "" => " -- ", "Awdal" => "Awdal", "Bakool" => "Bakool", "Banaadir" => "Banaadir", "Bari" => "Bari", 
+            "" => " - ", "Awdal" => "Awdal", "Bakool" => "Bakool", "Banaadir" => "Banaadir", "Bari" => "Bari", 
             "Bay" => "Bay", "Galguduud" => "Galguduud", "Gedo" => "Gedo", "Hiiraan" => "Hiiraan", 
             "Jubbada Dhexe" => "Jubbada Dhexe", "Jubbada Hoose" => "Jubbada Hoose",
             "Mudug" => "Mudug", "Nugaal" => "Nugaal", "Sanaag" => "Sanaag", 
@@ -122,7 +149,7 @@ class Clients extends Security_Controller {
 
     function Districts(){
         $districts_of_somalia = array(
-            "" => " -- ", "Baki" => "Baki", "Borama" => "Borama", "Dilla" => "Dilla", "Lughaya" => "Lughaya", 
+            "" => " - ", "Baki" => "Baki", "Borama" => "Borama", "Dilla" => "Dilla", "Lughaya" => "Lughaya", 
             "Saylac" => "Saylac", "El Barde" => "El Barde", "Hoddur" => "Hoddur", "Rabdhure" => "Rabdhure", 
             "Tayeeglow" => "Tayeeglow", "Wajid" => "Wajid", "Abdiaziz" => "Abdiaziz", "Bondhere" => "Bondhere", 
             "Daynile" => "Daynile", "Dharkenley" => "Dharkenley", "Hamar Jabjab" => "Hamar Jabjab", 
@@ -165,17 +192,28 @@ class Clients extends Security_Controller {
 
         $data = array(
             "company_name" => $company_name,
-            "type" => $this->request->getPost('account_type'),
+            "mother_name" => $this->request->getPost('mother_name'),
+            "nationality" => $this->request->getPost('nationality'),
+            "region" => $this->request->getPost('region'),
+            "district" => $this->request->getPost('district'),
             "address" => $this->request->getPost('address'),
+            "email" => $this->request->getPost('email'),
+            "phone" => $this->request->getPost('phone'),
+            "gender" => $this->request->getPost('gender'),
+            "birth_place" => $this->request->getPost('birth_place'),
+            "birth_date" => $this->request->getPost('birth_date'),
+
+            "type" => $this->request->getPost('account_type'),
             "city" => $this->request->getPost('city'),
             "state" => $this->request->getPost('state'),
             "zip" => $this->request->getPost('zip'),
             "country" => $this->request->getPost('country'),
-            "phone" => $this->request->getPost('phone'),
             "website" => $this->request->getPost('website'),
             "vat_number" => $this->request->getPost('vat_number'),
             "gst_number" => $this->request->getPost('gst_number')
         );
+
+        
 
         if ($this->login_user->user_type === "staff") {
             $data["group_ids"] = $this->request->getPost('group_ids') ? $this->request->getPost('group_ids') : "";
@@ -210,6 +248,30 @@ class Clients extends Security_Controller {
             //the user hasn't permission to change created by but s/he can create new client
             $data["created_by"] = $this->login_user->id;
         }
+
+        $target_path = get_setting("clients_photos_path");
+        $photos_data = move_files_from_temp_dir_to_permanent_dir($target_path, "clients_photos");
+        $new_photos = unserialize($photos_data);
+
+        if ($client_id) {
+            $client_info = $this->Clients_model->get_one($client_id);
+            $clients_photos_path = get_setting("clients_photos_path");
+            $new_photos = update_saved_files($clients_photos_path, $client_info->photo, $new_photos);
+        }
+
+        $data["photo"] = serialize($new_photos);
+        
+        $target_path = get_setting("clients_identifications_path");
+        $identifications_data = move_files_from_temp_dir_to_permanent_dir($target_path, "clients_identifications");
+        $new_identifications = unserialize($identifications_data);
+
+        if ($client_id) {
+            $client_info = $this->Clients_model->get_one($client_id);
+            $clients_identifications_path = get_setting("clients_identifications_path");
+            $new_identifications = update_saved_files($clients_identifications_path, $client_info->identification, $new_identifications);
+        }
+
+        $data["identification"] = serialize($new_identifications);
 
         $data = clean_data($data);
 
@@ -320,6 +382,7 @@ class Clients extends Security_Controller {
 
     private function _make_row($data, $custom_fields) {
 
+        $meta_info = $this->_prepare_clients_info($data);
 
         $image_url = get_avatar($data->contact_avatar);
         $contact = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->primary_contact";
@@ -349,13 +412,19 @@ class Clients extends Security_Controller {
 
         $row_data = array($data->id,
             anchor(get_uri("clients/view/" . $data->id), $data->company_name),
-            $data->primary_contact ? $primary_contact : "",
-            $group_list,
-            $client_labels,
-            to_decimal_format($data->total_projects),
-            to_currency($data->invoice_value, $data->currency_symbol),
-            to_currency($data->payment_received, $data->currency_symbol),
-            to_currency($due, $data->currency_symbol)
+            $data->gender,
+            $data->mother_name,
+            $data->nationality,
+            $meta_info->address_meta,
+            $data->phone,
+            $data->email,
+            // $data->primary_contact ? $primary_contact : "",
+            // $group_list,
+            // $client_labels,
+            // to_decimal_format($data->total_projects),
+            // to_currency($data->invoice_value, $data->currency_symbol),
+            // to_currency($data->payment_received, $data->currency_symbol),
+            // to_currency($due, $data->currency_symbol)
         );
 
         foreach ($custom_fields as $field) {
@@ -367,6 +436,52 @@ class Clients extends Security_Controller {
                 . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_client'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("clients/delete"), "data-action" => "delete-confirmation"));
 
         return $row_data;
+    }
+
+    private function _prepare_clients_info($data) {
+
+        $address_parts = [];
+
+    // Add each part to the array only if it has a value
+    if (!empty($data->address)) {
+        $address_parts[] = $data->address;
+    }
+    if (!empty($data->district)) {
+        $address_parts[] = $data->district;
+    }
+    if (!empty($data->region)) {
+        $address_parts[] = $data->region;
+    }
+
+    // Join the parts with a comma and add a full stop at the end
+    $data->address_meta = implode(", ", $address_parts) . (count($address_parts) > 0 ? '.' : '');
+
+        // $data->address_meta = $data->address.", ".$data->district.", ".$data->region.".";
+
+        // $style = '';
+
+        // if (isset($data->status)) {
+        //     if ($data->status === "Registred") {
+        //         // $status_class = "bg-warning";
+        //         $status_class = "btn-dark";
+        //         $style = "background-color:#6690f4;";
+        //     } else if ($data->status === "Pending") {
+        //         $status_class = "btn-dark";
+        //         $style = "background-color:#ff9e08;";
+        //     } else if ($data->status === "Sold") {
+        //         $status_class = "btn-dark";
+        //         $style = "background-color:#08976d;";
+        //     } else {
+        //         $status_class = "bg-dark";
+        //     }
+        //     $data->status_meta = "<span style='$style' class='badge $status_class'>" . $data->status . "</span>";
+        // }
+
+        if (isset($data->created_at)) {
+            $date = format_to_date($data->created_at, FALSE);
+            $data->created_at_meta = $date;
+        }
+        return $data;
     }
 
     /* load client details view */
@@ -754,6 +869,10 @@ class Clients extends Security_Controller {
 
     function upload_file() {
         upload_file_to_temp();
+    }
+
+    function validate_events_file() {
+        return validate_post_file($this->request->getPost("file_name"));
     }
 
     /* check valid file for client */

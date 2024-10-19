@@ -45,13 +45,19 @@
             columns: [
             {title: "<?php echo app_lang("id") ?>", "class": "text-center w50 all", order_by: "id"},
             {title: "<?php echo app_lang("name") ?>", "class": "all", order_by: "company_name"},
-            {title: "<?php echo app_lang("primary_contact") ?>", order_by: "primary_contact"},
-            {title: "<?php echo app_lang("client_groups") ?>", order_by: "client_groups"},
-            {title: "<?php echo app_lang("labels") ?>"},
-            {title: "<?php echo app_lang("projects") ?>"},
-            {visible: showInvoiceInfo, searchable: showInvoiceInfo, title: "<?php echo app_lang("total_invoiced") ?>"},
-            {visible: showInvoiceInfo, searchable: showInvoiceInfo, title: "<?php echo app_lang("payment_received") ?>"},
-            {visible: showInvoiceInfo, searchable: showInvoiceInfo, title: "<?php echo app_lang("due") ?>"}
+            {title: "<?php echo "Gender" ?>", "class": "all", order_by: "gender"},
+            {title: "<?php echo "Mpther Name" ?>", "class": "all", order_by: "mother_name"},
+            {title: "<?php echo "Nationality" ?>", "class": "all", order_by: "nationality"},
+            {title: "<?php echo "Address" ?>", "class": "all", order_by: "address"},
+            {title: "<?php echo "Phone" ?>", "class": "all", order_by: "phone"},
+            {title: "<?php echo "email" ?>", "class": "all", order_by: "email"}
+            // {title: "<?php //echo app_lang("primary_contact") ?>", order_by: "primary_contact"},
+            // {title: "<?php //echo app_lang("client_groups") ?>", order_by: "client_groups"},
+            // {title: "<?php //echo app_lang("labels") ?>"},
+            // {title: "<?php //echo app_lang("projects") ?>"},
+            // {visible: showInvoiceInfo, searchable: showInvoiceInfo, title: "<?php //echo app_lang("total_invoiced") ?>"},
+            // {visible: showInvoiceInfo, searchable: showInvoiceInfo, title: "<?php //echo app_lang("payment_received") ?>"},
+            // {visible: showInvoiceInfo, searchable: showInvoiceInfo, title: "<?php //echo app_lang("due") ?>"}
 <?php echo $custom_field_headers; ?>,
             {title: '<i data-feather="menu" class="icon-16"></i>', "class": "text-center option w100", visible: showOptions}
             ],

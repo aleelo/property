@@ -1,4 +1,5 @@
 <?php echo form_open(get_uri("clients/save"), array("id" => "client-form", "class" => "general-form", "role" => "form")); ?>
+<div id="clients-dropzone" class="post-dropzone">
 <div class="modal-body clearfix">
     <div class="container-fluid">
         <input type="hidden" name="ticket_id" value="<?php echo $ticket_id; ?>" />
@@ -21,6 +22,10 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+
+        var uploadUrl = "<?php echo get_uri("events/upload_file"); ?>";
+        var validationUri = "<?php echo get_uri("events/validate_events_file"); ?>";
+        var dropzone = attachDropzoneWithForm("#clients-dropzone", uploadUrl, validationUri);
         var ticket_id = "<?php echo $ticket_id; ?>";
 
         window.clientForm = $("#client-form").appForm({
