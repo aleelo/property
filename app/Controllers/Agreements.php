@@ -746,7 +746,7 @@ class Agreements extends Security_Controller {
                     }
                 } else {
                     // Handle the case where $imageArr is not an array or doesn't have the expected structure
-                    echo json_encode(array("success" => false, "message" => "Invalid signature data"));
+                    echo json_encode(array("success" => false, "message" => "You have no Signature on the System"));
                     die;
                 }
             
@@ -818,7 +818,7 @@ class Agreements extends Security_Controller {
                     }
                 } else {
                     // Handle the case where $imageArr is not an array or doesn't have the expected structure
-                    echo json_encode(array("success" => false, "message" => "Invalid signature data"));
+                    echo json_encode(array("success" => false, "message" => "You have no Signature on the System"));
                     die;
                 }
 
