@@ -86,10 +86,10 @@ class Agreements extends Security_Controller {
 
         $view_data['notaries'] = array("" => " -- choose notary -- ") + $this->Clients_model->get_dropdown_list(array("company_name"), "id");
         $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo"), "id");
-        $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name", "hyphen", "phone"), "id");
-        $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name", "hyphen", "phone"), "id");
+        $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
+        $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
         $view_data['documents'] = array("" => " -- choose document -- ") + $this->Templates_model->get_dropdown_list(array("name"), "id");
-        $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name", "hyphen", "phone"), "id");
+        $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
 
 
         // $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name"," ","last_name")), "id");
@@ -180,13 +180,13 @@ class Agreements extends Security_Controller {
 
                 $buyers_info = $this->db->query("SELECT 
                 p.titleDeedNo,
-                GROUP_CONCAT(DISTINCT concat(bu_s.first_name, ' ', bu_s.last_name) SEPARATOR ', ') as buyers, 
-                GROUP_CONCAT(DISTINCT concat(se_u.first_name, ' ', se_u.last_name) SEPARATOR ', ') as sellers, 
-                GROUP_CONCAT(DISTINCT concat(wi_u.first_name, ' ', wi_u.last_name) SEPARATOR ', ') as witnesses
+                GROUP_CONCAT(DISTINCT bu_s.company_name SEPARATOR ', ') as buyers, 
+                GROUP_CONCAT(DISTINCT se_u.company_name SEPARATOR ', ') as sellers, 
+                GROUP_CONCAT(DISTINCT wi_u.company_name SEPARATOR ', ') as witnesses
                 FROM rise_agreements ag 
-                LEFT JOIN rise_users bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
-                LEFT JOIN rise_users se_u ON FIND_IN_SET(se_u.id, ag.seller_ids)
-                LEFT JOIN rise_users wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
+                LEFT JOIN rise_clients bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
+                LEFT JOIN rise_clients se_u ON FIND_IN_SET(se_u.id, ag.seller_ids)
+                LEFT JOIN rise_clients wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
                 LEFT JOIN rise_properties p ON p.id = ag.property_id
                 WHERE ag.id = $save_id")->getRow();
 
