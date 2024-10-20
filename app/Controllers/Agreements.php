@@ -579,6 +579,98 @@ class Agreements extends Security_Controller {
 
     }
 
+    function Signaure_Pad() {
+        
+        $agreement_id = $this->request->getPost('id');
+        // $this->_validate_client_manage_access($agreement_id);
+
+        $this->validate_submitted_data(array(
+            "id" => "numeric"
+        ));
+
+        $view_data['label_column'] = "col-md-2 text-right";
+        $view_data['field_column'] = "col-md-10";
+
+        $view_data['label_column_2'] = "col-md-2 text-right";
+        $view_data['field_column_2'] = "col-md-4";
+
+        $view_data['field_column_3'] = "col-md-10";
+
+        $agreement_id = intval($agreement_id); // Make sure $agreement_id is an integer to prevent SQL injection
+
+        $client_query = "
+            SELECT rc_combined.company_name AS client_name, rc_combined.id
+            FROM rise_agreements ra
+            LEFT JOIN rise_clients rc_combined ON FIND_IN_SET(rc_combined.id, ra.buyer_ids)
+            WHERE ra.id = $agreement_id
+
+            UNION
+
+            SELECT rc_combined.company_name AS client_name, rc_combined.id
+            FROM rise_agreements ra
+            LEFT JOIN rise_clients rc_combined ON FIND_IN_SET(rc_combined.id, ra.seller_ids)
+            WHERE ra.id = $agreement_id
+        ";
+
+        $client_name_results = $this->db->query($client_query)->getResultArray();
+
+        $client_name = [];
+        foreach ($client_name_results as $row) {
+            $client_name[$row['id']] = $row['client_name'];
+        }
+
+        $view_data["client_name"] = $client_name;
+
+
+
+        // $view_data["client_name"] = $this->db->query("SELECT 
+        //     rc_combined.company_name AS client_name
+        //     FROM rise_agreements ra
+        //     LEFT JOIN rise_clients rc_combined ON FIND_IN_SET(rc_combined.id, CONCAT(ra.buyer_ids, ',', ra.seller_ids))
+        //     WHERE ra.id = $agreement_id")->getRow();
+
+
+        $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loading from the client's details view
+        $view_data["ticket_id"] = $this->request->getPost('ticket_id'); //needed only when loading from the ticket's details view and created by unknown client
+        $view_data['model_info'] = $this->Agreements_model->get_one($agreement_id);
+        $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();
+        $view_data['time_format_24_hours'] = get_setting("time_format") == "24_hours" ? true : false;
+
+        $role = $this->get_user_role();
+        $user_id = $this->login_user->id;
+
+        if($role === "Secretary"){
+            $view_data['host'] = $this->_get_secretary_director();
+        }else{
+            $view_data['host'] = array("" => " -- Choose Host -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
+        }
+
+        // $view_data['departments'] = $this->Departments_model->get_dropdown_list(array("nameSo"), "id");
+        // $view_data['Sections'] = $this->Sections_model->get_dropdown_list(array("nameSo"), "id");
+        // $view_data['Units'] = $this->Units_model->get_dropdown_list(array("nameSo"), "id");
+        // $view_data['payers'] = $this->Clients_model->get_dropdown_list(array("company_name"), "id");
+        // $view_data['partners'] = $this->Partners_model->get_dropdown_list(array("name"), "id");
+        // $view_data['guests'] = $this->Visitors_model->get_dropdown_list(array("name"), "id");
+        // $view_data['client_name'] = $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
+
+        // $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name"," ","last_name")), "id");
+
+        $view_data['label_suggestions'] = $this->make_labels_dropdown("client", $view_data['model_info']->labels);
+
+        //prepare groups dropdown list
+        $view_data['groups_dropdown'] = $this->_get_groups_dropdown_select2_data();
+
+
+        $view_data["team_members_dropdown"] = $this->get_team_members_dropdown();
+
+        //prepare label suggestions
+
+        //get custom fields
+        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $agreement_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+
+        return $this->template->view('agreements/signaure_pad', $view_data);
+    }
+
     private function can_view_files() {
         if ($this->login_user->user_type == "staff") {
             $this->access_only_allowed_members();

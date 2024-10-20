@@ -272,6 +272,18 @@ class Clients extends Security_Controller {
         }
 
         $data["identification"] = serialize($new_identifications);
+        
+        $target_path = get_setting("clients_signatures_path");
+        $signatures_data = move_files_from_temp_dir_to_permanent_dir($target_path, "clients_signatures");
+        $new_signature = unserialize($signatures_data);
+
+        if ($client_id) {
+            $client_info = $this->Clients_model->get_one($client_id);
+            $clients_signatures_path = get_setting("clients_signatures_path");
+            $new_signature = update_saved_files($clients_signatures_path, $client_info->signature, $new_signature);
+        }
+
+        $data["signature"] = serialize($new_signature);
 
         $data = clean_data($data);
 

@@ -280,6 +280,20 @@
     <div class="row">
         <label for="photo" class=" col-md-3"><?php echo 'Photo'; ?></label>
         <div class=" col-md-9">
+            <button id="upload_photo_button" class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2">
+                <i data-feather="camera" class="icon-16"></i> <?php echo "Upload Photo" ?>
+            </button>
+            <?php echo view("includes/dropzone_preview"); ?>
+            <?php echo view("includes/file_list", array("files" => $model_info->photo)); ?>
+        </div>
+    </div>
+</div>
+
+
+<div class="form-group">
+    <div class="row">
+        <label for="photo" class=" col-md-3"><?php echo 'Photo'; ?></label>
+        <div class=" col-md-9">
             <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class="icon-16"></i> <?php echo "Upload Photo" ?></button>
             <?php echo view("includes/dropzone_preview"); ?>
             <?php echo view("includes/file_list", array("files" => $model_info->photo)); ?>
@@ -296,6 +310,19 @@
             <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class="icon-16"></i> <?php echo "Upload Identification" ?></button>
             <?php echo view("includes/dropzone_preview"); ?>
             <?php echo view("includes/file_list", array("files" => $model_info->identification)); ?>
+        </div>
+    </div>
+</div>
+
+<!----------------------------------------- Signature ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        <label for="signature" class=" col-md-3"><?php echo 'Signature'; ?></label>
+        <div class=" col-md-9">
+            <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class="icon-16"></i> <?php echo "Upload Signature" ?></button>
+            <?php echo view("includes/dropzone_preview"); ?>
+            <?php echo view("includes/file_list", array("files" => $model_info->signature)); ?>
         </div>
     </div>
 </div>
