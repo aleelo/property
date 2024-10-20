@@ -33,6 +33,7 @@ $settings_menu = array(
 
 $settings_menu["setup"][] = array("name" => "notary_services", "url" => "notary_services");
 $settings_menu["setup"][] = array("name" => "agreement_type", "url" => "agreement_type");
+$settings_menu["setup"][] = array("name" => "templates", "url" => "documents/templates");
 
 //restricted settings
 if ($login_user->is_admin || (get_array_value($login_user->permissions, "can_manage_all_kinds_of_settings") && get_array_value($login_user->permissions, "can_manage_user_role_and_permissions"))) {

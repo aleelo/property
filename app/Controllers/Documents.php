@@ -854,24 +854,32 @@ function update_status() {
                 $where .= " )";
             }
 
-            $result = $this->db->query("select d.*,dp.nameSo as department from rise_templates d
+            $result = $this->db->query("select d.*,dp.nameSo as department,ns.service_name,at.agreement_type from rise_templates d
             LEFT JOIN rise_departments dp on d.department = dp.id
+            LEFT JOIN rise_notary_services ns on d.service_id = ns.id
+            LEFT JOIN rise_agreement_type at on d.agreement_type_id = at.id
             where d.department LIKE '$department_id' and $where $extraWhere order by $order_by $limit_offset");
 
             $list_data = $result->getResult();
             $total_rows = $this->db->query("select count(*) as affected from rise_templates d
             LEFT JOIN rise_departments dp on d.department = dp.id
+            LEFT JOIN rise_notary_services ns on d.service_id = ns.id
+            LEFT JOIN rise_agreement_type at on d.agreement_type_id = at.id
             where department LIKE '$department_id' and d.deleted=0 $extraWhere")->getRow()->affected;
             $result = array();
 
         } else {
-            $result = $this->db->query("select d.*,dp.nameSo as department from rise_templates d
+            $result = $this->db->query("select d.*,dp.nameSo as department,ns.service_name,at.agreement_type from rise_templates d
             LEFT JOIN rise_departments dp on d.department = dp.id
+            LEFT JOIN rise_notary_services ns on d.service_id = ns.id
+            LEFT JOIN rise_agreement_type at on d.agreement_type_id = at.id
             where  d.department LIKE '$department_id' and  d.deleted=0 $extraWhere");
 
             $list_data = $result->getResult();
             $total_rows = $this->db->query("select count(*) as affected from rise_templates d
             LEFT JOIN rise_departments dp on d.department = dp.id
+            LEFT JOIN rise_notary_services ns on d.service_id = ns.id
+            LEFT JOIN rise_agreement_type at on d.agreement_type_id = at.id
             where   department LIKE '$department_id' and  d.deleted=0 $extraWhere")->getRow()->affected;
             $result = array();
         }
@@ -987,7 +995,8 @@ function update_status() {
             // anchor(get_uri("documents/view/" . $data->id), ),
             $data->ref_prefix,
             $data->destination_folder,
-            $data->department,
+            $data->service_name,
+            $data->agreement_type,
             $data->description,
             format_to_date($data->created_at, false),
         );
@@ -999,6 +1008,19 @@ function update_status() {
         return $row_data;
     }
 
+    public function get_agreement_types_by_service_id()
+        {
+            $service_id = $this->request->getPost('service_id');
+            
+            // Call the model method to get the dropdown list
+            $dropdown = $this->Agreement_type_model->get_drop_list($service_id);
+        
+            // Return the dropdown as JSON
+            echo json_encode($dropdown);
+        }
+    
+
+
     public function template_modal_form()
     {
         $this->validate_submitted_data(array(
@@ -1006,6 +1028,9 @@ function update_status() {
         ));
 
         $view_data['departments'] = $this->get_departments_for_select();
+        $view_data['services'] = array("" => " -- choose a service -- ") + $this->Notary_services_model->get_dropdown_list(array("service_name"), "id");
+        $view_data['agreement_types'] = array("" => " -- choose a agreement type -- ") + $this->Agreement_type_model->get_dropdown_list(array("agreement_type"), "id");
+
 
         $view_data['model_info'] = $this->Templates_model->get_one($this->request->getPost('id'));
         return $this->template->view('templates/modal_form', $view_data);
@@ -1016,9 +1041,10 @@ function update_status() {
         $this->validate_submitted_data(array(
             "id" => "numeric",
             "name" => "required",
-            "destination_folder" => "required",
             "ref_prefix" => "required",
-            "department" => "required",
+            "destination_folder" => "required",
+            "service_id" => "required",
+            "agreement_type_id" => "required",
         ));
 
         $id = $this->request->getPost('id');
@@ -1057,6 +1083,8 @@ function update_status() {
                     $data = array(
                         "name" => $this->request->getPost('name') . $sufix2,
                         "department" => $this->request->getPost('department'), //$job_info->department_id,
+                        "service_id" => $this->request->getPost('service_id'), //$job_info->department_id,
+                        "agreement_type_id" => $this->request->getPost('agreement_type_id'), //$job_info->department_id,
                         "ref_prefix" => $this->request->getPost('ref_prefix'),
                         "destination_folder" => $this->request->getPost('destination_folder'),
                         "description" => $this->request->getPost('description_' . $file),
@@ -1077,9 +1105,12 @@ function update_status() {
                 "name" => $this->request->getPost('name'),
                 "department" => $this->request->getPost('department'), //$job_info->department_id,
                 "ref_prefix" => $this->request->getPost('ref_prefix'),
-                "destination_folder" => $this->request->getPost('destination_folder')
+                "destination_folder" => $this->request->getPost('destination_folder'),
+                "service_id" => $this->request->getPost('service_id'), //$job_info->department_id,
+                "agreement_type_id" => $this->request->getPost('agreement_type_id'), //$job_info->department_id,
 
             );
+            // print_r($data); die;
 
             $success = $this->Templates_model->ci_save($data,$id);
         }

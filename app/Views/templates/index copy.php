@@ -1,29 +1,28 @@
-<div id="page-content" class="page-wrapper clearfix">
-    <div class="row">
-        <div class="col-sm-3 col-lg-2">
-            <?php
-            $tab_view['active_tab'] = "templates";
-            echo view("settings/tabs", $tab_view);
-            ?>
-        </div>
+<div id="page-content" class="page-wrapper clearfix grid-button leads-view">
+    <ul class="nav nav-tabs bg-white title" role="tablist">
+        <li class="title-tab leads-title-section"><h4 class="pl15 pt10 pr15"><?php echo app_lang("templates"); ?></h4></li>
 
-        <div class="col-sm-9 col-lg-10">
-            <div class="card">
-                <div class="page-title clearfix">
-                    <h4> <?php echo app_lang('templates'); ?></h4>
-                    <div class="title-button-group">
-                        <?php echo modal_anchor(get_uri("documents/template_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_template'), array("class" => "btn btn-default", "title" => app_lang('add_template'))); ?>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table id="template-table" class="display" cellspacing="0" width="100%">            
-                    </table>
-                </div>
-            </div>
+        <!-- <?php //echo view("documents/tabs", array("active_tab" => "leads_list")); ?> -->
+
+        <div class="tab-title clearfix no-border">
+            <div class="title-button-group">
+
+                <?php
+                if($can_add_template){
+                    echo modal_anchor(get_uri("documents/template_modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_template'), array("class" => "btn btn-outline-light", "title" => app_lang('add_template'), "data-post-type" => "client"));
+               }?>
+
+               </div>
+        </div>
+    </ul>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table id="template-table" class="display" cellspacing="0" width="100%">            
+            </table>
         </div>
     </div>
 </div>
-
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -52,8 +51,7 @@
             {title: "<?php echo app_lang("name") ?>", "class": "all", order_by: "document_title"},
             {title: "<?php echo app_lang("ref_prefix") ?>", order_by: "ref_prefix"},
             {title: "<?php echo app_lang("destination_folder") ?>", order_by: "destination_folder"},
-            {title: "<?php echo app_lang("service_name") ?>", order_by: "service_name"},
-            {title: "<?php echo app_lang("agreement_type") ?>", order_by: "agreement_type"},
+            {title: "<?php echo app_lang("depertment") ?>", order_by: "depertment"},
             {title: "<?php echo app_lang("description") ?>", order_by: "description"},
             {title: "<?php echo app_lang("created_at") ?>", order_by: "created_at"}
             <?php echo $custom_field_headers; ?>,
