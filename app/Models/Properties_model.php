@@ -185,6 +185,24 @@ class Properties_model extends Crud_model {
         }
     }
 
+    public function get_notary_service_id_by_property($property_id)
+    {
+        // Define the SQL query to fetch the notary service ID for the given property ID
+        $sql = "SELECT service_id FROM rise_properties WHERE id = ?";
+        
+        // Execute the query and fetch the result
+        $query = $this->db->query($sql, array($property_id));
+        
+        if ($query && $query->getNumRows() > 0) {
+            $result = $query->getRow();
+            return $result->service_id;
+        } else {
+            // Log an error if no rows are found or the query fails
+            log_message('error', 'No notary service found for property ID: ' . $property_id);
+            return null;
+        }
+    }
+
     private function make_quick_filter_query($filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table) {
         $query = "";
         $tolarance = get_paid_status_tolarance();

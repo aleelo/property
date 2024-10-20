@@ -112,25 +112,44 @@
 
 <div class="form-group">
     <div class="row">
-        
-        <label for="type" class=" <?php echo $label_column; ?>"><?php echo 'Type'; ?></label>
+        <label for="service_id" class=" col-md-3"><?php echo 'Service'; ?></label>
         <div class=" col-md-9">
             <?php
-            $type = [''=>' -- choose type -- ','Dhul Bannaan'=>'Dhul Bannaan','Dhul Dhisan'=>'Dhul Dhisan','Dhul Beereed'=>'Dhul Beereed'];
             echo form_dropdown(array(
-                "id" => "type",
-                "name" => "type",
+                "id" => "service_id",
+                "name" => "service_id",
                 "class" => "form-control select2",
-                "placeholder" => 'Training Type',
+                "placeholder" => 'Service',
                 "autocomplete" => "off",
                 'data-rule-required' => true,
                 'data-msg-required' => app_lang('field_required'),
-            ),$type,[$model_info->type]);
+            ),$Services,[$model_info->service_id]);
             ?>
         </div>
     </div>
 </div>
 
+<!-- <div class="form-group">
+    <div class="row">
+        
+        <label for="type" class=" <?php// echo $label_column; ?>"><?php// echo 'Type'; ?></label>
+        <div class=" col-md-9">
+            <?php
+            // $type = [''=>' -- choose type -- ','Dhul Bannaan'=>'Dhul Bannaan','Dhul Dhisan'=>'Dhul Dhisan','Dhul Beereed'=>'Dhul Beereed'];
+            // echo form_dropdown(array(
+            //     "id" => "type",
+            //     "name" => "type",
+            //     "class" => "form-control select2",
+            //     "placeholder" => 'Training Type',
+            //     "autocomplete" => "off",
+            //     'data-rule-required' => true,
+            //     'data-msg-required' => app_lang('field_required'),
+            // ),$type,[$model_info->type]);
+            ?>
+        </div>
+    </div>
+</div>
+ -->
 
 <!----------------------------------------- Area  ------------------------------------>
 

@@ -83,6 +83,7 @@ class Agreements extends Security_Controller {
         $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();
 
         $view_data['payment_method'] = $this->payment_method();
+        $view_data['agreement_types'] = array("" => " -- choose a agreement type -- ") + $this->Agreement_type_model->get_dropdown_list(array("agreement_type"), "id");
 
         $view_data['notaries'] = array("" => " -- choose notary -- ") + $this->Clients_model->get_dropdown_list(array("company_name"), "id");
         $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo"), "id");
@@ -127,6 +128,22 @@ class Agreements extends Security_Controller {
         return $payment_methods_somali;
     }
 
+    public function get_agreement_types_by_property_id()
+        {
+            // Get the property ID from the request
+            $property_id = $this->request->getPost('property_id');
+
+            // Fetch the notary service ID associated with the selected property
+            $notary_service_id = $this->Properties_model->get_notary_service_id_by_property($property_id);
+
+            // Fetch the related agreement types using the notary service ID
+            $agreement_types = $this->Agreement_type_model->get_drop_list($notary_service_id);
+
+            // Return the agreement types as JSON
+            echo json_encode($agreement_types);
+        }
+
+
     public function save()
         {
             $agreement_id = $this->request->getPost('id');
@@ -139,14 +156,13 @@ class Agreements extends Security_Controller {
                 "buyer_ids" => "required",
                 "seller_ids" => "required",
                 "witness_ids" => "required",
-                "agreement_type" => "required",
+                "agreement_type_id" => "required",
                 "amount" => "required|numeric",
                 "payment_method" => "required",
-                "template_id" => "required",
             ));
 
-            $template_id = $this->request->getPost('template_id');
             $property_id = $this->request->getPost('property');
+            $agreement_type_id = $this->request->getPost('agreement_type_id');
 
             $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
             $seller_ids = $this->request->getPost('seller_ids') ? implode(',', $this->request->getPost('seller_ids')) : null;
@@ -156,8 +172,7 @@ class Agreements extends Security_Controller {
                 'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
                 "property_id" => $property_id,
                 "notary_ref" => $this->request->getPost('notary_ref'),
-                "template_id" => $template_id,
-                "agreement_type" => $this->request->getPost('agreement_type'),
+                "agreement_type_id" => $agreement_type_id,
                 "amount" => $this->request->getPost('amount'),
                 "payment_method" => $this->request->getPost('payment_method'),
 
@@ -199,6 +214,12 @@ class Agreements extends Security_Controller {
                 $input['property'] = $buyers_info->titleDeedNo;
                 
                 // print_r($input['buyer']); die;
+                $agreement_type_info = $this->db->query("SELECT 
+                t.id, t.name, at.agreement_type
+                FROM rise_templates t 
+                LEFT JOIN rise_agreement_type at ON at.id = t.agreement_type_id WHERE at.id = $agreement_type_id")->getRow();
+
+                $template_id = $agreement_type_info->id;
 
                 $template = $this->Templates_model->get_one($template_id);
                 $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template_id");
@@ -214,6 +235,7 @@ class Agreements extends Security_Controller {
                 $input['folder'] = $ag->folder;
                 $input['uuid'] = $ag->uuid;
                 $input['ref_number'] = $ag->ref_prefix . '/' . $sqn . '/' . date('m') . '/' . date('y');
+                $input['agreement_type'] = $agreement_type_info->agreement_type;
                 $token = $this->AccesToken();
 
                 //create/save agreement document
@@ -243,7 +265,7 @@ class Agreements extends Security_Controller {
                 $input = array(
                     "property_id" => $property_id,
                     "notary_ref" => $this->request->getPost('notary_ref'),
-                    "agreement_type" => $this->request->getPost('agreement_type'),
+                    "agreement_type_id" => $this->request->getPost('agreement_type_id'),
                     "amount" => $this->request->getPost('amount'),
                     "payment_method" => $this->request->getPost('payment_method'),
                     "buyer_ids" => $buyer_ids,

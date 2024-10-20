@@ -78,6 +78,7 @@ class Properties extends Security_Controller {
         $view_data['departments'] = array("" => " -- Choose Section Department -- ") + $this->Departments_model->get_dropdown_list(array("nameSo"), "id");
         $view_data['owners'] = array("" => " -- choose owner -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
         $view_data['secretary'] = array("" => " -- Choose Secretary -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
+        $view_data['Services'] = array("" => " -- choose a service -- ") + $this->Notary_services_model->get_dropdown_list(array("service_name"), "id");
 
         // $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name"," ","last_name")), "id");
 
@@ -155,7 +156,7 @@ class Properties extends Security_Controller {
             "region" => "required",
             "district" => "required",
             "address" => "required",
-            "type" => "required",
+            "service_id" => "required",
             "area" => "required",
             "property_value" => "required",
         ));
@@ -170,7 +171,7 @@ class Properties extends Security_Controller {
             "region" => $this->request->getPost('region'),
             "district" => $this->request->getPost('district'),
             "address" => $this->request->getPost('address'),
-            "type" => $this->request->getPost('type'),
+            "service_id" => $this->request->getPost('service_id'),
             "area" => $this->request->getPost('area'),
             "propertyValue" => $this->request->getPost('property_value'),
         );

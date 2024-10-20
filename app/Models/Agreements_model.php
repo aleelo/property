@@ -266,6 +266,41 @@ class Agreements_model extends Crud_model {
       
     }
 
+       
+
+        public function get_drop_list($notary_service_id)
+        {
+            if (!is_numeric($notary_service_id)) {
+                log_message('error', 'Invalid notary service ID provided: ' . $notary_service_id);
+                return array();
+            }
+
+            // Define the SQL query with a placeholder for the notary service ID
+            $sql = "SELECT id, agreement_type FROM rise_agreement_type WHERE notary_service_id = ?";
+            
+            // Execute the query
+            $query = $this->db->query($sql, array($notary_service_id));
+
+            // Check if the query was successful and returned any rows
+            if ($query && $query->getNumRows() > 0) {
+                $result = $query->getResult();
+                
+                // Prepare the dropdown list in the key-value format
+                $dropdown = array();
+                foreach ($result as $row) {
+                    $dropdown[$row->id] = $row->agreement_type;
+                }
+
+                return $dropdown;
+            } else {
+                // Log an error if no rows are found or the query fails
+                log_message('error', 'No agreement types found for notary service ID: ' . $notary_service_id);
+                return array();
+            }
+        }
+
+
+
     private function make_quick_filter_query($filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table) {
         $query = "";
         $tolarance = get_paid_status_tolarance();

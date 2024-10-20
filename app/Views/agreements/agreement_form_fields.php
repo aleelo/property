@@ -121,23 +121,42 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="agreement_type" class=" <?php echo $label_column; ?>"><?php echo 'Agreement Type'; ?></label>
+        <label for="agreement_type_id" class=" col-md-3"><?php echo 'Agreement Type'; ?></label>
         <div class=" col-md-9">
             <?php
-            $agreement_type = [''=>' -- choose agreement type -- ','Sale'=>'Sale','Lease'=>'Lease','Transfer'=>'Transfer','Gift (Hibeyn)'=>'Gift (Hibeyn)'];
             echo form_dropdown(array(
-                "id" => "agreement_type",
-                "name" => "agreement_type",
+                "id" => "agreement_type_id",
+                "name" => "agreement_type_id",
                 "class" => "form-control select2",
                 "placeholder" => 'Agreement Type',
                 "autocomplete" => "off",
                 'data-rule-required' => true,
-                'data-msg-required' =>   app_lang('field_required'),
-            ),$agreement_type,[$model_info->agreement_type]);
+                'data-msg-required' => app_lang('field_required'),
+            ),$agreement_types,[$model_info->agreement_type_id]);
             ?>
         </div>
     </div>
 </div>
+<!-- 
+<div class="form-group">
+    <div class="row">
+        <label for="agreement_type" class=" <?php// echo $label_column; ?>"><?php //echo 'Agreement Type'; ?></label>
+        <div class=" col-md-9">
+            <?php
+            // $agreement_type = [''=>' -- choose agreement type -- ','Sale'=>'Sale','Lease'=>'Lease','Transfer'=>'Transfer','Gift (Hibeyn)'=>'Gift (Hibeyn)'];
+            // echo form_dropdown(array(
+            //     "id" => "agreement_type",
+            //     "name" => "agreement_type",
+            //     "class" => "form-control select2",
+            //     "placeholder" => 'Agreement Type',
+            //     "autocomplete" => "off",
+            //     'data-rule-required' => true,
+            //     'data-msg-required' =>   app_lang('field_required'),
+            // ),$agreement_type,[$model_info->agreement_type]);
+            ?>
+        </div>
+    </div>
+</div> -->
 
 
 
@@ -226,7 +245,33 @@
     var k=1;
     $(document).ready(function () {
 
-      
+        $("#property").change(function () {
+            var propertyId = $(this).val();
+
+            // Clear the Agreement Type dropdown and reset any selected value
+            $("#agreement_type_id").html('<option value=""> -- choose an agreement type -- </option>').val("").trigger('change');
+
+            // Check if a valid property ID is selected
+            if (propertyId) {
+                $.ajax({
+                    url: "<?php echo get_uri('agreements/get_agreement_types_by_property_id'); ?>",
+                    type: 'POST',
+                    data: {property_id: propertyId},
+                    success: function (data) {
+                        // Parse the response if it contains valid JSON data
+                        var options = JSON.parse(data);
+                        if (options && Object.keys(options).length > 0) {
+                            $.each(options, function (key, value) {
+                                $("#agreement_type_id").append('<option value="' + key + '">' + value + '</option>');
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while fetching agreement types.");
+                    }
+                });
+            }
+        });
 
         setDatePicker("#Start_Date")
         setDatePicker("#End_Date")
