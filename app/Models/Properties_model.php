@@ -14,6 +14,8 @@ class Properties_model extends Crud_model {
     function get_details($options = array()) {
         $properties_table = $this->db->prefixTable('properties');
         $departments_table = $this->db->prefixTable('departments');
+        $clients_table = $this->db->prefixTable('clients');
+        $notary_services_table = $this->db->prefixTable('notary_services');
 
         $projects_table = $this->db->prefixTable('projects');
         $users_table = $this->db->prefixTable('users');
@@ -161,9 +163,11 @@ class Properties_model extends Crud_model {
 
 
         $sql = "SELECT SQL_CALC_FOUND_ROWS $properties_table.*,
-        CONCAT($users_table.first_name, ' ', $users_table.last_name) as owner_name
+        $clients_table.company_name as owner_name,
+        $notary_services_table.service_name
         FROM $properties_table
-        LEFT JOIN $users_table ON $users_table.id = $properties_table.owner_id
+        LEFT JOIN $clients_table ON $clients_table.id = $properties_table.owner_ids
+        LEFT JOIN $notary_services_table ON $notary_services_table.id = $properties_table.service_id
         $join_custom_fieds               
         WHERE $properties_table.deleted=0 $where $custom_fields_where  
         $order $limit_offset";

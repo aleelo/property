@@ -26,24 +26,24 @@
 </div>
 
 
-<!-----------------------------------------  Owner  ------------------------------------>
+<!-----------------------------------------  Owners  ------------------------------------>
 
-<div class="form-group">
+<div class="form-group" id="departments_section">
     <div class="row">
-        
-        <label for="owner_id" class=" <?php echo $label_column; ?>"><?php echo 'Owner Property'; ?></label>
-        <div class=" col-md-9">
+        <label for="owner_ids" class=" <?php echo $label_column; ?>"><?php echo 'Owner(s) Property'; ?></label>
+        <div class="<?php echo $field_column; ?>">
             <?php
-            // $type = [''=>' -- choose type -- ','Dhul Bannaan'=>'Dhul Bannaan','Dhul Dhisan'=>'Dhul Dhisan','Dhul Beereed'=>'Dhul Beereed'];
+            
             echo form_dropdown(array(
-                "id" => "owner_id",
-                "name" => "owner_id",
+                "id" => "owner_ids",
+                "name" => "owner_ids[]",
                 "class" => "form-control select2",
-                "placeholder" => 'Owner Property',
+                "multiple" => "multiple",
+                "placeholder" => ' -- choose owner(s) -- ',
                 "autocomplete" => "off",
                 'data-rule-required' => true,
-                'data-msg-required' => app_lang('field_required'),
-            ),$owners,[$model_info->owner_id]);
+                'data-msg-required' =>   app_lang('field_required'),
+            ),$owners,$model_info->owner_ids ? explode(',', $model_info->owner_ids) : []); // Handle multiple values
             ?>
         </div>
     </div>
@@ -112,7 +112,7 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="service_id" class=" col-md-3"><?php echo 'Service'; ?></label>
+        <label for="service_id" class="<?php echo $label_column; ?>"><?php echo 'Service'; ?></label>
         <div class=" col-md-9">
             <?php
             echo form_dropdown(array(

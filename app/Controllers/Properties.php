@@ -57,7 +57,8 @@ class Properties extends Security_Controller {
             "id" => "numeric"
         ));
 
-        $view_data['label_column'] = "col-md-3 text-right";
+        // $view_data['label_column'] = "col-md-3 text-right";
+        $view_data['label_column'] = "col-md-3";
         $view_data['field_column'] = "col-md-9";
 
         $view_data['label_column_2'] = "col-md-2 text-right";
@@ -75,8 +76,10 @@ class Properties extends Security_Controller {
         $view_data['regions'] = $this->Regions();
         $view_data['districts'] = $this->Districts();
 
+        $view_data['owners'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
+
+
         $view_data['departments'] = array("" => " -- Choose Section Department -- ") + $this->Departments_model->get_dropdown_list(array("nameSo"), "id");
-        $view_data['owners'] = array("" => " -- choose owner -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
         $view_data['secretary'] = array("" => " -- Choose Secretary -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
         $view_data['Services'] = array("" => " -- choose a service -- ") + $this->Notary_services_model->get_dropdown_list(array("service_name"), "id");
 
@@ -152,7 +155,7 @@ class Properties extends Security_Controller {
         $this->validate_submitted_data(array(
             "id" => "numeric",
             "title_deed_no" => "required",
-            "owner_id" => "required",
+            "owner_ids" => "required",
             "region" => "required",
             "district" => "required",
             "address" => "required",
@@ -161,13 +164,15 @@ class Properties extends Security_Controller {
             "property_value" => "required",
         ));
 
+        $owner_ids = $this->request->getPost('owner_ids') ? implode(',', $this->request->getPost('owner_ids')) : null;
+
         $target_path = get_setting("properties_file_path");
         $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "properties");
         $new_files = unserialize($files_data);
 
         $data = array(
             "titleDeedNo" => $this->request->getPost('title_deed_no'),
-            "owner_id" => $this->request->getPost('owner_id'),
+            "owner_ids" => $owner_ids,
             "region" => $this->request->getPost('region'),
             "district" => $this->request->getPost('district'),
             "address" => $this->request->getPost('address'),
@@ -310,9 +315,9 @@ class Properties extends Security_Controller {
         $row_data = array(
             $data->id,
             anchor(get_uri("properties/view/" . $data->id), $data->titleDeedNo),
+            $data->service_name,
             $data->owner_name,
             $meta_info->address_meta,
-            $data->type,
             $data->area,
             $data->propertyValue,
             $meta_info->created_at_meta,
@@ -331,8 +336,22 @@ class Properties extends Security_Controller {
     }
 
     private function _prepare_agreement_info($data) {
+        $address_parts = [];
 
-        $data->address_meta = $data->address.", ".$data->district.", ".$data->region.".";
+    // Add each part to the array only if it has a value
+    if (!empty($data->address)) {
+        $address_parts[] = $data->address;
+    }
+    if (!empty($data->district)) {
+        $address_parts[] = $data->district;
+    }
+    if (!empty($data->region)) {
+        $address_parts[] = $data->region;
+    }
+
+    // Join the parts with a comma and add a full stop at the end
+    $data->address_meta = implode(", ", $address_parts) . (count($address_parts) > 0 ? '.' : '');
+
 
         $style = '';
 

@@ -121,8 +121,8 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="agreement_type_id" class=" col-md-3"><?php echo 'Agreement Type'; ?></label>
-        <div class=" col-md-9">
+        <label for="agreement_type_id" class="<?php echo $label_column; ?>"><?php echo 'Agreement Type'; ?></label>
+        <div class="<?php echo $field_column; ?>">
             <?php
             echo form_dropdown(array(
                 "id" => "agreement_type_id",
@@ -137,28 +137,6 @@
         </div>
     </div>
 </div>
-<!-- 
-<div class="form-group">
-    <div class="row">
-        <label for="agreement_type" class=" <?php// echo $label_column; ?>"><?php //echo 'Agreement Type'; ?></label>
-        <div class=" col-md-9">
-            <?php
-            // $agreement_type = [''=>' -- choose agreement type -- ','Sale'=>'Sale','Lease'=>'Lease','Transfer'=>'Transfer','Gift (Hibeyn)'=>'Gift (Hibeyn)'];
-            // echo form_dropdown(array(
-            //     "id" => "agreement_type",
-            //     "name" => "agreement_type",
-            //     "class" => "form-control select2",
-            //     "placeholder" => 'Agreement Type',
-            //     "autocomplete" => "off",
-            //     'data-rule-required' => true,
-            //     'data-msg-required' =>   app_lang('field_required'),
-            // ),$agreement_type,[$model_info->agreement_type]);
-            ?>
-        </div>
-    </div>
-</div> -->
-
-
 
 <!----------------------------------------- Amount  ------------------------------------>
 
