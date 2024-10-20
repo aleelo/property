@@ -205,27 +205,6 @@
 </div>
 
 
-<!----------------------------------------- Template  ------------------------------------>
-
-<div class="form-group">
-    <div class="row">
-        <label for="template_id" class=" <?php echo $label_column; ?>"><?php echo 'Template'; ?></label>
-        <div class=" col-md-9">
-            <?php
-            // $documents = [''=>' -- choose document -- ','Dhul Bannaan'=>'Dhul Bannaan','Dhul Dhisan'=>'Dhul Dhisan','Dhul Beereed'=>'Dhul Beereed'];
-            echo form_dropdown(array(
-                "id" => "template_id",
-                "name" => "template_id",
-                "class" => "form-control select2",
-                "placeholder" => 'Template',
-                "autocomplete" => "off",
-                'data-rule-required' => true,
-                'data-msg-required' =>   app_lang('field_required'),
-            ),$documents,[$model_info->template_id]);
-            ?>
-        </div>
-    </div>
-</div>
 
 <!----------------------------------------- Files  ------------------------------------>
 
