@@ -11,7 +11,7 @@ class Agreement_type extends Security_Controller {
 
     //load leave type list view
     function index() {
-        return $this->template->rander("Agreement_type/index");
+        return $this->template->rander("agreement_type/index");
     }
 
     //load leave type add/edit form
@@ -19,7 +19,7 @@ class Agreement_type extends Security_Controller {
         $view_data['model_info'] = $this->Agreement_type_model->get_one($this->request->getPost('id'));
         $view_data['Services'] = array("" => " -- choose a service -- ") + $this->Notary_services_model->get_dropdown_list(array("service_name"), "id");
 
-        return $this->template->view('Agreement_type/modal_form', $view_data);
+        return $this->template->view('agreement_type/modal_form', $view_data);
     }
 
     //save leave type
