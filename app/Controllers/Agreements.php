@@ -311,11 +311,14 @@ class Agreements extends Security_Controller {
         $template->setValues([
 
             'ref' => $data['ref_number'],
+            'owner' => $data['owner'],
             'buyer' => $data['buyer'],
-            'seller' => $data['seller'],
+            'tenant' => $data['tenant'],
             'witness' => $data['witness'],
+            'lease_period' => $data['lease_period'],
             'agreement_type' => $data['agreement_type'],
             'payment_method' => $data['payment_method'],
+            'payment_frequency' => $data['payment_frequency'],
             'property' => $data['property'],
             'amount' => $data['amount'],
             'doctor' => $data['doctor'],
