@@ -178,7 +178,7 @@ class Agreements_model extends Crud_model {
         // FROM $agreements_table
         // LEFT JOIN $properties_table ON $properties_table.id = $agreements_table.property_id
         // LEFT JOIN $users_table as buyer ON FIND_IN_SET(buyer.id, $agreements_table.buyer_ids)
-        // LEFT JOIN $users_table as seller ON FIND_IN_SET(seller.id, $agreements_table.seller_ids)
+        // LEFT JOIN $users_table as seller ON FIND_IN_SET(seller.id, $agreements_table.owner_ids)
         // LEFT JOIN $users_table as witnes ON FIND_IN_SET(witnes.id, $agreements_table.witness_ids)
         // LEFT JOIN $templates_table ON $templates_table.id = $agreements_table.document_id
         // $join_custom_fieds               
@@ -198,7 +198,7 @@ class Agreements_model extends Crud_model {
         FROM $agreements_table
         LEFT JOIN $properties_table ON $properties_table.id = $agreements_table.property_id
         LEFT JOIN $clients_table as buyer ON buyer.id = $agreements_table.buyer_ids
-        LEFT JOIN $clients_table as seller ON seller.id = $agreements_table.seller_ids
+        LEFT JOIN $clients_table as seller ON seller.id = $agreements_table.owner_ids
         LEFT JOIN $clients_table as witnes ON witnes.id = $agreements_table.witness_ids
         LEFT JOIN $templates_table ON $templates_table.id = $agreements_table.template_id
         $join_custom_fieds               

@@ -24,6 +24,28 @@
     </div>
 </div>
 
+
+<!----------------------------------------- Agreement Type  ------------------------------------>
+
+<div class="form-group">
+    <div class="row">
+        <label for="agreement_type_id" class="<?php echo $label_column; ?>"><?php echo 'Agreement Type'; ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            echo form_dropdown(array(
+                "id" => "agreement_type_id",
+                "name" => "agreement_type_id",
+                "class" => "form-control select2",
+                "placeholder" => 'Agreement Type',
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' => app_lang('field_required'),
+            ),$agreement_types,[$model_info->agreement_type_id]);
+            ?>
+        </div>
+    </div>
+</div>
+
 <!-----------------------------------------  Ref NO  ------------------------------------>
 
 
@@ -46,9 +68,32 @@
     </div>
 </div>
 
+<!----------------------------------------- Owner  ------------------------------------>
+
+<div class="form-group" id="owner_section">
+    <div class="row">
+        <label for="owner_ids" class=" <?php echo $label_column; ?>"><?php echo 'Owner'; ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            
+            echo form_dropdown(array(
+                "id" => "owner_ids",
+                "name" => "owner_ids[]",
+                "class" => "form-control select2",
+                "multiple" => "multiple",
+                "placeholder" => ' -- choose Owner -- ',
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' =>   app_lang('field_required'),
+            ),$sellers,$model_info->owner_ids ? explode(',', $model_info->owner_ids) : []); // Handle multiple values
+            ?>
+        </div>
+    </div>
+</div>
+
 <!----------------------------------------- Buyer  ------------------------------------>
 
-<div class="form-group" id="departments_section">
+<div class="form-group" id="buyer_section">
     <div class="row">
         <label for="buyer_ids" class=" <?php echo $label_column; ?>"><?php echo 'Buyer'; ?></label>
         <div class="<?php echo $field_column; ?>">
@@ -59,7 +104,7 @@
                 "name" => "buyer_ids[]",
                 "class" => "form-control select2",
                 "multiple" => "multiple",
-                "placeholder" => ' -- choose buyer -- ',
+                "placeholder" => ' -- choose buyer(s) -- ',
                 "autocomplete" => "off",
                 'data-rule-required' => true,
                 'data-msg-required' =>   app_lang('field_required'),
@@ -69,29 +114,28 @@
     </div>
 </div>
 
-<!----------------------------------------- Seller  ------------------------------------>
+<!----------------------------------------- Tenant  ------------------------------------>
 
-<div class="form-group" id="departments_section">
+<div class="form-group" id="tenant_section">
     <div class="row">
-        <label for="seller_ids" class=" <?php echo $label_column; ?>"><?php echo 'seller'; ?></label>
+        <label for="tenant_ids" class=" <?php echo $label_column; ?>"><?php echo 'Tenant'; ?></label>
         <div class="<?php echo $field_column; ?>">
             <?php
             
             echo form_dropdown(array(
-                "id" => "seller_ids",
-                "name" => "seller_ids[]",
+                "id" => "tenant_ids",
+                "name" => "tenant_ids[]",
                 "class" => "form-control select2",
                 "multiple" => "multiple",
-                "placeholder" => ' -- choose seller -- ',
+                "placeholder" => ' -- choose Tenant(s) -- ',
                 "autocomplete" => "off",
                 'data-rule-required' => true,
                 'data-msg-required' =>   app_lang('field_required'),
-            ),$sellers,$model_info->seller_ids ? explode(',', $model_info->seller_ids) : []); // Handle multiple values
+            ),$sellers,$model_info->tenant_ids ? explode(',', $model_info->tenant_ids) : []); // Handle multiple values
             ?>
         </div>
     </div>
 </div>
-
 
 <!----------------------------------------- Witness  ------------------------------------>
 
@@ -117,22 +161,24 @@
 </div>
 
 
-<!----------------------------------------- Agreement Type  ------------------------------------>
 
-<div class="form-group">
+<!----------------------------------------- Leas Period  ------------------------------------>
+
+
+<div class="form-group" id="lease_period_section">
     <div class="row">
-        <label for="agreement_type_id" class="<?php echo $label_column; ?>"><?php echo 'Agreement Type'; ?></label>
+        <label for="lease_period" class="<?php echo $label_column; ?> company_name_section"><?php echo 'Lease Period'; ?></label>
         <div class="<?php echo $field_column; ?>">
             <?php
-            echo form_dropdown(array(
-                "id" => "agreement_type_id",
-                "name" => "agreement_type_id",
-                "class" => "form-control select2",
-                "placeholder" => 'Agreement Type',
-                "autocomplete" => "off",
+            echo form_input(array(
+                "id" => "lease_period",
+                "name" => "lease_period",
+                "value" => $model_info->lease_period,
+                "class" => "form-control company_name_input_section",
+                "placeholder" => 'Lease Period ',
                 'data-rule-required' => true,
-                'data-msg-required' => app_lang('field_required'),
-            ),$agreement_types,[$model_info->agreement_type_id]);
+                'data-msg-required' =>   app_lang('field_required'),
+            ));
             ?>
         </div>
     </div>
@@ -182,7 +228,26 @@
     </div>
 </div>
 
+<!----------------------------------------- Payment Frequency  ------------------------------------>
 
+<div class="form-group" id="payment_frequency_section">
+    <div class="row">
+        <label for="payment_frequency" class="<?php echo $label_column; ?> company_name_section"><?php echo 'Payment Frequency'; ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            echo form_input(array(
+                "id" => "payment_frequency",
+                "name" => "payment_frequency",
+                "value" => $model_info->payment_frequency,
+                "class" => "form-control company_name_input_section",
+                "placeholder" => app_lang('amount'),
+                'data-rule-required' => true,
+                'data-msg-required' =>   app_lang('field_required'),
+            ));
+            ?>
+        </div>
+    </div>
+</div>
 
 <!----------------------------------------- Files  ------------------------------------>
 
@@ -267,6 +332,61 @@
         });
 
         $("#client-form .select2").select2();
+
+// ---------------------------------------------------------------------------------------------//
+        // Function to reset other fields when an agreement type changes
+function resetOtherFields(excludeFieldIds) {
+    // Define all field selectors that might need to be reset
+    var fields = ['#buyer_section', '#tenant_section', '#lease_period_section', '#payment_frequency_section'];
+    
+    // Remove the excluded fields from the list
+    fields = fields.filter(function (field) {
+        return !excludeFieldIds.includes(field);
+    });
+
+    // Loop through each field and reset the values or hide them
+    fields.forEach(function (field) {
+        $(field).val(null).trigger('change'); // Clear selection or value
+        $(field).hide(); // Hide the field
+    });
+}
+
+// Initially hide all fields
+function hideAllFields() {
+    // $('#buyer_section').hide();
+    $('#tenant_section').hide();
+    $('#lease_period_section').hide();
+    $('#payment_frequency_section').hide();
+}
+
+// Call this function whenever the "agreement_type_id" dropdown changes
+$('#agreement_type_id').on('change', function () {
+    var agreementType = $(this).val();
+
+    // Hide all fields first
+    hideAllFields();
+
+    // Show the appropriate fields based on the selected agreement type and reset others
+    switch (agreementType) {
+        case '2':
+            $('#tenant_section').show();
+            $('#lease_period_section').show();
+            $('#payment_frequency_section').show();
+            resetOtherFields(['#tenant_section', '#lease_period_section', '#payment_frequency_section']);
+            break;
+        case '1':
+            $('#buyer_section').show();
+            resetOtherFields(['#buyer_section']);
+            break;
+        default:
+            hideAllFields(); // If no valid selection is made, hide all fields and reset all inputs
+            resetOtherFields([]);
+    }
+});
+
+// Trigger change on page load to set the correct visibility based on any pre-selected value
+$('#agreement_type_id').trigger('change');
+
 
     });
 </script>

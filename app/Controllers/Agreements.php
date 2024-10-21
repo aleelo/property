@@ -52,7 +52,6 @@ class Agreements extends Security_Controller {
         return $this->template->rander("agreements/index", $view_data);
     }
 
-  
     /* load client add/edit modal */
 
     function modal_form() {
@@ -152,11 +151,11 @@ class Agreements extends Security_Controller {
             $this->validate_submitted_data(array(
                 "id" => "numeric",
                 "property" => "required",
-                "notary_ref" => "required",
-                "buyer_ids" => "required",
-                "seller_ids" => "required",
-                "witness_ids" => "required",
                 "agreement_type_id" => "required",
+                "notary_ref" => "required",
+                "owner_ids" => "required",
+                "buyer_ids" => "required",
+                "witness_ids" => "required",
                 "amount" => "required|numeric",
                 "payment_method" => "required",
             ));
@@ -164,22 +163,24 @@ class Agreements extends Security_Controller {
             $property_id = $this->request->getPost('property');
             $agreement_type_id = $this->request->getPost('agreement_type_id');
 
+            $owner_ids = $this->request->getPost('owner_ids') ? implode(',', $this->request->getPost('owner_ids')) : null;
             $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
-            $seller_ids = $this->request->getPost('seller_ids') ? implode(',', $this->request->getPost('seller_ids')) : null;
+            $tenant_ids = $this->request->getPost('tenant_ids') ? implode(',', $this->request->getPost('tenant_ids')) : null;
             $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
 
             $input = array(
                 'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
                 "property_id" => $property_id,
-                "notary_ref" => $this->request->getPost('notary_ref'),
                 "agreement_type_id" => $agreement_type_id,
+                "notary_ref" => $this->request->getPost('notary_ref'),
+                "owner_ids" => $owner_ids,
+                "buyer_ids" => $buyer_ids,
+                "tenant_ids" => $tenant_ids,
+                "witness_ids" => $witness_ids,
+                "lease_period" => $this->request->getPost('lease_period'),
                 "amount" => $this->request->getPost('amount'),
                 "payment_method" => $this->request->getPost('payment_method'),
-
-                "buyer_ids" => $buyer_ids,
-                "seller_ids" => $seller_ids,
-                "witness_ids" => $witness_ids,
-
+                "payment_frequency" => $this->request->getPost('payment_frequency'),
                 "created_by" => $this->request->getPost('created_by') ?: $this->login_user->id,
                 "created_at" => date('Y-m-d'),
             );
@@ -195,12 +196,14 @@ class Agreements extends Security_Controller {
 
                 $buyers_info = $this->db->query("SELECT 
                 p.titleDeedNo,
+                GROUP_CONCAT(DISTINCT ow_u.company_name SEPARATOR ', ') as owners, 
                 GROUP_CONCAT(DISTINCT bu_s.company_name SEPARATOR ', ') as buyers, 
-                GROUP_CONCAT(DISTINCT se_u.company_name SEPARATOR ', ') as sellers, 
+                GROUP_CONCAT(DISTINCT te_u.company_name SEPARATOR ', ') as tenants, 
                 GROUP_CONCAT(DISTINCT wi_u.company_name SEPARATOR ', ') as witnesses
                 FROM rise_agreements ag 
+                LEFT JOIN rise_clients ow_u ON FIND_IN_SET(ow_u.id, ag.owner_ids)
                 LEFT JOIN rise_clients bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
-                LEFT JOIN rise_clients se_u ON FIND_IN_SET(se_u.id, ag.seller_ids)
+                LEFT JOIN rise_clients te_u ON FIND_IN_SET(te_u.id, ag.tenant_ids)
                 LEFT JOIN rise_clients wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
                 LEFT JOIN rise_properties p ON p.id = ag.property_id
                 WHERE ag.id = $save_id")->getRow();
@@ -208,8 +211,9 @@ class Agreements extends Security_Controller {
                 $doctor = $this->login_user->first_name . ' ' . $this->login_user->last_name;
 
                 $input['doctor'] = $doctor;
+                $input['owner'] = $this->format_names($buyers_info->owners);
                 $input['buyer'] = $this->format_names($buyers_info->buyers);
-                $input['seller'] = $this->format_names($buyers_info->sellers);
+                $input['tenant'] = $this->format_names($buyers_info->tenants);
                 $input['witness'] = $this->format_names($buyers_info->witnesses);
                 $input['property'] = $buyers_info->titleDeedNo;
                 
@@ -260,7 +264,7 @@ class Agreements extends Security_Controller {
 
             } else {
                 $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
-                $seller_ids = $this->request->getPost('seller_ids') ? implode(',', $this->request->getPost('seller_ids')) : null;
+                $owner_ids = $this->request->getPost('owner_ids') ? implode(',', $this->request->getPost('owner_ids')) : null;
                 $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
                 $input = array(
                     "property_id" => $property_id,
@@ -269,7 +273,7 @@ class Agreements extends Security_Controller {
                     "amount" => $this->request->getPost('amount'),
                     "payment_method" => $this->request->getPost('payment_method'),
                     "buyer_ids" => $buyer_ids,
-                    "seller_ids" => $seller_ids,
+                    "owner_ids" => $owner_ids,
                     "witness_ids" => $witness_ids,
                 );
 
@@ -630,7 +634,7 @@ class Agreements extends Security_Controller {
 
             SELECT rc_combined.company_name AS client_name, rc_combined.id
             FROM rise_agreements ra
-            LEFT JOIN rise_clients rc_combined ON FIND_IN_SET(rc_combined.id, ra.seller_ids)
+            LEFT JOIN rise_clients rc_combined ON FIND_IN_SET(rc_combined.id, ra.owner_ids)
             WHERE ra.id = $agreement_id
         ";
 
@@ -648,7 +652,7 @@ class Agreements extends Security_Controller {
         // $view_data["client_name"] = $this->db->query("SELECT 
         //     rc_combined.company_name AS client_name
         //     FROM rise_agreements ra
-        //     LEFT JOIN rise_clients rc_combined ON FIND_IN_SET(rc_combined.id, CONCAT(ra.buyer_ids, ',', ra.seller_ids))
+        //     LEFT JOIN rise_clients rc_combined ON FIND_IN_SET(rc_combined.id, CONCAT(ra.buyer_ids, ',', ra.owner_ids))
         //     WHERE ra.id = $agreement_id")->getRow();
 
 
