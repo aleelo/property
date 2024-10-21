@@ -154,9 +154,8 @@ class Agreements extends Security_Controller {
                 "agreement_type_id" => "required",
                 "notary_ref" => "required",
                 "owner_ids" => "required",
-                "buyer_ids" => "required",
                 "witness_ids" => "required",
-                "amount" => "required|numeric",
+                "amount" => "required",
                 "payment_method" => "required",
             ));
 

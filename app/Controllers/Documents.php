@@ -504,7 +504,6 @@ function update_status() {
             'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
             "document_title" => $this->request->getPost('document_title'),
             "ref_number" => $this->request->getPost('ref_number'),
-            "depertment" => $this->get_user_department_id(),
             "template" => $template_id,
             "item_id" => $this->request->getPost('zip'),
             "created_by" => $this->request->getPost('owner_id') ? $this->request->getPost('owner_id') : $this->login_user->id,
@@ -1082,7 +1081,6 @@ function update_status() {
 
                     $data = array(
                         "name" => $this->request->getPost('name') . $sufix2,
-                        "department" => $this->request->getPost('department'), //$job_info->department_id,
                         "service_id" => $this->request->getPost('service_id'), //$job_info->department_id,
                         "agreement_type_id" => $this->request->getPost('agreement_type_id'), //$job_info->department_id,
                         "ref_prefix" => $this->request->getPost('ref_prefix'),
@@ -1103,7 +1101,6 @@ function update_status() {
             $id = $this->request->getPost('id');
             $data = array(
                 "name" => $this->request->getPost('name'),
-                "department" => $this->request->getPost('department'), //$job_info->department_id,
                 "ref_prefix" => $this->request->getPost('ref_prefix'),
                 "destination_folder" => $this->request->getPost('destination_folder'),
                 "service_id" => $this->request->getPost('service_id'), //$job_info->department_id,
