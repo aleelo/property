@@ -61,6 +61,23 @@ $lang["add_property"] = "Add Property";
 $lang["edit_property"] = "Edit Property";
 $lang["delete_property"] = "Delete Property";
 
+
+// Notary Services
+$lang["agreement_type"] = "Agreement Type";
+$lang["agreement_types"] = "Agreement Types";
+$lang["add_agreement_type"] = "Add Agreement Type";
+$lang["edit_agreement_type"] = "Edit Agreement Type";
+$lang["delete_agreement_type"] = "Delete Agreement Type";
+
+
+// Notary Services
+$lang["notary_service"] = "Notary Service";
+$lang["notary_services"] = "Notary Services";
+$lang["service_name"] = "Service Name";
+$lang["add_service"] = "Add Service";
+$lang["edit_service"] = "Edit Service";
+$lang["delete_service"] = "Delete Service";
+
 // Agreements
 $lang["agreement"] = "Agreement";
 $lang["agreements"] = "Agreements";

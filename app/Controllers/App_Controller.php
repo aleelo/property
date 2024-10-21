@@ -105,6 +105,8 @@ class App_Controller extends Controller {
     public $Subscription_items_model;
     public $Agreements_model;
     public $Properties_owner_log_model;
+    public $Notary_services_model;
+    public $Agreement_type_model;
     
     public function __construct() {
         //main template to make frame of this app
@@ -236,6 +238,8 @@ class App_Controller extends Controller {
             'Subscription_items_model',
             'Agreements_model',
             'Properties_owner_log_model',
+            'Notary_services_model',
+            'Agreement_type_model',
         );
     }
 

@@ -1,4 +1,6 @@
 <?php
+
+
 $settings_menu = array(
     "app_settings" => array(
         array("name" => "general", "url" => "settings/general"),
@@ -29,6 +31,9 @@ $settings_menu = array(
     ),
 );
 
+$settings_menu["setup"][] = array("name" => "notary_services", "url" => "notary_services");
+$settings_menu["setup"][] = array("name" => "agreement_type", "url" => "agreement_type");
+
 //restricted settings
 if ($login_user->is_admin || (get_array_value($login_user->permissions, "can_manage_all_kinds_of_settings") && get_array_value($login_user->permissions, "can_manage_user_role_and_permissions"))) {
     $settings_menu["access_permission"] = array(
@@ -36,6 +41,7 @@ if ($login_user->is_admin || (get_array_value($login_user->permissions, "can_man
         array("name" => "user_roles", "url" => "roles/user_roles")
     );
 }
+
 
 $settings_menu["access_permission"][] = array("name" => "team", "url" => "team");
 
