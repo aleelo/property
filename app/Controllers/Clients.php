@@ -295,6 +295,35 @@ class Clients extends Security_Controller {
 
         $save_id = $this->Clients_model->ci_save($data, $client_id);
 
+        $files = $this->request->getPost("files");
+        // $success = false;
+        $now = get_current_utc_time();
+
+        $target_path = getcwd() . "/" . get_general_file_path("client", $save_id);
+        // print_r($target_path); die;
+
+        //process the fiiles which has been uploaded by dropzone
+        if ($files && get_array_value($files, 0)) {
+            foreach ($files as $file) {
+                $file_name = $this->request->getPost('file_name_' . $file);
+                $file_info = move_temp_file($file_name, $target_path);
+                if ($file_info) {
+                    $data = array(
+                        "client_id" => $save_id,
+                        "file_name" => get_array_value($file_info, 'file_name'),
+                        "file_id" => get_array_value($file_info, 'file_id'),
+                        "service_type" => get_array_value($file_info, 'service_type'),
+                        "description" => $this->request->getPost('description_' . $file),
+                        "file_size" => $this->request->getPost('file_size_' . $file),
+                        "created_at" => $now,
+                        "uploaded_by" => $this->login_user->id
+                    );
+                    $this->General_files_model->ci_save($data);
+                }
+            }
+        }
+
+
         if ($save_id) {
             save_custom_fields("clients", $save_id, $this->login_user->is_admin, $this->login_user->user_type);
 
@@ -1074,12 +1103,24 @@ class Clients extends Security_Controller {
 
             $view_data['model_info'] = $this->Clients_model->get_one($client_id);
             $view_data['groups_dropdown'] = $this->_get_groups_dropdown_select2_data();
+            $view_data['label_column'] = "col-md-3";
+            $view_data['field_column'] = "col-md-9";
+
+            $view_data['label_column_2'] = "col-md-2 text-right";
+            $view_data['field_column_2'] = "col-md-3";
+
+            $view_data['field_column_4'] = "col-md-4";
+
+            $view_data['field_column_3'] = "col-md-10";
 
             $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $client_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
 
             $view_data['label_column'] = "col-md-2";
             $view_data['field_column'] = "col-md-10";
             $view_data['can_edit_clients'] = $this->can_edit_clients($client_id);
+            $view_data['Nationalities'] = $this->Nationalities();
+            $view_data['regions'] = $this->Regions();
+            $view_data['districts'] = $this->Districts();
 
             $view_data["team_members_dropdown"] = $this->get_team_members_dropdown();
             $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();

@@ -23,9 +23,6 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var uploadUrl = "<?php echo get_uri("events/upload_file"); ?>";
-        var validationUri = "<?php echo get_uri("events/validate_events_file"); ?>";
-        var dropzone = attachDropzoneWithForm("#clients-dropzone", uploadUrl, validationUri);
         var ticket_id = "<?php echo $ticket_id; ?>";
 
         window.clientForm = $("#client-form").appForm({
@@ -71,5 +68,11 @@
             window.showAddNewModal = true;
             $(this).trigger("submit");
         });
+
+        
+        var uploadUrl = "<?php echo get_uri("events/upload_file"); ?>";
+        var validationUri = "<?php echo get_uri("events/validate_events_file"); ?>";
+        var dropzone = attachDropzoneWithForm("#clients-dropzone", uploadUrl, validationUri);
+
     });
 </script>    

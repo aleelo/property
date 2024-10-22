@@ -3,11 +3,11 @@
     <div class="card">
         <div class=" card-header">
             
-                <h4> <?php echo app_lang('section_info'); ?></h4>
+                <h4> <?php echo 'Property Info'; ?></h4>
            
         </div>
         <div class="card-body">
-            <?php echo view("properties/section_form_fields"); ?>
+            <?php echo view("properties/property_form_fields"); ?>
         </div>
             <div class="card-footer rounded-bottom">
                 <button type="submit" class="btn btn-primary"><span data-feather="check-circle" class="icon-16"></span> <?php echo app_lang('save'); ?></button>

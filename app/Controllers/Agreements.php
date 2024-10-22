@@ -193,6 +193,34 @@ class Agreements extends Security_Controller {
 
                 $save_id = $this->Agreements_model->ci_save($input);
 
+                $files = $this->request->getPost("files");
+                // $success = false;
+                $now = get_current_utc_time();
+        
+                $target_path = getcwd() . "/" . get_general_file_path("client", $save_id);
+                // print_r($target_path); die;
+        
+                //process the fiiles which has been uploaded by dropzone
+                if ($files && get_array_value($files, 0)) {
+                    foreach ($files as $file) {
+                        $file_name = $this->request->getPost('file_name_' . $file);
+                        $file_info = move_temp_file($file_name, $target_path);
+                        if ($file_info) {
+                            $data = array(
+                                "agreement_id" => $save_id,
+                                "file_name" => get_array_value($file_info, 'file_name'),
+                                "file_id" => get_array_value($file_info, 'file_id'),
+                                "service_type" => get_array_value($file_info, 'service_type'),
+                                "description" => $this->request->getPost('description_' . $file),
+                                "file_size" => $this->request->getPost('file_size_' . $file),
+                                "created_at" => $now,
+                                "uploaded_by" => $this->login_user->id
+                            );
+                            $this->General_files_model->ci_save($data);
+                        }
+                    }
+                }
+
                 $buyers_info = $this->db->query("SELECT 
                 p.titleDeedNo,
                 GROUP_CONCAT(DISTINCT ow_u.company_name SEPARATOR ', ') as owners, 
@@ -699,6 +727,21 @@ class Agreements extends Security_Controller {
         return $this->template->view('agreements/signaure_pad', $view_data);
     }
 
+    public function check_agreement_template()
+    {
+        $agreement_type_id = $this->request->getPost('agreement_type_id');
+
+        // Fetch agreement type details to check if it has a template
+        $agreement_type_info = $this->db->query("SELECT id FROM rise_templates WHERE agreement_type_id = ?", array($agreement_type_id))->getRow();
+
+        if ($agreement_type_info) {
+            echo json_encode(['has_template' => true]);
+        } else {
+            echo json_encode(['has_template' => false]);
+        }
+    }
+
+
     private function can_view_files() {
         if ($this->login_user->user_type == "staff") {
             $this->access_only_allowed_members();
@@ -870,23 +913,6 @@ class Agreements extends Security_Controller {
                     die;
                 }
             
-               //   print_r($imageArr);die;
-
-            //    if($signatureImageUrl){
-            //        $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
-
-            //        if($resultArr['success'] == true) {
-            //            $localFilePath = $resultArr['result'];
-            //            $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
-            //            $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
-                   
-            //        }else{                
-                       
-            //            $result = $resultArr['result'];
-            //            echo json_encode(array("success" => false, "data" => null, 'message' => $result));
-            //            die;
-            //        }
-            //    }
             } elseif ($sign_from === 'Manual') {
             
                 $data["signed_by"] = $this->login_user->id;

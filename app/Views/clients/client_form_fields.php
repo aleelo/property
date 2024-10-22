@@ -240,7 +240,7 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="birth_place" class=" col-md-3"><?php echo 'Place of Birth'; ?></label>
+        <label for="birth_place" class="<?php echo $label_column; ?>"><?php echo 'Place of Birth'; ?></label>
         <div class=" col-md-9">
             <?php
             echo form_input(array(
@@ -259,7 +259,7 @@
 
 <div class="form-group">
     <div class="row">
-        <label for="birth_date" class=" col-md-3"><?php echo 'Date of Birth'; ?></label>
+        <label for="birth_date" class="<?php echo $label_column; ?>"><?php echo 'Date of Birth'; ?></label>
         <div class=" col-md-9">
             <?php
             echo form_input(array(
@@ -274,58 +274,55 @@
     </div>
 </div>
 
+<div class="form-group">
+    <?php
+        echo view("includes/multi_file_uploader", array(
+            "upload_url" => get_uri("clients/upload_file"),
+            "validation_url" => get_uri("clients/validate_file"),
+        ));
+    ?>
+</div>
+
+
 <!----------------------------------------- Photo ------------------------------------>
 
+<!-- 
 <div class="form-group">
     <div class="row">
-        <label for="photo" class=" col-md-3"><?php echo 'Photo'; ?></label>
-        <div class=" col-md-9">
-            <button id="upload_photo_button" class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2">
-                <i data-feather="camera" class="icon-16"></i> <?php echo "Upload Photo" ?>
-            </button>
-            <?php echo view("includes/dropzone_preview"); ?>
-            <?php echo view("includes/file_list", array("files" => $model_info->photo)); ?>
-        </div>
-    </div>
-</div>
-
-
-<div class="form-group">
-    <div class="row">
-        <label for="photo" class=" col-md-3"><?php echo 'Photo'; ?></label>
+        <label for="photo" class="<?php //echo $label_column; ?>"><?php// echo 'Photo'; ?></label>
         <div class=" col-md-9">
             <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class="icon-16"></i> <?php echo "Upload Photo" ?></button>
-            <?php echo view("includes/dropzone_preview"); ?>
-            <?php echo view("includes/file_list", array("files" => $model_info->photo)); ?>
+            <?php// echo view("includes/dropzone_preview"); ?>
+            <?php// echo view("includes/file_list", array("files" => $model_info->photo)); ?>
         </div>
     </div>
-</div>
+</div> -->
 
 <!----------------------------------------- identification ------------------------------------>
-
+<!-- 
 <div class="form-group">
     <div class="row">
-        <label for="identification" class=" col-md-3"><?php echo 'Identification'; ?></label>
+        <label for="identification" class="<?php// echo $label_column; ?>"><?php //echo 'Identification'; ?></label>
         <div class=" col-md-9">
             <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class="icon-16"></i> <?php echo "Upload Identification" ?></button>
-            <?php echo view("includes/dropzone_preview"); ?>
-            <?php echo view("includes/file_list", array("files" => $model_info->identification)); ?>
+            <?php //echo view("includes/dropzone_preview"); ?>
+            <?php //echo view("includes/file_list", array("files" => $model_info->identification)); ?>
         </div>
     </div>
-</div>
+</div> -->
 
 <!----------------------------------------- Signature ------------------------------------>
 
-<div class="form-group">
+<!-- <div class="form-group">
     <div class="row">
-        <label for="signature" class=" col-md-3"><?php echo 'Signature'; ?></label>
+        <label for="signature" class="<?php// echo $label_column; ?>"><?php// echo 'Signature'; ?></label>
         <div class=" col-md-9">
             <button class="btn btn-default upload-file-button float-start me-auto btn-sm round" type="button" style="color:#7988a2"><i data-feather="camera" class="icon-16"></i> <?php echo "Upload Signature" ?></button>
-            <?php echo view("includes/dropzone_preview"); ?>
-            <?php echo view("includes/file_list", array("files" => $model_info->signature)); ?>
+            <?php// echo view("includes/dropzone_preview"); ?>
+            <?php //echo view("includes/file_list", array("files" => $model_info->signature)); ?>
         </div>
     </div>
-</div>
+</div> -->
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -362,8 +359,10 @@
                 $(".company_name_input_section").attr("placeholder", "Company name");
             }
         });
-        $("#client-form .select2").select2();
+
+
         setDatePicker("#birth_date");
+        $("#client-form .select2").select2();
 
 
     });

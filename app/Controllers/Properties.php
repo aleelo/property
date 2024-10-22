@@ -208,7 +208,35 @@ class Properties extends Security_Controller {
         $data = clean_data($data);
 
         $save_id = $this->Properties_model->ci_save($data, $property_id);
-     
+
+        
+        $files = $this->request->getPost("files");
+        // $success = false;
+        $now = get_current_utc_time();
+
+        $target_path = getcwd() . "/" . get_general_file_path("property", $save_id);
+        // print_r($target_path); die;
+
+        //process the fiiles which has been uploaded by dropzone
+        if ($files && get_array_value($files, 0)) {
+            foreach ($files as $file) {
+                $file_name = $this->request->getPost('file_name_' . $file);
+                $file_info = move_temp_file($file_name, $target_path);
+                if ($file_info) {
+                    $data = array(
+                        "property_id" => $save_id,
+                        "file_name" => get_array_value($file_info, 'file_name'),
+                        "file_id" => get_array_value($file_info, 'file_id'),
+                        "service_type" => get_array_value($file_info, 'service_type'),
+                        "description" => $this->request->getPost('description_' . $file),
+                        "file_size" => $this->request->getPost('file_size_' . $file),
+                        "created_at" => $now,
+                        "uploaded_by" => $this->login_user->id
+                    );
+                    $this->General_files_model->ci_save($data);
+                }
+            }
+        }
 
         if ($save_id) {
 
@@ -400,6 +428,24 @@ class Properties extends Security_Controller {
         }
     }
 
+    public function get_owners_by_property_id()
+    {
+        // Get the property_id from the POST request
+        $property_id = $this->request->getPost('property_id');
+    
+        // Validate the property ID
+        if (!$property_id || !is_numeric($property_id)) {
+            echo json_encode([]);
+            return;
+        }
+    
+        // Fetch the owners related to the property
+        $owners = $this->Properties_model->get_owners_by_property($property_id);
+    
+        // Return the result as JSON
+        echo json_encode($owners);
+    }
+    
     /* load client details view */
 
     function view($Sections_id = 0, $tab = "") {
@@ -408,8 +454,8 @@ class Properties extends Security_Controller {
 
         if ($Sections_id) {
             $options = array("id" => $Sections_id);
-            $section_info = $this->Properties_model->get_details($options)->getRow();
-            if ($section_info && !$section_info->is_lead) {
+            $properties_info = $this->Properties_model->get_details($options)->getRow();
+            if ($properties_info && !$properties_info->is_lead) {
 
                 $view_data = $this->make_access_permissions_view_data();
 
@@ -419,9 +465,9 @@ class Properties extends Security_Controller {
                 $access_info = $this->get_access_info("expense");
                 $view_data["show_expense_info"] = (get_setting("module_expense") && $access_info->access_type == "all") ? true : false;
 
-                $view_data['section_info'] = $section_info;
+                $view_data['properties_info'] = $properties_info;
 
-                $view_data["is_starred"] = strpos($section_info->starred_by, ":" . $this->login_user->id . ":") ? true : false;
+                $view_data["is_starred"] = strpos($properties_info->starred_by, ":" . $this->login_user->id . ":") ? true : false;
 
                 $view_data["tab"] = clean_data($tab);
 
@@ -597,16 +643,11 @@ class Properties extends Security_Controller {
 
     /* load files tab */
 
-    function files($client_id, $view_type = "") {
+    function files($property_id, $view_type = "") {
         $this->can_view_files();
 
-        if ($this->login_user->user_type == "client") {
-            $client_id = $this->login_user->client_id;
-        }
 
-        $this->_validate_client_view_access($client_id);
-
-        $view_data['client_id'] = clean_data($client_id);
+        $view_data['property_id'] = clean_data($property_id);
         $view_data['page_view'] = false;
 
         if ($view_type == "page_view") {
@@ -620,13 +661,13 @@ class Properties extends Security_Controller {
     /* file upload modal */
 
     function file_modal_form() {
-        $this->can_add_files();
-
+        // print_r($$this->request->getPost('id'));die;
         $view_data['model_info'] = $this->General_files_model->get_one($this->request->getPost('id'));
-        $client_id = $this->request->getPost('client_id') ? $this->request->getPost('client_id') : $view_data['model_info']->client_id;
-        $this->_validate_client_manage_access($client_id);
+        $property_id = $this->request->getPost('property_id') ? $this->request->getPost('property_id') : $view_data['model_info']->property_id;
+        // $this->_validate_client_manage_access($property_id);
+        // print_r($property_id);die;
 
-        $view_data['client_id'] = $client_id;
+        $view_data['property_id'] = $property_id;
         return $this->template->view('properties/files/modal_form', $view_data);
     }
 
@@ -637,17 +678,17 @@ class Properties extends Security_Controller {
 
         $this->validate_submitted_data(array(
             "id" => "numeric",
-            "client_id" => "required|numeric"
+            "property_id" => "required|numeric"
         ));
 
-        $client_id = $this->request->getPost('client_id');
-        $this->_validate_client_manage_access($client_id);
+        $property_id = $this->request->getPost('property_id');
+        // $this->_validate_client_manage_access($property_id);
 
         $files = $this->request->getPost("files");
         $success = false;
         $now = get_current_utc_time();
 
-        $target_path = getcwd() . "/" . get_general_file_path("client", $client_id);
+        $target_path = getcwd() . "/" . get_general_file_path("property", $property_id);
 
         //process the fiiles which has been uploaded by dropzone
         if ($files && get_array_value($files, 0)) {
@@ -656,7 +697,7 @@ class Properties extends Security_Controller {
                 $file_info = move_temp_file($file_name, $target_path);
                 if ($file_info) {
                     $data = array(
-                        "client_id" => $client_id,
+                        "property_id" => $property_id,
                         "file_name" => get_array_value($file_info, 'file_name'),
                         "file_id" => get_array_value($file_info, 'file_id'),
                         "service_type" => get_array_value($file_info, 'service_type'),
@@ -682,11 +723,12 @@ class Properties extends Security_Controller {
 
     /* list of files, prepared for datatable  */
 
-    function files_list_data($client_id = 0) {
-        $this->can_view_files();
-        $this->_validate_client_view_access($client_id);
+    function files_list_data($property_id = 0) {
+        // print_r($property_id);die;
+        // $this->can_view_files();
+        // $this->_validate_client_view_access($property_id);
 
-        $options = array("client_id" => $client_id);
+        $options = array("property_id" => $property_id);
         $list_data = $this->General_files_model->get_details($options)->getResult();
         $result = array();
         foreach ($list_data as $data) {
@@ -736,16 +778,16 @@ class Properties extends Security_Controller {
         $file_info = $this->General_files_model->get_details(array("id" => $file_id))->getRow();
 
         if ($file_info) {
-            $this->can_view_files();
+            // $this->can_view_files();
 
-            if (!$file_info->client_id) {
-                app_redirect("forbidden");
-            }
+            // if (!$file_info->client_id) {
+            //     app_redirect("forbidden");
+            // }
 
-            $this->_validate_client_manage_access($file_info->client_id);
+            // $this->_validate_client_manage_access($file_info->client_id);
 
             $view_data['can_comment_on_files'] = false;
-            $file_url = get_source_url_of_file(make_array_of_file($file_info), get_general_file_path("client", $file_info->client_id));
+            $file_url = get_source_url_of_file(make_array_of_file($file_info), get_general_file_path("property", $file_info->property_id));
 
             $view_data["file_url"] = $file_url;
             $view_data["is_image_file"] = is_image_file($file_info->file_name);
@@ -804,12 +846,6 @@ class Properties extends Security_Controller {
 
         $id = $this->request->getPost('id');
         $info = $this->General_files_model->get_one($id);
-
-        if (!$info->client_id || ($this->login_user->user_type == "client" && $info->uploaded_by !== $this->login_user->id)) {
-            app_redirect("forbidden");
-        }
-
-        $this->_validate_client_manage_access($info->client_id);
 
         if ($this->General_files_model->delete($id)) {
 
@@ -979,23 +1015,33 @@ class Properties extends Security_Controller {
             $view_data['model_info'] = $this->Properties_model->get_one($Sections_id);
             $view_data['groups_dropdown'] = $this->_get_groups_dropdown_select2_data();
 
-            $view_data['Bank_names_dropdown'] = $this->get_bank_name_dropdown();
+            // $view_data['Bank_names_dropdown'] = $this->get_bank_name_dropdown();
 
-            $view_data['Merchant_types_dropdown'] = $this->get_merchant_types_dropdown();
+            // $view_data['Merchant_types_dropdown'] = $this->get_merchant_types_dropdown();
 
-            $view_data['Merchant_types_dropdown_js'] = $this->get_merchant_types_dropdown_js();
+            // $view_data['Merchant_types_dropdown_js'] = $this->get_merchant_types_dropdown_js();
             $view_data['secretary'] = array("" => " -- Choose Secretary -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
+            $view_data['label_column'] = "col-md-3";
+            $view_data['field_column'] = "col-md-9";
 
+            $view_data['label_column_2'] = "col-md-2 text-right";
+            $view_data['field_column_2'] = "col-md-3";
+
+            $view_data['field_column_4'] = "col-md-4";
+
+            $view_data['field_column_3'] = "col-md-10";
 
             $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $Sections_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
 
-            $view_data['label_column'] = "col-md-2";
-            $view_data['field_column'] = "col-md-10";
+            $view_data['Services'] = array("" => " -- choose a service -- ") + $this->Notary_services_model->get_dropdown_list(array("service_name"), "id");
 
             $view_data['label_column_2'] = "col-md-2 text-right";
             $view_data['field_column_2'] = "col-md-4";
 
             $view_data['field_column_3'] = "col-md-10";
+            $view_data['regions'] = $this->Regions();
+            $view_data['districts'] = $this->Districts();
+            $view_data['owners'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
 
             $view_data['can_edit_clients'] = $this->can_edit_clients($Sections_id);
 

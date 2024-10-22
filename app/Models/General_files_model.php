@@ -25,6 +25,16 @@ class General_files_model extends Crud_model {
             $where = " AND $general_files_table.client_id=$client_id";
         }
 
+        $property_id = $this->_get_clean_value($options, "property_id");
+        if ($property_id) {
+            $where = " AND $general_files_table.property_id=$property_id";
+        }
+
+        $agreement_id = $this->_get_clean_value($options, "agreement_id");
+        if ($agreement_id) {
+            $where = " AND $general_files_table.agreement_id=$agreement_id";
+        }
+
         $user_id = $this->_get_clean_value($options, "user_id");
         if ($user_id) {
             $where = " AND $general_files_table.user_id = $user_id";

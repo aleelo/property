@@ -175,14 +175,23 @@
 </div>
 
 <!----------------------------------------- Files  ------------------------------------>
-
+<!-- 
 
 <div class="form-group">
     <div class="col-md-12">
         <?php
-        echo view("includes/file_list", array("files" => $model_info->files));
+        //echo view("includes/file_list", array("files" => $model_info->files));
         ?>
     </div>
+</div> -->
+
+<div class="form-group">
+    <?php
+        echo view("includes/multi_file_uploader", array(
+            "upload_url" => get_uri("clients/upload_file"),
+            "validation_url" => get_uri("clients/validate_file"),
+        ));
+    ?>
 </div>
 
 <?php echo view("includes/dropzone_preview"); ?>

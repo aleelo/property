@@ -4,30 +4,30 @@
             <div class="col-md-12">
                 <div class="page-title clearfix no-border no-border-top-radius no-bg">
                     <h1 class="pl0">
-                        <?php echo app_lang('section_details') . " - " . $section_info->nameSo ?>
+                        <?php echo 'Property Details' . " - " . $properties_info->titleDeedNo ?>
                         <span id="star-mark">
                             <?php
                             if ($is_starred) {
-                                echo view('properties/star/starred', array("client_id" => $section_info->id));
+                                echo view('properties/star/starred', array("client_id" => $properties_info->id));
                             } else {
-                                echo view('properties/star/not_starred', array("client_id" => $section_info->id));
+                                echo view('properties/star/not_starred', array("client_id" => $properties_info->id));
                             }
                             ?>
                         </span>
 
-                        <?php if ($section_info->lead_status_id) { ?>
+                        <?php if ($properties_info->lead_status_id) { ?>
                             <?php $lead_information = app_lang("past_lead_information") . "<br />"; ?>
-                            <?php if ($section_info->created_date) { ?>
-                                <?php $lead_information .= app_lang("lead_created_at") . ": " . format_to_date($section_info->created_date, false) . "<br />"; ?>
+                            <?php if ($properties_info->created_date) { ?>
+                                <?php $lead_information .= app_lang("lead_created_at") . ": " . format_to_date($properties_info->created_date, false) . "<br />"; ?>
                             <?php } ?>
-                            <?php if ($section_info->client_migration_date && is_date_exists($section_info->client_migration_date)) { ?>
-                                <?php $lead_information .= app_lang("migrated_to_client_at") . ": " . format_to_date($section_info->client_migration_date, false) . "<br />"; ?>
+                            <?php if ($properties_info->client_migration_date && is_date_exists($properties_info->client_migration_date)) { ?>
+                                <?php $lead_information .= app_lang("migrated_to_client_at") . ": " . format_to_date($properties_info->client_migration_date, false) . "<br />"; ?>
                             <?php } ?>
-                            <?php if ($section_info->last_lead_status) { ?>
-                                <?php $lead_information .= app_lang("last_status") . ": " . $section_info->last_lead_status . "<br />"; ?>
+                            <?php if ($properties_info->last_lead_status) { ?>
+                                <?php $lead_information .= app_lang("last_status") . ": " . $properties_info->last_lead_status . "<br />"; ?>
                             <?php } ?>
-                            <?php if ($section_info->owner_id) { ?>
-                                <?php $lead_information .= app_lang("owner") . ": " . $section_info->owner_name; ?>
+                            <?php if ($properties_info->owner_id) { ?>
+                                <?php $lead_information .= app_lang("owner") . ": " . $properties_info->owner_name; ?>
                             <?php } ?>
 
                             <span data-bs-toggle="tooltip" data-bs-html="true" title="<?php echo $lead_information; ?>"><i data-feather="help-circle" class="icon-16"></i></span>
@@ -37,7 +37,7 @@
 
                     <?php if (can_access_reminders_module()) { ?>
                         <div class="title-button-group mr0 clients-view">
-                            <?php echo modal_anchor(get_uri("events/reminders"), "<i data-feather='clock' class='icon-16'></i> " . app_lang('reminders'), array("class" => "btn btn-default mr0", "id" => "reminder-icon", "data-post-client_id" => $section_info->id, "data-post-reminder_view_type" => "client", "title" => app_lang('reminders') . " (" . app_lang('private') . ")")); ?>
+                            <?php echo modal_anchor(get_uri("events/reminders"), "<i data-feather='clock' class='icon-16'></i> " . app_lang('reminders'), array("class" => "btn btn-default mr0", "id" => "reminder-icon", "data-post-client_id" => $properties_info->id, "data-post-reminder_view_type" => "client", "title" => app_lang('reminders') . " (" . app_lang('private') . ")")); ?>
                         </div>
                     <?php } ?>
                 </div>
@@ -48,12 +48,13 @@
 
                 <ul id="client-tabs" data-bs-toggle="ajax-tab" class="nav nav-tabs scrollable-tabs" role="tablist">
                     
-                    <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("properties/company_info_tab/" . $section_info->id); ?>" data-bs-target="#client-info"> <?php echo app_lang('section_info'); ?></a></li>
-\
+                    <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("properties/company_info_tab/" . $properties_info->id); ?>" data-bs-target="#client-info"> <?php echo 'Properties Info'; ?></a></li>
+
+                    <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("properties/files/" . $properties_info->id); ?>" data-bs-target="#client-files"><?php echo app_lang('files'); ?></a></li>
 
                     <?php
                     $hook_tabs = array();
-                    $hook_tabs = app_hooks()->apply_filters('app_filter_client_details_ajax_tab', $hook_tabs, $section_info->id);
+                    $hook_tabs = app_hooks()->apply_filters('app_filter_client_details_ajax_tab', $hook_tabs, $properties_info->id);
                     $hook_tabs = is_array($hook_tabs) ? $hook_tabs : array();
                     foreach ($hook_tabs as $hook_tab) {
                         ?>

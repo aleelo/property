@@ -42,6 +42,7 @@
                 'data-msg-required' => app_lang('field_required'),
             ),$agreement_types,[$model_info->agreement_type_id]);
             ?>
+            <span id="agreement_type_validation_msg" class="text-danger"></span>
         </div>
     </div>
 </div>
@@ -252,20 +253,33 @@
 <!----------------------------------------- Files  ------------------------------------>
 
 <div class="form-group">
+    <?php
+        echo view("includes/multi_file_uploader", array(
+            "upload_url" => get_uri("clients/upload_file"),
+            "validation_url" => get_uri("clients/validate_file"),
+        ));
+    ?>
+</div>
+<!-- 
+<div class="form-group">
     <div class="col-md-12">
         <?php
-        echo view("includes/file_list", array("files" => $model_info->files));
+       // echo view("includes/file_list", array("files" => $model_info->files));
         ?>
     </div>
-</div>
+</div> -->
 
 <?php echo view("includes/dropzone_preview"); ?>
 
 <?php echo view("custom_fields/form/prepare_context_fields", array("custom_fields" => $custom_fields, "label_column" => $label_column, "field_column" => $field_column)); ?> 
 
 <script type="text/javascript">
-    var k=1;
     $(document).ready(function () {
+        var preSelectedOwnerId = $("#owner_ids").data('preselected');
+        // Initialize Select2 and tooltips
+        $('[data-bs-toggle="tooltip"]').tooltip();
+        $(".select2").select2();
+        feather.replace();
 
         $("#property").change(function () {
             var propertyId = $(this).val();
@@ -295,98 +309,142 @@
             }
         });
 
-        setDatePicker("#Start_Date")
-        setDatePicker("#End_Date")
-        
-        $('[data-bs-toggle="tooltip"]').tooltip();
+        // Handle property selection to dynamically load agreement types and owners
+       // Handle property selection to dynamically load owners
+        // $("#property").change(function () {
+        //     var propertyId = $(this).val();
 
-<?php if (isset($currency_dropdown)) { ?>
-            if ($('#currency').length) {
-                $('#currency').select2({data: <?php echo json_encode($currency_dropdown); ?>});
-            }
-<?php } ?>
+        //     // Clear and reset the Owner dropdown
+        //     $("#owner_ids").html('<option value=""> -- choose Ownersss -- </option>').val("").trigger('change');
 
-<?php if (isset($groups_dropdown)) { ?>
-            $("#group_ids").select2({
-                multiple: true,
-                data: <?php echo json_encode($groups_dropdown); ?>
-            });
-<?php } ?>
+        //     if (propertyId) {
+        //         // Fetch Property Owners
+        //         $.ajax({
+        //             url: "<?php echo site_url('properties/get_owners_by_property_id'); ?>",
+        //             type: 'POST',
+        //             data: {property_id: propertyId},
+        //             success: function (data) {
+        //                 var owners = JSON.parse(data);
+        //                 if (owners && Object.keys(owners).length > 0) {
+        //                     $("#owner_ids").empty(); // Clear the dropdown
+        //                     $.each(owners, function (key, value) {
+        //                         $("#owner_ids").append('<option value="' + key + '">' + value + '</option>');
+        //                         // alert(value);
+        //                     });
+        //                     // Disable the owner dropdown to make it read-only
+        //                     $("#owner_ids").prop('disabled', true);
+        //                 }
+        //             },
+        //             error: function () {
+        //                 alert("An error occurred while fetching property owners.");
+        //             }
+        //         });
+        //     } else {
+        //         // Reset the owner dropdown if no property is selected
+        //         $("#owner_ids").html('<option value=""> -- choose Ownersss -- </option>').val("").trigger('change');
+        //         $("#owner_ids").prop('disabled', false); // Enable it if needed
+        //     }
+        //      // Pre-populate the Owner field on page load, if a value is present
+        //     if (preSelectedOwnerId) {
+        //          $("#owner_ids").val(preSelectedOwnerId).trigger('change');
+        //          console.log(value)
+        //      }
+        //      else{
+        //         console.log("no data")
+        //      }
+        // });
 
-<?php if ($login_user->is_admin || get_array_value($login_user->permissions, "client") === "all") { ?>
-            $('#created_by').select2({data: <?php echo $team_members_dropdown; ?>});
-<?php } ?>
 
-<?php if ($login_user->user_type === "staff") { ?>
-            $("#client_labels").select2({multiple: true, data: <?php echo json_encode($label_suggestions); ?>});
-<?php } ?>
-        $('.account_type').click(function () {
-            var inputValue = $(this).attr("value");
-            if (inputValue === "person") {
-                $(".company_name_section").html("Name");
-                $(".company_name_input_section").attr("placeholder", "Name");
-            } else {
-                $(".company_name_section").html("Company name");
-                $(".company_name_input_section").attr("placeholder", "Company name");
+        // Keep owners dropdown enabled during form submission so values are sent
+        $("#myForm").on('submit', function () {
+            $("#owner_ids").prop('disabled', false); // Enable it just before submitting the form
+        });
+
+        // Handle Agreement Type selection to validate the agreement and show/hide fields
+        $("#agreement_type_id").change(function () {
+            var agreementTypeId = $(this).val();
+            var $agreementTypeField = $(this);
+
+            // Reset validation messages and disable submit button if necessary
+            $('#agreement_type_validation_msg').text('');
+            $("#save_button").prop("disabled", false);
+
+            if (agreementTypeId) {
+                $.ajax({
+                    url: "<?php echo get_uri('agreements/check_agreement_template'); ?>",
+                    type: 'POST',
+                    data: {agreement_type_id: agreementTypeId},
+                    success: function (response) {
+                        var result = JSON.parse(response);
+
+                        if (result.has_template) {
+                            // If the agreement type has a template, no need for error message
+                            $('#agreement_type_validation_msg').text('');
+                            $("#save_button").prop("disabled", false);
+                        } else {
+                            // If the agreement type does not have a template, show error message
+                            $('#agreement_type_validation_msg').text('This agreement type has no template. Please choose another one.');
+                            $("#save_button").prop("disabled", true);
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while checking agreement type template.");
+                    }
+                });
             }
         });
 
-        $("#client-form .select2").select2();
+        // Hide/Show fields based on Agreement Type selection
+        function hideAllSections() {
+            $('#buyer_section').hide();
+            $('#tenant_section').hide();
+            $('#lease_period_section').hide();
+            $('#payment_frequency_section').hide();
+        }
 
-// ---------------------------------------------------------------------------------------------//
-        // Function to reset other fields when an agreement type changes
-function resetOtherFields(excludeFieldIds) {
-    // Define all field selectors that might need to be reset
-    var fields = ['#buyer_section', '#tenant_section', '#lease_period_section', '#payment_frequency_section'];
-    
-    // Remove the excluded fields from the list
-    fields = fields.filter(function (field) {
-        return !excludeFieldIds.includes(field);
-    });
+        function resetSections(excludeSections) {
+            var sections = ['#buyer_section', '#tenant_section', '#lease_period_section', '#payment_frequency_section'];
+            sections = sections.filter(function (section) {
+                return excludeSections.indexOf(section) === -1;
+            });
 
-    // Loop through each field and reset the values or hide them
-    fields.forEach(function (field) {
-        $(field).val(null).trigger('change'); // Clear selection or value
-        $(field).hide(); // Hide the field
-    });
-}
+            sections.forEach(function (section) {
+                $(section).val(null).trigger('change');
+                $(section).hide();
+            });
+        }
 
-// Initially hide all fields
-function hideAllFields() {
-    // $('#buyer_section').hide();
-    $('#tenant_section').hide();
-    $('#lease_period_section').hide();
-    $('#payment_frequency_section').hide();
-}
+        // On Agreement Type change, display the relevant fields
+        $('#agreement_type_id').on('change', function () {
+            var agreementType = $(this).val();
 
-// Call this function whenever the "agreement_type_id" dropdown changes
-$('#agreement_type_id').on('change', function () {
-    var agreementType = $(this).val();
+            // Hide all sections initially
+            hideAllSections();
 
-    // Hide all fields first
-    hideAllFields();
+            // Show relevant sections based on the selected agreement type
+            switch (agreementType) {
+                case '2': // Example case for Lease
+                    $('#tenant_section').show();
+                    $('#lease_period_section').show();
+                    $('#payment_frequency_section').show();
+                    resetSections(['#tenant_section', '#lease_period_section', '#payment_frequency_section']);
+                    break;
+                case '1': // Example case for Sale
+                    $('#buyer_section').show();
+                    resetSections(['#buyer_section']);
+                    break;
+                default:
+                    hideAllSections();
+                    resetSections([]);
+            }
+        });
 
-    // Show the appropriate fields based on the selected agreement type and reset others
-    switch (agreementType) {
-        case '2':
-            $('#tenant_section').show();
-            $('#lease_period_section').show();
-            $('#payment_frequency_section').show();
-            resetOtherFields(['#tenant_section', '#lease_period_section', '#payment_frequency_section']);
-            break;
-        case '1':
-            $('#buyer_section').show();
-            resetOtherFields(['#buyer_section']);
-            break;
-        default:
-            hideAllFields(); // If no valid selection is made, hide all fields and reset all inputs
-            resetOtherFields([]);
-    }
-});
+        // Trigger change on page load to set the correct visibility based on any pre-selected value
+        $('#agreement_type_id').trigger('change');
 
-// Trigger change on page load to set the correct visibility based on any pre-selected value
-$('#agreement_type_id').trigger('change');
-
-
+        // Date pickers initialization for lease periods
+        setDatePicker("#lease_period_start");
+        setDatePicker("#lease_period_end");
     });
 </script>
+

@@ -207,6 +207,38 @@ class Properties_model extends Crud_model {
         }
     }
 
+    public function get_owners_by_property($property_id)
+    {
+        // Validate the property ID
+        if (!is_numeric($property_id)) {
+            log_message('error', 'Invalid property ID provided: ' . $property_id);
+            return array();
+        }
+
+        // Define the SQL query with a placeholder for the property ID
+        $sql = "SELECT p.id, GROUP_CONCAT(DISTINCT ow_u.company_name SEPARATOR ', ') as owners FROM rise_properties p LEFT JOIN rise_clients ow_u ON FIND_IN_SET(ow_u.id, p.owner_ids) WHERE p.id = ?";
+
+        // Execute the query
+        $query = $this->db->query($sql, array($property_id));
+
+        // Check if the query was successful and returned any rows
+        if ($query && $query->getNumRows() > 0) {
+            $result = $query->getResult();
+
+            // Prepare the dropdown list in the key-value format
+            $owners_list = array();
+            foreach ($result as $row) {
+                $owners_list[$row->id] = $row->owners;
+            }
+
+            return $owners_list;
+        } else {
+            // Log an error if no rows are found or the query fails
+            log_message('error', 'No owners found for property ID: ' . $property_id);
+            return array();
+        }
+    }
+
     private function make_quick_filter_query($filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table) {
         $query = "";
         $tolarance = get_paid_status_tolarance();
