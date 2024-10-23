@@ -808,20 +808,20 @@ class Properties extends Security_Controller {
     /* download a file */
 
     function download_file($id) {
-        $this->can_view_files();
+        // $this->can_view_files();
 
         $file_info = $this->General_files_model->get_one($id);
 
-        if (!$file_info->client_id) {
-            app_redirect("forbidden");
-        }
+        // if (!$file_info->client_id) {
+        //     app_redirect("forbidden");
+        // }
 
-        $this->_validate_client_manage_access($file_info->client_id);
+        // $this->_validate_client_manage_access($file_info->client_id);
 
         //serilize the path
         $file_data = serialize(array(make_array_of_file($file_info)));
 
-        return $this->download_app_files(get_general_file_path("client", $file_info->client_id), $file_data);
+        return $this->download_app_files(get_general_file_path("property", $file_info->property_id), $file_data);
     }
 
     /* upload a post file */
@@ -1021,8 +1021,8 @@ class Properties extends Security_Controller {
 
             // $view_data['Merchant_types_dropdown_js'] = $this->get_merchant_types_dropdown_js();
             $view_data['secretary'] = array("" => " -- Choose Secretary -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
-            $view_data['label_column'] = "col-md-3";
-            $view_data['field_column'] = "col-md-9";
+            $view_data['label_column'] = "col-md-2";
+            $view_data['field_column'] = "col-md-10";
 
             $view_data['label_column_2'] = "col-md-2 text-right";
             $view_data['field_column_2'] = "col-md-3";

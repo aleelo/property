@@ -4,6 +4,17 @@
         <div class="container-fluid">
             <input type="hidden" name="ticket_id" value="<?php echo $ticket_id; ?>" />
             <?php echo view("properties/property_form_fields"); ?>
+            
+            <!----------------------------------------- Files  ------------------------------------>
+
+            <div class="form-group">
+                <?php
+                    echo view("includes/multi_file_uploader", array(
+                        "upload_url" => get_uri("clients/upload_file"),
+                        "validation_url" => get_uri("clients/validate_file"),
+                    ));
+                ?>
+            </div>
 
         </div>
     </div>

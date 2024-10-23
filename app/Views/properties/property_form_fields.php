@@ -8,7 +8,7 @@
 <div class="form-group">
     <div class="row">
         <label for="service_id" class="<?php echo $label_column; ?>"><?php echo 'Property Type'; ?></label>
-        <div class=" col-md-9">
+        <div class="<?php echo $field_column; ?>">
             <?php
             echo form_dropdown(array(
                 "id" => "service_id",
@@ -114,7 +114,7 @@
 <div class="form-group">
     <div class="row">
         <label for="address" class=" <?php echo $label_column; ?>"><?php echo 'Address'; ?></label>
-        <div class=" col-md-9">
+        <div class="<?php echo $field_column; ?>">
             <?php
             echo form_textarea(array(
                 "id" => "address",
@@ -174,7 +174,8 @@
     </div>
 </div>
 
-<!----------------------------------------- Files  ------------------------------------>
+
+
 <!-- 
 
 <div class="form-group">
@@ -185,14 +186,6 @@
     </div>
 </div> -->
 
-<div class="form-group">
-    <?php
-        echo view("includes/multi_file_uploader", array(
-            "upload_url" => get_uri("clients/upload_file"),
-            "validation_url" => get_uri("clients/validate_file"),
-        ));
-    ?>
-</div>
 
 <?php echo view("includes/dropzone_preview"); ?>
 
