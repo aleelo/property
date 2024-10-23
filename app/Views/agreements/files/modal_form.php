@@ -1,7 +1,7 @@
 <?php echo form_open(get_uri("agreements/save_file"), array("id" => "file-form", "class" => "general-form", "role" => "form")); ?>
 <div class="modal-body clearfix">
     <div class="container-fluid">
-        <input type="hidden" name="client_id" value="<?php echo $client_id; ?>" />
+        <input type="hidden" name="agreement_id" value="<?php echo $agreement_id; ?>" />
         <?php
         echo view("includes/multi_file_uploader", array(
             "upload_url" => get_uri("agreements/upload_file"),

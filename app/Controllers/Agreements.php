@@ -84,12 +84,12 @@ class Agreements extends Security_Controller {
         $view_data['payment_method'] = $this->payment_method();
         $view_data['agreement_types'] = array("" => " -- choose a agreement type -- ") + $this->Agreement_type_model->get_dropdown_list(array("agreement_type"), "id");
 
-        $view_data['notaries'] = array("" => " -- choose notary -- ") + $this->Clients_model->get_dropdown_list(array("company_name"), "id");
-        $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo"), "id");
-        $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
-        $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
+        $view_data['notaries'] = array("" => " -- choose notary -- ") + $this->Clients_model->get_dropdown_list(array("person_name"), "id");
+        $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo", "hyphen", "lotto_number"), "id");
+        $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+        $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
         $view_data['documents'] = array("" => " -- choose document -- ") + $this->Templates_model->get_dropdown_list(array("name"), "id");
-        $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
+        $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
 
 
         // $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name"," ","last_name")), "id");
@@ -197,7 +197,7 @@ class Agreements extends Security_Controller {
                 // $success = false;
                 $now = get_current_utc_time();
         
-                $target_path = getcwd() . "/" . get_general_file_path("client", $save_id);
+                $target_path = getcwd() . "/" . get_general_file_path("agreements", $save_id);
                 // print_r($target_path); die;
         
                 //process the fiiles which has been uploaded by dropzone
@@ -536,7 +536,7 @@ class Agreements extends Security_Controller {
         // Prepare the row data
         $row_data = array(
             $data->id,
-            $data->titleDeedNo,
+            anchor(get_uri("agreements/view/" . $data->id), $data->titleDeedNo),
             $data->notary_ref,
             $data->buyer,
             $data->seller,
@@ -806,14 +806,14 @@ class Agreements extends Security_Controller {
 
     /* load client details view */
 
-    function view($Sections_id = 0, $tab = "") {
+    function view($agreement_id = 0, $tab = "") {
         
-        // $this->_validate_client_view_access($Sections_id);
+        // $this->_validate_client_view_access($agreement_id);
 
-        if ($Sections_id) {
-            $options = array("id" => $Sections_id);
-            $section_info = $this->Agreements_model->get_details($options)->getRow();
-            if ($section_info && !$section_info->is_lead) {
+        if ($agreement_id) {
+            $options = array("id" => $agreement_id);
+            $agreement_info = $this->Agreements_model->get_details($options)->getRow();
+            if ($agreement_info && !$agreement_info->is_lead) {
 
                 $view_data = $this->make_access_permissions_view_data();
 
@@ -823,9 +823,9 @@ class Agreements extends Security_Controller {
                 $access_info = $this->get_access_info("expense");
                 $view_data["show_expense_info"] = (get_setting("module_expense") && $access_info->access_type == "all") ? true : false;
 
-                $view_data['section_info'] = $section_info;
+                $view_data['agreement_info'] = $agreement_info;
 
-                $view_data["is_starred"] = strpos($section_info->starred_by, ":" . $this->login_user->id . ":") ? true : false;
+                $view_data["is_starred"] = strpos($agreement_info->starred_by, ":" . $this->login_user->id . ":") ? true : false;
 
                 $view_data["tab"] = clean_data($tab);
 
@@ -1253,16 +1253,16 @@ class Agreements extends Security_Controller {
 
     /* load files tab */
 
-    function files($client_id, $view_type = "") {
-        $this->can_view_files();
+    function files($agreement_id, $view_type = "") {
+        // $this->can_view_files();
 
-        if ($this->login_user->user_type == "client") {
-            $client_id = $this->login_user->client_id;
-        }
+        // if ($this->login_user->user_type == "client") {
+        //     $agreement_id = $this->login_user->agreement_id;
+        // }
 
-        $this->_validate_client_view_access($client_id);
+        $this->_validate_client_view_access($agreement_id);
 
-        $view_data['client_id'] = clean_data($client_id);
+        $view_data['agreement_id'] = clean_data($agreement_id);
         $view_data['page_view'] = false;
 
         if ($view_type == "page_view") {
@@ -1276,34 +1276,34 @@ class Agreements extends Security_Controller {
     /* file upload modal */
 
     function file_modal_form() {
-        $this->can_add_files();
+        // $this->can_add_files();
 
         $view_data['model_info'] = $this->General_files_model->get_one($this->request->getPost('id'));
-        $client_id = $this->request->getPost('client_id') ? $this->request->getPost('client_id') : $view_data['model_info']->client_id;
-        $this->_validate_client_manage_access($client_id);
+        $agreement_id = $this->request->getPost('agreement_id') ? $this->request->getPost('agreement_id') : $view_data['model_info']->agreement_id;
+        $this->_validate_client_manage_access($agreement_id);
 
-        $view_data['client_id'] = $client_id;
+        $view_data['agreement_id'] = $agreement_id;
         return $this->template->view('agreements/files/modal_form', $view_data);
     }
 
     /* save file data and move temp file to parmanent file directory */
 
     function save_file() {
-        $this->can_add_files();
+        // $this->can_add_files();
 
         $this->validate_submitted_data(array(
             "id" => "numeric",
-            "client_id" => "required|numeric"
+            "agreement_id" => "required|numeric"
         ));
 
-        $client_id = $this->request->getPost('client_id');
-        $this->_validate_client_manage_access($client_id);
+        $agreement_id = $this->request->getPost('agreement_id');
+        // $this->_validate_client_manage_access($agreement_id);
 
         $files = $this->request->getPost("files");
         $success = false;
         $now = get_current_utc_time();
 
-        $target_path = getcwd() . "/" . get_general_file_path("client", $client_id);
+        $target_path = getcwd() . "/" . get_general_file_path("agreements", $agreement_id);
 
         //process the fiiles which has been uploaded by dropzone
         if ($files && get_array_value($files, 0)) {
@@ -1312,7 +1312,7 @@ class Agreements extends Security_Controller {
                 $file_info = move_temp_file($file_name, $target_path);
                 if ($file_info) {
                     $data = array(
-                        "client_id" => $client_id,
+                        "agreement_id" => $agreement_id,
                         "file_name" => get_array_value($file_info, 'file_name'),
                         "file_id" => get_array_value($file_info, 'file_id'),
                         "service_type" => get_array_value($file_info, 'service_type'),
@@ -1338,11 +1338,11 @@ class Agreements extends Security_Controller {
 
     /* list of files, prepared for datatable  */
 
-    function files_list_data($client_id = 0) {
-        $this->can_view_files();
-        $this->_validate_client_view_access($client_id);
+    function files_list_data($agreement_id = 0) {
+        // $this->can_view_files();
+        // $this->_validate_client_view_access($agreement_id);
 
-        $options = array("client_id" => $client_id);
+        $options = array("agreement_id" => $agreement_id);
         $list_data = $this->General_files_model->get_details($options)->getResult();
         $result = array();
         foreach ($list_data as $data) {
@@ -1392,16 +1392,16 @@ class Agreements extends Security_Controller {
         $file_info = $this->General_files_model->get_details(array("id" => $file_id))->getRow();
 
         if ($file_info) {
-            $this->can_view_files();
+            // $this->can_view_files();
 
-            if (!$file_info->client_id) {
+            if (!$file_info->agreement_id) {
                 app_redirect("forbidden");
             }
 
-            $this->_validate_client_manage_access($file_info->client_id);
+            $this->_validate_client_manage_access($file_info->agreement_id);
 
             $view_data['can_comment_on_files'] = false;
-            $file_url = get_source_url_of_file(make_array_of_file($file_info), get_general_file_path("client", $file_info->client_id));
+            $file_url = get_source_url_of_file(make_array_of_file($file_info), get_general_file_path("agreements", $file_info->agreement_id));
 
             $view_data["file_url"] = $file_url;
             $view_data["is_image_file"] = is_image_file($file_info->file_name);
@@ -1422,20 +1422,20 @@ class Agreements extends Security_Controller {
     /* download a file */
 
     function download_file($id) {
-        $this->can_view_files();
+        // $this->can_view_files();
 
         $file_info = $this->General_files_model->get_one($id);
 
-        if (!$file_info->client_id) {
+        if (!$file_info->agreement_id) {
             app_redirect("forbidden");
         }
 
-        $this->_validate_client_manage_access($file_info->client_id);
+        $this->_validate_client_manage_access($file_info->agreement_id);
 
         //serilize the path
         $file_data = serialize(array(make_array_of_file($file_info)));
 
-        return $this->download_app_files(get_general_file_path("client", $file_info->client_id), $file_data);
+        return $this->download_app_files(get_general_file_path("agreements", $file_info->agreement_id), $file_data);
     }
 
     /* upload a post file */
@@ -1461,16 +1461,16 @@ class Agreements extends Security_Controller {
         $id = $this->request->getPost('id');
         $info = $this->General_files_model->get_one($id);
 
-        if (!$info->client_id || ($this->login_user->user_type == "client" && $info->uploaded_by !== $this->login_user->id)) {
-            app_redirect("forbidden");
-        }
+        // if (!$info->client_id || ($this->login_user->user_type == "client" && $info->uploaded_by !== $this->login_user->id)) {
+        //     app_redirect("forbidden");
+        // }
 
-        $this->_validate_client_manage_access($info->client_id);
+        // $this->_validate_client_manage_access($info->client_id);
 
         if ($this->General_files_model->delete($id)) {
 
             //delete the files
-            delete_app_files(get_general_file_path("client", $info->client_id), array(make_array_of_file($info)));
+            delete_app_files(get_general_file_path("agreements", $info->client_id), array(make_array_of_file($info)));
 
             echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
         } else {
@@ -1628,22 +1628,22 @@ class Agreements extends Security_Controller {
 
     /* load contact's company info tab view */
 
-    function company_info_tab($Sections_id = 0) {
-        if ($Sections_id) {
-            // $this->_validate_client_view_access($Sections_id);
+    function company_info_tab($agreement_id = 0) {
+        if ($agreement_id) {
+            // $this->_validate_client_view_access($agreement_id);
 
-            $view_data['model_info'] = $this->Agreements_model->get_one($Sections_id);
+            $view_data['model_info'] = $this->Agreements_model->get_one($agreement_id);
             $view_data['groups_dropdown'] = $this->_get_groups_dropdown_select2_data();
 
-            $view_data['Bank_names_dropdown'] = $this->get_bank_name_dropdown();
+            // $view_data['Bank_names_dropdown'] = $this->get_bank_name_dropdown();
 
-            $view_data['Merchant_types_dropdown'] = $this->get_merchant_types_dropdown();
+            // $view_data['Merchant_types_dropdown'] = $this->get_merchant_types_dropdown();
 
-            $view_data['Merchant_types_dropdown_js'] = $this->get_merchant_types_dropdown_js();
+            // $view_data['Merchant_types_dropdown_js'] = $this->get_merchant_types_dropdown_js();
             $view_data['secretary'] = array("" => " -- Choose Secretary -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
 
 
-            $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $Sections_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+            $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $agreement_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
 
             $view_data['label_column'] = "col-md-2";
             $view_data['field_column'] = "col-md-10";
@@ -1653,10 +1653,17 @@ class Agreements extends Security_Controller {
 
             $view_data['field_column_3'] = "col-md-10";
 
-            $view_data['can_edit_clients'] = $this->can_edit_clients($Sections_id);
+            $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo"), "id");
+            $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
+            $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
+
+            $view_data['can_edit_clients'] = $this->can_edit_clients($agreement_id);
+            $view_data['payment_method'] = $this->payment_method();
+            $view_data['agreement_types'] = array("" => " -- choose a agreement type -- ") + $this->Agreement_type_model->get_dropdown_list(array("agreement_type"), "id");
 
             $view_data['departments'] = array("" => " -- Choose Department -- ") + $this->Departments_model->get_dropdown_list(array("nameSo"), "id");
             $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
+            $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
 
             $view_data["team_members_dropdown"] = $this->get_team_members_dropdown();
             $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();

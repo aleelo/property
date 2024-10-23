@@ -1,6 +1,5 @@
 
 <input type="hidden" name="id" value="<?php echo $model_info->id; ?>" />
-<input type="hidden" name="ower_log_id" value="<?php echo $ower_log_id; ?>" />
 <input type="hidden" name="view" value="<?php echo isset($view) ? $view : ""; ?>" />
 
 <!----------------------------------------- Property  ------------------------------------>
@@ -8,7 +7,7 @@
 <div class="form-group">
     <div class="row">
         <label for="property" class=" <?php echo $label_column; ?>"><?php echo 'Property'; ?></label>
-        <div class=" col-md-9">
+        <div class="<?php echo $field_column; ?>">
             <?php
             echo form_dropdown(array(
                 "id" => "property",
@@ -250,25 +249,6 @@
     </div>
 </div>
 
-<!----------------------------------------- Files  ------------------------------------>
-
-<div class="form-group">
-    <?php
-        echo view("includes/multi_file_uploader", array(
-            "upload_url" => get_uri("clients/upload_file"),
-            "validation_url" => get_uri("clients/validate_file"),
-        ));
-    ?>
-</div>
-<!-- 
-<div class="form-group">
-    <div class="col-md-12">
-        <?php
-       // echo view("includes/file_list", array("files" => $model_info->files));
-        ?>
-    </div>
-</div> -->
-
 <?php echo view("includes/dropzone_preview"); ?>
 
 <?php echo view("custom_fields/form/prepare_context_fields", array("custom_fields" => $custom_fields, "label_column" => $label_column, "field_column" => $field_column)); ?> 
@@ -282,77 +262,86 @@
         feather.replace();
 
         $("#property").change(function () {
-            var propertyId = $(this).val();
+        var propertyId = $(this).val();
 
-            // Clear the Agreement Type dropdown and reset any selected value
-            $("#agreement_type_id").html('<option value=""> -- choose an agreement type -- </option>').val("").trigger('change');
+        // Clear and reset the Owner dropdown
+        // $("#owner_ids").html('<option value=""> -- choose Owners -- </option>').val("").trigger('change');
 
-            // Check if a valid property ID is selected
-            if (propertyId) {
-                $.ajax({
-                    url: "<?php echo get_uri('agreements/get_agreement_types_by_property_id'); ?>",
-                    type: 'POST',
-                    data: {property_id: propertyId},
-                    success: function (data) {
-                        // Parse the response if it contains valid JSON data
-                        var options = JSON.parse(data);
-                        if (options && Object.keys(options).length > 0) {
-                            $.each(options, function (key, value) {
-                                $("#agreement_type_id").append('<option value="' + key + '">' + value + '</option>');
-                            });
+        if (propertyId) {
+            // Fetch Property Owners
+            $.ajax({
+                url: "<?php echo site_url('properties/get_owners_by_property_id'); ?>",
+                type: 'POST',
+                data: {property_id: propertyId},
+                success: function (data) {
+                    var owners = JSON.parse(data);
+                    if (owners && Object.keys(owners).length > 0) {
+                        $("#owner_ids").empty(); // Clear the dropdown
+
+                        $.each(owners, function (key, value) {
+                            $("#owner_ids").append('<option value="' + key + '">' + value + '</option>');
+                        });
+
+                        // 2. **Set the selected owner values in the dropdown** (highlighted)
+                        if (preSelectedOwnerId) {
+                            $("#owner_ids").val(preSelectedOwnerId).trigger('change'); // This ensures the owners are pre-selected
                         }
-                    },
-                    error: function () {
-                        alert("An error occurred while fetching agreement types.");
                     }
-                });
-            }
-        });
+                },
+                error: function () {
+                    alert("An error occurred while fetching property owners.");
+                }
+            });
+        } else {
+            // Reset the owner dropdown if no property is selected
+            $("#owner_ids").html('<option value=""> -- choose Owners -- </option>').val("").trigger('change');
+        }
+    });
 
         // Handle property selection to dynamically load agreement types and owners
        // Handle property selection to dynamically load owners
-        // $("#property").change(function () {
-        //     var propertyId = $(this).val();
+        $("#property").change(function () {
+            var propertyId = $(this).val();
 
-        //     // Clear and reset the Owner dropdown
-        //     $("#owner_ids").html('<option value=""> -- choose Ownersss -- </option>').val("").trigger('change');
+            // Clear and reset the Owner dropdown
+            // $("#owner_ids").html('<option value=""> -- choose Owners -- </option>').val("").trigger('change');
 
-        //     if (propertyId) {
-        //         // Fetch Property Owners
-        //         $.ajax({
-        //             url: "<?php echo site_url('properties/get_owners_by_property_id'); ?>",
-        //             type: 'POST',
-        //             data: {property_id: propertyId},
-        //             success: function (data) {
-        //                 var owners = JSON.parse(data);
-        //                 if (owners && Object.keys(owners).length > 0) {
-        //                     $("#owner_ids").empty(); // Clear the dropdown
-        //                     $.each(owners, function (key, value) {
-        //                         $("#owner_ids").append('<option value="' + key + '">' + value + '</option>');
-        //                         // alert(value);
-        //                     });
-        //                     // Disable the owner dropdown to make it read-only
-        //                     $("#owner_ids").prop('disabled', true);
-        //                 }
-        //             },
-        //             error: function () {
-        //                 alert("An error occurred while fetching property owners.");
-        //             }
-        //         });
-        //     } else {
-        //         // Reset the owner dropdown if no property is selected
-        //         $("#owner_ids").html('<option value=""> -- choose Ownersss -- </option>').val("").trigger('change');
-        //         $("#owner_ids").prop('disabled', false); // Enable it if needed
-        //     }
-        //      // Pre-populate the Owner field on page load, if a value is present
-        //     if (preSelectedOwnerId) {
-        //          $("#owner_ids").val(preSelectedOwnerId).trigger('change');
-        //          console.log(value)
-        //      }
-        //      else{
-        //         console.log("no data")
-        //      }
-        // });
+            if (propertyId) {
+                // Fetch Property Owners
+                $.ajax({
+                    url: "<?php echo site_url('properties/get_owners_by_property_id'); ?>",
+                    type: 'POST',
+                    data: {property_id: propertyId},
+                    success: function (data) {
+                        var owners = JSON.parse(data);
+                        if (owners && Object.keys(owners).length > 0) {
+                            $("#owner_ids").empty(); // Clear the dropdown
+                            $.each(owners, function (key, value) {
+                                $("#owner_ids").append('<option value="' + key + '">' + value + '</option>');
+                                // alert(value);
+                            });
+                            // Disable the owner dropdown to make it read-only
+                            // $("#owner_ids").prop('disabled', true);
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while fetching property owners.");
+                    }
+                });
+            } else {
+                // Reset the owner dropdown if no property is selected
+                $("#owner_ids").html('<option value=""> -- choose Ownersss -- </option>').val("").trigger('change');
+                $("#owner_ids").prop('disabled', false); // Enable it if needed
+            }
+             // Pre-populate the Owner field on page load, if a value is present
+            if (preSelectedOwnerId) {
+                 $("#owner_ids").val(preSelectedOwnerId).trigger('change');
+                 console.log(value)
+             }
+             else{
+                console.log("no data")
+             }
+        });
 
 
         // Keep owners dropdown enabled during form submission so values are sent

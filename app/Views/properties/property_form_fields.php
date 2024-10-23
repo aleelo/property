@@ -47,6 +47,28 @@
     </div>
 </div>
 
+<!-----------------------------------------  Lotto Number  ------------------------------------>
+
+
+<div class="form-group">
+    <div class="row">
+        <label for="lotto_number" class="<?php echo $label_column; ?> company_name_section"><?php echo 'Lotto Number'; ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            echo form_input(array(
+                "id" => "lotto_number",
+                "name" => "lotto_number",
+                "value" => $model_info->lotto_number,
+                "class" => "form-control company_name_input_section",
+                "placeholder" => 'Lotto Number',
+                "data-rule-required" => true,
+                "data-msg-required" => app_lang("field_required"),
+            ));
+            ?>
+        </div>
+    </div>
+</div>
+
 
 <!-----------------------------------------  Owners  ------------------------------------>
 

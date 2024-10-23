@@ -192,6 +192,7 @@ class Clients extends Security_Controller {
 
         $data = array(
             "company_name" => $company_name,
+            "person_name" => $this->request->getPost('person_name'),
             "mother_name" => $this->request->getPost('mother_name'),
             "nationality" => $this->request->getPost('nationality'),
             "region" => $this->request->getPost('region'),
@@ -452,7 +453,7 @@ class Clients extends Security_Controller {
         $client_labels = make_labels_view_data($data->labels_list, true);
 
         $row_data = array($data->id,
-            anchor(get_uri("clients/view/" . $data->id), $data->company_name),
+            anchor(get_uri("clients/view/" . $data->id), $data->person_name),
             $data->gender,
             $data->mother_name,
             $data->nationality,
@@ -1109,7 +1110,7 @@ class Clients extends Security_Controller {
             $view_data['label_column_2'] = "col-md-2 text-right";
             $view_data['field_column_2'] = "col-md-3";
 
-            $view_data['field_column_4'] = "col-md-4";
+            $view_data['field_column_4'] = "col-md-5";
 
             $view_data['field_column_3'] = "col-md-10";
 

@@ -27,54 +27,45 @@
     </div>
 </div>
 
-<?php if ($model_info->id) { ?>
-    <div class="form-group">
-        <div class="row">
-            <?php if ($model_info->type == "person") { ?>
-                <label for="name" class="<?php echo $label_column; ?> company_name_section"><?php echo app_lang('name'); ?></label>
-            <?php } else { ?>
-                <label for="company_name" class="<?php echo $label_column; ?> company_name_section"><?php echo app_lang('company_name'); ?></label>
-            <?php } ?>
-            <div class="<?php echo $field_column; ?>">
-                <?php
-                echo form_input(array(
-                    "id" => ($model_info->type == "person") ? "name" : "company_name",
-                    "name" => "company_name",
-                    "value" => $model_info->company_name,
-                    "class" => "form-control company_name_input_section",
-                    "placeholder" => app_lang('company_name'),
-                    "autofocus" => true,
-                    "data-rule-required" => true,
-                    "data-msg-required" => app_lang("field_required"),
-                ));
-                ?>
-            </div>
+<!----------------------------------------- Company Name ------------------------------------>
+
+<div class="form-group" id="company_section">
+    <div class="row">
+        <label for="company_name" class="<?php echo $label_column; ?>"><?php echo 'Company Name'; ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            echo form_input(array(
+                "id" => "company_name",
+                "name" => "company_name",
+                "value" => $model_info->company_name,
+                "class" => "form-control",
+                "placeholder" => 'Company Name'
+            ));
+            ?>
         </div>
     </div>
-<?php } else { ?>
-    <div class="form-group">
-        <div class="row">
-            <label for="company_name" class="<?php echo $label_column; ?> company_name_section"><?php echo app_lang('company_name'); ?></label>
-            <div class="<?php echo $field_column; ?>">
-                <?php
-                echo form_input(array(
-                    "id" => "company_name",
-                    "name" => "company_name",
-                    "value" => $model_info->company_name,
-                    "class" => "form-control company_name_input_section",
-                    "placeholder" => app_lang('company_name'),
-                    "autofocus" => true,
-                    "data-rule-required" => true,
-                    "data-msg-required" => app_lang("field_required"),
-                ));
-                ?>
-            </div>
+</div>
+
+<!----------------------------------------- Person Name ------------------------------------>
+
+<div class="form-group" id="person_section">
+    <div class="row">
+        <label for="person_name" class="<?php echo $label_column; ?>"><?php echo 'Person Name'; ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            echo form_input(array(
+                "id" => "person_name",
+                "name" => "person_name",
+                "value" => $model_info->person_name,
+                "class" => "form-control",
+                "placeholder" => 'Person Name'
+            ));
+            ?>
         </div>
     </div>
-<?php } ?>
+</div>
 
-
-<!-----------------------------------------  Mother Name ------------------------------------>
+<!----------------------------------------- Mother Name ------------------------------------>
 
 <div class="form-group">
     <div class="row">
@@ -214,7 +205,7 @@
 <div class="form-group">
     <div class="row">
         <label for="gender" class="<?php echo $label_column; ?>"><?php echo app_lang('gender'); ?></label>
-        <div class=" col-md-9">
+        <div class="<?php echo $field_column; ?>">
             <?php
             echo form_radio(array(
                 "id" => "gender_male",
@@ -241,7 +232,7 @@
 <div class="form-group">
     <div class="row">
         <label for="birth_place" class="<?php echo $label_column; ?>"><?php echo 'Place of Birth'; ?></label>
-        <div class=" col-md-9">
+        <div class="<?php echo $field_column; ?>">
             <?php
             echo form_input(array(
                 "id" => "birth_place",
@@ -260,7 +251,7 @@
 <div class="form-group">
     <div class="row">
         <label for="birth_date" class="<?php echo $label_column; ?>"><?php echo 'Date of Birth'; ?></label>
-        <div class=" col-md-9">
+        <div class="<?php echo $field_column; ?>">
             <?php
             echo form_input(array(
                 "id" => "birth_date",
@@ -274,14 +265,7 @@
     </div>
 </div>
 
-<div class="form-group">
-    <?php
-        echo view("includes/multi_file_uploader", array(
-            "upload_url" => get_uri("clients/upload_file"),
-            "validation_url" => get_uri("clients/validate_file"),
-        ));
-    ?>
-</div>
+
 
 
 <!----------------------------------------- Photo ------------------------------------>
@@ -349,6 +333,7 @@
         <?php if ($login_user->user_type === "staff") { ?>
                     $("#client_labels").select2({multiple: true, data: <?php echo json_encode($label_suggestions); ?>});
         <?php } ?>
+
         $('.account_type').click(function () {
             var inputValue = $(this).attr("value");
             if (inputValue === "person") {
@@ -360,6 +345,41 @@
             }
         });
 
+        // Function to hide the company name section
+        function hideCompanySection() {
+            $('#company_section').hide();  // Hide the company section when 'person' is selected
+            $('#company_name').val('');  // Optionally, clear the input value when hiding
+        }
+
+        // Function to show the company name section
+        function showCompanySection() {
+            $('#company_section').show();  // Show the company section when 'organization' is selected
+        }
+
+        // Event listener for radio button changes
+        $('.account_type').click(function () {
+            var selectedType = $(this).val();
+            
+            // Check if 'organization' or 'person' is selected and show/hide accordingly
+            if (selectedType === "organization") {
+                showCompanySection();
+            } else if (selectedType === "person") {
+                hideCompanySection();
+            }
+        });
+
+        // Trigger change on page load to set the correct visibility based on the pre-selected value
+        var preSelectedType = $('input[name="account_type"]:checked').val();
+        if (preSelectedType === "organization") {
+            showCompanySection();
+        } else if (preSelectedType === "person") {
+            hideCompanySection();
+        }
+        
+        // Initialize Select2 and tooltips
+        $('[data-bs-toggle="tooltip"]').tooltip();
+        $(".select2").select2();
+        feather.replace();
 
         setDatePicker("#birth_date");
         $("#client-form .select2").select2();

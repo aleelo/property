@@ -191,9 +191,9 @@ class Agreements_model extends Crud_model {
         $sql = "SELECT SQL_CALC_FOUND_ROWS 
         $agreements_table.*, 
         $properties_table.titleDeedNo as titleDeedNo,
-        buyer.company_name as buyer, 
-        seller.company_name as seller,
-        witnes.company_name as witness, 
+        buyer.person_name as buyer, 
+        seller.person_name as seller,
+        witnes.person_name as witness, 
         $templates_table.name as template_name,$templates_table.destination_folder as folder,$templates_table.path,$templates_table.ref_prefix
         FROM $agreements_table
         LEFT JOIN $properties_table ON $properties_table.id = $agreements_table.property_id

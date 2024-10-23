@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="page-title clearfix no-border no-border-top-radius no-bg">
                     <h1 class="pl0">
-                        <?php echo app_lang('client_details') . " - " . $client_info->company_name ?>
+                        <?php echo app_lang('client_details') . " - " . $client_info->person_name ?>
                         <span id="star-mark">
                             <?php
                             if ($is_starred) {

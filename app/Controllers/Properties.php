@@ -76,7 +76,7 @@ class Properties extends Security_Controller {
         $view_data['regions'] = $this->Regions();
         $view_data['districts'] = $this->Districts();
 
-        $view_data['owners'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
+        $view_data['owners'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
 
 
         $view_data['departments'] = array("" => " -- Choose Section Department -- ") + $this->Departments_model->get_dropdown_list(array("nameSo"), "id");
@@ -155,6 +155,7 @@ class Properties extends Security_Controller {
         $this->validate_submitted_data(array(
             "id" => "numeric",
             "title_deed_no" => "required",
+            "lotto_number" => "required",
             "owner_ids" => "required",
             "region" => "required",
             "district" => "required",
@@ -172,6 +173,7 @@ class Properties extends Security_Controller {
 
         $data = array(
             "titleDeedNo" => $this->request->getPost('title_deed_no'),
+            "lotto_number" => $this->request->getPost('lotto_number'),
             "owner_ids" => $owner_ids,
             "region" => $this->request->getPost('region'),
             "district" => $this->request->getPost('district'),
@@ -441,6 +443,8 @@ class Properties extends Security_Controller {
     
         // Fetch the owners related to the property
         $owners = $this->Properties_model->get_owners_by_property($property_id);
+
+        // print_r($owners);die;
     
         // Return the result as JSON
         echo json_encode($owners);

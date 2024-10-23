@@ -216,7 +216,7 @@ class Properties_model extends Crud_model {
         }
 
         // Define the SQL query with a placeholder for the property ID
-        $sql = "SELECT p.id, GROUP_CONCAT(DISTINCT ow_u.company_name SEPARATOR ', ') as owners FROM rise_properties p LEFT JOIN rise_clients ow_u ON FIND_IN_SET(ow_u.id, p.owner_ids) WHERE p.id = ?";
+        $sql = "SELECT ow_u.id AS owner_id, concat(ow_u.person_name,' ', ow_u.hyphen,' ', ow_u.phone) AS owner_name FROM rise_properties p LEFT JOIN rise_clients ow_u ON FIND_IN_SET(ow_u.id, p.owner_ids) WHERE p.id = ? ";
 
         // Execute the query
         $query = $this->db->query($sql, array($property_id));
@@ -228,7 +228,7 @@ class Properties_model extends Crud_model {
             // Prepare the dropdown list in the key-value format
             $owners_list = array();
             foreach ($result as $row) {
-                $owners_list[$row->id] = $row->owners;
+                $owners_list[$row->owner_id] = $row->owner_name;
             }
 
             return $owners_list;
