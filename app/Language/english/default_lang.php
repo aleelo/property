@@ -62,6 +62,10 @@ $lang["edit_property"] = "Edit Property";
 $lang["delete_property"] = "Delete Property";
 
 
+// Notary
+$lang["notary"] = "Notary";
+
+
 // Notary Services
 $lang["agreement_type"] = "Agreement Type";
 $lang["agreement_types"] = "Agreement Types";

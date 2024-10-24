@@ -31,6 +31,7 @@ $settings_menu = array(
     ),
 );
 
+$settings_menu["setup"][] = array("name" => "notary", "url" => "notary");
 $settings_menu["setup"][] = array("name" => "notary_services", "url" => "notary_services");
 $settings_menu["setup"][] = array("name" => "agreement_type", "url" => "agreement_type");
 $settings_menu["setup"][] = array("name" => "templates", "url" => "documents/templates");
