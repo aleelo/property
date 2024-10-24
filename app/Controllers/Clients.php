@@ -93,8 +93,12 @@ class Clients extends Security_Controller {
         $view_data['groups_dropdown'] = $this->_get_groups_dropdown_select2_data();
 
         $view_data['Nationalities'] = $this->Nationalities();
-        $view_data['regions'] = $this->Regions();
+        // $view_data['regions'] = $this->Regions();
         $view_data['districts'] = $this->Districts();
+        $view_data['regions'] = array("" => " -- choose region -- ") + $this->Regions_model->get_dropdown_list(array("region"), "id");
+        // $view_data['districts'] = array("" => " -- choose district -- ") + $this->Districts_model->get_dropdown_list(array("district"), "id");
+        // $view_data['districts'] = array("" => " -- choose district -- ") + $this->Districts_model->get_details();
+        // print_r($view_data['districts']);die;
 
         $view_data["team_members_dropdown"] = $this->get_team_members_dropdown();
 
@@ -195,8 +199,8 @@ class Clients extends Security_Controller {
             "person_name" => $this->request->getPost('person_name'),
             "mother_name" => $this->request->getPost('mother_name'),
             "nationality" => $this->request->getPost('nationality'),
-            "region" => $this->request->getPost('region'),
-            "district" => $this->request->getPost('district'),
+            "region_id" => $this->request->getPost('region_id'),
+            "district_id" => $this->request->getPost('district_id'),
             "address" => $this->request->getPost('address'),
             "email" => $this->request->getPost('email'),
             "phone" => $this->request->getPost('phone'),
@@ -478,6 +482,17 @@ class Clients extends Security_Controller {
                 . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_client'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("clients/delete"), "data-action" => "delete-confirmation"));
 
         return $row_data;
+    }
+
+    public function get_districts_by_region_id()
+    {
+        $region_id = $this->request->getPost('region_id');
+        
+        // Call the model method to get the dropdown list for districts
+        $dropdown = $this->Clients_model->get_drop_list($region_id);
+
+        // Return the dropdown as JSON
+        echo json_encode($dropdown);
     }
 
     private function _prepare_clients_info($data) {

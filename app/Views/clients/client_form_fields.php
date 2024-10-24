@@ -110,33 +110,33 @@
 <div class="form-group">
     <div class="row">
         
-        <label for="region" class=" <?php echo $label_column; ?>"><?php echo 'Region'; ?></label>
+        <label for="region_id" class=" <?php echo $label_column; ?>"><?php echo 'Region'; ?></label>
         <div class="<?php echo $field_column_2; ?>">
             <?php
             echo form_dropdown(array(
-                "id" => "region",
-                "name" => "region",
+                "id" => "region_id",
+                "name" => "region_id",
                 "class" => "form-control select2",
                 "placeholder" => 'Region',
                 "autocomplete" => "off",
                 'data-rule-required' => true,
                 'data-msg-required' => app_lang('field_required'),
-            ),$regions,[$model_info->region]);
+            ),$regions,[$model_info->region_id]);
             ?>
         </div>
         
-        <label for="district" class=" <?php echo $label_column_2; ?>"><?php echo 'District'; ?></label>
+        <label for="district_id" class=" <?php echo $label_column_2; ?>"><?php echo 'District'; ?></label>
         <div class="<?php echo $field_column_4; ?>">
             <?php
             echo form_dropdown(array(
-                "id" => "district",
-                "name" => "district",
+                "id" => "district_id",
+                "name" => "district_id",
                 "class" => "form-control select2",
-                "placeholder" => 'Owner Property',
+                "placeholder" => 'District',
                 "autocomplete" => "off",
                 'data-rule-required' => true,
                 'data-msg-required' => app_lang('field_required'),
-            ),$districts,[$model_info->district]);
+            ),$districts,[$model_info->district_id]);
             ?>
         </div>
     </div>
@@ -383,6 +383,34 @@
 
         setDatePicker("#birth_date");
         $("#client-form .select2").select2();
+
+        // $("#region_id").change(function () {
+        //     var regionId = $(this).val();
+
+        //     // Clear the District dropdown and reset any selected value
+        //     $("#district_id").html('<option value=""> -- choose a district -- </option>').val("").trigger('change');
+
+        //     // Check if a valid region ID is selected
+        //     if (regionId) {
+        //         $.ajax({
+        //             url: "<?php echo get_uri('clients/get_districts_by_region_id'); ?>",
+        //             type: 'POST',
+        //             data: {region_id: regionId},
+        //             success: function (data) {
+        //                 // Parse the response if it contains valid JSON data
+        //                 var options = JSON.parse(data);
+        //                 if (options && Object.keys(options).length > 0) {
+        //                     $.each(options, function (key, value) {
+        //                         $("#district_id").append('<option value="' + key + '">' + value + '</option>');
+        //                     });
+        //                 }
+        //             },
+        //             error: function () {
+        //                 alert("An error occurred while fetching districts.");
+        //             }
+        //         });
+        //     }
+        // });
 
 
     });

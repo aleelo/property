@@ -17,6 +17,8 @@
 
                 <input type="hidden" name="id" value="<?php echo $model_info->id; ?>" />
 
+                    <!-----------------------------------------  Legal Name ------------------------------------>
+
                     <div class="form-group">
                         <div class="row">
                             <label for="legal_name" class=" col-md-2"><?php echo 'Legal Name'; ?></label>
@@ -33,6 +35,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-----------------------------------------  Legal Structure ------------------------------------>
 
                     <div class="form-group">
                         <div class="row">
