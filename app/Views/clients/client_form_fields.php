@@ -384,33 +384,33 @@
         setDatePicker("#birth_date");
         $("#client-form .select2").select2();
 
-        // $("#region_id").change(function () {
-        //     var regionId = $(this).val();
+        $("#region_id").change(function () {
+            var regionId = $(this).val();
 
-        //     // Clear the District dropdown and reset any selected value
-        //     $("#district_id").html('<option value=""> -- choose a district -- </option>').val("").trigger('change');
+            // Clear the District dropdown and reset any selected value
+            $("#district_id").html('<option value=""> -- choose a district -- </option>').val("").trigger('change');
 
-        //     // Check if a valid region ID is selected
-        //     if (regionId) {
-        //         $.ajax({
-        //             url: "<?php echo get_uri('clients/get_districts_by_region_id'); ?>",
-        //             type: 'POST',
-        //             data: {region_id: regionId},
-        //             success: function (data) {
-        //                 // Parse the response if it contains valid JSON data
-        //                 var options = JSON.parse(data);
-        //                 if (options && Object.keys(options).length > 0) {
-        //                     $.each(options, function (key, value) {
-        //                         $("#district_id").append('<option value="' + key + '">' + value + '</option>');
-        //                     });
-        //                 }
-        //             },
-        //             error: function () {
-        //                 alert("An error occurred while fetching districts.");
-        //             }
-        //         });
-        //     }
-        // });
+            // Check if a valid region ID is selected
+            if (regionId) {
+                $.ajax({
+                    url: "<?php echo get_uri('clients/get_districts_by_region_id'); ?>",
+                    type: 'POST',
+                    data: {region_id: regionId},
+                    success: function (data) {
+                        // Parse the response if it contains valid JSON data
+                        var options = JSON.parse(data);
+                        if (options && Object.keys(options).length > 0) {
+                            $.each(options, function (key, value) {
+                                $("#district_id").append('<option value="' + key + '">' + value + '</option>');
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while fetching districts.");
+                    }
+                });
+            }
+        });
 
 
     });

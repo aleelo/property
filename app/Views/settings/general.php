@@ -21,6 +21,7 @@
                         <?php echo form_open(get_uri("settings/save_general_settings"), array("id" => "general-settings-form", "class" => "general-form dashed-row", "role" => "form")); ?>
 
                         <div class="card-body post-dropzone">
+                            
                             <div class="form-group">
                                 <div class="row">
                                     <label for="logo" class=" col-md-2"><?php echo app_lang('site_logo'); ?> (175x40) </label>

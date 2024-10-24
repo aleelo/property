@@ -19,10 +19,16 @@ class Notary extends Security_Controller {
         // $view_data['owner'] = array("" => " -- Choose Owner -- ") + $this->Users_model->get_dropdown_list(array("first_name"," ","last_name")), "id");
 
 
-        return $this->template->rander("notary/index", $view_data);
+        return $this->template->rander("notary/notary", $view_data);
     }
 
     //load leave type add/edit form
+    function sqn() {
+        $view_data['model_info'] = $this->Notary_model->get_one($this->request->getPost('id'));
+        
+        return $this->template->view('notary/sqn', $view_data);
+    }
+
     function modal_form() {
         $view_data['model_info'] = $this->Notary_model->get_one($this->request->getPost('id'));
         
@@ -57,6 +63,27 @@ class Notary extends Security_Controller {
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
         }
+    }
+
+    function save_notary() {
+        $settings = array("legal_name", "invoice_color", "region", "district", "address", "notary_owner_id");
+        $reload_page = false;
+
+        foreach ($settings as $setting) {
+            $value = $this->request->getPost($setting);
+
+            if (is_null($value)) {
+                $value = "";
+            }
+
+            // print_r($setting);
+            // print_r($value);
+            // die;
+
+            $this->Settings_model->save_setting($setting, $value);
+        }
+
+        echo json_encode(array("success" => true, 'message' => app_lang('settings_updated'), "reload_page" => $reload_page));
     }
 
     //delete/undo a leve type

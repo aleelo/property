@@ -94,10 +94,9 @@ class Clients extends Security_Controller {
 
         $view_data['Nationalities'] = $this->Nationalities();
         // $view_data['regions'] = $this->Regions();
-        $view_data['districts'] = $this->Districts();
+        // $view_data['districts'] = $this->Districts();
         $view_data['regions'] = array("" => " -- choose region -- ") + $this->Regions_model->get_dropdown_list(array("region"), "id");
-        // $view_data['districts'] = array("" => " -- choose district -- ") + $this->Districts_model->get_dropdown_list(array("district"), "id");
-        // $view_data['districts'] = array("" => " -- choose district -- ") + $this->Districts_model->get_details();
+        $view_data['districts'] = array("" => " -- choose district -- ") + $this->Districts_model->get_dropdown_list(array("district"), "id");
         // print_r($view_data['districts']);die;
 
         $view_data["team_members_dropdown"] = $this->get_team_members_dropdown();
@@ -489,7 +488,7 @@ class Clients extends Security_Controller {
         $region_id = $this->request->getPost('region_id');
         
         // Call the model method to get the dropdown list for districts
-        $dropdown = $this->Clients_model->get_drop_list($region_id);
+        $dropdown = $this->Districts_model->get_drop_list($region_id);
 
         // Return the dropdown as JSON
         echo json_encode($dropdown);
