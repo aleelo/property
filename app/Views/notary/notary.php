@@ -147,30 +147,81 @@
                                     </div>
                                 </div>
 
+                                 <!----------------------------------------- Ref Prefix ------------------------------------>
+
+                                 <div class="form-group">
+                                    <div class="row">
+                                        <label for="notary_ref_prefix" class=" col-md-2"><?php echo 'Ref Prefix'; ?></label>
+                                        <div class=" col-md-10">
+                                            <?php
+                                            echo form_input(array(
+                                                "id" => "notary_ref_prefix",
+                                                "name" => "notary_ref_prefix",
+                                                "value" => get_setting("notary_ref_prefix"),
+                                                "class" => "form-control",
+                                                "placeholder" => 'Ref Prefix'
+                                            ));
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 <!----------------------------------------- Stamp ------------------------------------>
+
                                 <div class="form-group">
                                     <div class="row">
-                                        <label for="logo" class=" col-md-2"><?php echo 'Stamp'; ?> </label>
-                                        <div class=" col-md-10">
+                                        <label for="notary_stamp" class="col-md-2"><?php echo 'Stamp'; ?></label>
+                                        <div class="col-lg-10">
                                             <div class="float-start mr15">
-                                                <img id="site-logo-preview" src="<?php echo get_logo_url(); ?>" alt="..." style="width: 175px" />
+                                                <img id="favicon-preview" src="<?php echo get_favicon_url(); ?>" alt="..." style="width: 32px" />
                                             </div>
                                             <div class="float-start file-upload btn btn-default btn-sm">
                                                 <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload_and_crop"); ?>
-                                                <input id="site_logo_file" class="cropbox-upload upload" name="site_logo_file" type="file" data-height="40" data-width="175" data-preview-container="#site-logo-preview" data-input-field="#site_logo" />
+                                                <input id="favicon_file" class="cropbox-upload upload" name="notary_stamp" type="file" data-height="32" data-width="32" data-preview-container="#favicon-preview" data-input-field="#favicon" />
                                             </div>
                                             <div class="mt10 ml10 float-start">
                                                 <?php
                                                 echo form_upload(array(
-                                                    "id" => "site_logo_file_upload",
-                                                    "name" => "site_logo_file",
+                                                    "id" => "favicon_file_upload",
+                                                    "name" => "notary_stamp",
                                                     "class" => "no-outline hidden-input-file"
                                                 ));
                                                 ?>
-                                                <label for="site_logo_file_upload" class="btn btn-default btn-sm">
+                                                <label for="favicon_file_upload" class="btn btn-default btn-sm">
                                                     <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload"); ?>
                                                 </label>
                                             </div>
-                                            <input type="hidden" id="site_logo" name="site_logo" value=""  />
+                                            <input type="hidden" id="notary_stamp" name="notary_stamp" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 <!----------------------------------------- Signature ------------------------------------>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label for="notary_signature" class="col-md-2"><?php echo 'Signature'; ?></label>
+                                        <div class="col-lg-10">
+                                            <div class="float-start mr15">
+                                                <img id="favicon-preview" src="<?php echo get_favicon_url(); ?>" alt="..." style="width: 32px" />
+                                            </div>
+                                            <div class="float-start file-upload btn btn-default btn-sm">
+                                                <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload_and_crop"); ?>
+                                                <input id="favicon_file" class="cropbox-upload upload" name="notary_signature" type="file" data-height="32" data-width="32" data-preview-container="#favicon-preview" data-input-field="#favicon" />
+                                            </div>
+                                            <div class="mt10 ml10 float-start">
+                                                <?php
+                                                echo form_upload(array(
+                                                    "id" => "favicon_file_upload",
+                                                    "name" => "notary_signature",
+                                                    "class" => "no-outline hidden-input-file"
+                                                ));
+                                                ?>
+                                                <label for="favicon_file_upload" class="btn btn-default btn-sm">
+                                                    <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload"); ?>
+                                                </label>
+                                            </div>
+                                            <input type="hidden" id="favicon" name="notary_signature" value="" />
                                         </div>
                                     </div>
                                 </div>

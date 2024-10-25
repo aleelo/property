@@ -66,7 +66,7 @@ class Notary extends Security_Controller {
     }
 
     function save_notary() {
-        $settings = array("legal_name", "invoice_color", "region", "district", "address", "notary_owner_id");
+        $settings = array("legal_name", "legal_structure", "region", "district", "address", "notary_owner_id","notary_ref_prefix","notary_stamp","notary_signature");
         $reload_page = false;
 
         foreach ($settings as $setting) {
