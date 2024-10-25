@@ -86,6 +86,27 @@ class Notary extends Security_Controller {
         echo json_encode(array("success" => true, 'message' => app_lang('settings_updated'), "reload_page" => $reload_page));
     }
 
+    function save_sqn() {
+        $settings = array("sqn_notary");
+        $reload_page = false;
+
+        foreach ($settings as $setting) {
+            $value = $this->request->getPost($setting);
+
+            if (is_null($value)) {
+                $value = "";
+            }
+
+            // print_r($setting);
+            // print_r($value);
+            // die;
+
+            $this->Settings_model->save_setting($setting, $value);
+        }
+
+        echo json_encode(array("success" => true, 'message' => app_lang('settings_updated'), "reload_page" => $reload_page));
+    }
+
     //delete/undo a leve type
     function delete() {
         $this->validate_submitted_data(array(

@@ -147,6 +147,34 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label for="logo" class=" col-md-2"><?php echo 'Stamp'; ?> </label>
+                                        <div class=" col-md-10">
+                                            <div class="float-start mr15">
+                                                <img id="site-logo-preview" src="<?php echo get_logo_url(); ?>" alt="..." style="width: 175px" />
+                                            </div>
+                                            <div class="float-start file-upload btn btn-default btn-sm">
+                                                <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload_and_crop"); ?>
+                                                <input id="site_logo_file" class="cropbox-upload upload" name="site_logo_file" type="file" data-height="40" data-width="175" data-preview-container="#site-logo-preview" data-input-field="#site_logo" />
+                                            </div>
+                                            <div class="mt10 ml10 float-start">
+                                                <?php
+                                                echo form_upload(array(
+                                                    "id" => "site_logo_file_upload",
+                                                    "name" => "site_logo_file",
+                                                    "class" => "no-outline hidden-input-file"
+                                                ));
+                                                ?>
+                                                <label for="site_logo_file_upload" class="btn btn-default btn-sm">
+                                                    <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload"); ?>
+                                                </label>
+                                            </div>
+                                            <input type="hidden" id="site_logo" name="site_logo" value=""  />
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary"><span data-feather='check-circle' class="icon-16"></span> <?php echo app_lang('save'); ?></button>

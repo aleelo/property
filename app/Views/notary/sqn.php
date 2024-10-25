@@ -1,5 +1,5 @@
                 
-    <?php echo form_open(get_uri("notary/save_notary"), array("id" => "notary-form", "class" => "general-form dashed-row", "role" => "form")); ?>
+    <?php echo form_open(get_uri("notary/save_sqn"), array("id" => "notary-form", "class" => "general-form dashed-row", "role" => "form")); ?>
         <div class="card-body">
             <input type="hidden" name="id" value="<?php echo $model_info->id; ?>" />
 
@@ -7,13 +7,13 @@
 
             <div class="form-group">
                 <div class="row">
-                    <label for="sqn" class=" col-md-2"><?php echo 'Sequence Number'; ?></label>
+                    <label for="sqn_notary" class=" col-md-2"><?php echo 'Sequence Number'; ?></label>
                     <div class=" col-md-10">
                         <?php
                         echo form_input(array(
-                            "id" => "sqn",
-                            "name" => "sqn",
-                            "value" => '',
+                            "id" => "sqn_notary",
+                            "name" => "sqn_notary",
+                            "value" => get_setting("sqn_notary"),
                             "class" => "form-control",
                             "placeholder" => 'SQN'
                         ));
