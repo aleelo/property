@@ -170,29 +170,31 @@
 
                                 <div class="form-group">
                                     <div class="row">
+
                                         <label for="notary_stamp" class="col-md-2"><?php echo 'Stamp'; ?></label>
                                         <div class="col-lg-10">
                                             <div class="float-start mr15">
-                                                <img id="favicon-preview" src="<?php echo get_favicon_url(); ?>" alt="..." style="width: 32px" />
+                                                <img id="stamp-preview" src="<?php echo get_favicon_url(); ?>" alt="..." style="width: 32px" />
                                             </div>
                                             <div class="float-start file-upload btn btn-default btn-sm">
                                                 <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload_and_crop"); ?>
-                                                <input id="favicon_file" class="cropbox-upload upload" name="notary_stamp" type="file" data-height="32" data-width="32" data-preview-container="#favicon-preview" data-input-field="#favicon" />
+                                                <input id="stamp_file" class="cropbox-upload upload" name="notary_stamp" type="file" data-height="32" data-width="32" data-preview-container="#stamp-preview" data-input-field="#stamp" />
                                             </div>
                                             <div class="mt10 ml10 float-start">
                                                 <?php
                                                 echo form_upload(array(
-                                                    "id" => "favicon_file_upload",
+                                                    "id" => "stamp_file_upload",
                                                     "name" => "notary_stamp",
                                                     "class" => "no-outline hidden-input-file"
                                                 ));
                                                 ?>
-                                                <label for="favicon_file_upload" class="btn btn-default btn-sm">
+                                                <label for="stamp_file_upload" class="btn btn-default btn-sm">
                                                     <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload"); ?>
                                                 </label>
                                             </div>
                                             <input type="hidden" id="notary_stamp" name="notary_stamp" value="" />
                                         </div>
+
                                     </div>
                                 </div>
 
@@ -203,7 +205,7 @@
                                         <label for="notary_signature" class="col-md-2"><?php echo 'Signature'; ?></label>
                                         <div class="col-lg-10">
                                             <div class="float-start mr15">
-                                                <img id="favicon-preview" src="<?php echo get_favicon_url(); ?>" alt="..." style="width: 32px" />
+                                                <img id="signature-preview" src="<?php echo get_favicon_url(); ?>" alt="..." style="width: 32px" />
                                             </div>
                                             <div class="float-start file-upload btn btn-default btn-sm">
                                                 <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload_and_crop"); ?>
