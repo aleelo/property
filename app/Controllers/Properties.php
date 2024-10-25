@@ -73,8 +73,8 @@ class Properties extends Security_Controller {
         $view_data['model_info'] = $this->Properties_model->get_one($Sections_id);
         $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();
 
-        $view_data['regions'] = $this->Regions();
-        $view_data['districts'] = $this->Districts();
+        $view_data['regions'] = array("" => " -- choose region -- ") + $this->Regions_model->get_dropdown_list(array("region"), "id");
+        $view_data['districts'] = array("" => " -- choose district -- ") + $this->Districts_model->get_dropdown_list(array("district"), "id");
 
         $view_data['owners'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
 
@@ -157,8 +157,8 @@ class Properties extends Security_Controller {
             "title_deed_no" => "required",
             "lotto_number" => "required",
             "owner_ids" => "required",
-            "region" => "required",
-            "district" => "required",
+            "region_id" => "required",
+            "district_id" => "required",
             "address" => "required",
             "service_id" => "required",
             "area" => "required",
@@ -175,8 +175,8 @@ class Properties extends Security_Controller {
             "titleDeedNo" => $this->request->getPost('title_deed_no'),
             "lotto_number" => $this->request->getPost('lotto_number'),
             "owner_ids" => $owner_ids,
-            "region" => $this->request->getPost('region'),
-            "district" => $this->request->getPost('district'),
+            "region_id" => $this->request->getPost('region_id'),
+            "district_id" => $this->request->getPost('district_id'),
             "address" => $this->request->getPost('address'),
             "service_id" => $this->request->getPost('service_id'),
             "area" => $this->request->getPost('area'),
@@ -1043,8 +1043,8 @@ class Properties extends Security_Controller {
             $view_data['field_column_2'] = "col-md-4";
 
             $view_data['field_column_3'] = "col-md-10";
-            $view_data['regions'] = $this->Regions();
-            $view_data['districts'] = $this->Districts();
+            $view_data['regions'] = array("" => " -- choose region -- ") + $this->Regions_model->get_dropdown_list(array("region"), "id");
+            $view_data['districts'] = array("" => " -- choose district -- ") + $this->Districts_model->get_dropdown_list(array("district"), "id");
             $view_data['owners'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
 
             $view_data['can_edit_clients'] = $this->can_edit_clients($Sections_id);

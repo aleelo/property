@@ -34,7 +34,7 @@ class Districts_model extends Crud_model {
         }
 
         // Define the SQL query with a placeholder for the region ID
-        $sql = "SELECT id, district_name FROM rise_districts WHERE region_id = ?";
+        $sql = "SELECT id, district FROM rise_districts WHERE region_id = ?";
         
         // Execute the query
         $query = $this->db->query($sql, array($region_id));
@@ -46,7 +46,7 @@ class Districts_model extends Crud_model {
             // Prepare the dropdown list in the key-value format
             $dropdown = array();
             foreach ($result as $row) {
-                $dropdown[$row->id] = $row->district_name;
+                $dropdown[$row->id] = $row->district;
             }
 
             return $dropdown;
