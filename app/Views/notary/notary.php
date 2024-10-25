@@ -209,21 +209,21 @@
                                             </div>
                                             <div class="float-start file-upload btn btn-default btn-sm">
                                                 <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload_and_crop"); ?>
-                                                <input id="favicon_file" class="cropbox-upload upload" name="notary_signature" type="file" data-height="32" data-width="32" data-preview-container="#favicon-preview" data-input-field="#favicon" />
+                                                <input id="signature_file" class="cropbox-upload upload" name="notary_signature" type="file" data-height="32" data-width="32" data-preview-container="#signature-preview" data-input-field="#signature" />
                                             </div>
                                             <div class="mt10 ml10 float-start">
                                                 <?php
                                                 echo form_upload(array(
-                                                    "id" => "favicon_file_upload",
+                                                    "id" => "signature_file_upload",
                                                     "name" => "notary_signature",
                                                     "class" => "no-outline hidden-input-file"
                                                 ));
                                                 ?>
-                                                <label for="favicon_file_upload" class="btn btn-default btn-sm">
+                                                <label for="signature_file_upload" class="btn btn-default btn-sm">
                                                     <i data-feather="upload" class="icon-14"></i> <?php echo app_lang("upload"); ?>
                                                 </label>
                                             </div>
-                                            <input type="hidden" id="favicon" name="notary_signature" value="" />
+                                            <input type="hidden" id="notary_signature" name="notary_signature" value="" />
                                         </div>
                                     </div>
                                 </div>
