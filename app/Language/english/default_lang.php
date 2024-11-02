@@ -61,10 +61,12 @@ $lang["add_property"] = "Add Property";
 $lang["edit_property"] = "Edit Property";
 $lang["delete_property"] = "Delete Property";
 
+// Notary
+$lang["agent"] = "Agent";
+$lang["agents"] = "Agents";
 
 // Notary
 $lang["notary"] = "Notary";
-
 
 // Notary Services
 $lang["agreement_type"] = "Agreement Type";
@@ -72,7 +74,6 @@ $lang["agreement_types"] = "Agreement Types";
 $lang["add_agreement_type"] = "Add Agreement Type";
 $lang["edit_agreement_type"] = "Edit Agreement Type";
 $lang["delete_agreement_type"] = "Delete Agreement Type";
-
 
 // Notary Services
 $lang["notary_service"] = "Notary Service";

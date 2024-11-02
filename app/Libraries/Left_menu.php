@@ -70,6 +70,10 @@ class Left_menu {
             }
 
             if ($this->ci->login_user->is_admin || $access_client) {
+                $sidebar_menu["agents"] = array("name" => "agents", "url" => "agents", "class" => "check-circle");
+            }
+
+            if ($this->ci->login_user->is_admin || $access_client) {
                 $sidebar_menu["agreements"] = array("name" => "agreements", "url" => "agreements", "class" => "repeat");
             }
 
