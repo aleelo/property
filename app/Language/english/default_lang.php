@@ -47,8 +47,6 @@ $lang["po_id"] = "PO ID";
 $lang["supplier_name"] = "Supplier Name";
 $lang["contact_person"] = "Contact Person";
 $lang["complete"] = "Complete";
-$lang["Complete"] = "Complete";
-
 $lang["others"] = "Others";
 
 // Properties
