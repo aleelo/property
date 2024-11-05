@@ -16,6 +16,8 @@ class Properties_model extends Crud_model {
         $departments_table = $this->db->prefixTable('departments');
         $clients_table = $this->db->prefixTable('clients');
         $notary_services_table = $this->db->prefixTable('notary_services');
+        $districts_table = $this->db->prefixTable('districts');
+        $regions_table = $this->db->prefixTable('regions');
 
         $projects_table = $this->db->prefixTable('projects');
         $users_table = $this->db->prefixTable('users');
@@ -163,11 +165,13 @@ class Properties_model extends Crud_model {
 
 
         $sql = "SELECT SQL_CALC_FOUND_ROWS $properties_table.*,
-        $clients_table.company_name as owner_name,
+        $clients_table.company_name as owner_name, $regions_table.region as region, $districts_table.district as district,
         $notary_services_table.service_name
         FROM $properties_table
         LEFT JOIN $clients_table ON $clients_table.id = $properties_table.owner_ids
         LEFT JOIN $notary_services_table ON $notary_services_table.id = $properties_table.service_id
+        LEFT JOIN $regions_table ON $regions_table.id = $properties_table.region_id 
+        LEFT JOIN $districts_table ON $districts_table.id = $properties_table.district_id 
         $join_custom_fieds               
         WHERE $properties_table.deleted=0 $where $custom_fields_where  
         $order $limit_offset";
