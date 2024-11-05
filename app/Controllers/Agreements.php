@@ -555,8 +555,8 @@ class Agreements extends Security_Controller {
         $link = "<a href='$data->webUrl' class='btn btn-success' target='_blank' title='Open Agreement' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i></a>";
     
         // Final row data with actions (edit, view details, delete)
-        $row_data[] = modal_anchor(get_uri("agreements/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_agreement'), "data-post-id" => $data->id))
-            . $document_details_link
+        // $row_data[] = modal_anchor(get_uri("agreements/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_agreement'), "data-post-id" => $data->id))
+        $row_data[] = $document_details_link
             . $link
             . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_agreement'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("agreements/delete"), "data-action" => "delete-confirmation"));
     
