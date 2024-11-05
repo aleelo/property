@@ -103,8 +103,9 @@ class Visitors_info extends App_Controller
         LEFT JOIN rise_properties p ON p.id = ag.property_id
         WHERE ag.uuid ='$id'")->getRow();
 
+        $view_data['owners'] = $this->format_names($agr->owners);
         $view_data['buyers'] = $this->format_names($agr->buyers);
-        $view_data['sellers'] = $this->format_names($agr->sellers);
+        $view_data['tenants'] = $this->format_names($agr->tenants);
         $view_data['witnesses'] = $this->format_names($agr->witnesses);
 
         if (isset($agr->created_at)) {
