@@ -110,7 +110,7 @@ class App_Controller extends Controller {
     public $Notary_model;
     public $Regions_model;
     public $Districts_model;
-    public $Agents_model;
+    public $Agency_model;
     
     public function __construct() {
         //main template to make frame of this app
@@ -247,7 +247,7 @@ class App_Controller extends Controller {
             'Notary_model',
             'Regions_model',
             'Districts_model',
-            'Agents_model',
+            'Agency_model',
         );
     }
 

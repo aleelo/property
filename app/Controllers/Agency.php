@@ -2,14 +2,7 @@
 
 namespace App\Controllers;
 
-use chillerlan\QRCode\Common\EccLevel;
-use chillerlan\QRCode\Common\Version;
-use chillerlan\QRCode\Output\QROutputInterface;
-use chillerlan\QRCode\QRCode;
-use chillerlan\QRCode\QROptions;
-use PhpOffice\PhpWord\TemplateProcessor;
-
-class Agreements extends Security_Controller {
+class Agency extends Security_Controller {
 
     function __construct() {
         parent::__construct();
@@ -49,48 +42,46 @@ class Agreements extends Security_Controller {
 
         
 
-        return $this->template->rander("agreements/index", $view_data);
+        return $this->template->rander("agency/index", $view_data);
     }
 
+  
     /* load client add/edit modal */
 
     function modal_form() {
         
-        $agreement_id = $this->request->getPost('id');
-        $ower_log_id = $this->request->getPost('ower_log_id');
-
-        // $this->_validate_client_manage_access($agreement_id);
+        $Sections_id = $this->request->getPost('id');
+        // $this->_validate_client_manage_access($Sections_id);
 
         $this->validate_submitted_data(array(
             "id" => "numeric"
         ));
 
-        $view_data['label_column'] = "col-md-3 text-right";
+        // $view_data['label_column'] = "col-md-3 text-right";
+        $view_data['label_column'] = "col-md-3";
         $view_data['field_column'] = "col-md-9";
 
         $view_data['label_column_2'] = "col-md-2 text-right";
-        $view_data['field_column_2'] = "col-md-4";
+        $view_data['field_column_2'] = "col-md-3";
+
+        $view_data['field_column_4'] = "col-md-4";
 
         $view_data['field_column_3'] = "col-md-10";
 
         $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loading from the client's details view
         $view_data["ticket_id"] = $this->request->getPost('ticket_id'); //needed only when loading from the ticket's details view and created by unknown client
-        $model_info = $this->Agreements_model->get_one($agreement_id);
-        $view_data['model_info'] = $model_info;
-        $owner_log_info = $this->Properties_owner_log_model->get_one($model_info->id);
-        $view_data['ower_log_id'] = $owner_log_info->id;
+        $view_data['model_info'] = $this->Agency_model->get_one($Sections_id);
         $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();
 
-        $view_data['payment_method'] = $this->payment_method();
-        $view_data['agreement_types'] = array("" => " -- choose a agreement type -- ") + $this->Agreement_type_model->get_dropdown_list(array("agreement_type"), "id");
+        $view_data['regions'] = array("" => " -- choose region -- ") + $this->Regions_model->get_dropdown_list(array("region"), "id");
+        $view_data['districts'] = array("" => " -- choose district -- ") + $this->Districts_model->get_dropdown_list(array("district"), "id");
 
-        $view_data['notaries'] = array("" => " -- choose notary -- ") + $this->Clients_model->get_dropdown_list(array("person_name"), "id");
-        $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo", "hyphen", "lotto_number"), "id");
-        $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
-        $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
-        $view_data['documents'] = array("" => " -- choose document -- ") + $this->Templates_model->get_dropdown_list(array("name"), "id");
-        $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+        $view_data['owners'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
 
+
+        $view_data['departments'] = array("" => " -- Choose Section Department -- ") + $this->Departments_model->get_dropdown_list(array("nameSo"), "id");
+        $view_data['secretary'] = array("" => " -- Choose Secretary -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
+        $view_data['Services'] = array("" => " -- choose a service -- ") + $this->Notary_services_model->get_dropdown_list(array("service_name"), "id");
 
         // $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name"," ","last_name")), "id");
 
@@ -105,339 +96,176 @@ class Agreements extends Security_Controller {
         //prepare label suggestions
 
         //get custom fields
-        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $agreement_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $Sections_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
 
-        return $this->template->view('agreements/modal_form', $view_data);
+        return $this->template->view('agency/modal_form', $view_data);
     }
 
-    function payment_method(){
-        $payment_methods_somali = array(
-            "" => " - ",
-            "Cash" => "Cash",
-            "Bank Card" => "Bank Card",
-            "E-Dahab" => "E-Dahab",
-            "Zaad" => "Zaad",
-            "Sahal" => "Sahal",
-            "Bank Transfer" => "Bank Transfer",
-            "Credit Card" => "Credit Card",
-            "Debit Card" => "Debit Card",
-            "PayPal" => "PayPal",
-            "Mobile Money" => "Mobile Money"
+    function Regions(){
+        $regions_of_somalia = array(
+            "" => " -- ", "Awdal" => "Awdal", "Bakool" => "Bakool", "Banaadir" => "Banaadir", "Bari" => "Bari", 
+            "Bay" => "Bay", "Galguduud" => "Galguduud", "Gedo" => "Gedo", "Hiiraan" => "Hiiraan", 
+            "Jubbada Dhexe" => "Jubbada Dhexe", "Jubbada Hoose" => "Jubbada Hoose",
+            "Mudug" => "Mudug", "Nugaal" => "Nugaal", "Sanaag" => "Sanaag", 
+            "Shabeellaha Dhexe" => "Shabeellaha Dhexe", "Shabeellaha Hoose" => "Shabeellaha Hoose", 
+            "Sool" => "Sool", "Togdheer" => "Togdheer", "Woqooyi Galbeed" => "Woqooyi Galbeed"
         );
-        return $payment_methods_somali;
+        
+        return $regions_of_somalia;
     }
 
-    public function get_agreement_types_by_property_id()
-        {
-            // Get the property ID from the request
-            $property_id = $this->request->getPost('property_id');
-
-            // Fetch the notary service ID associated with the selected property
-            $notary_service_id = $this->Properties_model->get_notary_service_id_by_property($property_id);
-
-            // Fetch the related agreement types using the notary service ID
-            $agreement_types = $this->Agreement_type_model->get_drop_list($notary_service_id);
-
-            // Return the agreement types as JSON
-            echo json_encode($agreement_types);
-        }
-
-    public function save()
-        {
-            $agreement_id = $this->request->getPost('id');
-
-            /* Validation Input */
-            $this->validate_submitted_data(array(
-                "id" => "numeric",
-                "property" => "required",
-                "agreement_type_id" => "required",
-                "notary_ref" => "required",
-                "owner_ids" => "required",
-                "witness_ids" => "required",
-                "amount" => "required",
-                "payment_method" => "required",
-            ));
-
-            $property_id = $this->request->getPost('property');
-            $agreement_type_id = $this->request->getPost('agreement_type_id');
-
-            $owner_ids = $this->request->getPost('owner_ids') ? implode(',', $this->request->getPost('owner_ids')) : null;
-            $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
-            $tenant_ids = $this->request->getPost('tenant_ids') ? implode(',', $this->request->getPost('tenant_ids')) : null;
-            $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
-
-            $input = array(
-                'uuid' => $this->db->query("select replace(uuid(),'-','') as uuid;")->getRow()->uuid,
-                "property_id" => $property_id,
-                "agreement_type_id" => $agreement_type_id,
-                "notary_ref" => $this->request->getPost('notary_ref'),
-                "owner_ids" => $owner_ids,
-                "buyer_ids" => $buyer_ids,
-                "tenant_ids" => $tenant_ids,
-                "witness_ids" => $witness_ids,
-                "lease_period" => $this->request->getPost('lease_period'),
-                "amount" => $this->request->getPost('amount'),
-                "payment_method" => $this->request->getPost('payment_method'),
-                "payment_frequency" => $this->request->getPost('payment_frequency'),
-                "created_by" => $this->request->getPost('created_by') ?: $this->login_user->id,
-                "created_at" => date('Y-m-d'),
-            );
-
-            $input = clean_data($input);
-            $save_id = null;
-            $webUrl = null;
-
-            if (!$agreement_id) {
-
-                $save_id = $this->Agreements_model->ci_save($input);
-
-                $files = $this->request->getPost("files");
-                // $success = false;
-                $now = get_current_utc_time();
+    function Districts(){
+        $districts_of_somalia = array(
+            "" => " -- ", "Baki" => "Baki", "Borama" => "Borama", "Dilla" => "Dilla", "Lughaya" => "Lughaya", 
+            "Saylac" => "Saylac", "El Barde" => "El Barde", "Hoddur" => "Hoddur", "Rabdhure" => "Rabdhure", 
+            "Tayeeglow" => "Tayeeglow", "Wajid" => "Wajid", "Abdiaziz" => "Abdiaziz", "Bondhere" => "Bondhere", 
+            "Daynile" => "Daynile", "Dharkenley" => "Dharkenley", "Hamar Jabjab" => "Hamar Jabjab", 
+            "Hamar Weyne" => "Hamar Weyne", "Hawl Wadaag" => "Hawl Wadaag", "Hodan" => "Hodan", 
+            "Howlwadag" => "Howlwadag", "Karaan" => "Karaan",
+            "Shangani" => "Shangani", "Shibis" => "Shibis", "Wadajir" => "Wadajir", "Wardhigley" => "Wardhigley", 
+            "Yaaqshid" => "Yaaqshid", "Alula" => "Alula", "Bandarbeyla" => "Bandarbeyla", "Bosaso" => "Bosaso", 
+            "Qandala" => "Qandala", "Iskushuban" => "Iskushuban", "Ufayn" => "Ufayn", "Baidoa" => "Baidoa", 
+            "Buurhakaba" => "Buurhakaba", "Diinsoor" => "Diinsoor", "Qansahdhere" => "Qansahdhere", 
+            "Abudwak" => "Abudwak", "Adado" => "Adado", "El Bur" => "El Bur", "El Dher" => "El Dher", "Guriel" => "Guriel",
+            "Bardera" => "Bardera", "Belet Hawo" => "Belet Hawo", "Bur Dubo" => "Bur Dubo", "El Wak" => "El Wak", 
+            "Garbaharey" => "Garbaharey", "Luuq" => "Luuq", "Beledweyne" => "Beledweyne", "Bulo Burde" => "Bulo Burde", 
+            "Jalalaqsi" => "Jalalaqsi", "Mataban" => "Mataban", "Bu'aale" => "Bu'aale", "Jilib" => "Jilib", 
+            "Saakow" => "Saakow", "Afmadow" => "Afmadow", "Badhaadhe" => "Badhaadhe", "Kismayo" => "Kismayo", 
+            "Jamame" => "Jamame", "Gaalkacyo" => "Gaalkacyo", "Galdogob" => "Galdogob", "Harardhere" => "Harardhere",
+            "Hobyo" => "Hobyo", "Jariban" => "Jariban", "Burtinle" => "Burtinle", "Eyl" => "Eyl", 
+            "Garowe" => "Garowe", "Badhan" => "Badhan", "Ceerigaabo" => "Ceerigaabo", "Dhahar" => "Dhahar", 
+            "Laasqoray" => "Laasqoray", "Adale" => "Adale", "Bal'ad" => "Bal'ad", "Jowhar" => "Jowhar", 
+            "Mahaday" => "Mahaday", "Afgooye" => "Afgooye", "Baraawe" => "Baraawe", "Kurtunwarey" => "Kurtunwarey", 
+            "Marka" => "Marka", "Qoryooley" => "Qoryooley", "Wanlaweyn" => "Wanlaweyn", "Ainabo" => "Ainabo",
+            "Laas Anod" => "Laas Anod", "Taleh" => "Taleh", "Burao" => "Burao", "Oodweyne" => "Oodweyne", 
+            "Berbera" => "Berbera", "Gabiley" => "Gabiley", "Hargeisa" => "Hargeisa"
+        );
         
-                $target_path = getcwd() . "/" . get_general_file_path("agreements", $save_id);
-                // print_r($target_path); die;
-        
-                //process the fiiles which has been uploaded by dropzone
-                if ($files && get_array_value($files, 0)) {
-                    foreach ($files as $file) {
-                        $file_name = $this->request->getPost('file_name_' . $file);
-                        $file_info = move_temp_file($file_name, $target_path);
-                        if ($file_info) {
-                            $data = array(
-                                "agreement_id" => $save_id,
-                                "file_name" => get_array_value($file_info, 'file_name'),
-                                "file_id" => get_array_value($file_info, 'file_id'),
-                                "service_type" => get_array_value($file_info, 'service_type'),
-                                "description" => $this->request->getPost('description_' . $file),
-                                "file_size" => $this->request->getPost('file_size_' . $file),
-                                "created_at" => $now,
-                                "uploaded_by" => $this->login_user->id
-                            );
-                            $this->General_files_model->ci_save($data);
-                        }
-                    }
-                }
-
-                $buyers_info = $this->db->query("SELECT 
-                p.titleDeedNo,
-                GROUP_CONCAT(DISTINCT ow_u.company_name SEPARATOR ', ') as owners, 
-                GROUP_CONCAT(DISTINCT bu_s.company_name SEPARATOR ', ') as buyers, 
-                GROUP_CONCAT(DISTINCT te_u.company_name SEPARATOR ', ') as tenants, 
-                GROUP_CONCAT(DISTINCT wi_u.company_name SEPARATOR ', ') as witnesses
-                FROM rise_agreements ag 
-                LEFT JOIN rise_clients ow_u ON FIND_IN_SET(ow_u.id, ag.owner_ids)
-                LEFT JOIN rise_clients bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
-                LEFT JOIN rise_clients te_u ON FIND_IN_SET(te_u.id, ag.tenant_ids)
-                LEFT JOIN rise_clients wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
-                LEFT JOIN rise_properties p ON p.id = ag.property_id
-                WHERE ag.id = $save_id")->getRow();
-
-                $doctor = $this->login_user->first_name . ' ' . $this->login_user->last_name;
-
-                $input['doctor'] = $doctor;
-                $input['owner'] = $this->format_names($buyers_info->owners);
-                $input['buyer'] = $this->format_names($buyers_info->buyers);
-                $input['tenant'] = $this->format_names($buyers_info->tenants);
-                $input['witness'] = $this->format_names($buyers_info->witnesses);
-                $input['property'] = $buyers_info->titleDeedNo;
-                
-                // print_r($input['buyer']); die;
-                $agreement_type_info = $this->db->query("SELECT 
-                t.id, t.name, at.agreement_type
-                FROM rise_templates t 
-                LEFT JOIN rise_agreement_type at ON at.id = t.agreement_type_id WHERE at.id = $agreement_type_id")->getRow();
-
-                $template_id = $agreement_type_info->id;
-
-                $template = $this->Templates_model->get_one($template_id);
-                $this->db->query("update rise_templates set sqn = sqn + 1 where id = $template_id");
-                $sqn = $this->db->query("SELECT lpad(max(sqn),4,0) as sqn FROM rise_templates where id = $template_id")->getRow()->sqn;
-                $template_name = $template->path;
-                $input['template'] = $template_name;
-                $input['id'] = $save_id;
-
-                //get agreement row
-                $options = array('id' => $save_id);
-                $ag = $this->Agreements_model->get_details($options)->getRow();
-                
-                $input['folder'] = $ag->folder;
-                $input['uuid'] = $ag->uuid;
-                $input['ref_number'] = $ag->ref_prefix . '/' . $sqn . '/' . date('m') . '/' . date('y');
-                $input['agreement_type'] = $agreement_type_info->agreement_type;
-                $token = $this->AccesToken();
-
-                //create/save agreement document
-                $docPath = $this->createDoc($input);
-
-                //upload to sharepoint
-                $data = $this->uploadDoc($token, $input, $docPath);
-
-                if (isset($data['error'])) {
-                    $msg = $data['error']['code'] . ', ' . $data['error']['message'];
-                    echo json_encode(array("success" => false, 'message' => app_lang('error_occurred') . ', ' . $msg));
-                    exit;
-                } else {
-                    $webUrl = $data["webUrl"];
-                    $drive_ref = $data['parentReference'];
-                    $itemId = $data["id"];
-
-                    //update item id and web url
-                    $u_data = array('item_id' => $itemId, 'webUrl' => $webUrl, 'ref_number' => $input['ref_number'], 'drive_info' => @serialize($drive_ref));
-                    $this->Agreements_model->ci_save($u_data, $save_id);
-                }
-
-            } else {
-                $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
-                $owner_ids = $this->request->getPost('owner_ids') ? implode(',', $this->request->getPost('owner_ids')) : null;
-                $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
-                $input = array(
-                    "property_id" => $property_id,
-                    "notary_ref" => $this->request->getPost('notary_ref'),
-                    "agreement_type_id" => $this->request->getPost('agreement_type_id'),
-                    "amount" => $this->request->getPost('amount'),
-                    "payment_method" => $this->request->getPost('payment_method'),
-                    "buyer_ids" => $buyer_ids,
-                    "owner_ids" => $owner_ids,
-                    "witness_ids" => $witness_ids,
-                );
-
-                $ag = $this->Agreements_model->ci_save($input, $agreement_id);
-            }
-
-            if ($save_id || $agreement_id) {
-                log_notification("agreement_created", array("agreement_id" => $save_id), $this->login_user->id);
-                echo json_encode(array("success" => true, "data" => $this->_make_row($ag, null), 'webUrl' => $webUrl, 'id' => $save_id, 'message' => app_lang('record_saved')));
-            } else {
-                echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
-            }
-        }
-        
-    // Creates the Document Using the Provided Template
-    public function createDoc($data = array())
-    {
-
-        require_once ROOTPATH . 'vendor/autoload.php';
-
-        // Creating the new document...
-
-        $template = new \PhpOffice\PhpWord\TemplateProcessor(APPPATH . 'Views/agreements/documents/' . $data['template']);
-
-        $ext = pathinfo(APPPATH . 'Views/agreements/documents/' . $data['template'], PATHINFO_EXTENSION);
-        $save_as_name = $data['id'] . '_' . date('m') . '_' . date('Y') . '.' . $ext;
-
-        $path_absolute = APPPATH . 'Views/agreements/documents/' . $save_as_name;
-        // var_dump($data);
-        // var_dump($save_as_name);
-        // die();
-
-        $template->setValues([
-
-            'ref' => $data['ref_number'],
-            'owner' => $data['owner'],
-            'buyer' => $data['buyer'],
-            'tenant' => $data['tenant'],
-            'witness' => $data['witness'],
-            'lease_period' => $data['lease_period'],
-            'agreement_type' => $data['agreement_type'],
-            'payment_method' => $data['payment_method'],
-            'payment_frequency' => $data['payment_frequency'],
-            'property' => $data['property'],
-            'amount' => $data['amount'],
-            'doctor' => $data['doctor'],
-            'date' => date('F d, Y', strtotime($data['created_at'])),
-
-        ]);
-
-        $options = new QROptions([
-            'eccLevel' => EccLevel::H,
-            'outputBase64' => true,
-            'cachefile' => APPPATH . 'Views/agreements/documents/qrcode.png',
-            'outputType' => QROutputInterface::GDIMAGE_PNG,
-            'logoSpaceHeight' => 17,
-            'logoSpaceWidth' => 17,
-            'scale' => 20,
-            'version' => Version::AUTO,
-
-        ]);
-
-        //   $options->outputType = ;
-
-        $qrcode = (new QRCode($options))->render(get_uri('visitors_info/show_agreement_qrcode/' . $data['uuid'])); //->getQRMatrix(current_url())
-
-        // $qrOutputInterface = new QRImageWithLogo($options, $qrcode);
-
-        // // dump the output, with an additional logo
-        // $out = $qrOutputInterface->dump(APPPATH . 'Views/documents/qrcode.png', APPPATH . 'Views/documents/logo.png');
-
-        $template->setImageValue('qrcode',
-            [
-                'path' => APPPATH . 'Views/agreements/documents/qrcode.png',
-                'width' => '100',
-                'height' => '100',
-                'ratio' => false,
-            ]);
-
-        $template->saveAs($path_absolute);
-
-        return $save_as_name;
-
+        return $districts_of_somalia;
     }
 
-    // Gets the created file and uploads it to the SharePoint Drive
-    public function uploadDoc($accessToken, $data, $path)
-    {
-
-        $fileContents = file_get_contents(APPPATH . 'Views/agreements/documents/' . $path); // Read the contents of the image file
-        $driveId = getenv('DRIVE_ID');
-
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://graph.microsoft.com/v1.0/drives/$driveId/root:/" . $data['folder'] . '/' . $path . ':/content',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'PUT',
-            CURLOPT_POSTFIELDS => $fileContents,
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer ' . $accessToken,
-            ),
+    /* insert or update a client */
+    
+    function save() {
+        
+        $property_id = $this->request->getPost('id');
+        // $this->_validate_client_manage_access($property_id);
+        
+        /* Validation Imput */
+        $this->validate_submitted_data(array(
+            "id" => "numeric",
+            "title_deed_no" => "required",
+            "lotto_number" => "required",
+            "owner_ids" => "required",
+            "region_id" => "required",
+            "district_id" => "required",
+            "address" => "required",
+            "service_id" => "required",
+            "area" => "required",
+            "property_value" => "required",
         ));
 
-        $json = curl_exec($curl);
+        $owner_ids = $this->request->getPost('owner_ids') ? implode(',', $this->request->getPost('owner_ids')) : null;
 
-        curl_close($curl);
+        $target_path = get_setting("properties_file_path");
+        $files_data = move_files_from_temp_dir_to_permanent_dir($target_path, "properties");
+        $new_files = unserialize($files_data);
 
-        // Decode the JSON response into an associative array
-        $data = json_decode($json, true);
+        $data = array(
+            "titleDeedNo" => $this->request->getPost('title_deed_no'),
+            "lotto_number" => $this->request->getPost('lotto_number'),
+            "owner_ids" => $owner_ids,
+            "region_id" => $this->request->getPost('region_id'),
+            "district_id" => $this->request->getPost('district_id'),
+            "address" => $this->request->getPost('address'),
+            "service_id" => $this->request->getPost('service_id'),
+            "area" => $this->request->getPost('area'),
+            "propertyValue" => $this->request->getPost('property_value'),
+        );
 
-        if (file_exists(APPPATH . 'Views/agreements/documents/' . $path)) {
-            unlink(APPPATH . 'Views/agreements/documents/' . $path);
+        if ($this->login_user->user_type === "staff") {
+            $data["labels"] = $this->request->getPost('labels');
         }
 
-        return $data;
 
-    }
+        if (!$property_id) {
+            $data["created_at"] = get_current_utc_time();
+        }
 
-    private function format_names($names) {
-        $names_array = explode(',', $names);
-        $total_names = count($names_array);
+        if ($this->login_user->is_admin || get_array_value($this->login_user->permissions, "client") === "all") {
+            $data["created_by"] = $this->request->getPost('created_by') ? $this->request->getPost('created_by') : $this->login_user->id;
+        } else if (!$property_id) {
+            $data["created_by"] = $this->login_user->id;
+        }
+
+        if ($property_id) {
+            $property_info = $this->Agency_model->get_one($property_id);
+            $timeline_file_path = get_setting("properties_file_path");
+
+            $new_files = update_saved_files($timeline_file_path, $property_info->files, $new_files);
+        }
+
+        $data["files"] = serialize($new_files);
+
+        $data = clean_data($data);
+
+        $save_id = $this->Agency_model->ci_save($data, $property_id);
+
         
-        if ($total_names == 2) {
-            return $names_array[0] . " and " . $names_array[1];
-        } else if ($total_names > 2) {
-            $last_name = array_pop($names_array);
-            return implode(', ', $names_array) . " and " . $last_name;
+        $files = $this->request->getPost("files");
+        // $success = false;
+        $now = get_current_utc_time();
+
+        $target_path = getcwd() . "/" . get_general_file_path("property", $save_id);
+        // print_r($target_path); die;
+
+        //process the fiiles which has been uploaded by dropzone
+        if ($files && get_array_value($files, 0)) {
+            foreach ($files as $file) {
+                $file_name = $this->request->getPost('file_name_' . $file);
+                $file_info = move_temp_file($file_name, $target_path);
+                if ($file_info) {
+                    $data = array(
+                        "property_id" => $save_id,
+                        "file_name" => get_array_value($file_info, 'file_name'),
+                        "file_id" => get_array_value($file_info, 'file_id'),
+                        "service_type" => get_array_value($file_info, 'service_type'),
+                        "description" => $this->request->getPost('description_' . $file),
+                        "file_size" => $this->request->getPost('file_size_' . $file),
+                        "created_at" => $now,
+                        "uploaded_by" => $this->login_user->id
+                    );
+                    $this->General_files_model->ci_save($data);
+                }
+            }
         }
-    
-        return $names; // If only one name, just return it
+
+        if ($save_id) {
+
+            if(!$property_id){
+                    
+                $options = array('id'=>$save_id);
+
+                $partner = $this->Agency_model->get_details($options)->getRow();
+
+                $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $partner?->created_by")->getRow();
+
+            }
+
+            save_custom_fields("clients", $save_id, $this->login_user->is_admin, $this->login_user->user_type);
+
+            $ticket_id = $this->request->getPost('ticket_id');
+            if ($ticket_id) {
+                $ticket_data = array("property_id" => $save_id);
+                $this->Tickets_model->ci_save($ticket_data, $ticket_id);
+            }
+
+            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'view' => $this->request->getPost('view'), 'message' => app_lang('record_saved')));
+        } else {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+        }
     }
-    
-    
+
     /* delete or undo a client */
 
     function delete() {
@@ -448,7 +276,7 @@ class Agreements extends Security_Controller {
             "id" => "required|numeric"
         ));
 
-        if ($this->Agreements_model->delete($id)) {
+        if ($this->Agency_model->delete($id)) {
             echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
@@ -476,7 +304,7 @@ class Agreements extends Security_Controller {
 
         $all_options = append_server_side_filtering_commmon_params($options);
 
-        $result = $this->Agreements_model->get_details($all_options);
+        $result = $this->Agency_model->get_details($all_options);
 
         //by this, we can handel the server side or client side from the app table prams.
         if (get_array_value($all_options, "server_side")) {
@@ -504,84 +332,74 @@ class Agreements extends Security_Controller {
             "id" => $id,
             "custom_fields" => $custom_fields
         );
-        $data = $this->Agreements_model->get_details($options)->getRow();
+        $data = $this->Agency_model->get_details($options)->getRow();
         return $this->_make_row($data, $custom_fields);
-       // Fetch the data
-        // $data = $this->Agreements_model->get_details($options);
-        
-        // // Check if data is an array, get the first row
-        // if (is_array($data) && !empty($data)) {
-        //     $data = $data[0]; // assuming you're dealing with the first row of data
-        // }
-
-        // // Return processed data
-        // return $this->_make_row($data, $custom_fields);
-
     }
+
+    /* prepare a row of client list table */
 
     private function _make_row($data, $custom_fields) {
 
         $meta_info = $this->_prepare_agreement_info($data);
 
-
-        $option_icon = "info";
-        if ($data->status === "pending") {
-            $option_icon = "cloud-lightning";
-        }
-        // Prepare the row data
         $row_data = array(
             $data->id,
-            anchor(get_uri("agreements/view/" . $data->id), $data->titleDeedNo),
-            $data->notary_ref,
-            $data->buyer,
-            $data->seller,
-            $data->witness,
-            $data->agreement_type,
-            $data->amount,
-            $data->payment_method,
-            $data->template_name,
+            anchor(get_uri("agency/view/" . $data->id), $data->titleDeedNo),
+            $data->service_name,
+            $data->owner_name,
+            $meta_info->address_meta,
+            $data->area,
+            $data->propertyValue,
             $meta_info->created_at_meta,
             $meta_info->status_meta,
-            // format_to_date($data->created_at, false), // Date formatting as used in the first function
         );
-        // User role checks for approving documents or agreements
-        $role = $this->get_user_role();
-        $can_approve_documents = $role != 'Employee';
-    
-        // Option for document/agreement details and links
-        $document_details_link = modal_anchor(get_uri("agreements/agreement_details"), "<i data-feather='$option_icon' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('agreement_details'), "data-post-id" => $data->id));
-    
-        // Open agreement document link
-        $link = "<a href='$data->webUrl' class='btn btn-success' target='_blank' title='Open Agreement' style='background: #1cc976;color: white'><i data-feather='eye' class='icon-16'></i></a>";
-    
-        // Final row data with actions (edit, view details, delete)
-        $row_data[] = modal_anchor(get_uri("agreements/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_agreement'), "data-post-id" => $data->id))
-            . $document_details_link
-            . $link
-            . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_agreement'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("agreements/delete"), "data-action" => "delete-confirmation"));
-    
+
+        foreach ($custom_fields as $field) {
+            $cf_id = "cfv_" . $field->id;
+            $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
+        }
+
+        $row_data[] = modal_anchor(get_uri("agency/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_property'), "data-post-id" => $data->id))
+                . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_property'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("agency/delete"), "data-action" => "delete-confirmation"));
+
         return $row_data;
     }
-    
 
     private function _prepare_agreement_info($data) {
+        $address_parts = [];
+
+    // Add each part to the array only if it has a value
+    if (!empty($data->address)) {
+        $address_parts[] = $data->address;
+    }
+    if (!empty($data->district)) {
+        $address_parts[] = $data->district;
+    }
+    if (!empty($data->region)) {
+        $address_parts[] = $data->region;
+    }
+
+    // Join the parts with a comma and add a full stop at the end
+    $data->address_meta = implode(", ", $address_parts) . (count($address_parts) > 0 ? '.' : '');
+
+
         $style = '';
 
         if (isset($data->status)) {
-            if ($data->status === "pending") {
+            if ($data->status === "Registred") {
                 // $status_class = "bg-warning";
                 $status_class = "btn-dark";
                 $style = "background-color:#6690f4;";
-            } else if ($data->status === "completed") {
+            } else if ($data->status === "Pending") {
+                $status_class = "btn-dark";
+                $style = "background-color:#ff9e08;";
+            } else if ($data->status === "Sold") {
                 $status_class = "btn-dark";
                 $style = "background-color:#08976d;";
-            } else if ($data->status === "signed") {
-                $status_class = "btn-dark";
-                $style = "background-color:#6341c5;";
             } else {
                 $status_class = "bg-dark";
             }
-            $data->status_meta = "<span style='$style' class='badge $status_class'>" . app_lang($data->status) . "</span>";
+            $data->status_meta = "<span style='$style' class='badge $status_class'>" . $data->status . "</span>";
         }
 
         if (isset($data->created_at)) {
@@ -589,151 +407,6 @@ class Agreements extends Security_Controller {
             $data->created_at_meta = $date;
         }
         return $data;
-    }
-
-    public function AccesToken()
-    {
-        $appid = getenv('AZURE_APP_ID'); //"a70c275e-7713-46eb-8a09-6d5a7c3b823d";
-        $tennantid = getenv('AZURE_TENANT_ID'); //"695822cd-3aaa-446d-aac2-3ebb02854b8a";
-        $secret = getenv('AZURE_SECRET_ID'); //"e54c00ad-6cfd-4113-b46f-5a3de239d13b";
-        $env = getenv('ENVIRONMENT'); //ENVIRONMENT
-
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://login.microsoftonline.com/' . $tennantid . '/oauth2/v2.0/token?Content-Type=application%2Fx-www-form-urlencoded',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => 'client_id=' . $appid . '&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=' . $secret . '&grant_type=client_credentials',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/x-www-form-urlencoded',
-                'Cookie: fpc=AvtPK5Dz759HgjJgzmeSAChRGrKTAQAAAIgG3NwOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd',
-            ),
-        ));
-
-        $response = curl_exec($curl);
-
-        // Decode the JSON response into an associative array
-        $data = json_decode($response, true);
-        // var_dump($data);
-        // die();
-        // Get the web URL of the file from the array
-        $accessToken = get_array_value($data, "access_token");
-
-        curl_close($curl);
-        return $accessToken;
-
-    }
-
-    function Signaure_Pad() {
-        
-        $agreement_id = $this->request->getPost('id');
-        // $this->_validate_client_manage_access($agreement_id);
-
-        $this->validate_submitted_data(array(
-            "id" => "numeric"
-        ));
-
-        $view_data['label_column'] = "col-md-2 text-right";
-        $view_data['field_column'] = "col-md-10";
-
-        $view_data['label_column_2'] = "col-md-2 text-right";
-        $view_data['field_column_2'] = "col-md-4";
-
-        $view_data['field_column_3'] = "col-md-10";
-
-        $agreement_id = intval($agreement_id); // Make sure $agreement_id is an integer to prevent SQL injection
-
-        $client_query = "
-            SELECT rc_combined.company_name AS client_name, rc_combined.id
-            FROM rise_agreements ra
-            LEFT JOIN rise_clients rc_combined ON FIND_IN_SET(rc_combined.id, ra.buyer_ids)
-            WHERE ra.id = $agreement_id
-
-            UNION
-
-            SELECT rc_combined.company_name AS client_name, rc_combined.id
-            FROM rise_agreements ra
-            LEFT JOIN rise_clients rc_combined ON FIND_IN_SET(rc_combined.id, ra.owner_ids)
-            WHERE ra.id = $agreement_id
-        ";
-
-        $client_name_results = $this->db->query($client_query)->getResultArray();
-
-        $client_name = [];
-        foreach ($client_name_results as $row) {
-            $client_name[$row['id']] = $row['client_name'];
-        }
-
-        $view_data["client_name"] = $client_name;
-
-
-
-        // $view_data["client_name"] = $this->db->query("SELECT 
-        //     rc_combined.company_name AS client_name
-        //     FROM rise_agreements ra
-        //     LEFT JOIN rise_clients rc_combined ON FIND_IN_SET(rc_combined.id, CONCAT(ra.buyer_ids, ',', ra.owner_ids))
-        //     WHERE ra.id = $agreement_id")->getRow();
-
-
-        $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loading from the client's details view
-        $view_data["ticket_id"] = $this->request->getPost('ticket_id'); //needed only when loading from the ticket's details view and created by unknown client
-        $view_data['model_info'] = $this->Agreements_model->get_one($agreement_id);
-        $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();
-        $view_data['time_format_24_hours'] = get_setting("time_format") == "24_hours" ? true : false;
-
-        $role = $this->get_user_role();
-        $user_id = $this->login_user->id;
-
-        if($role === "Secretary"){
-            $view_data['host'] = $this->_get_secretary_director();
-        }else{
-            $view_data['host'] = array("" => " -- Choose Host -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
-        }
-
-        // $view_data['departments'] = $this->Departments_model->get_dropdown_list(array("nameSo"), "id");
-        // $view_data['Sections'] = $this->Sections_model->get_dropdown_list(array("nameSo"), "id");
-        // $view_data['Units'] = $this->Units_model->get_dropdown_list(array("nameSo"), "id");
-        // $view_data['payers'] = $this->Clients_model->get_dropdown_list(array("company_name"), "id");
-        // $view_data['partners'] = $this->Partners_model->get_dropdown_list(array("name"), "id");
-        // $view_data['guests'] = $this->Visitors_model->get_dropdown_list(array("name"), "id");
-        // $view_data['client_name'] = $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
-
-        // $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name"," ","last_name")), "id");
-
-        $view_data['label_suggestions'] = $this->make_labels_dropdown("client", $view_data['model_info']->labels);
-
-        //prepare groups dropdown list
-        $view_data['groups_dropdown'] = $this->_get_groups_dropdown_select2_data();
-
-
-        $view_data["team_members_dropdown"] = $this->get_team_members_dropdown();
-
-        //prepare label suggestions
-
-        //get custom fields
-        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $agreement_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
-
-        return $this->template->view('agreements/signaure_pad', $view_data);
-    }
-
-    public function check_agreement_template()
-    {
-        $agreement_type_id = $this->request->getPost('agreement_type_id');
-
-        // Fetch agreement type details to check if it has a template
-        $agreement_type_info = $this->db->query("SELECT id FROM rise_templates WHERE agreement_type_id = ?", array($agreement_type_id))->getRow();
-
-        if ($agreement_type_info) {
-            echo json_encode(['has_template' => true]);
-        } else {
-            echo json_encode(['has_template' => false]);
-        }
     }
 
 
@@ -757,58 +430,36 @@ class Agreements extends Security_Controller {
         }
     }
 
-    function agreement_details() {
-        $this->validate_submitted_data(array(
-            "id" => "required|numeric"
-        ));
-
-        
-        $id = $this->request->getPost('id');
-        $options = array('id' => $id);
-
-        $info = $this->Agreements_model->get_details($options)->getRow();
-        if (!$info) {
-            show_404();
+    public function get_owners_by_property_id()
+    {
+        // Get the property_id from the POST request
+        $property_id = $this->request->getPost('property_id');
+    
+        // Validate the property ID
+        if (!$property_id || !is_numeric($property_id)) {
+            echo json_encode([]);
+            return;
         }
+    
+        // Fetch the owners related to the property
+        $owners = $this->Agency_model->get_owners_by_property($property_id);
 
-        $role = $this->get_user_role();
-        
-        $style = '';
-
-        if ($info->status === "pending") {
-            $status_class = "btn-dark";
-            $style = "background-color:#6690f4;";
-        } else if ($info->status === "completed") {
-            $status_class = "btn-dark";
-            $style = "background-color:#08976d;";
-        } else if ($info->status === "signed") {
-            $status_class = "btn-dark";
-            $style = "background-color:#6341c5;";
-        } else {
-            $status_class = "bg-dark";
-        }
-        $info->status_meta = "<span style='$style' class='badge $status_class'>" . app_lang($info->status) . "</span>";
-
-        if (isset($info->created_at)) {
-            $created_at = format_to_date($info->created_at, FALSE);
-            $info->created_at_meta = $created_at;
-        }
-       
-        $view_data['agreement_info'] = $info;
-        $view_data['role']=$role;
-        return $this->template->view("agreements/agreement_details", $view_data);
+        // print_r($owners);die;
+    
+        // Return the result as JSON
+        echo json_encode($owners);
     }
-
+    
     /* load client details view */
 
-    function view($agreement_id = 0, $tab = "") {
+    function view($Sections_id = 0, $tab = "") {
         
-        // $this->_validate_client_view_access($agreement_id);
+        // $this->_validate_client_view_access($Sections_id);
 
-        if ($agreement_id) {
-            $options = array("id" => $agreement_id);
-            $agreement_info = $this->Agreements_model->get_details($options)->getRow();
-            if ($agreement_info && !$agreement_info->is_lead) {
+        if ($Sections_id) {
+            $options = array("id" => $Sections_id);
+            $properties_info = $this->Agency_model->get_details($options)->getRow();
+            if ($properties_info && !$properties_info->is_lead) {
 
                 $view_data = $this->make_access_permissions_view_data();
 
@@ -818,9 +469,9 @@ class Agreements extends Security_Controller {
                 $access_info = $this->get_access_info("expense");
                 $view_data["show_expense_info"] = (get_setting("module_expense") && $access_info->access_type == "all") ? true : false;
 
-                $view_data['agreement_info'] = $agreement_info;
+                $view_data['properties_info'] = $properties_info;
 
-                $view_data["is_starred"] = strpos($agreement_info->starred_by, ":" . $this->login_user->id . ":") ? true : false;
+                $view_data["is_starred"] = strpos($properties_info->starred_by, ":" . $this->login_user->id . ":") ? true : false;
 
                 $view_data["tab"] = clean_data($tab);
 
@@ -829,7 +480,7 @@ class Agreements extends Security_Controller {
                 //even it's hidden, admin can view all information of client
                 $view_data['hidden_menu'] = array("");
 
-                return $this->template->rander("agreements/view", $view_data);
+                return $this->template->rander("agency/view", $view_data);
             } else {
                 show_404();
             }
@@ -838,258 +489,6 @@ class Agreements extends Security_Controller {
         }
     }
 
-
-    function update_status() {
-
-        $this->validate_submitted_data(array(
-            "id" => "required|numeric",
-            "status" => "required",
-            // "sign_from" => "required"
-        ));
-
-        $agreement_id = $this->request->getPost('id');
-        $status = $this->request->getPost('status');
-        $sign_from = $this->request->getPost('sign_from');
-        $now = get_current_utc_time();
-
-        // print_r($sign_from); die;
-
-        $role = $this->get_user_role();
- 
-        $data = array(
-            "status" => $status,
-            "sign_from" => $sign_from
-        );
-
-        if ($status === "Signed" ) {
-                
-            if ($sign_from === 'System') {
-
-                $login_user_id = $this->login_user->id;
-                $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.signature,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $login_user_id")->getRow();
-
-               //get document row
-               $ag = $this->db->query("SELECT ag.* FROM rise_agreements ag WHERE ag.id =$agreement_id")->getRow();
-
-               // $drive_info = unserialize($doc->drive_info);
-               $itemID = $ag->item_id;
-               $siteId = getenv('SITE_ID');
-               $driveId = getenv('DRIVE_ID');
-               $accessToken = $this->AccesToken();
-               $imageArr = unserialize($user_info->signature);
-            //    $signatureImageUrl = get_array_value($imageArr[0],'file_name');
-
-               if (is_array($imageArr) && isset($imageArr[0])) {
-
-                $signatureImageUrl = get_array_value($imageArr[0], 'file_name');
-
-                    if($signatureImageUrl){
-                        $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
-
-                        if($resultArr['success'] == true) {
-                            $localFilePath = $resultArr['result'];
-                            $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
-                            $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
-
-                            $data["signed_by"] = $this->login_user->id;
-                            $data["signed_at"] = $now;
-                            $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
-                        
-                        }else{                
-                            
-                            $result = $resultArr['result'];
-                            echo json_encode(array("success" => false, "data" => null, 'message' => $result));
-                            die;
-                        }
-                    }
-                } else {
-                    // Handle the case where $imageArr is not an array or doesn't have the expected structure
-                    echo json_encode(array("success" => false, "message" => "You have no Signature on the System"));
-                    die;
-                }
-            
-            } elseif ($sign_from === 'Manual') {
-            
-                $data["signed_by"] = $this->login_user->id;
-                $data["signed_at"] = $now;
-                $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
-
-            }
-
-        } elseif ($status === "Completed" ) {
-
-            if ($sign_from === 'System') {
-
-                $login_user_id = $this->login_user->id;
-                $user_info = $this->db->query("SELECT u.*,j.job_title_so,j.signature,j.department_id FROM rise_users u left join rise_team_member_job_info j on u.id=j.user_id where u.id = $login_user_id")->getRow();
-
-               //get document row
-               $ag = $this->db->query("SELECT ag.* FROM rise_agreements ag WHERE ag.id =$agreement_id")->getRow();
-
-               // $drive_info = unserialize($doc->drive_info);
-               $itemID = $ag->item_id;
-               $siteId = getenv('SITE_ID');
-               $driveId = getenv('DRIVE_ID');
-               $accessToken = $this->AccesToken();
-               $imageArr = unserialize($user_info->signature);
-            //    $signatureImageUrl = get_array_value($imageArr[0],'file_name');
-
-               if (is_array($imageArr) && isset($imageArr[0])) {
-
-                $signatureImageUrl = get_array_value($imageArr[0], 'file_name');
-
-                    if($signatureImageUrl){
-                        $resultArr = $this->downloadWordDocument($accessToken,$siteId,$driveId,$itemID);
-
-                        if($resultArr['success'] == true) {
-                            $localFilePath = $resultArr['result'];
-                            $updatedFilePath = $this->updateWordDocument($localFilePath, $signatureImageUrl);
-                            $respose = $this->uploadUpdatedDocument($accessToken,$siteId,$driveId,$itemID,$updatedFilePath);
-
-                            $data["completed_by"] = $this->login_user->id;
-                            $data["completed_at"] = $now;
-                            $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
-                        
-                        }else{                
-                            
-                            $result = $resultArr['result'];
-                            echo json_encode(array("success" => false, "data" => null, 'message' => $result));
-                            die;
-                        }
-                    }
-                } else {
-                    // Handle the case where $imageArr is not an array or doesn't have the expected structure
-                    echo json_encode(array("success" => false, "message" => "You have no Signature on the System"));
-                    die;
-                }
-
-            } elseif ($sign_from === 'Manual') {
-                $data["completed_by"] = $this->login_user->id;
-                $data["completed_at"] = $now;
-                $save_id = $this->Agreements_model->ci_save($data, $agreement_id);
-            }
-        }
-
-        if ($save_id) {
-            
-            $notification_options = array("leave_id" => $agreement_id, );
-               
-            echo json_encode(array("success" => true, "data" => $this->_row_data($save_id), 'id' => $save_id, 'message' => app_lang('record_saved')));
-        } else {
-            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
-        }
-    }
-
-        /** start word update */
-        function downloadWordDocument($accessToken, $siteId, $driveId, $itemId) {
-            $url = "https://graph.microsoft.com/v1.0/drives/$driveId/items/$itemId/content";
-            
-            $headers = [
-                "Authorization: Bearer $accessToken"
-            ];
-    
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Follow redirects
-            curl_setopt($ch, CURLOPT_MAXREDIRS, 10); // Set the maximum number of redirects
-    
-            $response = curl_exec($ch);
-            $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $curlError = curl_error($ch);
-            $redirect_url = curl_getinfo($ch, CURLINFO_REDIRECT_URL);
-            curl_close($ch);
-        
-            // print_r('response: '.$accessToken);
-            // print_r('redirect: '.$url);
-            // die;
-            // Debugging output
-            if ($curlError) {
-                echo "cURL Error: " . $curlError;
-                return array('success' => false, 'result' => $curlError); 
-            }
-        
-            if ($httpStatusCode != 200) {
-                echo "HTTP Status Code: " . $httpStatusCode;          
-            }
-        
-            if (empty($response)) {
-                echo "No response received!";            
-               return array('success' => false, 'result' => 'No response received'); 
-               
-            }
-            curl_close($ch);
-    
-            $localFilePath = APPPATH . 'Views/agreements/documents/local_copy_'.date('hs').'.docx';  
-            file_put_contents($localFilePath, $response);
-    
-            return array('success' => true, 'result' => $localFilePath); 
-        }
-    
-        function updateWordDocument($localFilePath, $signatureImageUrl) {
-            // $localFilePath = APPPATH . 'Views/documents/'.$localFilePath;  
-            // $phpWord = IOFactory::load($localFilePath);
-    
-            $template = new TemplateProcessor($localFilePath);
-    
-            $template->setImageValue('signature',
-            [
-                'path' => ROOTPATH . 'files/signature_file_path/'.$signatureImageUrl,
-                'width' => '300',
-                'height' => '150',
-                'ratio' => true,
-            ]);
-    
-            $template->saveAs($localFilePath);
-    
-            // $section = $phpWord->addSection();
-            // $section->addText('This is new content added to the document.');
-            // $phpWord->save($localFilePath, 'Word2007');
-    
-            // echo $localFilePath;
-            return $localFilePath;
-        }
-    
-        function uploadUpdatedDocument($accessToken, $siteId, $driveId, $itemId, $updatedFilePath) {
-            $url = "https://graph.microsoft.com/v1.0/drives/$driveId/items/$itemId/content";
-            
-            $headers = [
-                "Authorization: Bearer $accessToken",
-                "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            ];
-    
-            $fileContents = file_get_contents($updatedFilePath);
-    
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $fileContents);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Follow redirects
-            // curl_setopt($ch, CURLOPT_MAXREDIRS, 10); // Set the maximum number of redirects
-    
-            $response = curl_exec($ch);
-            
-            $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $curlError = curl_error($ch);
-            curl_close($ch);
-            
-            //  print_r('updatedFilePath: '.$updatedFilePath);
-            //  print_r('fileContents: '.$fileContents);
-            //  print_r('response: '.$response);
-            //  print_r('httpStatusCode: '.$httpStatusCode);
-            // print_r('curlError: '.$curlError);
-            // die;
-    
-            //delete local file:
-            if(file_exists($updatedFilePath)){
-                unlink($updatedFilePath);
-            }
-    
-            return json_decode($response, true);
-        }
     /* add-remove start mark from client */
 
     function add_remove_star($client_id, $type = "add") {
@@ -1098,17 +497,17 @@ class Agreements extends Security_Controller {
 
             if ($type === "add") {
                 $this->Clients_model->add_remove_star($client_id, $this->login_user->id, $type = "add");
-                return $this->template->view('agreements/star/starred', $view_data);
+                return $this->template->view('agency/star/starred', $view_data);
             } else {
                 $this->Clients_model->add_remove_star($client_id, $this->login_user->id, $type = "remove");
-                return $this->template->view('agreements/star/not_starred', $view_data);
+                return $this->template->view('agency/star/not_starred', $view_data);
             }
         }
     }
 
     function show_my_starred_clients() {
         $view_data["clients"] = $this->Clients_model->get_starred_clients($this->login_user->id, $this->allowed_client_groups)->getResult();
-        return $this->template->view('agreements/star/clients_list', $view_data);
+        return $this->template->view('agency/star/clients_list', $view_data);
     }
 
     /* load projects tab  */
@@ -1122,7 +521,7 @@ class Agreements extends Security_Controller {
 
         $view_data['client_id'] = clean_data($client_id);
         $view_data['project_statuses'] = $this->Project_status_model->get_details()->getResult();
-        return $this->template->view("agreements/projects/index", $view_data);
+        return $this->template->view("agency/projects/index", $view_data);
     }
 
     /* load payments tab  */
@@ -1133,7 +532,7 @@ class Agreements extends Security_Controller {
         if ($client_id) {
             $view_data["client_info"] = $this->Clients_model->get_one($client_id);
             $view_data['client_id'] = clean_data($client_id);
-            return $this->template->view("agreements/payments/index", $view_data);
+            return $this->template->view("agency/payments/index", $view_data);
         }
     }
 
@@ -1150,7 +549,7 @@ class Agreements extends Security_Controller {
 
             $view_data['show_project_reference'] = get_setting('project_reference_in_tickets');
 
-            return $this->template->view("agreements/tickets/index", $view_data);
+            return $this->template->view("agency/tickets/index", $view_data);
         }
     }
 
@@ -1175,7 +574,7 @@ class Agreements extends Security_Controller {
             );
             $view_data['types_dropdown'] = json_encode($type_suggestions);
 
-            return $this->template->view("agreements/invoices/index", $view_data);
+            return $this->template->view("agency/invoices/index", $view_data);
         }
     }
 
@@ -1191,7 +590,7 @@ class Agreements extends Security_Controller {
             $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("estimates", $this->login_user->is_admin, $this->login_user->user_type);
             $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("estimates", $this->login_user->is_admin, $this->login_user->user_type);
 
-            return $this->template->view("agreements/estimates/estimates", $view_data);
+            return $this->template->view("agency/estimates/estimates", $view_data);
         }
     }
 
@@ -1207,7 +606,7 @@ class Agreements extends Security_Controller {
             $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("orders", $this->login_user->is_admin, $this->login_user->user_type);
             $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("orders", $this->login_user->is_admin, $this->login_user->user_type);
 
-            return $this->template->view("agreements/orders/orders", $view_data);
+            return $this->template->view("agency/orders/orders", $view_data);
         }
     }
 
@@ -1218,7 +617,7 @@ class Agreements extends Security_Controller {
 
         if ($client_id) {
             $view_data['client_id'] = clean_data($client_id);
-            return $this->template->view("agreements/estimates/estimate_requests", $view_data);
+            return $this->template->view("agency/estimates/estimate_requests", $view_data);
         }
     }
 
@@ -1229,7 +628,7 @@ class Agreements extends Security_Controller {
 
         if ($client_id) {
             $view_data['client_id'] = clean_data($client_id);
-            return $this->template->view("agreements/notes/index", $view_data);
+            return $this->template->view("agency/notes/index", $view_data);
         }
     }
 
@@ -1248,57 +647,52 @@ class Agreements extends Security_Controller {
 
     /* load files tab */
 
-    function files($agreement_id, $view_type = "") {
-        // $this->can_view_files();
+    function files($property_id, $view_type = "") {
+        $this->can_view_files();
 
-        // if ($this->login_user->user_type == "client") {
-        //     $agreement_id = $this->login_user->agreement_id;
-        // }
 
-        $this->_validate_client_view_access($agreement_id);
-
-        $view_data['agreement_id'] = clean_data($agreement_id);
+        $view_data['property_id'] = clean_data($property_id);
         $view_data['page_view'] = false;
 
         if ($view_type == "page_view") {
             $view_data['page_view'] = true;
-            return $this->template->rander("agreements/files/index", $view_data);
+            return $this->template->rander("agency/files/index", $view_data);
         } else {
-            return $this->template->view("agreements/files/index", $view_data);
+            return $this->template->view("agency/files/index", $view_data);
         }
     }
 
     /* file upload modal */
 
     function file_modal_form() {
-        // $this->can_add_files();
-
+        // print_r($$this->request->getPost('id'));die;
         $view_data['model_info'] = $this->General_files_model->get_one($this->request->getPost('id'));
-        $agreement_id = $this->request->getPost('agreement_id') ? $this->request->getPost('agreement_id') : $view_data['model_info']->agreement_id;
-        $this->_validate_client_manage_access($agreement_id);
+        $property_id = $this->request->getPost('property_id') ? $this->request->getPost('property_id') : $view_data['model_info']->property_id;
+        // $this->_validate_client_manage_access($property_id);
+        // print_r($property_id);die;
 
-        $view_data['agreement_id'] = $agreement_id;
-        return $this->template->view('agreements/files/modal_form', $view_data);
+        $view_data['property_id'] = $property_id;
+        return $this->template->view('agency/files/modal_form', $view_data);
     }
 
     /* save file data and move temp file to parmanent file directory */
 
     function save_file() {
-        // $this->can_add_files();
+        $this->can_add_files();
 
         $this->validate_submitted_data(array(
             "id" => "numeric",
-            "agreement_id" => "required|numeric"
+            "property_id" => "required|numeric"
         ));
 
-        $agreement_id = $this->request->getPost('agreement_id');
-        // $this->_validate_client_manage_access($agreement_id);
+        $property_id = $this->request->getPost('property_id');
+        // $this->_validate_client_manage_access($property_id);
 
         $files = $this->request->getPost("files");
         $success = false;
         $now = get_current_utc_time();
 
-        $target_path = getcwd() . "/" . get_general_file_path("agreements", $agreement_id);
+        $target_path = getcwd() . "/" . get_general_file_path("property", $property_id);
 
         //process the fiiles which has been uploaded by dropzone
         if ($files && get_array_value($files, 0)) {
@@ -1307,7 +701,7 @@ class Agreements extends Security_Controller {
                 $file_info = move_temp_file($file_name, $target_path);
                 if ($file_info) {
                     $data = array(
-                        "agreement_id" => $agreement_id,
+                        "property_id" => $property_id,
                         "file_name" => get_array_value($file_info, 'file_name'),
                         "file_id" => get_array_value($file_info, 'file_id'),
                         "service_type" => get_array_value($file_info, 'service_type'),
@@ -1333,11 +727,12 @@ class Agreements extends Security_Controller {
 
     /* list of files, prepared for datatable  */
 
-    function files_list_data($agreement_id = 0) {
+    function files_list_data($property_id = 0) {
+        // print_r($property_id);die;
         // $this->can_view_files();
-        // $this->_validate_client_view_access($agreement_id);
+        // $this->_validate_client_view_access($property_id);
 
-        $options = array("agreement_id" => $agreement_id);
+        $options = array("property_id" => $property_id);
         $list_data = $this->General_files_model->get_details($options)->getResult();
         $result = array();
         foreach ($list_data as $data) {
@@ -1359,7 +754,7 @@ class Agreements extends Security_Controller {
         }
 
         $description = "<div class='float-start'>" .
-                js_anchor(remove_file_prefix($data->file_name), array('title' => "", "data-toggle" => "app-modal", "data-sidebar" => "0", "data-url" => get_uri("agreements/view_file/" . $data->id)));
+                js_anchor(remove_file_prefix($data->file_name), array('title' => "", "data-toggle" => "app-modal", "data-sidebar" => "0", "data-url" => get_uri("agency/view_file/" . $data->id)));
 
         if ($data->description) {
             $description .= "<br /><span>" . $data->description . "</span></div>";
@@ -1367,10 +762,10 @@ class Agreements extends Security_Controller {
             $description .= "</div>";
         }
 
-        $options = anchor(get_uri("agreements/download_file/" . $data->id), "<i data-feather='download-cloud' class='icon-16'></i>", array("title" => app_lang("download")));
+        $options = anchor(get_uri("agency/download_file/" . $data->id), "<i data-feather='download-cloud' class='icon-16'></i>", array("title" => app_lang("download")));
 
         if ($this->login_user->user_type == "staff") {
-            $options .= js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_file'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("agreements/delete_file"), "data-action" => "delete-confirmation"));
+            $options .= js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_file'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("agency/delete_file"), "data-action" => "delete-confirmation"));
         }
 
 
@@ -1389,14 +784,14 @@ class Agreements extends Security_Controller {
         if ($file_info) {
             // $this->can_view_files();
 
-            if (!$file_info->agreement_id) {
-                app_redirect("forbidden");
-            }
+            // if (!$file_info->client_id) {
+            //     app_redirect("forbidden");
+            // }
 
-            $this->_validate_client_manage_access($file_info->agreement_id);
+            // $this->_validate_client_manage_access($file_info->client_id);
 
             $view_data['can_comment_on_files'] = false;
-            $file_url = get_source_url_of_file(make_array_of_file($file_info), get_general_file_path("agreements", $file_info->agreement_id));
+            $file_url = get_source_url_of_file(make_array_of_file($file_info), get_general_file_path("property", $file_info->property_id));
 
             $view_data["file_url"] = $file_url;
             $view_data["is_image_file"] = is_image_file($file_info->file_name);
@@ -1408,7 +803,7 @@ class Agreements extends Security_Controller {
 
             $view_data["file_info"] = $file_info;
             $view_data['file_id'] = clean_data($file_id);
-            return $this->template->view("agreements/files/view", $view_data);
+            return $this->template->view("agency/files/view", $view_data);
         } else {
             show_404();
         }
@@ -1421,16 +816,16 @@ class Agreements extends Security_Controller {
 
         $file_info = $this->General_files_model->get_one($id);
 
-        if (!$file_info->agreement_id) {
-            app_redirect("forbidden");
-        }
+        // if (!$file_info->client_id) {
+        //     app_redirect("forbidden");
+        // }
 
-        $this->_validate_client_manage_access($file_info->agreement_id);
+        // $this->_validate_client_manage_access($file_info->client_id);
 
         //serilize the path
         $file_data = serialize(array(make_array_of_file($file_info)));
 
-        return $this->download_app_files(get_general_file_path("agreements", $file_info->agreement_id), $file_data);
+        return $this->download_app_files(get_general_file_path("property", $file_info->property_id), $file_data);
     }
 
     /* upload a post file */
@@ -1438,7 +833,7 @@ class Agreements extends Security_Controller {
     function upload_file() {
         upload_file_to_temp();
     }
-    
+
     function validate_events_file() {
         return validate_post_file($this->request->getPost("file_name"));
     }
@@ -1456,16 +851,10 @@ class Agreements extends Security_Controller {
         $id = $this->request->getPost('id');
         $info = $this->General_files_model->get_one($id);
 
-        // if (!$info->client_id || ($this->login_user->user_type == "client" && $info->uploaded_by !== $this->login_user->id)) {
-        //     app_redirect("forbidden");
-        // }
-
-        // $this->_validate_client_manage_access($info->client_id);
-
         if ($this->General_files_model->delete($id)) {
 
             //delete the files
-            delete_app_files(get_general_file_path("agreements", $info->client_id), array(make_array_of_file($info)));
+            delete_app_files(get_general_file_path("client", $info->client_id), array(make_array_of_file($info)));
 
             echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
         } else {
@@ -1485,7 +874,7 @@ class Agreements extends Security_Controller {
             $view_data['show_cotact_info'] = true;
             $view_data['show_social_links'] = true;
             $view_data['social_link'] = $this->Social_links_model->get_one($contact_id);
-            return $this->template->rander("agreements/contacts/view", $view_data);
+            return $this->template->rander("agency/contacts/view", $view_data);
         } else {
             show_404();
         }
@@ -1512,7 +901,7 @@ class Agreements extends Security_Controller {
 
         $view_data["hidden_topbar_menus_dropdown"] = $this->get_hidden_topbar_menus_dropdown();
 
-        return $this->template->view("agreements/contacts/my_preferences", $view_data);
+        return $this->template->view("agency/contacts/my_preferences", $view_data);
     }
 
     function save_my_preferences() {
@@ -1585,7 +974,7 @@ class Agreements extends Security_Controller {
 
         $view_data['can_edit_clients'] = $this->can_edit_clients();
 
-        return $this->template->view("agreements/contacts/index", $view_data);
+        return $this->template->view("agency/contacts/index", $view_data);
     }
 
     /* contact add modal */
@@ -1601,7 +990,7 @@ class Agreements extends Security_Controller {
         $this->_validate_client_manage_access($view_data['model_info']->Sections_id);
 
         $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("client_contacts", $view_data['model_info']->id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
-        return $this->template->view('agreements/contacts/modal_form', $view_data);
+        return $this->template->view('agency/contacts/modal_form', $view_data);
     }
 
     /* load contact's general info tab view */
@@ -1617,17 +1006,17 @@ class Agreements extends Security_Controller {
             $view_data['label_column'] = "col-md-2";
             $view_data['field_column'] = "col-md-10";
             $view_data['can_edit_clients'] = $this->can_edit_clients($view_data['model_info']->client_id);
-            return $this->template->view('agreements/contacts/contact_general_info_tab', $view_data);
+            return $this->template->view('agency/contacts/contact_general_info_tab', $view_data);
         }
     }
 
     /* load contact's company info tab view */
 
-    function company_info_tab($agreement_id = 0) {
-        if ($agreement_id) {
-            // $this->_validate_client_view_access($agreement_id);
+    function company_info_tab($Sections_id = 0) {
+        if ($Sections_id) {
+            // $this->_validate_client_view_access($Sections_id);
 
-            $view_data['model_info'] = $this->Agreements_model->get_one($agreement_id);
+            $view_data['model_info'] = $this->Agency_model->get_one($Sections_id);
             $view_data['groups_dropdown'] = $this->_get_groups_dropdown_select2_data();
 
             // $view_data['Bank_names_dropdown'] = $this->get_bank_name_dropdown();
@@ -1636,35 +1025,38 @@ class Agreements extends Security_Controller {
 
             // $view_data['Merchant_types_dropdown_js'] = $this->get_merchant_types_dropdown_js();
             $view_data['secretary'] = array("" => " -- Choose Secretary -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
-
-
-            $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $agreement_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
-
             $view_data['label_column'] = "col-md-2";
             $view_data['field_column'] = "col-md-10";
+
+            $view_data['label_column_2'] = "col-md-2 text-right";
+            $view_data['field_column_2'] = "col-md-3";
+
+            $view_data['field_column_4'] = "col-md-4";
+
+            $view_data['field_column_3'] = "col-md-10";
+
+            $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("clients", $Sections_id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+
+            $view_data['Services'] = array("" => " -- choose a service -- ") + $this->Notary_services_model->get_dropdown_list(array("service_name"), "id");
 
             $view_data['label_column_2'] = "col-md-2 text-right";
             $view_data['field_column_2'] = "col-md-4";
 
             $view_data['field_column_3'] = "col-md-10";
+            $view_data['regions'] = array("" => " -- choose region -- ") + $this->Regions_model->get_dropdown_list(array("region"), "id");
+            $view_data['districts'] = array("" => " -- choose district -- ") + $this->Districts_model->get_dropdown_list(array("district"), "id");
+            $view_data['owners'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
 
-            $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo"), "id");
-            $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
-            $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
-
-            $view_data['can_edit_clients'] = $this->can_edit_clients($agreement_id);
-            $view_data['payment_method'] = $this->payment_method();
-            $view_data['agreement_types'] = array("" => " -- choose a agreement type -- ") + $this->Agreement_type_model->get_dropdown_list(array("agreement_type"), "id");
+            $view_data['can_edit_clients'] = $this->can_edit_clients($Sections_id);
 
             $view_data['departments'] = array("" => " -- Choose Department -- ") + $this->Departments_model->get_dropdown_list(array("nameSo"), "id");
             $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
-            $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
 
             $view_data["team_members_dropdown"] = $this->get_team_members_dropdown();
             $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();
             $view_data['label_suggestions'] = $this->make_labels_dropdown("client", $view_data['model_info']->labels);
 
-            return $this->template->view('agreements/contacts/company_info_tab', $view_data);
+            return $this->template->view('agency/contacts/company_info_tab', $view_data);
         }
     }
 
@@ -1735,7 +1127,7 @@ class Agreements extends Security_Controller {
 
         //by default, the first contact of a client is the primary contact
         //check existing primary contact. if not found then set the first contact = primary contact
-        $primary_contact = $this->Agreements_model->get_primary_contact($Sections_id);
+        $primary_contact = $this->Agency_model->get_primary_contact($Sections_id);
         if (!$primary_contact) {
             $user_data['is_primary_contact'] = 1;
         }
@@ -2037,7 +1429,7 @@ class Agreements extends Security_Controller {
             $removal_request_pending = "<span class='bg-danger badge'>" . app_lang("removal_request_pending") . "</span>";
         }
 
-        $contact_link = anchor(get_uri("agreements/contact_profile/" . $data->id), $full_name . $primary_contact) . $removal_request_pending;
+        $contact_link = anchor(get_uri("agency/contact_profile/" . $data->id), $full_name . $primary_contact) . $removal_request_pending;
         if ($this->login_user->user_type === "client") {
             $contact_link = $full_name; //don't show clickable link to client
         }
@@ -2047,7 +1439,7 @@ class Agreements extends Security_Controller {
         $row_data = array(
             $user_avatar,
             $contact_link,
-            anchor(get_uri("agreements/view/" . $data->Sections_id), $client_info->company_name),
+            anchor(get_uri("agency/view/" . $data->Sections_id), $client_info->company_name),
             $data->job_title,
             $data->email,
             $data->phone ? $data->phone : "-",
@@ -2059,7 +1451,7 @@ class Agreements extends Security_Controller {
             $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
         }
 
-        $row_data[] = js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_contact'), "class" => "delete", "data-id" => "$data->id", "data-action-url" => get_uri("agreements/delete_contact"), "data-action" => "delete"));
+        $row_data[] = js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_contact'), "class" => "delete", "data-id" => "$data->id", "data-action-url" => get_uri("agency/delete_contact"), "data-action" => "delete"));
 
         return $row_data;
     }
@@ -2079,7 +1471,7 @@ class Agreements extends Security_Controller {
         $this->_validate_client_manage_access($client_id);
 
         $view_data["client_info"] = $this->Clients_model->get_one($client_id);
-        return $this->template->view('agreements/contacts/invitation_modal', $view_data);
+        return $this->template->view('agency/contacts/invitation_modal', $view_data);
     }
 
     //send a team member invitation to an email address
@@ -2137,7 +1529,7 @@ class Agreements extends Security_Controller {
     function users() {
         if ($this->login_user->user_type === "client") {
             $view_data['client_id'] = $this->login_user->client_id;
-            return $this->template->rander("agreements/contacts/users", $view_data);
+            return $this->template->rander("agency/contacts/users", $view_data);
         }
     }
 
@@ -2154,7 +1546,7 @@ class Agreements extends Security_Controller {
     function import_clients_modal_form() {
         $this->_validate_client_manage_access();
 
-        return $this->template->view("agreements/import_clients_modal_form");
+        return $this->template->view("agency/import_clients_modal_form");
     }
 
     private function _prepare_client_data($data_row, $allowed_headers) {
@@ -2590,7 +1982,7 @@ class Agreements extends Security_Controller {
 
     function gdpr() {
         $view_data["user_info"] = $this->Users_model->get_one($this->login_user->id);
-        return $this->template->view("agreements/contacts/gdpr", $view_data);
+        return $this->template->view("agency/contacts/gdpr", $view_data);
     }
 
     function export_my_data() {
@@ -2684,7 +2076,7 @@ class Agreements extends Security_Controller {
             log_notification("client_contact_requested_account_removal", array("client_id" => $client_id), $user_id);
 
             $this->session->setFlashdata("success_message", app_lang("estimate_submission_message"));
-            app_redirect("agreements/contact_profile/$user_id/gdpr");
+            app_redirect("agency/contact_profile/$user_id/gdpr");
         }
     }
 
@@ -2701,7 +2093,7 @@ class Agreements extends Security_Controller {
             $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("expenses", $this->login_user->is_admin, $this->login_user->user_type);
             $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("expenses", $this->login_user->is_admin, $this->login_user->user_type);
 
-            return $this->template->view("agreements/expenses/index", $view_data);
+            return $this->template->view("agency/expenses/index", $view_data);
         }
     }
 
@@ -2715,11 +2107,11 @@ class Agreements extends Security_Controller {
             $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("contracts", $this->login_user->is_admin, $this->login_user->user_type);
             $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("contracts", $this->login_user->is_admin, $this->login_user->user_type);
 
-            return $this->template->view("agreements/contracts/contracts", $view_data);
+            return $this->template->view("agency/contracts/contracts", $view_data);
         }
     }
 
-    function agreement_list() {
+    function properties_list() {
         $this->access_only_allowed_members();
 
         $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("clients", $this->login_user->is_admin, $this->login_user->user_type);
@@ -2733,7 +2125,7 @@ class Agreements extends Security_Controller {
         $view_data["team_members_dropdown"] = $this->get_team_members_dropdown(true);
         $view_data['labels_dropdown'] = json_encode($this->make_labels_dropdown("client", "", true));
 
-        return $this->template->view("agreements/agreement_list", $view_data);
+        return $this->template->view("agency/properties_list", $view_data);
     }
 
     private function make_access_permissions_view_data() {
@@ -2774,7 +2166,7 @@ class Agreements extends Security_Controller {
             $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("proposals", $this->login_user->is_admin, $this->login_user->user_type);
             $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("proposals", $this->login_user->is_admin, $this->login_user->user_type);
 
-            return $this->template->view("agreements/proposals/proposals", $view_data);
+            return $this->template->view("agency/proposals/proposals", $view_data);
         }
     }
 
@@ -2811,7 +2203,7 @@ class Agreements extends Security_Controller {
         $view_data["can_create_task"] = $this->can_edit_clients();
 
         $view_data['client_id'] = clean_data($client_id);
-        return $this->template->view("agreements/tasks/index", $view_data);
+        return $this->template->view("agency/tasks/index", $view_data);
     }
 }
 

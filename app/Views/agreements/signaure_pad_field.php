@@ -6,35 +6,35 @@
 
 <!----------------------------------------- Property  ------------------------------------>
 
-<div class="form-group">
+<!-- <div class="form-group">
     <div class="row">
         <div class="col-md-12">
             <?php
-            // Ensure $client_name is an associative array in the format ['id' => 'name']
-            if (!is_array($client_name)) {
-                $client_name = []; // Set default to prevent errors if it's null or not an array
-            }
+            // // Ensure $client_name is an associative array in the format ['id' => 'name']
+            // if (!is_array($client_name)) {
+            //     $client_name = []; // Set default to prevent errors if it's null or not an array
+            // }
 
-            // Convert buyer_ids to an array if it's a comma-separated string
-            $selected_client = isset($model_info->buyer_ids) ? $model_info->buyer_ids : ''; // Single selection instead of array
+            // // Convert buyer_ids to an array if it's a comma-separated string
+            // $selected_client = isset($model_info->buyer_ids) ? $model_info->buyer_ids : ''; // Single selection instead of array
 
-            echo form_dropdown(
-                array(
-                    "id" => "property",
-                    "name" => "property", // Single selection, keep name simple
-                    "class" => "form-control select2", // You can still use select2 for better UX
-                    "placeholder" => 'Property',
-                    "autocomplete" => "off",
-                    'data-rule-required' => true,
-                    'data-msg-required' => app_lang('field_required'),
-                ),
-                $client_name,
-                $selected_client
-            );
+            // echo form_dropdown(
+            //     array(
+            //         "id" => "property",
+            //         "name" => "property", // Single selection, keep name simple
+            //         "class" => "form-control select2", // You can still use select2 for better UX
+            //         "placeholder" => 'Property',
+            //         "autocomplete" => "off",
+            //         'data-rule-required' => true,
+            //         'data-msg-required' => app_lang('field_required'),
+            //     ),
+            //     $client_name,
+            //     $selected_client
+            // );
             ?>
         </div>
     </div>
-</div>
+</div> -->
 
 
 <!----------------------------------------- Signature Pad  ------------------------------------>

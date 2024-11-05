@@ -60,8 +60,7 @@ $lang["edit_property"] = "Edit Property";
 $lang["delete_property"] = "Delete Property";
 
 // Notary
-$lang["agent"] = "Agent";
-$lang["agents"] = "Agents";
+$lang["agency"] = "Agency";
 
 // Notary
 $lang["notary"] = "Notary";
@@ -181,7 +180,6 @@ $lang["search_todays_access_requests"] = "Search todays access requests";
 $lang["can_access_visitors_information"] = "Can access visitors information";
 $lang["yes_all_visitors"] = "Yes, all visitors information";
 $lang["yes_only_own_visitors"] = "Yes, only own visitor's information";
-
 $lang["can_access_requests_information"] = "Can manage access request information";
 $lang["yes_all_requests"] = "Yes, all access request information";
 $lang["yes_only_own_requests"] = "Yes, only own access request information";
