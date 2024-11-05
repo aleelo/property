@@ -13,9 +13,8 @@
     </div>
 
     <button type="button" class="btn btn-default" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo 'Close'; ?></button>
-    <button type="button" id="clear-signature" class="btn btn-warning" ><span data-feather="x" class="icon-16"></span> <?php echo 'Clear'; ?></button>
-    <button type="submit" id="save-signature" class="btn btn-primary"><span data-feather="check-circle" class="icon-16"></span> <?php echo 'Save'; ?></button>
-    <button type="submit" class="btn btn-success"><span data-feather="check-circle" class="icon-16"></span> <?php echo 'Done'; ?></button>
+    <button type="button" id="clear-signature" class="btn btn-default" ><span data-feather="x" class="icon-16"></span> <?php echo 'Clear'; ?></button>
+    <button type="submit" id="save-signature" class="btn btn-primary"><span data-feather="check-circle" class="icon-16"></span> <?php echo 'Save & Sign'; ?></button>
 </div>
 <?php echo form_close(); ?>
 
@@ -72,9 +71,21 @@
 
         // ---------------------------- Signature Pad ------------------------ //
 
-                    const canvas = document.getElementById('signature-canvas');
+            const canvas = document.getElementById('signature-canvas');
             const ctx = canvas.getContext('2d');
             let painting = false;
+
+            // Function to clear the canvas
+            function clearCanvas() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath(); // Ensure no artifacts remain
+            }
+
+            // Clear canvas button event
+            $('#clear-signature').on('click', function () {
+                clearCanvas();
+                console.log('Canvas cleared'); // Debugging to confirm the button works
+            });
 
             // Functions to handle the drawing
             function startPosition(e) {
