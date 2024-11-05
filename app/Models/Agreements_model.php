@@ -194,7 +194,7 @@ class Agreements_model extends Crud_model {
         buyer.person_name as buyer, 
         seller.person_name as seller,
         witnes.person_name as witness, 
-        $templates_table.name as template_name,$templates_table.destination_folder as folder,$templates_table.path,$templates_table.ref_prefix
+        $templates_table.name as template_name,$templates_table.destination_folder as folder,$templates_table.path, $templates_table.ref_prefix
         FROM $agreements_table
         LEFT JOIN $properties_table ON $properties_table.id = $agreements_table.property_id
         LEFT JOIN $clients_table as buyer ON buyer.id = $agreements_table.buyer_ids

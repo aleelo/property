@@ -40,29 +40,29 @@
                     <td> <?php echo app_lang('status'); ?></td>
                     <td><?php echo $agreement_info->status_meta; ?></td>
                 </tr>
-                <!-- <?php //if ($agreement_info->status === 'pending' || $agreement_info->status === 'signed') { ?>
+                <?php if ($agreement_info->status === 'pending' || $agreement_info->status === 'signed') { ?>
                     <tr>
-                        <td> <?php //echo 'Sign From'; ?></td>
+                        <td> <?php echo 'Sign From'; ?></td>
                         <td>
                             <?php
-                            // echo form_radio(array(
-                            //     "id" => "sign_from_system",
-                            //     "name" => "sign_from",
-                            //     "class" => "form-check-input",
-                            // ), "System", ($agreement_info->sign_from === "System") ? true : false, "class='form-check-input'");
+                            echo form_radio(array(
+                                "id" => "sign_from_system",
+                                "name" => "sign_from",
+                                "class" => "form-check-input",
+                            ), "System", ($agreement_info->sign_from === "System") ? true : false, "class='form-check-input'");
                             ?>
-                            <label for="sign_from_system" class="mr15 p0"><?php //echo 'System'; ?></label> 
+                            <label for="sign_from_system" class="mr15 p0"><?php echo 'System'; ?></label> 
                             <?php
-                            // echo form_radio(array(
-                            //     "id" => "sign_from_manual",
-                            //     "name" => "sign_from",
-                            //     "class" => "form-check-input",
-                            // ), "Manual", ($agreement_info->sign_from === "Manual") ? true : false, "class='form-check-input'");
+                            echo form_radio(array(
+                                "id" => "sign_from_manual",
+                                "name" => "sign_from",
+                                "class" => "form-check-input",
+                            ), "Manual", ($agreement_info->sign_from === "Manual") ? true : false, "class='form-check-input'");
                             ?>
                             <label for="sign_from_manual" class="p0 mr15"><?php echo 'Manual'; ?></label>
                         </td>
                     </tr>
-                <?php// } ?> -->
+                <?php } ?>
               
             </table>
         </div>
@@ -75,11 +75,10 @@
 <input type="hidden" name="sign_from" id="agreement_sign_from_input" value="" />
 
 <div class="modal-footer">
-
     <button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal"><span data-feather="x" class="icon-16"></span> <?php echo app_lang('close'); ?></button>
     <?php if ($agreement_info->status === 'pending') { ?>
-        <?php echo modal_anchor(get_uri("agreements/Signaure_Pad"), "<i data-feather='check-circle' class='icon-16'></i> Sign Manual", array("class" => "btn btn-success btn-sm", "style" => "background-color: #6341c5; border-color: #6341c5;", "title" => "Sign Manual", "data-post-id" => $agreement_info->id)); ?>
-        <button data-status="Signed" type="submit" class="btn btn-success btn-sm update-leave-status" style="background-color: #6341c5; border-color: #6341c5;"><span data-feather="check-circle" class="icon-16"></span> <?php echo 'Sign System'; ?></button>
+        <?php echo modal_anchor(get_uri("agreements/Signaure_Pad"), "<i data-feather='check-circle' class='icon-16'></i> Sign", array("class" => "btn btn-success btn-sm", "style" => "background-color: #6341c5; border-color: #6341c5;display:none", "title" => "Sign Manually", "id"=>"signature-pad-btn", "data-post-id" => $agreement_info->id)); ?>
+        <button id="sign-btn" data-status="Signed" type="submit" class="btn btn-success btn-sm update-leave-status" style="background-color: #6341c5; border-color: #6341c5;"><span data-feather="check-circle" class="icon-16"></span> <?php echo 'Sign'; ?></button>
     <?php } ?>
     <?php if ($agreement_info->status === 'pending' || $agreement_info->status === 'signed') { ?>
         <button data-status="Completed" type="submit" class="btn btn-success btn-sm update-leave-status"><span data-feather="check-circle" class="icon-16"></span> <?php echo 'Complete'; ?></button>
@@ -92,6 +91,14 @@
         // Update status when a button is clicked
         $(".update-leave-status").click(function () {
             $("#agreement_status_input").val($(this).attr("data-status"));
+        });
+
+        $('#sign_from_manual').change(function(){
+            if($(this).val() == 'Manual'){
+                // $('#signature-pad-btn').trigger('click');
+                $('#signature-pad-btn').css('display', 'block');
+                $('#sign-btn').css('display', 'none');
+            }
         });
 
         // Update sign_from value based on selected radio button

@@ -844,7 +844,7 @@ class Agreements extends Security_Controller {
         $this->validate_submitted_data(array(
             "id" => "required|numeric",
             "status" => "required",
-            // "sign_from" => "required"
+            "sign_from" => "required"
         ));
 
         $agreement_id = $this->request->getPost('id');
