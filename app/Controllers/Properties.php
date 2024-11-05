@@ -345,6 +345,7 @@ class Properties extends Security_Controller {
         $row_data = array(
             $data->id,
             anchor(get_uri("properties/view/" . $data->id), $data->titleDeedNo),
+            $data->lotto_number,
             $data->service_name,
             $data->owner_name,
             $meta_info->address_meta,

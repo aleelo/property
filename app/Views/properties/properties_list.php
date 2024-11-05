@@ -45,6 +45,7 @@
             columns: [
             {title: "<?php echo app_lang("id") ?>", "class": "text-center w50 all", order_by: "id"},
             {title: "<?php echo app_lang("title_deed_no") ?>", "class": "all", order_by: "titleDeedNo"},
+            {title: "<?php echo "Lotto Number" ?>", "class": "all", order_by: "lotto_number"},
             {title: "<?php echo "Service" ?>", "class": "all", order_by: "service_name"},
             {title: "<?php echo "Owner" ?>", "class": "all", order_by: "Owner"},
             {title: "<?php echo app_lang("address") ?>", order_by: "address"},
