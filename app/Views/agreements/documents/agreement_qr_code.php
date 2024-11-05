@@ -19,12 +19,12 @@
                                 <td><?php echo $agreement->titleDeedNo; ?></td>
                             </tr>
                             <tr>
-                                <th class=""> <?php echo 'Buyer(s)'; ?></th>
-                                <td><?php echo $buyers; ?></td>
+                                <th class=""> <?php echo 'Owner(s)'; ?></th>
+                                <td><?php echo $owners; ?></td>
                             </tr>
                             <tr>
-                                <th class=""> <?php echo 'Seller(s)'; ?></th>
-                                <td><?php echo $sellers; ?></td>
+                                <th class=""> <?php echo 'Buyer(s)'; ?></th>
+                                <td><?php echo $buyers; ?></td>
                             </tr>
                             <tr>
                                 <th class=""> <?php echo 'Witness(es)'; ?></th>
