@@ -318,7 +318,8 @@
             // alert(regionId);
 
             // Clear the District dropdown and reset any selected value
-            $("#district_id").html('<option value=""> -- choose a district -- </option>').val("").trigger('change');
+            $("#district_id").html('<option value=""> -- choose a district -- </option>').val("").trigger('change'); 
+            
 
             // Check if a valid region ID is selected
             if (regionId) {
