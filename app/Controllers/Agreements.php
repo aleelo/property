@@ -221,10 +221,10 @@ class Agreements extends Security_Controller {
 
                 $buyers_info = $this->db->query("SELECT 
                 p.titleDeedNo,
-                GROUP_CONCAT(DISTINCT ow_u.company_name SEPARATOR ', ') as owners, 
-                GROUP_CONCAT(DISTINCT bu_s.company_name SEPARATOR ', ') as buyers, 
-                GROUP_CONCAT(DISTINCT te_u.company_name SEPARATOR ', ') as tenants, 
-                GROUP_CONCAT(DISTINCT wi_u.company_name SEPARATOR ', ') as witnesses
+                GROUP_CONCAT(DISTINCT ow_u.person_name SEPARATOR ', ') as owners, 
+                GROUP_CONCAT(DISTINCT bu_s.person_name SEPARATOR ', ') as buyers, 
+                GROUP_CONCAT(DISTINCT te_u.person_name SEPARATOR ', ') as tenants, 
+                GROUP_CONCAT(DISTINCT wi_u.person_name SEPARATOR ', ') as witnesses
                 FROM rise_agreements ag 
                 LEFT JOIN rise_clients ow_u ON FIND_IN_SET(ow_u.id, ag.owner_ids)
                 LEFT JOIN rise_clients bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)

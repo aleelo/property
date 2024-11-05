@@ -91,9 +91,9 @@ class Visitors_info extends App_Controller
     /** show document QR CODE */
     public function show_agreement_qrcode($id=0){
         $agr = $this->db->query("SELECT ag.*, p.titleDeedNo, 
-        GROUP_CONCAT(DISTINCT bu_s.company_name SEPARATOR ', ') as buyers, 
-                GROUP_CONCAT(DISTINCT se_u.company_name SEPARATOR ', ') as sellers, 
-                GROUP_CONCAT(DISTINCT wi_u.company_name SEPARATOR ', ') as witnesses
+        GROUP_CONCAT(DISTINCT bu_s.person_name SEPARATOR ', ') as buyers, 
+        GROUP_CONCAT(DISTINCT se_u.person_name SEPARATOR ', ') as sellers, 
+        GROUP_CONCAT(DISTINCT wi_u.person_name SEPARATOR ', ') as witnesses
                 FROM rise_agreements ag 
                 LEFT JOIN rise_clients bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
                 LEFT JOIN rise_clients se_u ON FIND_IN_SET(se_u.id, ag.seller_ids)
