@@ -24,6 +24,8 @@ class Clients_model extends Crud_model {
         $tickets_table = $this->db->prefixTable('tickets');
         $orders_table = $this->db->prefixTable('orders');
         $proposals_table = $this->db->prefixTable('proposals');
+        $districts_table = $this->db->prefixTable('districts');
+        $regions_table = $this->db->prefixTable('regions');
 
         $where = "";
         $id = $this->_get_clean_value($options, "id");
@@ -169,19 +171,19 @@ class Clients_model extends Crud_model {
         $sql = "SELECT SQL_CALC_FOUND_ROWS $clients_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS primary_contact, $users_table.id AS primary_contact_id, $users_table.image AS contact_avatar,  project_table.total_projects, IFNULL(invoice_details.payment_received,0) AS payment_received $select_custom_fieds,
                 IFNULL(invoice_details.invoice_value,0) AS invoice_value,
                 (SELECT GROUP_CONCAT($client_groups_table.title) FROM $client_groups_table WHERE FIND_IN_SET($client_groups_table.id, $clients_table.group_ids)) AS client_groups, $lead_status_table.title AS lead_status_title,  $lead_status_table.color AS lead_status_color,
-                owner_details.owner_name, owner_details.owner_avatar, $select_labels_data_query
+                owner_details.owner_name, owner_details.owner_avatar, $select_labels_data_query, $regions_table.region as region, $districts_table.district as district
         FROM $clients_table
         LEFT JOIN $users_table ON $users_table.client_id = $clients_table.id AND $users_table.deleted=0 AND $users_table.is_primary_contact=1 
         LEFT JOIN (SELECT client_id, COUNT(id) AS total_projects FROM $projects_table WHERE deleted=0 AND project_type='client_project' GROUP BY client_id) AS project_table ON project_table.client_id= $clients_table.id
-        
         LEFT JOIN (SELECT client_id, SUM(payments_table.payment_received) as payment_received, SUM($invoices_table.invoice_total) AS invoice_value FROM $invoices_table
                    LEFT JOIN (SELECT invoice_id, SUM(amount) AS payment_received FROM $invoice_payments_table WHERE deleted=0 GROUP BY invoice_id) AS payments_table ON payments_table.invoice_id=$invoices_table.id AND $invoices_table.deleted=0 AND $invoices_table.status='not_paid'
                    WHERE $invoices_table.deleted=0 AND $invoices_table.status='not_paid'
                    GROUP BY $invoices_table.client_id    
                    ) AS invoice_details ON invoice_details.client_id= $clients_table.id 
-                       
         LEFT JOIN $lead_status_table ON $clients_table.lead_status_id = $lead_status_table.id 
         LEFT JOIN (SELECT $users_table.id, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS owner_name, $users_table.image AS owner_avatar FROM $users_table WHERE $users_table.deleted=0 AND $users_table.user_type='staff') AS owner_details ON owner_details.id=$clients_table.owner_id
+        LEFT JOIN $regions_table ON $regions_table.id = $clients_table.region_id 
+        LEFT JOIN $districts_table ON $districts_table.id = $clients_table.district_id 
         $join_custom_fieds               
         WHERE $clients_table.deleted=0 $where $custom_fields_where  
         $order $limit_offset";
