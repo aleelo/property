@@ -91,13 +91,15 @@ class Visitors_info extends App_Controller
     /** show document QR CODE */
     public function show_agreement_qrcode($id=0){
         $agr = $this->db->query("SELECT ag.*, p.titleDeedNo, 
+        GROUP_CONCAT(DISTINCT ow_u.person_name SEPARATOR ', ') as owners, 
         GROUP_CONCAT(DISTINCT bu_s.person_name SEPARATOR ', ') as buyers, 
-        GROUP_CONCAT(DISTINCT se_u.person_name SEPARATOR ', ') as sellers, 
+        GROUP_CONCAT(DISTINCT te_u.person_name SEPARATOR ', ') as tenants, 
         GROUP_CONCAT(DISTINCT wi_u.person_name SEPARATOR ', ') as witnesses
-                FROM rise_agreements ag 
-                LEFT JOIN rise_clients bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
-                LEFT JOIN rise_clients se_u ON FIND_IN_SET(se_u.id, ag.seller_ids)
-                LEFT JOIN rise_clients wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
+        FROM rise_agreements ag 
+        LEFT JOIN rise_clients ow_u ON FIND_IN_SET(ow_u.id, ag.owner_ids)
+        LEFT JOIN rise_clients bu_s ON FIND_IN_SET(bu_s.id, ag.buyer_ids)
+        LEFT JOIN rise_clients te_u ON FIND_IN_SET(te_u.id, ag.tenant_ids)
+        LEFT JOIN rise_clients wi_u ON FIND_IN_SET(wi_u.id, ag.witness_ids)
         LEFT JOIN rise_properties p ON p.id = ag.property_id
         WHERE ag.uuid ='$id'")->getRow();
 
