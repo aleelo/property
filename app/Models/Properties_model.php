@@ -165,7 +165,7 @@ class Properties_model extends Crud_model {
 
 
         $sql = "SELECT SQL_CALC_FOUND_ROWS $properties_table.*,
-        $clients_table.company_name as owner_name, $regions_table.region as region, $districts_table.district as district,
+        $clients_table.person_name as owner_name, $regions_table.region as region, $districts_table.district as district,
         $notary_services_table.service_name
         FROM $properties_table
         LEFT JOIN $clients_table ON $clients_table.id = $properties_table.owner_ids
