@@ -23,6 +23,7 @@ class Clients_model extends Crud_model {
         $estimate_requests_table = $this->db->prefixTable('estimate_requests');
         $tickets_table = $this->db->prefixTable('tickets');
         $orders_table = $this->db->prefixTable('orders');
+        $agreements_table = $this->db->prefixTable('agreements');
         $proposals_table = $this->db->prefixTable('proposals');
         $districts_table = $this->db->prefixTable('districts');
         $regions_table = $this->db->prefixTable('regions');
@@ -83,7 +84,7 @@ class Clients_model extends Crud_model {
 
         $quick_filter = $this->_get_clean_value($options, "quick_filter");
         if ($quick_filter) {
-            $where .= $this->make_quick_filter_query($quick_filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table);
+            $where .= $this->make_quick_filter_query($quick_filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $agreements_table, $proposals_table);
         }
 
         $start_date = $this->_get_clean_value($options, "start_date");
@@ -207,7 +208,7 @@ class Clients_model extends Crud_model {
 
 
 
-    private function make_quick_filter_query($filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table) {
+    private function make_quick_filter_query($filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $agreements_table, $proposals_table) {
         $query = "";
         $tolarance = get_paid_status_tolarance();
         if ($filter == "has_open_projects" || $filter == "has_completed_projects" || $filter == "has_any_hold_projects" || $filter == "has_canceled_projects") {
@@ -254,6 +255,8 @@ class Clients_model extends Crud_model {
             $query = " AND $clients_table.id IN(SELECT $tickets_table.client_id FROM $tickets_table WHERE $tickets_table.deleted=0 AND $tickets_table.status!='closed') ";
         } else if ($filter == "has_new_orders") {
             $query = " AND $clients_table.id IN(SELECT $orders_table.client_id FROM $orders_table WHERE $orders_table.deleted=0 AND $orders_table.status_id='1') ";
+        } else if ($filter == "has_agreements") {
+            $query = " AND $clients_table.id IN(SELECT $agreements_table.witness_ids FROM $agreements_table WHERE $agreements_table.deleted=0) ";
         } else if ($filter == "has_open_proposals" || $filter == "has_accepted_proposals" || $filter == "has_rejected_proposals") {
             $status = "sent";
             if ($filter == "has_accepted_proposals") {
@@ -450,6 +453,7 @@ class Clients_model extends Crud_model {
         $estimate_requests_table = $this->db->prefixTable('estimate_requests');
         $orders_table = $this->db->prefixTable('orders');
         $proposals_table = $this->db->prefixTable('proposals');
+        $agreements_table = $this->db->prefixTable('agreements');
 
         $where = "";
 
@@ -481,7 +485,7 @@ class Clients_model extends Crud_model {
 
         $filter = $this->_get_clean_value($options, "filter");
         if ($filter) {
-            $where .= $this->make_quick_filter_query($filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table);
+            $where .= $this->make_quick_filter_query($filter, $clients_table, $projects_table, $invoices_table, $invoice_payments_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $agreements_table, $proposals_table);
         }
 
         $client_groups = $this->_get_clean_value($options, "client_groups");

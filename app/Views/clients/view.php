@@ -42,17 +42,17 @@
                     <?php } ?>
                 </div>
 
-                <div>
-                    <?php echo view("clients/info_widgets/index"); ?>
-                </div>
+                <!-- <div>
+                    <?php// echo view("clients/info_widgets/index"); ?>
+                </div> -->
 
                 <ul id="client-tabs" data-bs-toggle="ajax-tab" class="nav nav-tabs scrollable-tabs" role="tablist">
                     <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("clients/contacts/" . $client_info->id); ?>" data-bs-target="#client-contacts"> <?php echo app_lang('contacts'); ?></a></li>
                     <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("clients/company_info_tab/" . $client_info->id); ?>" data-bs-target="#client-info"> <?php echo app_lang('client_info'); ?></a></li>
 
-                    <?php if ($show_project_info) { ?>
+                    <!-- <?php //if ($show_project_info) { ?>
                         <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("clients/projects/" . $client_info->id); ?>" data-bs-target="#client-projects"><?php echo app_lang('projects'); ?></a></li>
-                    <?php } ?>
+                    <?php //} ?> -->
 
                     <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("clients/tasks/" . $client_info->id); ?>" data-bs-target="#client-tasks"><?php echo app_lang('tasks'); ?></a></li>
 
@@ -64,7 +64,7 @@
                         <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("clients/estimates/" . $client_info->id); ?>" data-bs-target="#client-estimates"> <?php echo app_lang('estimates'); ?></a></li>
                     <?php } ?>
                     <?php if ($show_order_info) { ?>
-                        <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("clients/orders/" . $client_info->id); ?>" data-bs-target="#client-orders"> <?php echo app_lang('orders'); ?></a></li>
+                        <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("clients/orders/" . $client_info->id); ?>" data-bs-target="#client-orders"> <?php echo 'Agreements'; ?></a></li>
                     <?php } ?>
                     <?php if ($show_estimate_request_info) { ?>
                         <li><a  role="presentation" data-bs-toggle="tab" href="<?php echo_uri("clients/estimate_requests/" . $client_info->id); ?>" data-bs-target="#client-estimate-requests"> <?php echo app_lang('estimate_requests'); ?></a></li>
