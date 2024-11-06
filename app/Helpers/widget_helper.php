@@ -1403,18 +1403,17 @@ if (!function_exists('clients_has_open_tickets_widget')) {
  * 
  * @return html
  */
-if (!function_exists('clients_has_agreements_widget')) {
+if (!function_exists('clients_has_new_orders_widget')) {
 
-    function clients_has_agreements_widget($show_own_clients_only_user_id = "", $allowed_client_groups = "") {
+    function clients_has_new_orders_widget($show_own_clients_only_user_id = "", $allowed_client_groups = "") {
         $Clients_model = model("App\Models\Clients_model");
 
-        // $options = array("filter" => "has_new_orders", "show_own_clients_only_user_id" => $show_own_clients_only_user_id, "client_groups" => $allowed_client_groups);
-        $options = array("filter" => "has_agreements", "show_own_clients_only_user_id" => $show_own_clients_only_user_id, "client_groups" => $allowed_client_groups);
+        $options = array("filter" => "has_new_orders", "show_own_clients_only_user_id" => $show_own_clients_only_user_id, "client_groups" => $allowed_client_groups);
 
-        $view_data["clients_has_agreements"] = $Clients_model->count_total_clients($options);
+        $view_data["clients_has_new_orders"] = $Clients_model->count_total_clients($options);
         $view_data["total_clients"] = $Clients_model->count_total_clients();
         $template = new Template();
-        return $template->view("clients/widgets/clients_has_agreements_widget", $view_data);
+        return $template->view("clients/widgets/clients_has_new_orders_widget", $view_data);
     }
 
 }

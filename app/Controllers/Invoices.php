@@ -151,6 +151,7 @@ class Invoices extends Security_Controller {
 
         $view_data['client_id'] = $client_id;
         $view_data['project_id'] = $project_id;
+        $view_data['Services'] = array("" => " -- choose a service -- ") + $this->Notary_services_model->get_dropdown_list(array("service_name"), "id");
 
         //prepare label suggestions
         $view_data['label_suggestions'] = $this->make_labels_dropdown("invoice", $model_info->labels);
@@ -234,6 +235,7 @@ class Invoices extends Security_Controller {
         $_invoice_data = array(
             "client_id" => $client_id,
             "project_id" => $this->request->getPost('invoice_project_id') ? $this->request->getPost('invoice_project_id') : 0,
+            "service_id" => $this->request->getPost('service_id'),
             "bill_date" => $this->request->getPost('invoice_bill_date'),
             "due_date" => $this->request->getPost('invoice_due_date'),
             "tax_id" => $this->request->getPost('tax_id') ? $this->request->getPost('tax_id') : 0,
@@ -695,7 +697,8 @@ class Invoices extends Security_Controller {
             $data->id,
             $invoice_url,
             anchor(get_uri("clients/view/" . $data->client_id), $data->company_name),
-            $data->project_title ? anchor(get_uri("projects/view/" . $data->project_id), $data->project_title) : "-",
+            // $data->project_title ? anchor(get_uri("projects/view/" . $data->project_id), $data->project_title) : "-",
+            $data->service,
             $data->bill_date,
             format_to_date($data->bill_date, false),
             $data->due_date,

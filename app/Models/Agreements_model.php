@@ -89,6 +89,11 @@ class Agreements_model extends Crud_model {
             $where .= " AND (FIND_IN_SET('$label_id', $agreements_table.labels)) ";
         }
 
+        $client_id = $this->_get_clean_value($options, "client_id");
+        if ($client_id) {
+            $where .= " AND $agreements_table.client_id=$client_id";
+        }
+
         $select_labels_data_query = $this->get_labels_data_query();
 
         $client_groups = $this->_get_clean_value($options, "client_groups");

@@ -86,26 +86,47 @@
                     </div>
                 </div>
             <?php } ?>
-            <?php if ($project_id) { ?>
-                <input type="hidden" name="invoice_project_id" value="<?php echo $project_id; ?>" />
-            <?php } else { ?>
+            <!-- <?php //if ($project_id) { ?>
+                <input type="hidden" name="invoice_project_id" value="<?php// echo $project_id; ?>" />
+            <?php// } else { ?>
                 <div class="form-group">
                     <div class="row">
-                        <label for="invoice_project_id" class=" col-md-3"><?php echo app_lang('project'); ?></label>
+                        <label for="invoice_project_id" class=" col-md-3"><?php //echo app_lang('project'); ?></label>
                         <div class="col-md-9" id="invoice-porject-dropdown-section">
                             <?php
-                            echo form_input(array(
-                                "id" => "invoice_project_id",
-                                "name" => "invoice_project_id",
-                                "value" => $model_info->project_id,
-                                "class" => "form-control",
-                                "placeholder" => app_lang('project')
-                            ));
+                            // echo form_input(array(
+                            //     "id" => "invoice_project_id",
+                            //     "name" => "invoice_project_id",
+                            //     "value" => $model_info->project_id,
+                            //     "class" => "form-control",
+                            //     "placeholder" => app_lang('project')
+                            // ));
                             ?>
                         </div>
                     </div>
                 </div>
-            <?php } ?>
+            <?php// } ?> -->
+
+            <!----------------------------------------- Service  ------------------------------------>
+
+            <div class="form-group">
+                <div class="row">
+                    <label for="service_id" class="col-md-3"><?php echo 'Service'; ?></label>
+                    <div class="col-md-9">
+                        <?php
+                        echo form_dropdown(array(
+                            "id" => "service_id",
+                            "name" => "service_id",
+                            "class" => "form-control select2",
+                            "placeholder" => 'Service',
+                            "autocomplete" => "off",
+                            'data-rule-required' => true,
+                            'data-msg-required' => app_lang('field_required'),
+                        ),$Services,[$model_info->service_id]);
+                        ?>
+                    </div>
+                </div>
+            </div>
 
             <div class="form-group">
                 <div class="row">
@@ -117,26 +138,26 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="row">
-                    <label for="tax_id" class=" col-md-3"><?php echo app_lang('second_tax'); ?></label>
+                    <label for="tax_id" class=" col-md-3"><?php //echo app_lang('second_tax'); ?></label>
                     <div class="col-md-9">
                         <?php
-                        echo form_dropdown("tax_id2", $taxes_dropdown, array($model_info->tax_id2), "class='select2 tax-select2'");
+                        //echo form_dropdown("tax_id2", $taxes_dropdown, array($model_info->tax_id2), "class='select2 tax-select2'");
                         ?>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
+            </div> -->
+            <!-- <div class="form-group">
                 <div class="row">
-                    <label for="tax_id" class=" col-md-3"><?php echo app_lang('tax_deducted_at_source'); ?></label>
+                    <label for="tax_id" class=" col-md-3"><?php //echo app_lang('tax_deducted_at_source'); ?></label>
                     <div class="col-md-9">
                         <?php
-                        echo form_dropdown("tax_id3", $taxes_dropdown, array($model_info->tax_id3), "class='select2 tax-select2'");
+                        //echo form_dropdown("tax_id3", $taxes_dropdown, array($model_info->tax_id3), "class='select2 tax-select2'");
                         ?>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
            <?php echo view("invoices/recurring_fields"); ?>
                 
@@ -378,6 +399,8 @@
 
             setDefaultDueDate();
         }
+        $("#invoice-form .select2").select2();
+
 
     });
 </script>

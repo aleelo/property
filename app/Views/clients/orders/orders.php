@@ -10,7 +10,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#order-table").appTable({
-            source: '<?php echo_uri("orders/order_list_data_of_client/" . $client_id) ?>',
+            source: '<?php echo_uri("agreements/agreements_list_data_of_client/" . $client_id) ?>',
             order: [[0, "desc"]],
             filterDropdown: [<?php echo $custom_field_filters; ?>],
             columns: [

@@ -43,7 +43,7 @@
                 {visible: false, searchable: false},
                 {title: '<?php echo app_lang("id") ?>', "class": "w10p", "iDataSort": 0},
                 {targets: [1], visible: false, searchable: false},
-                {title: "<?php echo app_lang("project") ?>"},
+                {title: "<?php echo "Service" ?>"},
                 {visible: false, searchable: false},
                 {title: "<?php echo app_lang("bill_date") ?>", "class": "w10p", "iDataSort": 4},
                 {visible: false, searchable: false},

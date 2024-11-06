@@ -722,6 +722,22 @@ class Agreements extends Security_Controller {
         return $this->template->view('agreements/signaure_pad', $view_data);
     }
 
+    function agreements_list_data_of_client($client_id) {
+        validate_numeric_value($client_id);
+        $this->check_access_to_store();
+
+        $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("agreements", $this->login_user->is_admin, $this->login_user->user_type);
+
+        $options = array("client_id" => $client_id, "custom_fields" => $custom_fields, "custom_field_filter" => $this->prepare_custom_field_filter_values("orders", $this->login_user->is_admin, $this->login_user->user_type));
+
+        $list_data = $this->Agreements_model->get_details($options)->getResult();
+        $result = array();
+        foreach ($list_data as $data) {
+            $result[] = $this->_make_row($data, $custom_fields);
+        }
+        echo json_encode(array("data" => $result));
+    }
+
     public function check_agreement_template()
     {
         $agreement_type_id = $this->request->getPost('agreement_type_id');

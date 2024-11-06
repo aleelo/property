@@ -31,11 +31,11 @@
     <?php } ?>
 
     <div class="row">
-        <!-- <?php ///if ($show_project_info) { ?>
+        <?php if ($show_project_info) { ?>
             <div class="col-md-6">
-                <?php //echo client_projects_widget($show_own_clients_only_user_id, $allowed_client_groups); ?>
-            </div> -->
-        <?php //} ?>
+                <?php echo client_projects_widget($show_own_clients_only_user_id, $allowed_client_groups); ?>
+            </div>
+        <?php } ?>
 
         <?php if ($show_estimate_info) { ?>
             <div class="col-md-6">
@@ -49,11 +49,9 @@
                 echo clients_has_open_tickets_widget($show_own_clients_only_user_id, $allowed_client_groups);
             }
             ?>
-        </div>
-        <div class="col-md-6">
             <?php
             if ($show_order_info) {
-                echo clients_has_agreements_widget($show_own_clients_only_user_id, $allowed_client_groups);
+                echo clients_has_new_orders_widget($show_own_clients_only_user_id, $allowed_client_groups);
             }
             ?>
         </div>
