@@ -232,25 +232,25 @@
 
 <!----------------------------------------- Leas Period  ------------------------------------>
 
-
+<!-- 
 <div class="form-group" id="lease_period_section">
     <div class="row">
-        <label for="lease_period" class="<?php echo $label_column; ?> company_name_section"><?php echo 'Lease Period'; ?></label>
-        <div class="<?php echo $field_column; ?>">
+        <label for="lease_period" class="<?php// echo $label_column; ?> company_name_section"><?php //echo 'Lease Period'; ?></label>
+        <div class="<?php// echo $field_column; ?>">
             <?php
-            echo form_input(array(
-                "id" => "lease_period",
-                "name" => "lease_period",
-                "value" => $model_info->lease_period,
-                "class" => "form-control company_name_input_section",
-                "placeholder" => 'Lease Period ',
-                'data-rule-required' => true,
-                'data-msg-required' =>   app_lang('field_required'),
-            ));
+            // echo form_input(array(
+            //     "id" => "lease_period",
+            //     "name" => "lease_period",
+            //     "value" => $model_info->lease_period,
+            //     "class" => "form-control company_name_input_section",
+            //     "placeholder" => 'Lease Period ',
+            //     'data-rule-required' => true,
+            //     'data-msg-required' =>   app_lang('field_required'),
+            // ));
             ?>
         </div>
     </div>
-</div>
+</div> -->
 
 <!----------------------------------------- Amount  ------------------------------------>
 
