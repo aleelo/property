@@ -68,10 +68,13 @@ class Agreements extends Security_Controller {
         $view_data['label_column'] = "col-md-3 text-right";
         $view_data['field_column'] = "col-md-9";
 
-        $view_data['label_column_2'] = "col-md-2 text-right";
+        $view_data['label_column_2'] = "col-md-3 text-right";
         $view_data['field_column_2'] = "col-md-4";
 
-        $view_data['field_column_3'] = "col-md-10";
+        $view_data['label_column_3'] = "col-md-2 text-right";
+        $view_data['field_column_3'] = "col-md-3";
+
+        $view_data['field_column_6'] = "col-md-10";
 
         $view_data["view"] = $this->request->getPost('view'); //view='details' needed only when loading from the client's details view
         $view_data["ticket_id"] = $this->request->getPost('ticket_id'); //needed only when loading from the ticket's details view and created by unknown client
@@ -86,10 +89,14 @@ class Agreements extends Security_Controller {
 
         $view_data['notaries'] = array("" => " -- choose notary -- ") + $this->Clients_model->get_dropdown_list(array("person_name"), "id");
         $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo", "hyphen", "lotto_number"), "id");
-        $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
-        $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+
+        $view_data['owners'] = array("" => " -- choose owner(s) -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+        $view_data['agents'] = array("" => " -- choose agent(s) -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+        $view_data['buyers'] = array("" => " -- choose buyer(s) -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+        $view_data['tenants'] = array("" => " -- choose tenant(s) -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+        $view_data['witnesses'] = array("" => " -- choose witness(es) -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+
         $view_data['documents'] = array("" => " -- choose document -- ") + $this->Templates_model->get_dropdown_list(array("name"), "id");
-        $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
 
 
         // $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name"," ","last_name")), "id");
@@ -162,6 +169,7 @@ class Agreements extends Security_Controller {
             $agreement_type_id = $this->request->getPost('agreement_type_id');
 
             $owner_ids = $this->request->getPost('owner_ids') ? implode(',', $this->request->getPost('owner_ids')) : null;
+            $agent_ids = $this->request->getPost('agent_ids') ? implode(',', $this->request->getPost('agent_ids')) : null;
             $buyer_ids = $this->request->getPost('buyer_ids') ? implode(',', $this->request->getPost('buyer_ids')) : null;
             $tenant_ids = $this->request->getPost('tenant_ids') ? implode(',', $this->request->getPost('tenant_ids')) : null;
             $witness_ids = $this->request->getPost('witness_ids') ? implode(',', $this->request->getPost('witness_ids')) : null;
@@ -172,13 +180,17 @@ class Agreements extends Security_Controller {
                 "agreement_type_id" => $agreement_type_id,
                 "notary_ref" => $this->request->getPost('notary_ref'),
                 "owner_ids" => $owner_ids,
+                "agent_ids" => $agent_ids,
                 "buyer_ids" => $buyer_ids,
                 "tenant_ids" => $tenant_ids,
                 "witness_ids" => $witness_ids,
                 "lease_period" => $this->request->getPost('lease_period'),
                 "amount" => $this->request->getPost('amount'),
+                "has_agent" => $this->request->getPost('has_agent'),
                 "payment_method" => $this->request->getPost('payment_method'),
                 "payment_frequency" => $this->request->getPost('payment_frequency'),
+                "Lease_start_date" => $this->request->getPost('Lease_start_date'),
+                "Lease_end_date" => $this->request->getPost('Lease_end_date'),
                 "created_by" => $this->request->getPost('created_by') ?: $this->login_user->id,
                 "created_at" => date('Y-m-d'),
             );
@@ -1662,11 +1674,16 @@ class Agreements extends Security_Controller {
             $view_data['label_column_2'] = "col-md-2 text-right";
             $view_data['field_column_2'] = "col-md-4";
 
-            $view_data['field_column_3'] = "col-md-10";
+            $view_data['label_column_3'] = "col-md-1 text-right";
+            $view_data['field_column_3'] = "col-md-5";
 
             $view_data['properties'] = array("" => " -- choose property -- ") + $this->Properties_model->get_dropdown_list(array("titleDeedNo"), "id");
-            $view_data['buyers'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
-            $view_data['sellers'] = array("" => " -- choose seller -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
+
+            $view_data['owners'] = array("" => " -- choose owner(s) -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+            $view_data['agents'] = array("" => " -- choose agent(s) -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+            $view_data['buyers'] = array("" => " -- choose buyer(s) -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+            $view_data['tenants'] = array("" => " -- choose tenant(s) -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
+            $view_data['witnesses'] = array("" => " -- choose witness(es) -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
 
             $view_data['can_edit_clients'] = $this->can_edit_clients($agreement_id);
             $view_data['payment_method'] = $this->payment_method();
@@ -1674,7 +1691,6 @@ class Agreements extends Security_Controller {
 
             $view_data['departments'] = array("" => " -- Choose Department -- ") + $this->Departments_model->get_dropdown_list(array("nameSo"), "id");
             $view_data['Section_heads'] = array("" => " -- Choose Section Head -- ") + $this->Users_model->get_dropdown_list(array("first_name", "last_name"), "id");
-            $view_data['witnesses'] = array("" => " -- choose witness -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
 
             $view_data["team_members_dropdown"] = $this->get_team_members_dropdown();
             $view_data["currency_dropdown"] = $this->_get_currency_dropdown_select2_data();

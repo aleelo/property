@@ -68,11 +68,11 @@
     </div>
 </div>
 
-<!----------------------------------------- Owner  ------------------------------------>
+<!----------------------------------------- Owners  ------------------------------------>
 
 <div class="form-group" id="owner_section">
     <div class="row">
-        <label for="owner_ids" class=" <?php echo $label_column; ?>"><?php echo 'Owner'; ?></label>
+        <label for="owner_ids" class=" <?php echo $label_column; ?>"><?php echo 'Owner (s)'; ?></label>
         <div class="<?php echo $field_column; ?>">
             <?php
             
@@ -85,17 +85,53 @@
                 "autocomplete" => "off",
                 'data-rule-required' => true,
                 'data-msg-required' =>   app_lang('field_required'),
-            ),$sellers,$model_info->owner_ids ? explode(',', $model_info->owner_ids) : []); // Handle multiple values
+            ),$owners,$model_info->owner_ids ? explode(',', $model_info->owner_ids) : []); // Handle multiple values
             ?>
         </div>
     </div>
 </div>
 
-<!----------------------------------------- Buyer  ------------------------------------>
+<!----------------------------------------- Has Agent  ------------------------------------>
+
+<div class="form-group" id="has_agent_section">
+    <div class="row">
+        <label for="has_agent" class=" <?php echo $label_column; ?>"><?php echo 'Has Agent (s)'; ?></label>
+        <div class="<?php echo $field_column; ?>">
+        <?php
+        echo form_checkbox("has_agent", "1", $model_info->has_agent ? true : false, "id='has_agent' class='has_agent_section form-check-input'");
+        ?>
+        </div>
+    </div>
+</div>
+
+<!----------------------------------------- Agents  ------------------------------------>
+
+<div class="form-group" id="agent_section">
+    <div class="row">
+        <label for="agent_ids" class=" <?php echo $label_column; ?>"><?php echo 'Agent (s)'; ?></label>
+        <div class="<?php echo $field_column; ?>">
+            <?php
+            
+            echo form_dropdown(array(
+                "id" => "agent_ids",
+                "name" => "agent_ids[]",
+                "class" => "form-control select2",
+                "multiple" => "multiple",
+                "placeholder" => ' -- choose agent(s) -- ',
+                "autocomplete" => "off",
+                'data-rule-required' => true,
+                'data-msg-required' =>   app_lang('field_required'),
+            ),$agents,$model_info->agent_ids ? explode(',', $model_info->agent_ids) : []); // Handle multiple values
+            ?>
+        </div>
+    </div>
+</div>
+
+<!----------------------------------------- Buyers  ------------------------------------>
 
 <div class="form-group" id="buyer_section">
     <div class="row">
-        <label for="buyer_ids" class=" <?php echo $label_column; ?>"><?php echo 'Buyer'; ?></label>
+        <label for="buyer_ids" class=" <?php echo $label_column; ?>"><?php echo 'Buyer (s)'; ?></label>
         <div class="<?php echo $field_column; ?>">
             <?php
             
@@ -114,11 +150,11 @@
     </div>
 </div>
 
-<!----------------------------------------- Tenant  ------------------------------------>
+<!----------------------------------------- Tenants  ------------------------------------>
 
 <div class="form-group" id="tenant_section">
     <div class="row">
-        <label for="tenant_ids" class=" <?php echo $label_column; ?>"><?php echo 'Tenant'; ?></label>
+        <label for="tenant_ids" class=" <?php echo $label_column; ?>"><?php echo 'Tenant (s)'; ?></label>
         <div class="<?php echo $field_column; ?>">
             <?php
             
@@ -131,17 +167,17 @@
                 "autocomplete" => "off",
                 'data-rule-required' => true,
                 'data-msg-required' =>   app_lang('field_required'),
-            ),$sellers,$model_info->tenant_ids ? explode(',', $model_info->tenant_ids) : []); // Handle multiple values
+            ),$tenants,$model_info->tenant_ids ? explode(',', $model_info->tenant_ids) : []); // Handle multiple values
             ?>
         </div>
     </div>
 </div>
 
-<!----------------------------------------- Witness  ------------------------------------>
+<!----------------------------------------- Witnesses  ------------------------------------>
 
 <div class="form-group" id="departments_section">
     <div class="row">
-        <label for="witness_ids" class=" <?php echo $label_column; ?>"><?php echo 'Witness'; ?></label>
+        <label for="witness_ids" class=" <?php echo $label_column; ?>"><?php echo 'Witness (es)'; ?></label>
         <div class="<?php echo $field_column; ?>">
             <?php
             
@@ -160,7 +196,39 @@
     </div>
 </div>
 
+<!----------------------------------------- Lease ------------------------------------>
 
+<div class="form-group" id="Lease_start_end_date_section">
+    <div class="row">
+
+        <label for="Lease_start_date" class="<?php echo $label_column_2; ?>"><?php echo 'Start Date'; ?></label>
+        <div class="<?php echo $field_column_2; ?>">
+            <?php
+            echo form_input(array(
+                "id" => "Lease_start_date",
+                "name" => "Lease_start_date",
+                "value" => $model_info->Lease_start_date,
+                "class" => "form-control",
+                "placeholder" => 'Start Date'
+            ));
+            ?>
+        </div>
+
+        <label for="Lease_end_date" class="<?php echo $label_column_3; ?>"><?php echo 'End Date'; ?></label>
+        <div class="<?php echo $field_column_3; ?>">
+            <?php
+            echo form_input(array(
+                "id" => "Lease_end_date",
+                "name" => "Lease_end_date",
+                "value" => $model_info->Lease_end_date,
+                "class" => "form-control",
+                "placeholder" => 'End Date'
+            ));
+            ?>
+        </div>
+
+    </div>
+</div>
 
 <!----------------------------------------- Leas Period  ------------------------------------>
 
@@ -415,12 +483,13 @@
         function hideAllSections() {
             $('#buyer_section').hide();
             $('#tenant_section').hide();
+            $('#Lease_start_end_date_section').hide();
             $('#lease_period_section').hide();
             $('#payment_frequency_section').hide();
         }
 
         function resetSections(excludeSections) {
-            var sections = ['#buyer_section', '#tenant_section', '#lease_period_section', '#payment_frequency_section'];
+            var sections = ['#buyer_section', '#tenant_section', '#lease_period_section', '#payment_frequency_section', '#Lease_start_end_date_section'];
             sections = sections.filter(function (section) {
                 return excludeSections.indexOf(section) === -1;
             });
@@ -443,8 +512,9 @@
                 case '2': // Example case for Lease
                     $('#tenant_section').show();
                     $('#lease_period_section').show();
+                    $('#Lease_start_end_date_section').show();
                     $('#payment_frequency_section').show();
-                    resetSections(['#tenant_section', '#lease_period_section', '#payment_frequency_section']);
+                    resetSections(['#tenant_section', '#lease_period_section', '#payment_frequency_section', '#Lease_start_end_date_section']);
                     break;
                 case '1': // Example case for Sale
                     $('#buyer_section').show();
@@ -462,6 +532,55 @@
         // Date pickers initialization for lease periods
         setDatePicker("#lease_period_start");
         setDatePicker("#lease_period_end");
+
+        // $("#has_agent").click(function () {
+        //     if ($(this).is(":checked")) {
+        //         $("#agent_section").removeClass("hide");
+        //     } else {
+        //         $("#agent_section").addClass("hide");
+        //     }
+        // });
+
+    // Use change event to capture the checkbox state change
+        $("#has_agent").change(function () {
+            var has_agent = $(this).is(':checked'); // Check if checkbox is checked (returns true or false)
+
+            // Hide all sections initially
+            hideAllSectionsHasAgent();
+
+            // Show relevant sections based on checkbox state
+            if (has_agent) {
+                $('#agent_section').show();
+                resetSectionsHasAgent(['#agent_section']); // Only reset other sections, not agent_section
+            } else {
+                hideAllSectionsHasAgent();
+                resetSectionsHasAgent([]);
+            }
+        });
+
+        function hideAllSectionsHasAgent() {
+            $('#agent_section').hide();
+        }
+
+        function resetSectionsHasAgent(excludeSections) {
+            var sections = ['#agent_section'];
+            sections = sections.filter(function (section) {
+                return excludeSections.indexOf(section) === -1;
+            });
+
+            sections.forEach(function (section) {
+                $(section).val(null).trigger('change');
+                $(section).hide();
+            });
+        }
+
+        // Trigger change event on page load to set initial state
+        $('#has_agent').trigger('change');
+
+        setDatePicker("#Lease_start_date");
+        setDatePicker("#Lease_end_date");
+
+
     });
 </script>
 

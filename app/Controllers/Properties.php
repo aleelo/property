@@ -1046,7 +1046,7 @@ class Properties extends Security_Controller {
             $view_data['field_column_3'] = "col-md-10";
             $view_data['regions'] = array("" => " -- choose region -- ") + $this->Regions_model->get_dropdown_list(array("region"), "id");
             $view_data['districts'] = array("" => " -- choose district -- ") + $this->Districts_model->get_dropdown_list(array("district"), "id");
-            $view_data['owners'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("company_name", "hyphen", "phone"), "id");
+            $view_data['owners'] = array("" => " -- choose buyer -- ") + $this->Clients_model->get_dropdown_list(array("person_name", "hyphen", "phone"), "id");
 
             $view_data['can_edit_clients'] = $this->can_edit_clients($Sections_id);
 
