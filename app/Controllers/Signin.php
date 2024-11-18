@@ -218,7 +218,7 @@ class Signin extends App_Controller
 
         $params = array(
             'client_id' => $appid,
-            'redirect_uri' => $env == 'development' ? 'https://localhost/notary/signin/aad_callback' : 'https://notary.aleelo.com/signin/aad_callback',
+            'redirect_uri' => $env == 'development' ? 'https://localhost/property/signin/aad_callback' : 'https://property.aleelo.com/signin/aad_callback',
             'response_type' => 'code',
             'login_hint' => $email, //'admin@presidency@gov.so',
             // 'prompt'=>'consent',
